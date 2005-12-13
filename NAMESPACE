@@ -1,0 +1,22 @@
+## functions
+export(baro5, braincousens, bcl3, bcl4, bindrc, colFct, compParm, diagnostics, ED, gompertz, g3, g4, logistic, logit, l3, l4, l5, MAX, mdControl, mixdrc, mlogistic, ml3a, ml3b, ml3c, ml4a, ml4b, ml4c, multdrc, plotraw, searchdrc, SI)
+
+#importFrom(MASS, boxcox, ginv)
+
+## S3 methods
+S3method(anova, drc)
+S3method(coef, drc)
+S3method(confint, drc)
+S3method(fitted, drc)
+S3method(logLik, drc)
+S3method(plot, drc)
+S3method(predict, drc)
+S3method(print, drc)
+S3method(print, summary.drc)
+S3method(residuals, drc)
+S3method(summary, drc)
+S3method(summary, mixdrc)
+S3method(update, drc)
+S3method(vcov, drc)
+
+
