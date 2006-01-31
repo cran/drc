@@ -1,13 +1,14 @@
 "mixdrc" <- 
-function(object, random, lambda=1, data)
+function(object, random, data)
 {
 
 #    if (missing(lambda)) {lambda <- 1}
+    if (!is.null(object$"boxcox")) {lambda <- object$"boxcox"[1]; bcAdd <- object$"boxcox"[4]} else {lambda <- 1; bcAdd <- 0}
 
 
     ## Defining dose and response
-    respVar <- (eval(object$call[[2]][[2]], envir=data)^lambda - 1)/lambda  # name of response variable
-    doseVar <- eval(object$call[[2]][[3]], envir=data)
+    respVar <- ((eval(object$call[[2]][[2]], envir = data) + bcAdd)^lambda - 1)/lambda  # name of response variable
+    doseVar <- eval(object$call[[2]][[3]], envir = data)
     dataSet <- cbind(data, doseVar, respVar)
 
 
@@ -19,24 +20,29 @@ function(object, random, lambda=1, data)
     ## Defining dose-response function 
     if (inherits(object, "logistic"))
     {
-
-#        if (lenPN==3)
-#        {
-#            logist3 <- function(DOSE,b,d,e)
-#            {
-#                ( (0 + (d-0)/(1+exp(b*(log(DOSE)-log(e)))) )^lambda - 1)/lambda
-#            }
-#            assign("logist3", logist3, env=.GlobalEnv)
-#        }
-#        if (lenPN==4)
-#        {
-#            logist4 <- function(DOSE,b,c,d,e)
-#            {
-#                ( (c + (d-c)/(1+exp(b*(log(DOSE)-log(e)))) )^lambda - 1)/lambda
-#            }
-#            assign("logist4", logist4, env=.GlobalEnv)
-#        }
-#        if (lenPN==5) {stop("Not implemented for l5")}       
+        if (lenPN == 3)
+        {
+            opfct <- function(DOSE,b,d,e)
+            {
+                ( (0 + (d-0)/(1+exp(b*(log(DOSE)-log(e)))) + bcAdd)^lambda - 1)/lambda
+            }
+            NLMEfor <- formula(respVar ~ opfct(doseVar, b, d, e))
+        }
+        if (lenPN == 4)
+        {
+            opfct <- function(DOSE,b,c,d,e)
+            {
+                ( (c + (d-c)/(1+exp(b*(log(DOSE)-log(e)))) + bcAdd)^lambda - 1)/lambda
+            }
+            NLMEfor <- formula(respVar ~ opfct(doseVar, b, c, d, e))
+        }
+        if (lenPN == 5) {stop("Not implemented for l5")}       
+    }
+    assign("opfct", opfct, env = .GlobalEnv)  # assigning object to global environment    
+#    print(opfct(0, -1, 1, 4, 10))
+#    print(opfct(1000, -1, 1, 4, 10))
+#    print(opfct(10, -1, 1, 4, 10))    
+#    print(NLMEfor)
 
 
         ## Constructing list for fixed argument
@@ -83,65 +89,83 @@ function(object, random, lambda=1, data)
         ## Searching for start values that yield convergence
         require(nlme, quietly = TRUE)
         
-        if (lenPN==3)
-        {
-            logist3 <- function(DOSE,b,d,e)
-            {
-                ( (0 + (d-0)/(1+exp(b*(log(DOSE)-log(e)))) )^lambda - 1)/lambda
-            }
-            assign("logist3", logist3, env=.GlobalEnv)
+#        if (lenPN==3)
+#        {
+#            logist3 <- function(DOSE,b,d,e)
+#            {
+#                ( (0 + (d-0)/(1+exp(b*(log(DOSE)-log(e)))) + bcAdd)^lambda - 1)/lambda
+#            }
+#            assign("logist3", logist3, env=.GlobalEnv)  # assigning object to global environment
+#
+#            found <- FALSE
+#            for (i in 1:30)
+#            {
+#
+#                startVal <- c(i/10,coef(object)[-c(1)])
+#
+#                options(warn=-1)
+#                modelNLME <- try(nlme(respVar~logist3(doseVar,b,d,e),
+#                                      fixed = fixedList,
+#                                      random = randomList,
+#                                      start=startVal, na.action=na.omit, data=dataSet), silent=TRUE)
+#
+#                if (!inherits(modelNLME,"try-error")) {found <- TRUE; break}  # print(c(i)); stop("got it")}
+#                options(warn=0)
+#            }
+#            rm(logist3, envir=.GlobalEnv)  # removing object from global environment            
+#        }
+#        if (lenPN==4)
+#        {
+#            logist4 <- function(DOSE,b,c,d,e)
+#            {
+#                ( (c + (d-c)/(1+exp(b*(log(DOSE)-log(e)))) + bcAdd)^lambda - 1)/lambda
+#            }
+#            assign("logist4", logist4, env=.GlobalEnv)  # assigning object to global environment
+#
+#            found <- FALSE
+#            for (i in 1:30)
+#            {
+#
+#                startVal <- c(i/10,coef(object)[-c(1)])
+#
+#                options(warn=-1)
+#                modelNLME <- try(nlme(respVar~logist4(doseVar,b,c,d,e),
+#                                      fixed = fixedList,
+#                                      random = randomList,
+#                                      start=startVal, na.action=na.omit, data=dataSet), silent=TRUE)
+#
+#                if (!inherits(modelNLME,"try-error")) {found <- TRUE; break}  # print(c(i)); stop("got it")}
+#                options(warn=0)
+#            }
+#            rm(logist4, envir=.GlobalEnv)  # removing object from global environment            
+#        }
+##        if (lenPN==5) {stop("Not implemented for l5")}       
 
-            found <- FALSE
-            for (i in 1:30)
-            {
 
-                startVal <- c(i/10,coef(object)[-c(1)])
+    found <- FALSE
+    for (i in 1:30)
+    {
+        startVal <- c(i/10, coef(object)[-c(1)])
 
-                options(warn=-1)
-                modelNLME <- try(nlme(respVar~logist3(doseVar,b,d,e),
-                                      fixed = fixedList,
-                                      random = randomList,
-                                      start=startVal, na.action=na.omit, data=dataSet), silent=TRUE)
+        options(warn=-1)
+#        modelNLME <- try(nlme(respVar~opfct(doseVar, b ,d, e),
+        modelNLME <- try(nlme(NLMEfor,
+                              fixed = fixedList,
+                              random = randomList,
+                              start = startVal, na.action = na.omit, data = dataSet), silent = TRUE)
 
-                if (!inherits(modelNLME,"try-error")) {found <- TRUE; break}  # print(c(i)); stop("got it")}
-                options(warn=0)
-            }
-            rm(logist3, envir=.GlobalEnv)  # removing object from global environment            
-        }
-        if (lenPN==4)
-        {
-            logist4 <- function(DOSE,b,c,d,e)
-            {
-                ( (c + (d-c)/(1+exp(b*(log(DOSE)-log(e)))) )^lambda - 1)/lambda
-            }
-            assign("logist4", logist4, env=.GlobalEnv)
-
-            found <- FALSE
-            for (i in 1:30)
-            {
-
-                startVal <- c(i/10,coef(object)[-c(1)])
-
-                options(warn=-1)
-                modelNLME <- try(nlme(respVar~logist4(doseVar,b,c,d,e),
-                                      fixed = fixedList,
-                                      random = randomList,
-                                      start=startVal, na.action=na.omit, data=dataSet), silent=TRUE)
-
-                if (!inherits(modelNLME,"try-error")) {found <- TRUE; break}  # print(c(i)); stop("got it")}
-                options(warn=0)
-            }
-            rm(logist4, envir=.GlobalEnv)  # removing object from global environment            
-        }
-        if (lenPN==5) {stop("Not implemented for l5")}       
-        
-        if (!found) {stop("No convergence. The model may be too general.")}
-
+        if (!inherits(modelNLME,"try-error")) {found <- TRUE; break}  # print(c(i)); stop("got it")}
+        options(warn=0)
     }
+    rm(opfct, envir = .GlobalEnv)  # removing object from global environment            
+    
+    if (!found) {stop("No convergence. The model may be too general.")}
+
+#    }
 
 
 
-    modelNLME$class <- "logistic model with random effects"
+    modelNLME$class <- "mixed logistic"
     modelNLME$parNames <- mdrcPNsplit(rownames(summary(modelNLME)$tTable), ".")
 
     class(modelNLME) <- c("mixdrc", class(modelNLME))

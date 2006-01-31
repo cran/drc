@@ -20,7 +20,7 @@
     ## Defining the log likelihood function
     llfct <- function(object)
     {
-        degfre <- object$"sumList"$"df.residual"  # object$summary[6]
+        degfre <- object$"sumList"$"lenData"  # "df.residual"  # object$summary[6]
         c( -(degfre/2)*(log(2*pi)+log(object$"fit"$"value")-log(degfre)+1), length(object$"fit"$"par") + 1 )
     }
     

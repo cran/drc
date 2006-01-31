@@ -1,7 +1,7 @@
 "anova.drc" <-
-function(object, ...)
+function(object, ..., test = NULL)
 {
-    if (length(list(object, ...)) > 1) {return(anova.drclist(object, ...))} else {obj1 <- object}
+    if (length(list(object, ...)) > 1) {return(anova.drclist(object, ..., test = test))} else {obj1 <- object}
 
     if (inherits(object, "bindrc"))
     {
@@ -39,7 +39,7 @@ function(object, ...)
         
         
         anovaModel <- obj1$"anova"
-        if (!is.null(anovaModel)) 
+        if ( (!is.null(anovaModel)) && (is.null(test)) ) 
         {
             anovaDF <- df.residual(anovaModel$"anovaFit")
             nlsDF <- df.residual(obj1)
@@ -83,7 +83,10 @@ function(object, ...)
                 rowNames <- c(paste(wayStr, "ANOVA"), "DRC model")
                 colNames <- c("ModelDf", "Log lik", "Df", "Chisq value", "p value")                
             }           
-        } else {
+        } 
+        if ( (is.null(anovaModel)) || ( (!is.null(test)) && (test == "od") ) )
+        {        
+#        else {
 #            gof <- (obj1$"fct"$"gofTest")(obj1)
             gofTest <- obj1$"gofTest"
             if (!is.null(gofTest)) 
@@ -115,6 +118,7 @@ function(object, ...)
 #            rowNames<-c("", "DRC model")
 #            colNames<-c("ModelDf", "", "Df", "Chisq value", "p value")                            
         }
+
 
 #        loglik <- c(anovaSS, nlsSS)
 #        dfModel <- c(anovaDF, nlsDF)

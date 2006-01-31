@@ -10,7 +10,7 @@
 
 \usage{
 mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS", 
-          relTol = 1e-07, rmNA=FALSE, warnVal = -1, zeroTol=0)
+          noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, warnVal = -1, zeroTol=0)
 }
 
 \arguments{
@@ -19,6 +19,7 @@ mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS",
   \item{errorm}{logical specifying whether failed convergence in \code{\link{multdrc}} should result in an error or only a warning.}
   \item{maxIt}{numeric. The maximum number of iterations in the optimisation procedure.}
   \item{method}{character string. The method used in the optimisation procedure. See \code{\link{optim}} for available methods.}
+  \item{noMessage}{logical, specifying whether or not messages should be displayed.}
   \item{relTol}{numeric. The relative tolerance in the optimisation procedure.}
   \item{rmNA}{logical. Should NAs be removed from sum of squares used for estimation? Default is FALSE (not removed).}
   \item{warnVal}{numeric. If equal to 0 then the warnings are stored and displayed at the end. See under 'warn' in \code{\link{options}}.

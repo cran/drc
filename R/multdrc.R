@@ -1,6 +1,6 @@
 "multdrc" <-
 function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd = 0, varPower = FALSE, startVal, fct = l4(), na.action = na.fail,
-         robust = "mean", type = "continuous", cm = NULL, logDose = NULL, control = mdControl())
+         hetvar = NULL, robust = "mean", type = "continuous", cm = NULL, logDose = NULL, control = mdControl())
 {
     require(MASS, quietly = TRUE)  # used for boxcox and ginv
 
@@ -19,6 +19,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     bcConstant <- bcAdd  # the bcAdd argument overrules the setting via the control argument
     rmNA <- control$"rmNA"
     errorMessage <- control$"errorm"
+    noMessage <- control$"noMessage"
     
     
     ## Setting warnings policy
@@ -102,10 +103,11 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
 
     ## Handling the 'formula', 'curve' and 'data' arguments
     anName <- deparse(substitute(curve))  # storing name for later use
+    if (length(anName) > 1) {anName <- anName[1]}  # to circumvent the behaviour of 'substitute' in do.call("multdrc", ...)
 
     mf <- match.call(expand.dots = FALSE)   
     nmf <- names(mf) 
-    mnmf <- match(c("formula", "curve", "data", "na.action", "weights"), nmf, 0) 
+    mnmf <- match(c("formula", "curve", "data", "na.action", "weights", "hetvar"), nmf, 0) 
 
     mf[[1]] <- as.name("model.frame")
     mf <- eval(mf[c(1,mnmf)], parent.frame())
@@ -125,8 +127,18 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
 
     ## Retrieving weights
     weights <- model.weights(mf)
-    if (is.null(weights)) {weights <- rep(1, lenData)}
+    if ( (is.null(weights)) & (type == "continuous") ) 
+    {
+        weights <- rep(1, lenData)
+    }
+    if ( (is.null(weights)) & (type == "binomial") ) 
+    {
+        stop("Argument 'weights' needs to be specified")
+    }
 
+    ## Extracting variable for heterogeneous variances
+    vvar <- model.extract(mf, "hetvar")   
+    
     
     ## Finding indices for missing values
     missingIndices <- attr(mf, "na.action")
@@ -161,7 +173,12 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     } else {
 
     ## Handling a list or data.frame argument of 'collapse'
-    if (is.null(data)) {collapse <- eval(substitute(collapse), envir=.GlobalEnv)} else {collapse <- eval(substitute(collapse), envir=data)}
+    if (is.null(data)) 
+    {
+        collapse <- eval(substitute(collapse), envir=.GlobalEnv)
+    } else {
+        collapse <- eval(substitute(collapse), envir=data, enclos=parent.frame())
+    }
    
     if (is.data.frame(collapse))
     {
@@ -297,7 +314,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
         if ( (is.null(cm)) && (length(udNames) > 0) ) 
         {
             cm <- udNames
-            cat(paste("Control measurements detected for level: ",udNames, "\n", sep=""))
+            if (!noMessage) {cat(paste("Control measurements detected for level: ",udNames, "\n", sep=""))}
         }
 
 
@@ -318,7 +335,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
             testList <- mdrcBinomial(anovaYes = TRUE)
             gofTest <- testList$"gofTest"                
                         
-            if (!is.null(fct$"anovaYes")) 
+            if (!is.null(fct$"anovaYes"$"bin")) 
             {
 #                anovaModel0 <- (fct$"anovaTest")(anovaFormula, dset)
                 anovaModel0 <- (testList$"anovaTest")(anovaFormula, dset)
@@ -372,9 +389,10 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
             ## Fitting ANOVA model
 #            if (!is.null(fct$"anovaTest")) 
             if (varPower) {testList <- mdrcVp(anovaYes = TRUE)} else {testList <- mdrcLs(anovaYes = TRUE)}
+            if (!is.null(vvar)) {testList <- mdrcHetVar(anovaYes = TRUE)}
             gofTest <- testList$"gofTest"            
 
-            if ( (!is.null(fct$"anovaYes")) && (!is.null(testList$"anovaTest")) )
+            if ( (!is.null(fct$"anovaYes"$"cont")) && (!is.null(testList$"anovaTest")) )
             {
                 anovaModel0 <- (testList$"anovaTest")(anovaFormula, dset)
 #                anovaModel0 <- (fct$"anovaTest")(anovaFormula, dset)
@@ -480,7 +498,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     parmPos <- c(0, cumsum(ncclVec)[-numNames])
     # ncclVec and parmPos are used in 'parm2mat' function defined below
 
-    
+
     if(!noSSfct)
     {
         nrsm <- nrow(startMat)
@@ -588,7 +606,8 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
      
      if (selfStart)
      {
-         startVec <- mdrcConvertParm(startVec, startMat, assayNo, collapseList) 
+#         startVec <- mdrcConvertParm(startVec, startMat, assayNo, collapseList) 
+         startVec <- mdrcConvertParm(startVec, startMat, assayNo, collapseList2) 
      }
 #     print(startVec)
 
@@ -781,22 +800,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     
 
     ## Defining final objective function
-    if (type == "continuous")
-    {
-        if (varPower)
-        {        
-            estMethod <- mdrcVp(dose, resp, multCurves2)
-            lenStartVec <- length(startVec)
-            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
-            parmVec <- c(parmVec, "Sigma", "Power")
-
-        } else {
-            estMethod <- mdrcLs(dose, resp, multCurves2, startVec, robustFct, weights, rmNA)
-        }                     
-        opfct <- estMethod$opfct            
-    }
-
-    if (type=="binomial")
+    if (type == "binomial")
     {
 #        iv <- !is.nan(multCurves(dose, startVec))
 #        resp2 <- resp[iv]
@@ -810,6 +814,28 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
 #        }
         estMethod <- mdrcBinomial(dose, resp, multCurves2, startVec, robustFct, weights, rmNA)    
         opfct <- estMethod$opfct                     
+    }
+    
+    if (type == "continuous")
+    {
+        if (varPower)
+        {        
+            estMethod <- mdrcVp(dose, resp, multCurves2)
+            lenStartVec <- length(startVec)
+            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
+            parmVec <- c(parmVec, "Sigma", "Power")
+
+        } else {
+            estMethod <- mdrcLs(dose, resp, multCurves2, startVec, robustFct, weights, rmNA)
+        }              
+        if (!is.null(vvar))
+        {
+            estMethod <- mdrcHetVar(dose, resp, multCurves2, vvar)
+            lenStartVec <- length(startVec)
+            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
+            parmVec <- c(parmVec, as.character(unique(vvar)))        
+        }       
+        opfct <- estMethod$opfct            
     }
 
 
@@ -831,13 +857,14 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     }
     
     
-    ## Re-fitting the ANOVA model a second time (only if necessary)
-    if ( (!is.null(fct$"anovaYes")) && (!is.null(estMethod$"anovaTest2")) )
+    ## Re-fitting the ANOVA model a second time for binomial data (only if necessary)
+    ## leaving out dose values 0 and infinity
+    if ( (!is.null(fct$"anovaYes"$"bin")) && (!is.null(estMethod$"anovaTest2")) )
     {
         anovaModel0 <- (estMethod$"anovaTest2")(anovaFormula, dset)            
         anovaModel <- anovaModel0$"anovaFit"            
     }
-    
+
 
     ## Defining lower and upper limits of parameters
     if (constrained)
@@ -980,12 +1007,27 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
 
 
     ## Handling variance parameters
+#    vpType <- NULL    
+#    vpIndex <- NULL
+    varParm <- NULL
+        
     if (varPower)
     {
-        varParmIndex <- 1:lenStartVec  # (lenStartVec+1):length(nlsFit$par)
-    } else {
-        varParmIndex <- NULL
+#        vpType <- "varPower"
+#        vpIndex <- 1:lenStartVec  # (lenStartVec+1):length(nlsFit$par)
+        varParm <- list(type = "varPower", index = 1:lenStartVec)        
     }
+# else {
+#        varParmType <- NULL    
+#        varParmIndex <- NULL
+#    }
+    if (!is.null(vvar))
+    {
+#        vpType <- "hetvar"
+#        vpIndex <- 1:lenStartVec  # (lenStartVec+1):length(nlsFit$par)    
+        varParm <- list(type = "hetvar", index = 1:lenStartVec)
+    }
+#    varParm <- list(type=vpType, index=vpIndex)
 
 
     # Testing against the ANOVA (F-test)
@@ -1167,6 +1209,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     ## Box-Cox information
     bcVec <- c(lambda, boxcoxci)
     if (all(is.na(bcVec))) {bcVec <- NULL}
+    if (!is.null(bcVec)) {bcVec <- c(bcVec, bcAdd)}
 
 
     ## Evaluating goodness-of-fit test
@@ -1204,9 +1247,9 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
 
 
     ## Returning the fit
-    returnList <- list(varParmIndex, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), diagMat, callDetail, 
+    returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), diagMat, callDetail, 
                        dataSet, t(parmMat), fct, Xmat, robust, type, bcVec, estMethod, lenData-length(startVec), anovaModel0, gofTest, sumList, scaleFct2)
-    names(returnList) <- c("varPower", "fit", "curve", "summary", "startVal", "parNames", "residuals", "call", "data", "parmMat", "fct", 
+    names(returnList) <- c("varParm", "fit", "curve", "summary", "startVal", "parNames", "residuals", "call", "data", "parmMat", "fct", 
                            "transformation", "robust", "type", "boxcox", "estMethod", "df.residual", "anova", "gofTest", "sumList", "scaleFct")
     class(returnList) <- c("drc", class(fct))
 

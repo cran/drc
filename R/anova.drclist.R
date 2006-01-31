@@ -1,7 +1,7 @@
-"anova.drclist" <- function(object, ...,  test="F")
+"anova.drclist" <- function(object, ...,  test = NULL)
 {
     objects <- list(object, ...)
-    if (length(objects) > 2) {stop("Only two models can be compared.")}
+    if (length(objects) > 2) {stop("Only two models can be compared")}
 
     if (inherits(object, "bindrc"))  # the argument 'test="F"' is not used
     {
@@ -26,12 +26,16 @@
     ## Testing two models against each other
     obj1 <- objects[[1]]
     obj2 <- objects[[2]]
-    rowNames <- c("Model 1", "Model 2")
+    rowNames <- c("1st model", "2nd model")
  
     sumObj1 <- summary(obj1)
     sumObj2 <- summary(obj2)
 
-    if (!(test=="F"))  # chis-square based test
+    if ( !(obj1$"type"==obj2$"type") ) {stop("The two models are based on different types on data")}
+    if (obj1$"type" == "binomial" && (is.null(test)) ) {test <- "Chisq"}
+    if (obj1$"type" == "continuous"  && (is.null(test)) ) {test <- "F"}
+
+    if (!(test == "F"))  # chis-square based test
     {
         loglik <- c(logLik(obj1), logLik(obj2))  # c(sumObj1[[4]][1], sumObj2[[4]][1])
         dfModel <- c(attr(logLik(obj1), "df"),  attr(logLik(obj2), "df"))  # c(sumObj1[[4]][2], sumObj2[[4]][2])
@@ -52,15 +56,20 @@
         if (sumVec2[6]>sumVec1[6]) {sumTemp <- sumVec1; sumVec1 <- sumVec2; sumVec2 <- sumTemp; rowNames <- rowNames[c(2,1)]}
 
         loglik <- c(sumVec1[5],sumVec2[5])
-        dfModel <- c(sumVec1[6],sumVec2[6])
-        dfDiff <- c((loglik[1]-loglik[2])/(dfModel[1]-dfModel[2]), loglik[2]/dfModel[2])
-        testStat <- dfDiff[1]/dfDiff[2]
+        dfModel <- c(sumVec1[6], sumVec2[6])
+#        loglikTemp <- c(sumVec1[5], sumVec2[5])
+#        loglik <- c((loglikTemp[1]-loglikTemp[2])/(dfModel[1]-dfModel[2]), loglikTemp[2]/dfModel[2])
+#        dfModel <- c(sumVec1[6], sumVec2[6])
+#        dfDiff <- c((loglik[1]-loglik[2])/(dfModel[1]-dfModel[2]), loglik[2]/dfModel[2])
+        dfDiff <- c(NA, dfModel[1]-dfModel[2])
+#        testStat <- dfDiff[1]/dfDiff[2]
+        testStat <- ((loglik[1]-loglik[2])/(dfModel[1]-dfModel[2]))/(loglik[2]/dfModel[2])
 
         pVal <- c(NA,1-pf(testStat, dfModel[1]-dfModel[2], dfModel[2]))
         testStat <- c(NA,testStat)
 
         headName <- "ANOVA table\n"
-        colNames <- c("Df", "Sum Sq", "Mean Sq", "F value", "p value")
+        colNames <- c("ModelDf", "RSS", "Df", "F value", "p value")
     }
 #    dataFra <- data.frame(dfModel, loglik, dfDiff, testStat, pVal)
 
@@ -134,10 +143,10 @@
         collapse2 <- substring(collapse2, 6, nchar(collapse2)-1)
     }               
     
-    cat("Model 1\n")
+    cat("1st model\n")
     cat(paste(" fct:      ", deparse(obj1[[8]]$fct), "\n", sep=""))
     cat(paste(" collapse: ", collapse1, "\n", sep=""))
-    cat("Model 2\n")
+    cat("2nd model\n")
     cat(paste(" fct:      ", deparse(obj2[[8]]$fct), "\n", sep=""))
     cat(paste(" collapse: ", collapse2, "\n\n", sep=""))
     }

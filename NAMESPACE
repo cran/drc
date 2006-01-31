@@ -1,5 +1,5 @@
 ## functions
-export(baro5, braincousens, bcl3, bcl4, bindrc, colFct, compParm, diagnostics, ED, gompertz, g3, g4, logistic, logit, l3, l4, l5, MAX, mdControl, mixdrc, mlogistic, ml3a, ml3b, ml3c, ml4a, ml4b, ml4c, multdrc, plotraw, searchdrc, SI)
+export(baro5, braincousens, bcl3, bcl4, colFct, compParm, diagnostics, ED, logistic, l2, l3, l3u, l4, l5, MAX, mdControl, mixdrc, mixture, mlogistic, ml3a, ml3b, ml3c, ml4a, ml4b, ml4c, multdrc, plotraw, searchdrc, SI, w2, w3, w4, weibull, weibull2)
 
 #importFrom(MASS, boxcox, ginv)
 

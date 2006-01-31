@@ -138,13 +138,19 @@ function(object, od = FALSE, ...)
     dfres <- object$"sumList"$"df.residual"
     resultMat[,4] <- (pt(-abs(resultMat[,3]), dfres))+(1-pt(abs(resultMat[,3]), dfres))
 
-    if (!is.null(object$"varPower"))
+
+    ## Separating out variance parameters
+    if (!is.null(object$"varParm"))
     {
-        indexVec <- object$"varPower"
-        object$"varPower" <- resultMat[-indexVec, , drop=FALSE]
+        indexVec <- object$"varParm"$"index"
+        varParm <- object$"varParm"
+        varParm$"estimates" <- resultMat[-indexVec, , drop=FALSE]
         resultMat <- resultMat[indexVec,]
         varMat <- varMat[indexVec, indexVec]  # for use in ED/MAX/SI
+    } else {
+        varParm <- NULL
     }
+
 
 #    ## Calculating the value of the log-likelihood
 #    if (object$"type"=="continuous")
@@ -166,8 +172,8 @@ function(object, od = FALSE, ...)
     classObj <- class(object)
     if (inherits(object, "list")) {modelClass <- classObj[length(classObj)-1]} else {modelClass <- classObj[length(classObj)]}
 
-    sumObj <- list(resVar, varMat, resultMat, object$"boxcox", modelClass, object$"robust", object$"varPower", object$"type")
-    names(sumObj) <- c("resVar", "varMat", "estimates", "boxcox", "class", "robust", "varPower", "type")
+    sumObj <- list(resVar, varMat, resultMat, object$"boxcox", modelClass, object$"robust", varParm, object$"type")
+    names(sumObj) <- c("resVar", "varMat", "estimates", "boxcox", "class", "robust", "varParm", "type")
     class(sumObj) <- c("summary.drc")
     return(sumObj)
     }

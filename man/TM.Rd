@@ -37,11 +37,11 @@
 TM[1:20,]  # displaying first 20 lines of the data set
 
 ## Fitting a Weibull model
-## cControl measurements are specified using the 'cm' argument 
-model1 <- multdrc(rgr~dose, pct, cm="999", data=TM, fct=g4())
+## control measurements are specified using the 'cm' argument (not necessary to specify) 
+model1 <- multdrc(rgr~dose, pct, cm="999", data=TM, fct=w4())
 summary(model1)
 
-rm(model1)
 
+rm(model1)
 }
 \keyword{datasets}

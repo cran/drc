@@ -66,8 +66,13 @@ collapse=list(~factor(CURVE)-1,~factor(CURVE)-1,~factor(CURVE)-1,~factor(CURVE)-
 model7 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci, 
 collapse=list(~factor(CURVE),~factor(CURVE),~factor(CURVE),~factor(CURVE)))
 
+## Example using 'hetvar' argument 
+##  for heterogeneous variances
+model8 <- multdrc(SLOPE~DOSE, CURVE, data = PestSci, 
+hetvar = HERBICIDE, boxcox = TRUE, bcAdd = 0.01)
+summary(model8)
 
-rm(model1, model2, model3, model4, model5, model6, model7)
+rm(model1, model2, model3, model4, model5, model6, model7, model8)
 
 }
 \keyword{datasets}

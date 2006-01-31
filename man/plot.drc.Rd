@@ -3,14 +3,15 @@
 \alias{plot.drc}
 
 \title{Plotting fitted curves for a drc object}
+
 \description{
   'plot' displays fitted curves and observations in the same plot window, distinguishing between curves by different plot symbols and line types.
 }
 
 \usage{
-  plot.drc(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, 
+  plot.drc(x, ..., level=NULL, breakCurve = FALSE, col=FALSE, 
   conLevel, conName, grid=100, legend=TRUE, legendText, 
-  type = "average", obs, col, lty, log="x", xlab, ylab, xlim, ylim)
+  type = "average", obs, lty, log="x", pch, xlab, ylab, xlim, ylim)
 }
 
 \arguments{
@@ -18,7 +19,7 @@
   \item{...}{additional arguments.}
   \item{level}{vector of character strings. To plot only the curves specified by their names.}
   \item{breakCurve}{logical. If TRUE the curves break before reaching control. Experimental.}
-  \item{colour}{either logical or a vector of colours. If TRUE default colours are used. If FALSE (default) no colours are used.}  
+  \item{col}{either logical or a vector of colours. If TRUE default colours are used. If FALSE (default) no colours are used.}  
   \item{conLevel}{numeric. Dose level below which the dose is zero (the amount of stretching on the x-axis above zero). Default is 1e-2.}
   \item{conName}{character string. Name on x axis for dose zero. Default is '"0"'.}
   \item{grid}{numeric. Number of points in the grid used for plotting the fitted curves.}
@@ -27,10 +28,10 @@
   \item{type}{a character string specifying how the originals observations should be plotted. There are 4 options: "average" (default), "none", "points"
   and "add" (for adding a fit to an existing plot).}
   \item{obs}{Outdated argument. Use \code{type}.}  
-  \item{col}{a vector of colours. One colour for each curve.}
   \item{lty}{a numeric vector specifying the line types.}
   \item{log}{a character string which contains '"x"' if the x axis is to be logarithmic, '"y"' if the y axis is to be logarithmic and '"xy"' or
   '"yx"' if both axes are to be logarithmic. The default is "x". The empty string "" yields the original axes.}
+  \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
   \item{xlab}{an optional label for the x axis.}
   \item{ylab}{an optional label for the y axis.}
   \item{xlim}{a numeric vector of length two, containing the lower and upper limit for the x axis.}

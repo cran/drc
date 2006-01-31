@@ -21,7 +21,7 @@ function(object, ...)
     varMat <- sumObj$varFix
         
     ## Defining return list
-    retList <- list(varComp, varMat, resultMat, c(loglik, degfre), parNames, "logistic with random effects")
+    retList <- list(varComp, varMat, resultMat, c(loglik, degfre), parNames, "mixed logistic")
 
     names(retList) <- c("varComp", "varMat", "estimates", "loglik", "parNames", "class") 
     class(retList) <- c("summary.drc")

@@ -1,10 +1,11 @@
 "plot.drc" <-
-function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName, 
-         grid=100, legend=TRUE, legendText, type="average", obs, col, lty, log="x", xlab, ylab, xlim, ylim)
+function(x, ..., level = NULL, breakCurve = FALSE, col = FALSE, conLevel, conName, 
+         grid = 100, legend = TRUE, legendText, type = "average", obs, lty, log = "x", pch, xlab, ylab, xlim, ylim)
 {    
 #    breakCurve <- FALSE
+    colour <- col  # replace 'colour' throughout the file
 
-    if (!missing(obs)) {stop("Use 'type' instead of 'obs'.")}
+    if (!missing(obs)) {stop("Use 'type' instead of 'obs'")}  # remove in the future
 
     object <- x
 #    zeroEps <- 1e-4 # to avoid log(0) at lower limit of dose range in plot 
@@ -29,6 +30,8 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
     assayNo <- origData[, 3]
     assayNoOld <- origData[, 4]
     numAss <- length(unique(assayNo))
+    doPlot <- is.null(level) || any(unique(assayNoOld)%in%level)
+    if (!doPlot) {stop("Nothing to plot")}
 
     plotFct <- (object$"curve")[[1]]
     logDose <- (object$"curve")[[2]]
@@ -104,7 +107,7 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
     if (is.logical(colour) && colour) {colourVec <- 1:numCol}  
     if (!is.logical(colour) && is.numeric(colour) && length(colour)==numCol) {colourVec <- colour}# else {stop("Argument 'colour' not correct")}
     if (!is.logical(colour) && is.numeric(colour) && (!(length(colour)==numCol)) ) {colourVec <- rep(colour, numCol)}
-    if (!missing(col)) {colourVec <- col}
+#    if (!missing(col)) {colourVec <- col}
  
       
     ## Defining line types  
@@ -117,6 +120,14 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
         if (length(lty)==1) {ltyVec <- rep(lty, numCol)} else {ltyVec <- lty}
     } else {
         ltyVec <- 1:numCol
+    }
+
+    ## Defining plot characters 
+    if (!missing(pch)) 
+    {
+        if (length(pch)==1) {pchVec <- rep(pch, numCol)} else {pchVec <- pch}
+    } else {
+        pchVec <- 1:numCol
     }
 
 
@@ -158,7 +169,8 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
 
 #                if (!type=="add")
 #                {                    
-                    plot(plotPoints, xlab=xlab, ylab=ylab, log=log, xlim=xLimits, ylim=yLimits, pch=i, axes=FALSE, frame.plot=TRUE, col=colourVec[i], ...) 
+                    plot(plotPoints, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, axes = FALSE, 
+                         frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], ...) 
                 
                 xaxisTicks <- axTicks(1)
                 if (breakCurve) {xaxisTicks <- unique(c(xLimits[1], xaxisTicks))}
@@ -213,9 +225,10 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
             }
 
             matchLevel <- match(unique(assayNoOld)[i],level)
-            if ((!is.null(level)) && (!is.na(matchLevel)) && (matchLevel==1))
+            if ( (!is.null(level)) && (!is.na(matchLevel)) && (matchLevel==1) )
             {           
-                plot(plotPoints, xlab=xlab, ylab=ylab, log=log, xlim=xLimits, ylim=yLimits, pch=i, axes=FALSE, frame.plot=TRUE, col=colourVec[i], ...) 
+                plot(plotPoints, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, axes = FALSE, 
+                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], ...) 
 
                 xaxisTicks <- axTicks(1)             
                 if (breakCurve) {xaxisTicks <- unique(c(xLimits[1], xaxisTicks))}
@@ -229,7 +242,7 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
             }
             if (is.null(level) || ((!is.na(matchLevel)) && (matchLevel>1)) )
             {           
-                 points(plotPoints, pch=i, col=colourVec[i])
+                 points(plotPoints, col = colourVec[i], pch = pchVec[i])
             }
 #            }
         }
@@ -253,9 +266,9 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
     {
         lenLT <- length(legendText)
     
-        if (lenLT==numAss) {legendLevels <- legendText}
+        if (lenLT == numAss) {legendLevels <- legendText}
         
-        if (lenLT==1) {legendLevels <- rep(legendText, numAss)}
+        if (lenLT == 1) {legendLevels <- rep(legendText, numAss)}
     }
     levInd <- 1:numAss
     if (!is.null(level)) 
@@ -268,9 +281,11 @@ function(x, ..., level=NULL, breakCurve = FALSE, colour=FALSE, conLevel, conName
 #    ltyIndex <- (1+1:numAss)
     ltyVec[noPlot] <- 0
     
-    if (legend && !(type=="add"))
+#    if ( (numAss == 1) && (!legend) ) {legend <- FALSE}  # not displaying legend for a single curve unless forced to do so
+    if ( legend && !(type == "add") )
     {
-        legend(xLimits[2], yLimits[2], legendLevels, lty=ltyVec[levInd], pch=levInd, col=colourVec[levInd], bty="n", xjust=1, yjust=1)
+        legend(xLimits[2], yLimits[2], legendLevels, lty = ltyVec[levInd], pch = pchVec[levInd], 
+               col = colourVec[levInd], bty = "n", xjust = 1, yjust = 1)
     }
     par(las=0)
 

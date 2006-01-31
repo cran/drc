@@ -1,16 +1,20 @@
 \name{braincousens}
+
 \alias{braincousens}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{The Brain-Cousens modification of the logistic function}
+
 \description{
   'braincousens' provides a very general way of specifying Brain-Cousens' 
   modified logistic dose response functions, under various constraints on the parameters.
 }
+
 \usage{
   braincousens(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
   upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, useDer = FALSE)
 }
+
 \arguments{
   \item{lowerc}{numeric vector. The lower bound on parameters. Default is minus infinity.}
   \item{upperc}{numeric vector. The upper bound on parameters. Default is plus infinity.}
@@ -21,6 +25,7 @@
                    this is required for datasets where all dose values are small. }               
   \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not yet implemented!}
 }
+
 \details{
   The Brain-Cousens model is given by the expression
   \deqn{ f(x) = c + \frac{d-c+fx}{1+\exp(b(\log(x)-\log(e)))}}
@@ -28,6 +33,7 @@
   
   It is a modification of the four-parameter logistic curve to take hormesis into account.
 }
+
 \value{
   The value returned by the 'braincousens' is a list with the following components
   \item{fct}{The dose response function.}
@@ -40,9 +46,12 @@
   \item{sifct}{The SI function.}    
   \item{maxfct}{The function for calculating the mean maximum of the dose response curve.}  
 }
+
 \references{Brain, P. and Cousens, R. (1989) An equation to describe dose responses where there is stimulation of growth at low doses, 
             \emph{Weed Research}, \bold{29}, 93--96.}
+            
 \author{Christian Ritz}
+
 \note{This function is for use with the function \code{\link{multdrc}}.}
 
 \seealso{Special cases of the function 'braincousens' are \code{\link{bcl3}} and \code{\link{bcl4}}.}

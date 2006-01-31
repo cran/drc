@@ -29,7 +29,9 @@ function(obj, percVec, od = FALSE, ...)
     
 
     ## Retrieving relevant quantities
-    EDlist <- obj$fct$"edfct"    
+    EDlist <- obj$fct$"edfct"  
+    if (is.null(EDlist)) {stop("ED values cannot be calculated")}      
+
     assayNo <- obj$data[, 3]  # obj[[9]][,3]
     numAss <- length(unique(assayNo))
 

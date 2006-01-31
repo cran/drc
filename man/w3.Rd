@@ -1,33 +1,46 @@
-\name{g3}
-\alias{g3}
-\title{The three-parameter Gompertz function}
+\name{w3}
+
+\alias{w3}
+
+\title{The three-parameter Weibull function}
+
 \description{
-  'g3' provides the three-parameter Gompertz function, self starter function and names of the parameters.  
+  'w3' provides the three-parameter Weibull function, self starter function and names of the parameters.  
 }
+
 \usage{
-g3(names = c("b", "d", "e"), useDer = FALSE)
+w3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), useDer = FALSE)
 }
+
 \arguments{
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
   \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not implemented!}
 }
+
 \details{
-  The three-parameter Gompertz model is given by the expression
+  The three-parameter Weibull model is given by the expression
   \deqn{ f(x) = 0 + (d-0)\exp(-\exp(b(\log(x)-e))).}
   
   The function is asymmetric about the inflection point, that is the parameter \eqn{\exp(e)}.
 }
+
 \value{
-  See \code{\link{gompertz}}.
+  See \code{\link{weibull}}.
 }
+
 %\references{ ~put references to the literature/web site here ~ }
+
 \author{Christian Ritz}
+
 \note{This function is for use with the function \code{\link{multdrc}}.}
 
-\seealso{Related functions are \code{\link{g4}} and \code{\link{gompertz}}.}
+\seealso{Related functions are \code{\link{w4}} and \code{\link{weibull}}.}
+
 \examples{
 
-model1 <- multdrc(FA, fct=g3())
+## Fitting a three-parameter Weibull model
+model1 <- multdrc(FA, fct = w3())
 model1
 
 rm(model1)

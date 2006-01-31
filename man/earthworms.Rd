@@ -34,11 +34,13 @@ The dataset is kindly provided by Nina Cedergreen.
 \examples{
 
 ## Fitting a logistic regression model
-model1 <- multdrc(number/total~dose, weights=total, fct=logit(), data=earthworms)
+model1 <- multdrc(number/total~dose, weights=total, data=earthworms,
+fct=l2(), type="binomial")
 anova(model1)  # testing againsts more general one-way model
 
 ## Fitting an extended logistic regression model where the upper limit is estimated
-model2 <- multdrc(number/total~dose, weights=total, fct=logit(fixed=c(NA, NA, 0, NA)), data=earthworms)
+model2 <- multdrc(number/total~dose, weights=total, data=earthworms,
+fct=l3(), type="binomial")
 anova(model2)  # "goodness-of-fit test"
 
 ## Comparing model1 and model2 (can model2 be reduced to model1?)

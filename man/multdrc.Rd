@@ -10,7 +10,8 @@
 \usage{
 multdrc(formula, curve, collapse, weights, data=NULL, boxcox = FALSE, 
 bcAdd = 0, varPower = FALSE, startVal, fct = l4(), na.action = na.fail, 
-robust="mean", type = "continuous", cm = NULL, logDose = NULL, control = mdControl())
+hetvar = NULL, robust="mean", type = "continuous", cm = NULL, 
+logDose = NULL, control = mdControl())
 }
 
 \arguments{
@@ -31,6 +32,7 @@ robust="mean", type = "continuous", cm = NULL, logDose = NULL, control = mdContr
   function, the accompanying self starter function, the names of the parameter in the non-linear function and, optionally, the first and second derivatives.}
   \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  The default is 'na.fail'. To omit 'NA's use
   'na.omit'.}
+  \item{hetvar}{a vector specifying the grouping for heterogeneous variances.}
   \item{robust}{a character string specifying the rho function for robust estimation. Default is non-robust least squares estimation ("mean").
   Available robust methods are: median estimation ("median"), least median of squares ("lms"), least trimmed squares ("lts"), 
   metric trimming ("trimmed"), metric winsorizing ("winsor") and Tukey's biweight ("tukey").}
@@ -74,7 +76,7 @@ and 10 for 10-logarithm).}
 \examples{
 
 ## Fitting response MEANLR to dose MM in the data set FA 
-## (type ?FA to learn about the data set)
+##  (type ?FA to learn about the data set)
 model1 <- multdrc(MEANLR~MM, data=FA)
 summary(model1)
 
@@ -83,12 +85,12 @@ model2 <- multdrc(FA, fct = l5())
 summary(model2)
 
 ## Fitting a 4-parameter logistic model
-## with Box-Cox transformation
+##  with Box-Cox transformation
 model3 <- multdrc(FA, boxcox = TRUE)  
 summary(model3)
 
 ## Example using 'varPower' argument 
-## Modelling variance as power of mean
+##  modelling variance as power of mean
 model4 <- multdrc(FA, varPower = TRUE)
 summary(model4)
 
@@ -98,7 +100,7 @@ response <- c(7.941, 16.619, 11.021, 19.767, 30.487, 64.434, 74.422, 52.472)
 model5 <- multdrc(response~logdose, logDose=10)
 plot(model5, conLevel=-9)  # the default level is too high
 
-rm(model1, model2, model3, model4)
+rm(model1, model2, model3, model4, model5)
 
 }
 \keyword{models}

@@ -1,6 +1,6 @@
-"gompertz" <-
+"weibull" <-
 function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA), 
-         names=c("b","c","d","e"), useDer=FALSE)
+         names=c("b","c","d","e"), scaleDose = TRUE, useDer=FALSE)
 {
     ## Checking arguments
     numParm <- 4
@@ -23,7 +23,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
         parmMat[, notFixed] <- parm
     
-        parmMat[,2] + ( parmMat[,3] - parmMat[,2] ) * exp( - exp( parmMat[,1] *( log(dose) - parmMat[,4]) ) )
+        parmMat[,2] + ( parmMat[,3] - parmMat[,2] ) * exp( - exp( parmMat[,1] *( log(dose) - log(parmMat[,4])) ) )
     }
 
 
@@ -42,7 +42,11 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 
 
     ## Defining flag to indicate if more general ANOVA model
-    anovaYes <- TRUE
+#    anovaYes <- list(bin = !any(is.na(fixed[c(2,3)])) , cont = TRUE)
+    binVar <- all(fixed[c(2, 3)]==c(0, 1))
+    if (is.na(binVar)) {binVar <- FALSE}
+    if (!binVar) {binVar <- NULL}    
+    anovaYes <- list(bin = binVar, cont = TRUE)
 
 
     ## Defining the self starter function
@@ -56,7 +60,8 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
         startVal[2] <- min(resp3)  # -0.001  # the lower bound
 #        startVal[!notFixed] <- fixed[!notFixed] 
 
-        if (length(unique(dose2))==1) {return((c(NA, NA, startVal[3], NA))[notFixed])}  # only estimate of upper limit if a single unique dose value 
+        if (length(unique(dose2))==1) {return((c(NA, NA, startVal[3], NA))[notFixed])}  
+        # only estimate of upper limit if a single unique dose value 
 
         indexT2 <- (dose2>0)
         if (!any(indexT2)) {return((rep(NA, numParm))[notFixed])}  # for negative dose value
@@ -65,8 +70,11 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 
         loglogTrans <- log(-log((resp3-startVal[2] + 0.001)/(startVal[3]-startVal[2])))  # 0.001 to avoid 0 as argument to log
         loglogFit <- lm(loglogTrans~log(dose3))
-        startVal[4] <- (-coef(loglogFit)[1]/coef(loglogFit)[2])  # the e parameter
+        startVal[4] <- exp(-coef(loglogFit)[1]/coef(loglogFit)[2])  # the e parameter
         startVal[1] <- coef(loglogFit)[2]  # the b parameter
+
+        ## Avoiding 0 as start value for lower limit (convergence will fail)
+        if ( startVal[2] < 1e-12 ) {startVal[2] <- startVal[3]/10}
 
         return(startVal[notFixed])
     }
@@ -75,6 +83,15 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
     ## Defining names
     names <- names[notFixed]
 
+
+    ## Defining parameter to be scaled
+    if ( (scaleDose) && (is.na(fixed[4])) ) 
+    {
+        scaleInd <- sum(is.na(fixed[1:4]))
+    } else {
+        scaleInd <- NULL
+    }
+    
 
     ## Defining derivatives
     deriv1 <- NULL
@@ -92,9 +109,9 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
         parmVec[notFixed] <- parm
     
         tempVal <- log(-log((100-p)/100))
-        EDp <- exp(tempVal/parmVec[1] + parmVec[4])
+        EDp <- exp(tempVal/parmVec[1] + log(parmVec[4]))
 
-        EDder <- c(EDp*(-tempVal)/(parmVec[1]^2), 0, 0, EDp)
+        EDder <- EDp*c(-tempVal/(parmVec[1]^2), 0, 0, 1/parmVec[4])
     
         return(list(EDp, EDder[notFixed]))
     }
@@ -109,23 +126,18 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
         tempVal1 <- log(-log((100-pair[1])/100))
         tempVal2 <- log(-log((100-pair[2])/100))
     
-        SIpair <- exp(tempVal1/parmVec1[1] + parmVec1[4])/exp(tempVal2/parmVec2[1] + parmVec2[4])
+        SIpair <- exp(tempVal1/parmVec1[1] + log(parmVec1[4]))/exp(tempVal2/parmVec2[1] + log(parmVec2[4]))
     
-        SIder1 <- SIpair*c(-tempVal1/(parmVec1[1]*parmVec1[1]), 0, 0, 1)
-        SIder2 <- SIpair*c(tempVal2/(parmVec2[1]*parmVec2[1]), 0, 0, -1)
+        SIder1 <- SIpair*c(-tempVal1/(parmVec1[1]*parmVec1[1]), 0, 0, 1/parmVec1[4])
+        SIder2 <- SIpair*c(tempVal2/(parmVec2[1]*parmVec2[1]), 0, 0, -1/parmVec2[4])
     
         return(list(SIpair, SIder1[notFixed], SIder2[notFixed]))
     }
     
 
-    returnList <- list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-                       edfct=edfct, sifct=sifct, anovaYes=anovaYes)
+    returnList <- list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,
+                       lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, sifct=sifct, scaleInd=scaleInd)
 
-#    returnList <- switch(return, "fct+ss" = list(fct,ssfct,names),
-#                                 "fct+ss+der" = list(fct,ssfct,names,deriv1,deriv2),
-#                                 "ED" = list(edparm, edfct),
-#                                 "SI" = list(siparm, sifct))
-
-    class(returnList) <- "gompertz"
+    class(returnList) <- "Weibull"
     invisible(returnList)
 }

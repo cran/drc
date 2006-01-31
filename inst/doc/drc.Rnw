@@ -110,7 +110,7 @@ with respect to the parameters $(\alpha_1, \ldots, \alpha_n)$.
 \subsection{Commonly used models} \label{sec:2.1}
 
  
-Two models for sigmoidal dose response curves are widely used: The logistic model and the Gompertz model. We will briefly discuss these models. 
+Two models for sigmoidal dose response curves are widely used: The logistic and Weibull models. We will briefly discuss these models. 
  
 The four-parameter logistic function is given by the formula
 
@@ -136,20 +136,20 @@ f \big(x, (b,c,d,e,f) \big) = c+\frac{d-c}{\big(1+\exp \big\{b \big( \log(x)-\lo
 \end{equation}
 Letting the parameter $f$ be equal to 1 in (\ref{l5}) yields the four-parameter logistic model (\ref{l4}). 
 
-The four-parameter Gompertz model is given by the formula
+The four-parameter Weibull model is given by the formula
 
-\begin{equation} \label{g4}
+\begin{equation} \label{w4}
 f \big(x, (b,c,d,e) \big) = c+(d-c) \exp\{ -\exp\{ b(\log (x)- e)\}  \}.
 \end{equation}
 The parameters $c$ and $d$ are the lower and upper
 limits, as for four-parameter logistic model, $b$ is
-the relative slope around $e$, and the $e$ parameter is the logarithm of the inflection point. The Gompertz model is not symmetric around any point.
-The three-parameter Gompertz model with the lower limit equal to 0 is then
+the relative slope around $e$, and the $e$ parameter is the logarithm of the inflection point. The Weibull model is not symmetric around any point.
+The three-parameter Weibull model with the lower limit equal to 0 is then
 
 \[
 f \big(x, (b,d,e) \big) = d \exp\{ -\exp\{ b(\log (x)- e)\}  \}.
 \]
-Besides the Gompertz model and the logistic model, Brain-Cousens' model \citep{brain&cousens:1989} is used in situations where \emph{hormesis} is present: 
+Besides the Weibull model and the logistic model, Brain-Cousens' model \citep{brain&cousens:1989} is used in situations where \emph{hormesis} is present: 
 For small doses the herbicide has the adverse effect resulting in response values above the level of the control group 
 \citep{calabrese&baldwin:2001, calabrese&baldwin:2003}. Brain-Cousens model is obtained by modifying the four-parameter logistic model
 
@@ -159,7 +159,7 @@ f \big(x, (b,c,d,e) \big)=  c+\frac{d+fx-c}{1+\exp \big\{b \big( \log(x)-\log(e)
 adding the linear term $fx$ in the numerator. Again we could also consider the modification where the lower limit is set equal to 0.
 \\
 \\
-Notice that the $b$ and $e$ parameters are different in (\ref{l4}), (\ref{l5}), (\ref{g4}) and (\ref{bcl4}), respectively.
+Notice that the $b$ and $e$ parameters are different in (\ref{l4}), (\ref{l5}), (\ref{w4}) and (\ref{bcl4}), respectively.
 In this paper we assume that the response is a decreasing function of the dose (from maximum response to lower limit), corresponding to positive $b$, 
 but the models also apply to situation where the response is increasing with the dose.
 
@@ -179,7 +179,7 @@ then making the transformation
 \end{equation}
 Now linear regression can be used to obtain initial values of $b$ and $e$. The procedure described can be captured in a function which for a given data
 set returns starting values. We will refer to such a function as a self starter function.
-A similar approach can be used for the Gompertz model and Brain-Cousens' model. For another example see section~\ref{sec:7}.
+A similar approach can be used for the Weibull model and Brain-Cousens' model. For another example see section~\ref{sec:7}.
 
 
 \subsection{Comparison of parameters} \label{sec:2.2}
@@ -202,7 +202,7 @@ For instance, EDy can be expressed by means of the parameters $b$ and $e$ in the
 \[
 \mbox{EDy} = e (y/(100 - y))^{1/b}.
 \] 
-The Gompertz model yields a similar formula. For Brain-Cousens' model there are no closed-form solutions, but numerical methods can be applied; we
+The Weibull model yields a similar formula. For Brain-Cousens' model there are no closed-form solutions, but numerical methods can be applied; we
 use the bisection method. SI(x,y) is the ratio between EDx for one curve and EDy for another curves. 
 
 \[
@@ -232,15 +232,15 @@ Table~\ref{sec3-table1} provides a list of some of the built-in functions availa
 \hline
 Function & Model\\
 \hline
-\verb+g3()+ & Three-parameter Gompertz\\
-\verb+g4()+ & Four-parameter Gompertz\\
-%\verb+mg4()+ & Modified four-parameter Gompertz\\
+%\verb+mg4()+ & Modified four-parameter Weibull\\
 \verb+l3()+ & Three-parameter logistic\\
 \verb+l4()+ & Four-parameter logistic (default)\\
 \verb+l5()+ & Five-parameter logistic\\
 \verb+bcl3()+ & Brain-Cousens three-parameter logistic\\
 \verb+bcl4()+ & Brain-Cousens four-parameter logistic\\
 %\verb+ml4()+ & Modified four-parameter logistic\\
+\verb+w3()+ & Three-parameter Weibull\\
+\verb+w4()+ & Four-parameter Weibull\\
 \hline
 \end{tabular} \caption{Built-in functions in the package \texttt{drc}.} \label{sec3-table1}
 \end{center} 
@@ -447,7 +447,7 @@ in Figure~\ref{sec5-plot2}, showing reasonable agreement between observations an
 
 <<sec5-plot2, echo=T, fig=T, onefig=T, height=5, width=5>>=
 
-plot(modelex2, xlab="Dose", ylab='Rate of Oxygen Evolution', conName="Control", colour=TRUE)
+plot(modelex2, xlab="Dose", ylab='Rate of Oxygen Evolution', conName="Control", col=TRUE)
 
 @
 \caption{Observed data and fitted dose response curves for the data set \texttt{PestSci}.} \label{sec5-plot2}
@@ -529,18 +529,18 @@ There are three variables: \verb+dose+ is the dose, \verb+pct+ the curve number 
 The responses are growth rates of duckweed and the treatments are mixtures of two herbicides with different modes of action \citep{cedergreen:2004}. 
 There are 180 observations.
 
-We define a simultaneous model, assuming that each dose response curve follows a four-parameter Gompertz model (\ref{g4})
+We define a simultaneous model, assuming that each dose response curve follows a four-parameter Weibull model (\ref{w4})
 and with different parameters for different assays. This model is specified as follows
 
 <<sec6-fit1, echo=T>>=
 
-modelex3.1<-multdrc(rgr~dose, pct, data=TM, fct=g4())
+modelex3.1<-multdrc(rgr~dose, pct, data=TM, fct=w4())
 
 @
 As \verb+pct+ take 8 different values (7 curves + control group), we are specifying a model with 8 curves, where the curve corresponding to the control
 group only is defined as dose equal to 0 and thus not constitutes an entire dose response curve.
-The asymmetric four-parameter Gompertz model is specified with the argument \verb+fct=g4()+. 
-The lack-of-fit test against the two-way ANOVA using \verb+anova+ (not displayed) confirms that the Gompertz model fits the data.
+The asymmetric four-parameter Weibull model is specified with the argument \verb+fct=w4()+. 
+The lack-of-fit test against the two-way ANOVA using \verb+anova+ (not displayed) confirms that the Weibull model fits the data.
 \\
 \\
 A summary of the fit \verb+modelex3.1+ is
@@ -578,19 +578,19 @@ The data frame specification is better for collapsing parameters for arbitrary c
 The list specification allows more general structures involving more than one variable per parameter. Specification of the 
 \verb+collapse+ argument by means of a list of formulas, follows the same syntax as is used for \verb+lm+ and \verb+glm+.
 
-The data frame should contain as many columns as there are parameters in the model, eg four columns in case of the four-parameter Gompertz model, 
+The data frame should contain as many columns as there are parameters in the model, eg four columns in case of the four-parameter Weibull model, 
 and the columns correspond to parameters by order, eg the first column
 corresponds to $b$, $\ldots$, the fourth column to $e$. For built-in function the order of parameters is always alphabetical. 
 Observations sharing the same value in a column will share the corresponding parameter in the model. We specify the model with common upper as follows
 
 \begin{verbatim}
 modelex3.2<-multdrc(TM[,c(3,1)], TM[,2],
-collapse=data.frame(TM[,2], TM[,2], colFct(TM[,2],1:8), TM[,2]), fct=g4())
+collapse=data.frame(TM[,2], TM[,2], colFct(TM[,2],1:8), TM[,2]), fct=w4())
 \end{verbatim}
 <<sec6-fit2, echo=F>>=
 
 modelex3.2<-multdrc(TM[,c(3,1)], TM[,2],
-collapse=data.frame(TM[,2], TM[,2], colFct(TM[,2],1:8), TM[,2]), fct=g4())
+collapse=data.frame(TM[,2], TM[,2], colFct(TM[,2],1:8), TM[,2]), fct=w4())
 
 @
 
@@ -618,14 +618,14 @@ the alternative specification looks like
 
 \begin{verbatim}
 modelex3.2 <- multdrc(rgr~dose, pct, collapse=data.frame(pct, pct, 1, pct),
-data=TM, fct=g4())
+data=TM, fct=w4())
 \end{verbatim}
 or, using a list
 
 \begin{verbatim}
 modelex3.2 <- multdrc(rgr~dose, pct, 
 collapse=list(~factor(pct), ~factor(pct), ~1, ~factor(pct)),
-data=TM, fct=g4())
+data=TM, fct=w4())
 \end{verbatim}
 In order to compare \verb+modelex3.2+ to \verb+modelex3.1+ the \verb+anova+ function can be used.
 The \verb+anova+ function with the two model objects as arguments produces an approximate F-test (or a likelihood ratio test) for test of reduction 
@@ -647,7 +647,7 @@ Another aspect of \verb+modelex3.1+ is that it seems from the summary of \verb+m
 
 <<sec6-fit3, echo=T>>=
 
-modelex3.3 <- multdrc(rgr~dose, pct, collapse=data.frame(pct, 1, pct, pct), data=TM, fct=g4())
+modelex3.3 <- multdrc(rgr~dose, pct, collapse=data.frame(pct, 1, pct, pct), data=TM, fct=w4())
 
 @
 The test for model reduction is not significant
@@ -658,10 +658,10 @@ anova(modelex3.3, modelex3.1)
 
 @
 Thus \verb+modelex3.3+ provides as good a fit to the data as does \verb+modelex3.1+. Next we fit a model with the common lower limit equal to 0. This
-can be done using the built-in function \verb+g3()+ which is a three-parameter Gompertz model (lower limit set to 0).
+can be done using the built-in function \verb+w3()+ which is a three-parameter Weibull model (lower limit set to 0).
 
 <<sec6-fit4, echo=T>>=
-modelex3.4 <- multdrc(rgr~dose, pct, data.frame(pct, pct, pct), data=TM, fct=g3())
+modelex3.4 <- multdrc(rgr~dose, pct, data.frame(pct, pct, pct), data=TM, fct=w3())
 @
 The F-test for reduction from \verb+modelex3.3+ to \verb+modelex3.4+ is
 

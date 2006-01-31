@@ -40,7 +40,7 @@
     ## Defining the log likelihood function
     llfct <- function(object)
     {
-        c( -(object$"sumList"$"df.residual"/2)*log(pi)-object$"fit"$"value"/2, length(object$"fit"$"par") )
+        c( -(lenData/2)*log(2*pi)-object$"fit"$"value"/2, length(object$"fit"$"par") )
     }
     
        

@@ -9,13 +9,12 @@
 }
 
 \usage{
-mixdrc(object, random, lambda = 1, data)
+mixdrc(object, random, data)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{random}{a character string specifying the random effects. Specification is as in \code{\link{nlme}}.}
-  \item{lambda}{numeric specifying the value of the Box-Cox transformation.}
   \item{data}{a data frame containing the variables in the model (not optional).}
 }
 
@@ -42,10 +41,20 @@ model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
 collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE))
 
 ## Then fitting model with random effects (assigned to d)
-model2<-mixdrc(model1, random="d~1|CURVE", data=PestSci)
+model2 <- mixdrc(model1, random="d~1|CURVE", data=PestSci)
 compParm(model2, "e", "-")
 
-rm(model1, model2)
+## First fitting model without random effects
+##  but with a Box-Cox transformation
+model3 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE)
+
+## Then fitting model with random effects (assigned to d)
+model4 <- mixdrc(model3, random="d~1|CURVE", data=PestSci)
+compParm(model4, "e", "-")
+
+
+rm(model1, model2, model3, model4)
 
 }
 \keyword{models}

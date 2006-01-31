@@ -17,7 +17,8 @@ function(obj, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, ...)
 
 
 #    SIlist <- obj[[11]][[9]]
-    SIlist <- obj[[11]]$"sifct"
+    SIlist <- obj$fct$"sifct"
+    if (is.null(SIlist)) {stop("SI values cannot be calculated")}
 
     ## Checking contain of percVec vector ... should be numbers between 0 and 100
     if (any(percVec<=0 | percVec>=100)) {stop("Percentages outside the interval [0, 100] not allowed")}

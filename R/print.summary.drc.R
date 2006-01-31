@@ -19,7 +19,7 @@ function(x, ...)
     if ((!is.null(object$"resVar")) && (!(object$"type"=="binomial")))
     {
         cat("\n")
-        cat("Estimate of residual variance:", object$"resVar", "\n\n")
+        cat("Estimated residual variance:", object$"resVar", "\n")  # , "\n\n")
     }
 
     if (!is.null(object$"varComp"))
@@ -29,16 +29,26 @@ function(x, ...)
         printCoefmat(object$"varComp")
     }
     
-    if (!is.null(object$"varPower"))  # summary of variance as power of mean
+    if (!is.null(object$"varParm"))  # summary of variance as power of mean
     {
-        cat("Heterogeneity adjustment: variance is a power of mean function\n\n")    
-        if (dim(object$"varPower")[1]>1)
+        if (object$"varParm"$"type" == "varPower")
         {
-            printCoefmat(object$"varPower"[2, , drop=FALSE])  
-            # only displaying power exponent, not residual variance
-        } else {
-            printCoefmat(object$"varPower")
+            cat("\n")
+            cat("Heterogeneity adjustment: variance is a power of mean function\n\n")    
+            if (dim(object$"varParm"$"estimates")[1] > 1)
+            {
+                printCoefmat(object$"varParm"$"estimates"[2, , drop=FALSE])  
+                # only displaying power exponent, not residual variance
+            } else {
+                printCoefmat(object$"varParm"$"estimates")
+            }
         }
+        if (object$"varParm"$"type" == "hetvar")
+        {
+            cat("\n")
+            cat("Estimated heterogeneous variances:\n\n")    
+            printCoefmat(object$"varParm"$"estimates"[, 1, drop = FALSE])
+        }        
     }
     
     if (!is.null(object$"boxcox"))  # summary of Box-Cox transformation
@@ -51,6 +61,7 @@ function(x, ...)
 #            pVal <- format(object$"boxcox"[2], digits=3)
             boxcoxci <- c(format(object$"boxcox"[2], digits=3), format(object$"boxcox"[3], digits=3))
 
+            cat("\n")
             cat("Heterogeneity adjustment: Box-Cox transformation\n\n")
 
             if (!is.na(boxcoxci[1]))

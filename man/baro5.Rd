@@ -10,7 +10,9 @@
 }
 
 \usage{
-baro5(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), names = c("b1", "b2", "c", "d", "e"), scaleDose = TRUE, useDer = FALSE)
+baro5(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
+upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
+names = c("b1", "b2", "c", "d", "e"), scaleDose = TRUE, useDer = FALSE)
 }
 
 \arguments{

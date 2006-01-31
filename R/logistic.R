@@ -43,7 +43,12 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining flag to indicate if more general ANOVA model
-    anovaYes <- TRUE
+#    anovaYes <- list(bin = !any(is.na(fixed[c(2,3,5)])) , cont = TRUE)
+    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
+    if (is.na(binVar)) {binVar <- FALSE}
+    if (!binVar) {binVar <- NULL}
+    anovaYes <- list(bin = binVar, cont = TRUE)
+
 
 
     ## Defining the self starter function
@@ -150,8 +155,8 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     }
     
     
-    returnList <- list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, 
-                       upperc=upperLimits, edfct=edfct, sifct=sifct, scaleInd=scaleInd)
+    returnList <- list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,
+                       lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, sifct=sifct, scaleInd=scaleInd)
 
     class(returnList) <- "logistic"
     invisible(returnList)
