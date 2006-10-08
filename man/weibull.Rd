@@ -78,9 +78,10 @@
 
 ## Fitting two different Weibull models
 model1 <- multdrc(FA, fct = weibull())
-plot(model1)
+plot(model1, conLevel=0.5, legend=FALSE)
 model2 <- multdrc(FA, fct = weibull2())
-plot(model2, type="add", col=2)
+plot(model2, conLevel=0.5, type="add", col=2)
+# you could also look at the ED values to see the difference
 
 ## A four-parameter Weibull model with b fixed at 1
 model3 <- multdrc(FA, fct = weibull(fixed=c(1, NA, NA, NA)))

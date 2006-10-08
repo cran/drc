@@ -1,5 +1,5 @@
 "ED" <-
-function(obj, percVec, od = FALSE, ...)
+function(obj, percVec, bound = TRUE, od = FALSE, ci = FALSE, level = ifelse(ci, 0.95, NULL), ...)
 {
 #    typeStr <- "ED"
 #
@@ -24,7 +24,10 @@ function(obj, percVec, od = FALSE, ...)
     } else {
 
     ## Checking 'percVec' vector ... should be numbers between 0 and 100
-    if (any(percVec<=0 | percVec>=100)) {stop("Percentages outside the interval ]0, 100[ not allowed")}
+    if (bound) 
+    {
+        if (any(percVec<=0 | percVec>=100)) {stop("Percentages outside the interval ]0, 100[ not allowed")}
+    }
     lenPV <- length(percVec)
     
 
@@ -37,12 +40,13 @@ function(obj, percVec, od = FALSE, ...)
 
     parmMat <- obj$"parmMat"  # [[10]]
     sumObj <- summary(obj, od = od)
-    resVar <- sumObj$"resVar"  # [[1]]
+#    resVar <- sumObj$"resVar"  # [[1]]
     varMat<-obj$"transformation"%*%sumObj$"varMat"%*%t(obj$"transformation")        
+    
 #    varMat <- obj[[12]]%*%sumObj[[2]]%*%t(obj[[12]])
 #    varMat <- sumObj[[2]]
 #    parm <- c((sumObj[[3]])[,1])
-    parm <- c((sumObj$"estimates")[,1])
+#    parm <- c((sumObj$"estimates")[,1])
 #    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
 #    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
     strParm <- unique(obj$"data"[, ncol(obj$"data") - 1])  # second last column contains original curve levels
@@ -137,6 +141,16 @@ function(obj, percVec, od = FALSE, ...)
     
     rowIndex <- 1
 #    for (i in maxIndex)
+
+    ## Skipping curve id if only one curve is present
+    lenIV <- ncol(indexMat)
+    if (length(unique(strParm)) == 1) 
+    {
+        strParm[1:lenIV] <- rep("", lenIV)
+    } else {
+        strParm <- paste(strParm, ":", sep = "")
+    }
+
     for (i in indexVec)
     {
         parmInd <- indexMat[, i]
@@ -147,16 +161,30 @@ function(obj, percVec, od = FALSE, ...)
         {
             EDeval <- EDlist(parmChosen, percVec[j], ...)
             EDmat[rowIndex, 1] <- EDeval[[1]]
-            dfEval <- EDeval[[2]]
-#            print(dfEval)
-        
+            dfEval <- EDeval[[2]]       
             EDmat[rowIndex, 2] <- sqrt(dfEval%*%varCov%*%dfEval)
 
-            dimNames[rowIndex] <- paste(strParm[i], ":", percVec[j], sep="")
+#            dimNames[rowIndex] <- paste(strParm[i], ":", percVec[j], sep="")
+            dimNames[rowIndex] <- paste(strParm[i], percVec[j], sep="")
             rowIndex <- rowIndex + 1
         }
     }
-    dimnames(EDmat) <- list(dimNames, c("Estimate", "Std. Error"))
+    colNames <- c("Estimate", "Std. Error")
+
+    if (ci)
+    {
+        ciMat <- matrix(0, lenEB*lenPV, 2)
+        tquan <- qt(1 - (1 - level)/2, df.residual(obj))        
+#        ciMat[, 1] <- EDmat[, 1] - qnorm(level + (1-level)/2)*EDmat[, 2]
+#        ciMat[, 2] <- EDmat[, 1] + qnorm(level + (1-level)/2)*EDmat[, 2]
+        ciMat[, 1] <- EDmat[, 1] - tquan * EDmat[, 2]
+        ciMat[, 2] <- EDmat[, 1] + tquan * EDmat[, 2]
+        colNames <- c( colNames, "Lower", "Upper")
+        
+        EDmat <- as.matrix(cbind(EDmat, ciMat))
+    }
+    
+    dimnames(EDmat) <- list(dimNames, colNames)
 
     ## Displaying the ED values
     cat("\n")

@@ -1,11 +1,11 @@
 %PDF-1.1
-%Å‚Å„ÅœÅ”
+%Å‚Å„ÅœÅ”\r
 1 0 obj
 <<
-/CreationDate (D:20060207103750)
-/ModDate (D:20060207103750)
+/CreationDate (D:20061008220606)
+/ModDate (D:20061008220606)
 /Title (R Graphics Output)
-/Producer (R 2.2.1)
+/Producer (R 2.5.0)
 /Creator (R)
 >>
 endobj
@@ -708,28 +708,6 @@ S
 258.97 81.91 l
 261.50 81.89 l
 264.03 81.87 l
-266.56 81.86 l
-269.09 81.85 l
-271.63 81.84 l
-274.16 81.83 l
-276.69 81.82 l
-279.22 81.81 l
-281.75 81.81 l
-284.29 81.80 l
-286.82 81.80 l
-289.35 81.79 l
-291.88 81.79 l
-294.41 81.79 l
-296.95 81.79 l
-299.48 81.78 l
-302.01 81.78 l
-304.54 81.78 l
-307.07 81.78 l
-309.61 81.78 l
-312.14 81.78 l
-314.67 81.78 l
-317.20 81.78 l
-319.73 81.78 l
 S
 0.000 0.000 0.000 RG
 0.75 w
@@ -788,7 +766,7 @@ Q
 endstream
 endobj
 8 0 obj
-12937
+12607
 endobj
 3 0 obj
 <<
@@ -803,7 +781,7 @@ endobj
 4 0 obj
 <<
 /ProcSet [/PDF /Text]
-/Font << /F1 5 0 R /F2 10 0 R /F3 11 0 R /F4 12 0 R /F5 13 0 R /F6 14 0 R >>
+/Font << /F1 5 0 R /F2 10 0 R >>
 /ExtGState << >>
 >>
 endobj
@@ -814,73 +792,32 @@ endobj
 /Differences [ 45/minus ]
 >>
 endobj
-10 0 obj
-<<
+10 0 obj <<
 /Type /Font
 /Subtype /Type1
 /Name /F2
 /BaseFont /Helvetica
 /Encoding 9 0 R
->>
-endobj
-11 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F3
-/BaseFont /Helvetica-Bold
-/Encoding 9 0 R
->>
-endobj
-12 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F4
-/BaseFont /Helvetica-Oblique
-/Encoding 9 0 R
->>
-endobj
-13 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F5
-/BaseFont /Helvetica-BoldOblique
-/Encoding 9 0 R
->>
-endobj
-14 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F6
-/BaseFont /Symbol
->>
-endobj
+>> endobj
 xref
-0 15
+0 11
 0000000000 65535 f 
-0000000020 00000 n 
-0000000162 00000 n 
-0000013385 00000 n 
-0000013468 00000 n 
-0000000211 00000 n 
-0000000294 00000 n 
-0000000374 00000 n 
-0000013364 00000 n 
-0000013605 00000 n 
-0000013699 00000 n 
-0000013796 00000 n 
-0000013898 00000 n 
-0000014003 00000 n 
-0000014112 00000 n 
+0000000021 00000 n 
+0000000163 00000 n 
+0000013056 00000 n 
+0000013139 00000 n 
+0000000212 00000 n 
+0000000295 00000 n 
+0000000375 00000 n 
+0000013035 00000 n 
+0000013232 00000 n 
+0000013326 00000 n 
 trailer
 <<
-/Size 15
+/Size 11
 /Info 1 0 R
 /Root 2 0 R
 >>
 startxref
-14190
+13423
 %%EOF

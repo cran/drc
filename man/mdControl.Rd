@@ -9,7 +9,7 @@
 }
 
 \usage{
-mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS", 
+mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxDose = 1e-1, maxIt = 500, method="BFGS", 
           noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, warnVal = -1, zeroTol=0)
 }
 
@@ -17,6 +17,7 @@ mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS",
   \item{bcAdd}{numeric. The constant to be added in Box-Cox transformation.}
   \item{constr}{logical. If TRUE optimisation is constrained, only yielding non-negative parameters.}
   \item{errorm}{logical specifying whether failed convergence in \code{\link{multdrc}} should result in an error or only a warning.}
+  \item{maxDose}{numeric. The maximum dose allowed if scaling of dose is to be used.}
   \item{maxIt}{numeric. The maximum number of iterations in the optimisation procedure.}
   \item{method}{character string. The method used in the optimisation procedure. See \code{\link{optim}} for available methods.}
   \item{noMessage}{logical, specifying whether or not messages should be displayed.}

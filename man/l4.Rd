@@ -9,13 +9,14 @@
 }
 
 \usage{
-l4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), useDer = FALSE)
+l4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), useDer = FALSE, w = FALSE)
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
   \item{useDer}{logical. If TRUE derivatives are supplied, if FALSE (default) they are not supplied.}
+  \item{w}{logical. If TRUE weighted regression is applied to determine the start values.}  
 }
 
 \details{

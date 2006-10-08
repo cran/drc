@@ -9,7 +9,7 @@
     ## Defining the objective function
     opfct <- function(c)
     {
-        sum( robustFct( (resp - multCurves(dose, c))*weights ), na.rm=rmNA)  # weights enter multiplicatively!
+        sum( robustFct( (resp - multCurves(dose, c))*weights ), na.rm = rmNA)  # weights enter multiplicatively!
     }
 
     
@@ -41,5 +41,12 @@
         fit$par
     }
 
-    return(list(llfct=llfct, opfct=opfct, ssfct=ssfct, rvfct=rvfct, vcovfct=vcovfct, parmfct=parmfct))
+    rstanfct <- function(object)
+    {
+        rep(1, object$"sumList"$"lenData")*sqrt(summary(object)$"resVar")
+    }
+
+
+    return(list(llfct = llfct, opfct = opfct, ssfct = ssfct, rvfct = rvfct, vcovfct = vcovfct,
+                parmfct = parmfct, rstanfct = rstanfct))
 }

@@ -119,7 +119,7 @@ function(obj, upper=NULL)
         dimNames[i] <- strParm[i]
     }
 
-    dimnames(MAXmat)<-list(dimNames,c("Dose","Maximum"))
+    dimnames(MAXmat) <- list(dimNames, c("Dose", "Response"))
     printCoefmat(MAXmat)
     invisible(MAXmat)    
 #    return(EDmat)

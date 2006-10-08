@@ -9,7 +9,9 @@
 }
 
 \usage{
-confint.drc(object, parm, level = 0.95, ...)
+
+  \method{confint}{drc}(object, parm, level = 0.95, type = "t", ...)
+
 }
 
 \arguments{
@@ -18,6 +20,8 @@ confint.drc(object, parm, level = 0.95, ...)
           confidence intervals, either a vector of numbers or a vector
           of names. If missing, all parameters are considered.}
   \item{level}{the confidence level required.}
+  \item{type}{the type of confidence interval: based on the standard normal distribution or 
+  based on a t-distribution (default).}  
   \item{\dots}{additional argument(s) for methods. Not used.}
 }
 
@@ -40,8 +44,10 @@ confint.drc(object, parm, level = 0.95, ...)
 
 \examples{
 
-## Confidence interval for a single parameter
+## Fitting a model
 model1 <- multdrc(FA)
+
+## Confidence interval for a single parameter
 confint(model1, "e")
 
 ## Confidence intervals for all parameters

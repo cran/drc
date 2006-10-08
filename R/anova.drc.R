@@ -1,7 +1,12 @@
 "anova.drc" <-
-function(object, ..., test = NULL)
+function(object, ..., details = TRUE, test = NULL)
 {
-    if (length(list(object, ...)) > 1) {return(anova.drclist(object, ..., test = test))} else {obj1 <- object}
+    if (length(list(object, ...)) > 1) 
+    {
+        return(anova.drclist(object, ..., details = details, test = test))
+    } else {
+        obj1 <- object
+    }
 
     if (inherits(object, "bindrc"))
     {

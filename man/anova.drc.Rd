@@ -2,7 +2,7 @@
 
 \alias{anova.drc}
 
-\alias{anova.drclist}
+%\alias{anova.drclist}
 
 \title{ANOVA for non-linear model fits}
 
@@ -11,14 +11,17 @@
 }
 
 \usage{
-anova.drc(object, ..., test = NULL)
 
-anova.drclist(object, ..., test = NULL)
+  \method{anova}{drc}(object, ..., details = TRUE, test = NULL)
+
+%anova.drclist(object, ..., test = NULL)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{...}{additional arguments.}
+  \item{details}{logical indicating whether or not details on the models compared should be displayed. 
+  Default is TRUE (details are displayed).}
   \item{test}{a character string specifying the test statistic to be applied.
               Use "od" to assess overdispersion for binomial data.}
 }
@@ -51,6 +54,7 @@ anova(model1)
 model2 <- multdrc(FA, fct = w3())
 anova(model2, model1)  # reduction to 'w3' not possible (highly significant)   
 
+anova(model2, model1, details = FALSE)  # without details
 
 rm(model1, model2)
 }

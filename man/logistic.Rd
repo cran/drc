@@ -12,7 +12,8 @@
 \usage{
   logistic(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
   upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-  names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, useDer = FALSE)
+  names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, 
+  useDer = FALSE, w = FALSE)
 }
 
 \arguments{
@@ -26,6 +27,7 @@
   \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
                    this is required for datasets where all dose values are small. }
   \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not yet implemented!}
+  \item{w}{logical. If TRUE weighted regression is applied to determine the start values.}  
 }
 
 \details{
@@ -51,7 +53,7 @@
   Finney, D. J. (1979) Bioassay and the Practise of Statistical Inference, 
   \emph{Int. Statist. Rev.}, \bold{47}, 1--12.
 
-  Seber, G. A. F. and Wild, C. J (1989) \emph{Nonlinear Regression}, New York: Wiley \& Sons (p. 330).
+  Seber, G. A. F. and Wild, C. J. (1989) \emph{Nonlinear Regression}, New York: Wiley \& Sons (p. 330).
 }
 
 \author{Christian Ritz}

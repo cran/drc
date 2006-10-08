@@ -8,13 +8,16 @@
 }
 
 \usage{
-  ED(obj, percVec, od = FALSE, ...)
+  ED(obj, percVec, bound = TRUE, od = FALSE, ci = FALSE, level = ifelse(ci, 0.95, NULL), ...)
 }
 
 \arguments{
   \item{obj}{an object of class 'drc'.}
   \item{percVec}{a numeric vector containing the dosage values.}
+  \item{bound}{logical. If TRUE only ED values between 0 and 100\% are allowed. FALSE is useful for hormesis models.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
+  \item{ci}{logical. If TRUE confidence intervals (based on the t-distribution) are produced.}
+  \item{level}{numeric. The level for the confidence intervals. Default is 0.95.}
   \item{...}{additional arguments for the function doing the calculations.}
 }
 
@@ -46,11 +49,28 @@
 
 model1<-multdrc(FA)
 
-ED(model1, c(10,50,90))[,1]   
+ED(model1, c(10,50,90)) 
 ## first column: the estimates of ED10, ED50 and ED90
 ## second column: the estimated standard errors 
 
-rm(model1)
+## Also displaying 95% confidence intervals
+ED(model1, c(10,50,90), ci = TRUE)
+
+## The argument 'bound'
+model2 <- multdrc(weight~conc, data=hormesis, fct=bcl3())
+
+## Calculating ED[-10]
+#ED(model2, -10)  
+# does not work
+
+ED(model2, -10, bound = FALSE)  # works
+ED(model2, -20, bound = FALSE)  # works
+
+#ED(model2, -30, bound = FALSE)  
+# does not work: ED[-30] does not exist 
+
+
+rm(model1, model2)
 
 }
 

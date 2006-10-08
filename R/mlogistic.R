@@ -44,7 +44,11 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining flag to indicate if more general ANOVA model
-    anovaYes <- TRUE
+#    anovaYes <- TRUE
+    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
+    if (is.na(binVar)) {binVar <- FALSE}
+    if (!binVar) {binVar <- NULL}
+    anovaYes <- list(bin = binVar, cont = TRUE)
 
 
     ## Defining the self starter function
@@ -99,7 +103,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining the ED function    
-    edfct <- function(parm, p, upper=1000, interval=c(1e-3, 1000))  # upper2=1000)
+    edfct <- function(parm, p, upper = 10000, interval = c(1e-4, 10000))  # upper2=1000)
     {
 #        if (is.null(upper)) {upper <- 1000}
 #        if (missing(upper2)) {upper2 <- 1000}
@@ -112,6 +116,8 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 #        doseVec <- exp(seq(-upper2, upper2, length=1000))
         doseVec <- exp(seq(log(interval[1]), log(interval[2]), length=1000))
         maxAt <- doseVec[which.max(helpFct(doseVec))]
+#        print(maxAt)
+#        print(upper)
     
         eqn <- function(dose) {tempVal*(1+exp(parmVec[1]*(log(dose)-log(parmVec[4]))))-(1+parmVec[5]*exp(-1/(dose^alpha))/(parmVec[3]-parmVec[2]))}
         EDp <- uniroot(eqn, lower=maxAt, upper=upper)$root
@@ -131,7 +137,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining the SI function
-    sifct <- function(parm1, parm2, pair, upper=1000, interval=c(1e-3, 1000))
+    sifct <- function(parm1, parm2, pair, upper = 10000, interval = c(1e-4, 10000))
     {
 #        if (is.null(upper)) {upper <- 1000}
 #        if (missing(upper2)) {upper2 <- 1000}

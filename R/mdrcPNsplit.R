@@ -8,7 +8,9 @@
     for (i in 1:lenPV)
     {
         parmVecA[i] <- splitList[[i]][1]
-        parmVecB[i] <- splitList[[i]][2]
+        
+        lenSL <- length(splitList[[i]])
+        parmVecB[i] <- paste(splitList[[i]][2:lenSL], collapse = "")  # 'paste' is needed in case several ":" occur
     }
     return(list(parmVec, parmVecA, parmVecB))
 }

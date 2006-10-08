@@ -9,7 +9,9 @@
 }
 
 \usage{
-update.drc(object, ..., evaluate=TRUE)
+
+  \method{update}{drc}(object, ..., evaluate = TRUE)
+
 }
 
 \arguments{

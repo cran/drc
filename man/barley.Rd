@@ -1,6 +1,6 @@
-\name{barley}
+\name{leaflength}
 
-\alias{barley}
+\alias{leaflength}
 
 \docType{data}
 
@@ -10,7 +10,7 @@
   In an experiment barley was grown in a hydroponic solution with a herbicide.
 }
 
-\usage{data(barley)}
+\usage{data(leaflength)}
 
 \format{
   A data frame with 42 observations on the following 2 variables.
@@ -33,13 +33,14 @@
 \examples{
 
 ## Fitting a hormesis model
-fit.ml3c <- multdrc(DW~Dose, data=barley, fct=ml3c(), boxcox=TRUE)
+fit.ml3c <- multdrc(DW~Dose, data=leaflength, fct=ml3c(), boxcox=TRUE)
 
 ## Plottinf fitted curve and original data
 plot(fit.ml3c, conLevel=0.001, type="points", legend=FALSE, 
-ylab="Produced leaf length(cm)", xlab="Metsulfuron-methyl(mg/l)")
-
+ylab="Produced leaf length(cm)", xlab="Metsulfuron-methyl(mg/l)",
+main="Hormesis: leaf length of barley")
 
 rm(fit.ml3c)
+
 }
 \keyword{datasets}

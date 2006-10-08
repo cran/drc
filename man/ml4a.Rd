@@ -1,34 +1,54 @@
 \name{ml4a}
+
 \alias{ml4a}
+\alias{uml4a}
 %- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{The modified logistic function}
+
 \description{
   'ml4a' provides Cedergreen-Ritz-Streibig's modified logistic dose response function.
+  
+  'uml4a' provides Cedergreen-Ritz-Streibig's modified logistic 
+  effect response function (u-shaped hormesis).  
 }
+
 \usage{
-ml4a(names = c("b", "c", "d", "e", "f"), useDer = FALSE)
+  ml4a(names = c("b", "c", "d", "e", "f"), useDer = FALSE)
 }
+
 \arguments{
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable (see above).}
   \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not yet implemented!}
 }
+
 \details{
-  The model is given by the expression
+The model is given by the expression
   \deqn{ f(x) = c + \frac{d-c+f \exp(-1/x)}{1+\exp(b(\log(x)-\log(e)))}}
-  which is a five-parameter model.
+which is a five-parameter model.
   
-  It is a modification of the four-parameter logistic curve to take hormesis into account.
+It is a modification of the four-parameter logistic curve to take hormesis into account.
+  
+The u-shaped model is given by the expression
+  \deqn{ f(x) = c + d - \frac{d-c+f \exp(-1/x)}{1+\exp(b(\log(x)-\log(e)))}}
 }
+
 \value{
   See \code{\link{mlogistic}}.
 }
+
 \references{Cedergreen, N. and Ritz, C. and Streibig, J. C. (2005) Improved empirical models describing hormesis, Submitted.}
 
 \author{Christian Ritz}
 
-\note{This function is for use with the function \code{\link{multdrc}}.}
+\note{
+  This function is for use with the function \code{\link{multdrc}}.  
+}
 
-\seealso{Similar functions are \code{\link{ml4b}} and \code{\link{ml4c}}.}
+\seealso{
+  Similar functions are \code{\link{ml4b}} and \code{\link{ml4c}}.
+}
+
 \examples{
 
 ## Modified logistic model

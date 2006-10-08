@@ -5,12 +5,13 @@
   'l5' provides the five-parameter logistic function, self starter function and names of the parameters.
 }
 \usage{
-l5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), useDer = FALSE)
+l5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), useDer = FALSE, w = FALSE)
 }
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
   \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not implemented!}
+  \item{w}{logical. If TRUE weighted regression is applied to determine the start values.}  
 }
 \details{
   The five-parameter logistic function is given by the expression
@@ -22,7 +23,10 @@ l5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), useDer = F
 \value{
   See \code{\link{logistic}}.
 }
-\references{Finney, D. J. (1979) Bioassay and the Practise of Statistical Inference, \emph{Int. Statist. Rev.}, \bold{47}, 1--12.}
+\references{
+  Finney, D. J. (1979) Bioassay and the Practise of Statistical Inference, 
+  \emph{Int. Statist. Rev.}, \bold{47}, 1--12.
+}
 
 \author{Christian Ritz}
 \note{This function is for use with the function \code{\link{multdrc}}.}

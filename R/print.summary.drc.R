@@ -4,12 +4,12 @@ function(x, ...)
     object <- x
     
     cat("\n")
-    cat(paste("A '", object$"class", "' model was fitted.\n", sep=""))
+    cat(paste("Model fitted: ", object$"fctName", "\n", sep=""))
 
     if (!is.null(object$"robust"))
     {
         cat("\n")
-        cat("Robust estimation:",object[[7]],"\n")    
+        cat("Robust estimation:", object$"robust", "\n")   
     }
 
     cat("\n")
@@ -34,7 +34,7 @@ function(x, ...)
         if (object$"varParm"$"type" == "varPower")
         {
             cat("\n")
-            cat("Heterogeneity adjustment: variance is a power of mean function\n\n")    
+            cat("Heterogeneity adjustment: variance is a power of mean\n\n")    
             if (dim(object$"varParm"$"estimates")[1] > 1)
             {
                 printCoefmat(object$"varParm"$"estimates"[2, , drop=FALSE])  

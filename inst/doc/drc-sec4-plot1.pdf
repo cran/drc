@@ -1,11 +1,11 @@
 %PDF-1.1
-%Å‚Å„ÅœÅ”
+%Å‚Å„ÅœÅ”\r
 1 0 obj
 <<
-/CreationDate (D:20060207103747)
-/ModDate (D:20060207103747)
+/CreationDate (D:20061008220604)
+/ModDate (D:20061008220604)
 /Title (R Graphics Output)
-/Producer (R 2.2.1)
+/Producer (R 2.5.0)
 /Creator (R)
 >>
 endobj
@@ -93,22 +93,14 @@ BT
 /F2 1 Tf 12.00 0.00 0.00 12.00 37.97 227.23 Tm (6) Tj
 /F2 1 Tf 12.00 0.00 0.00 12.00 37.97 279.02 Tm (8) Tj
 ET
-69.07 73.44 m 285.34 73.44 l S
+69.07 73.44 m 213.25 73.44 l S
 69.07 73.44 m 69.07 66.24 l S
-119.46 73.44 m 119.46 66.24 l S
 141.16 73.44 m 141.16 66.24 l S
-191.55 73.44 m 191.55 66.24 l S
 213.25 73.44 m 213.25 66.24 l S
-263.64 73.44 m 263.64 66.24 l S
-285.34 73.44 m 285.34 66.24 l S
 BT
 /F2 1 Tf 12.00 0.00 0.00 12.00 65.73 44.87 Tm (0) Tj
-/F2 1 Tf 12.00 0.00 0.00 12.00 107.78 44.87 Tm (0.05) Tj
 /F2 1 Tf 12.00 0.00 0.00 12.00 132.82 44.87 Tm (0.1) Tj
-/F2 1 Tf 12.00 0.00 0.00 12.00 183.21 44.87 Tm (0.5) Tj
 /F2 1 Tf 12.00 0.00 0.00 12.00 209.91 44.64 Tm (1) Tj
-/F2 1 Tf 12.00 0.00 0.00 12.00 260.30 44.87 Tm (5) Tj
-/F2 1 Tf 12.00 0.00 0.00 12.00 278.67 44.87 Tm (10) Tj
 ET
 Q q 59.04 73.44 270.72 227.52 re W n
 0.000 0.000 0.000 RG
@@ -218,17 +210,11 @@ Q q 59.04 73.44 270.72 227.52 re W n
 317.20 86.41 l
 319.73 86.27 l
 S
-275.26 278.13 m 296.86 278.13 l S
-BT
-/F1 1 Tf 1 Tr 7.48 0 0 7.48 283.10 275.54 Tm (l) Tj 0 Tr
-0.000 0.000 0.000 rg
-/F2 1 Tf 12.00 0.00 0.00 12.00 307.66 273.83 Tm (1) Tj
-ET
 Q
 endstream
 endobj
 8 0 obj
-3809
+3286
 endobj
 3 0 obj
 <<
@@ -243,7 +229,7 @@ endobj
 4 0 obj
 <<
 /ProcSet [/PDF /Text]
-/Font << /F1 5 0 R /F2 10 0 R /F3 11 0 R /F4 12 0 R /F5 13 0 R /F6 14 0 R >>
+/Font << /F1 5 0 R /F2 10 0 R >>
 /ExtGState << >>
 >>
 endobj
@@ -254,73 +240,32 @@ endobj
 /Differences [ 45/minus ]
 >>
 endobj
-10 0 obj
-<<
+10 0 obj <<
 /Type /Font
 /Subtype /Type1
 /Name /F2
 /BaseFont /Helvetica
 /Encoding 9 0 R
->>
-endobj
-11 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F3
-/BaseFont /Helvetica-Bold
-/Encoding 9 0 R
->>
-endobj
-12 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F4
-/BaseFont /Helvetica-Oblique
-/Encoding 9 0 R
->>
-endobj
-13 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F5
-/BaseFont /Helvetica-BoldOblique
-/Encoding 9 0 R
->>
-endobj
-14 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F6
-/BaseFont /Symbol
->>
-endobj
+>> endobj
 xref
-0 15
+0 11
 0000000000 65535 f 
-0000000020 00000 n 
-0000000162 00000 n 
-0000004256 00000 n 
-0000004339 00000 n 
-0000000211 00000 n 
-0000000294 00000 n 
-0000000374 00000 n 
-0000004236 00000 n 
-0000004476 00000 n 
-0000004570 00000 n 
-0000004667 00000 n 
-0000004769 00000 n 
-0000004874 00000 n 
-0000004983 00000 n 
+0000000021 00000 n 
+0000000163 00000 n 
+0000003734 00000 n 
+0000003817 00000 n 
+0000000212 00000 n 
+0000000295 00000 n 
+0000000375 00000 n 
+0000003714 00000 n 
+0000003910 00000 n 
+0000004004 00000 n 
 trailer
 <<
-/Size 15
+/Size 11
 /Info 1 0 R
 /Root 2 0 R
 >>
 startxref
-5061
+4101
 %%EOF

@@ -38,6 +38,13 @@
 
 \examples{
 
+## Fitting the model with freely varying ED50 values
+model1 <- multdrc(rgr1~dose1, pct1, data=acidiq, 
+collapse=list(~factor(pct1),~1,~1,~factor(pct1) - 1), 
+boxcox=TRUE)
+summary(model1)
+
+
 ## Fitting the concentration addition model
 model1ca <- mixture(rgr1~dose1, pct1, data=acidiq, collapse=~factor(pct1), 
 model="CA", boxcox=TRUE)
@@ -60,6 +67,6 @@ anova(model1v)  # comparison to a model with freely varying e parameter
 summary(model1v)
 
 
-rm(model1ca, model1h, model1v)
+rm(model1, model1ca, model1h, model1v)
 }
 \keyword{datasets}

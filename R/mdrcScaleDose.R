@@ -1,4 +1,4 @@
-"mdrcScaleDose" <- function(dose, lowTol = 1e-2)
+"mdrcScaleDose" <- function(dose, lowTol)
 {
     if (max(dose) < lowTol)
     {

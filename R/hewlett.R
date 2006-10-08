@@ -1,5 +1,5 @@
-"hewlett" <- function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA, NA, NA), 
-                 names=c("b","c","d","e","f","g"), useDer=FALSE)
+"hewlett" <- function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf, Inf), 
+                      fixed = c(NA, NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f", "g"), useDer = FALSE)
 {
     ## Checking arguments
     numParm <- 6

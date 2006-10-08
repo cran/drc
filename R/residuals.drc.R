@@ -1,11 +1,16 @@
 "residuals.drc" <-
-function(object, ...)
+function(object, rstandard = FALSE, ...)
 {
-    if (inherits(object, "bindrc"))
+    if (rstandard)
     {
-        return(object$data$resp - fitted(object))
+        rstan <- object$"estMethod"$"rstanfct"
+        if (is.null(rstan)) 
+        {
+            stop("No standardisation available")
+        } else {
+            return(object$"predres"[, 2] / rstan(object))    
+        }
     } else {
-    
-        return(object[[7]][,2])
+        return(object$"predres"[, 2])
     }
 }

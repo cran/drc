@@ -67,9 +67,14 @@ function(object, od = FALSE, ...)
     parVec <- (em$parmfct)(object$fit, fixed=FALSE)
     notNA <- !is.na(parVec) 
         
-    if (!is.null(em$rvfct)) {resVar <- (em$rvfct)(object)} else {resVar <- NULL}
+    if (!is.null(em$rvfct)) 
+    {
+        resVar <- (em$rvfct)(object)
+    } else {
+        resVar <- NULL
+    }
     varMat <- (object$"scaleFct")( (em$vcovfct)(object) )
-    
+   
     if (od && (!is.null(object$"gofTest")) ) 
     { 
         varMat <- varMat*(object$"gofTest"[1]/object$"gofTest"[2])
@@ -144,7 +149,16 @@ function(object, od = FALSE, ...)
     {
         indexVec <- object$"varParm"$"index"
         varParm <- object$"varParm"
-        varParm$"estimates" <- resultMat[-indexVec, , drop=FALSE]
+#        varParm$"estimates" <- resultMat[-indexVec, , drop=FALSE]
+
+        estVec <- resultMat[-indexVec, , drop=FALSE]
+        if (object$"varParm"$"type" == "varPower")
+        {
+            estVec[2, 3] <- (estVec[2, 1] - 0)/estVec[2, 2]  # testing the hypothesis theta=0
+            estVec[2, 4] <- 2*pt(-abs(estVec[2, 3]), dfres)
+        }
+        varParm$"estimates" <- estVec
+        
         resultMat <- resultMat[indexVec,]
         varMat <- varMat[indexVec, indexVec]  # for use in ED/MAX/SI
     } else {
@@ -169,11 +183,19 @@ function(object, od = FALSE, ...)
 #        loglik <- sum(log(choose(total, success))) - object$fit$ofvalue
 #    }
 
-    classObj <- class(object)
-    if (inherits(object, "list")) {modelClass <- classObj[length(classObj)-1]} else {modelClass <- classObj[length(classObj)]}
 
-    sumObj <- list(resVar, varMat, resultMat, object$"boxcox", modelClass, object$"robust", varParm, object$"type")
-    names(sumObj) <- c("resVar", "varMat", "estimates", "boxcox", "class", "robust", "varParm", "type")
+    fctName <- deparse(object$call$fct)
+
+#    classObj <- class(object)
+#    if (inherits(object, "list")) 
+#    {
+#        modelClass <- classObj[length(classObj)-1]
+#    } else {
+#        modelClass <- classObj[length(classObj)]
+#    }
+
+    sumObj <- list(resVar, varMat, resultMat, object$"boxcox", fctName, object$"robust", varParm, object$"type")
+    names(sumObj) <- c("resVar", "varMat", "estimates", "boxcox", "fctName", "robust", "varParm", "type")
     class(sumObj) <- c("summary.drc")
     return(sumObj)
     }

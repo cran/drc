@@ -1,4 +1,4 @@
-"confint.drc" <- function(object, parm, level = 0.95, ...)
+"confint.drc" <- function(object, parm, level = 0.95, type = "t", ...)
 {
     ## Matching parameter names
     if (!missing(parm))
@@ -18,7 +18,8 @@
     confMat <- matrix(0, dim(estMat)[1], 2)
 
     alphah <- (1 - level)/2 
-    two <- qnorm(1 - alphah)
+    if (type == "u") {two <- qnorm(1 - alphah)}
+    if (type == "t") {two <- qt(1 - alphah, df.residual(object))}
     confMat[, 1] <- estMat[, 1] -  two * estMat[, 2]
     confMat[, 2] <- estMat[, 1] +  two * estMat[, 2]
 

@@ -65,6 +65,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
         resp3 <- resp3[indexT2]
 
         loglogTrans <- log(-log((startVal[3] - resp3 + 0.001)/(startVal[3]-startVal[2])))  # 0.001 to avoid 0 as argument to log
+        
         loglogFit <- lm(loglogTrans~log(dose3))
         startVal[4] <- exp(-coef(loglogFit)[1]/coef(loglogFit)[2])  # the e parameter
         startVal[1] <- coef(loglogFit)[2]  # the b parameter
@@ -77,7 +78,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 
    
     ## Defining names
-    names <- names[notFixed]
+    w2.names <- names[notFixed]
 
 
     ## Defining parameter to be scaled
@@ -90,7 +91,21 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
     
     
     ## Defining derivatives
-    deriv1 <- NULL
+    deriv1 <- function(dose, parm)
+              {
+                  parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+                  parmMat[, notFixed] <- parm
+
+                  t1 <- parmMat[, 3] - parmMat[, 2]
+                  t2 <- exp(parmMat[, 1]*(log(dose) - log(parmMat[, 4])))
+                  t3 <- exp(-t2)
+
+                  derMat <- as.matrix(cbind( t1*t3*t2*(log(dose)-log(parmMat[, 4])), 
+                                             1 - (1 - t3), 
+                                             1 - t3, 
+                                             -t1*t3*t2*parmMat[, 1]/parmMat[, 4] ))
+                  return(derMat[, notFixed])
+              }
     deriv2 <- NULL
 
 
@@ -113,7 +128,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 #    }
     edfct <- function(parm, p, upper=NULL)  # upper argument not used in 'gompertz'
     {    
-        weibull()$edfct(parm, 100-p, upper) 
+        weibull(lowerc, upperc, fixed, names, scaleDose, useDer)$edfct(parm, 100-p, upper) 
     }
 
 
@@ -135,11 +150,11 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 #    }
     sifct <- function(parm1, parm2, pair)
     {
-        weibull()$sifct(parm1, parm2, 100-pair)
+        weibull(lowerc, upperc, fixed, names, scaleDose, useDer)$sifct(parm1, parm2, 100-pair)
     }    
 
 
-    returnList <- list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
+    returnList <- list(fct=fct, confct=confct, ssfct=ssfct, names=w2.names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
                        edfct=edfct, sifct=sifct, anovaYes=anovaYes)
 
     class(returnList) <- "Weibull2"

@@ -13,9 +13,9 @@
 }
 
 \usage{
-  l3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), useDer = FALSE)
+  l3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), useDer = FALSE, w =FALSE)
 
-  l3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), useDer = FALSE)
+  l3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), useDer = FALSE, w = FALSE)
 }
 
 \arguments{
@@ -23,6 +23,7 @@
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
   \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not implemented!}
+  \item{w}{logical. If TRUE weighted regression is applied to determine the start values.}
 }
 
 \details{

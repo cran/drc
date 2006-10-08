@@ -96,9 +96,11 @@
 
 
     ## Fitting model where ED50 vary freely
-    model1 <- multdrc(formula=formula, curve=assayNo, collapse=collapseNew, weights=weights, data=cbind(data2, assayNo, weights), fct=fct, 
-                      boxcox=boxcox, bcAdd=bcAdd, varPower=varPower, startVal=startVal, robust=robust, type=type, cm=cm, logDose=logDose, control=conList)
-                      # no need for an 'na.action' argument as NAs have been removed above
+    model1 <- multdrc(formula=formula, curve=assayNo, collapse=collapseNew, weights=weights, 
+                      data=cbind(data2, assayNo, weights), fct=fct, boxcox=boxcox, bcAdd=bcAdd, 
+                      varPower=varPower, startVal=startVal, robust=robust, type=type, cm=cm, 
+                      logDose=logDose, control=conList)
+                      # no need for an 'na.action' argument as NAs have already been removed
 
     rm(collapseNew, envir = .GlobalEnv)
 
@@ -128,6 +130,8 @@
                 noLim <- 2  # number of c and d parameters  
             } else {stop("Does not work for l5")}
         if (missing(startVal2)) {startVal2 <- NULL}
+        
+        class(mixtfct) <- "CA"  # otherwise it would be "Hewlett"
     }
     
     if (model == "Hewlett")

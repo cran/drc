@@ -62,6 +62,11 @@
         if (fixed) {fit$"par"[1:(lp - 2)]} else {fit$"par"}
     }
 
+    rstanfct <- function(object)
+    {
+        sqrt(fitted(object)^(summary(object)$varParm$estimates[2,1])*summary(object)$"resVar")
+    }
 
-    return(list(llfct=llfct, opfct=opfct, ssfct=ssfct, rvfct=rvfct, vcovfct=vcovfct, parmfct=parmfct))
+    return(list(llfct = llfct, opfct = opfct, ssfct = ssfct, rvfct = rvfct, vcovfct = vcovfct, 
+                parmfct = parmfct, rstanfct = rstanfct))
 }

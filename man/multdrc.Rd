@@ -11,7 +11,7 @@
 multdrc(formula, curve, collapse, weights, data=NULL, boxcox = FALSE, 
 bcAdd = 0, varPower = FALSE, startVal, fct = l4(), na.action = na.fail, 
 hetvar = NULL, robust="mean", type = "continuous", cm = NULL, 
-logDose = NULL, control = mdControl())
+logDose = NULL, fctList = NULL, control = mdControl())
 }
 
 \arguments{
@@ -40,6 +40,7 @@ logDose = NULL, control = mdControl())
   \item{cm}{character string or numeric value specifying the level in \code{curve} corresponding to control measurements.}
   \item{logDose}{a numeric value or NULL. If log doses value are provided the base of the logarithm should be specified (exp(1) for the natural logarithm
 and 10 for 10-logarithm).}
+  \item{fctList}{a list of functions in case different functions need to be fit to different curves.}
   \item{control}{a list of arguments controlling constrained optimisation (zero as boundary), maximum number of iteration in the optimisation,
   relative tolerance in the optimisation, warnings issued during the optimisation.}
 }
@@ -97,10 +98,15 @@ summary(model4)
 ## Example using 'logDose' argument
 logdose <- c(-8.045757, -7.568636, -7.086186, -6.607303, -6.130768, -5.653647, -5.180456, -4.698970)
 response <- c(7.941, 16.619, 11.021, 19.767, 30.487, 64.434, 74.422, 52.472)
-model5 <- multdrc(response~logdose, logDose=10)
+model5 <- multdrc(response ~ logdose, logDose=10)
 plot(model5, conLevel=-9)  # the default level is too high
 
-rm(model1, model2, model3, model4, model5)
+## Example using 'fctLink'
+model6 <- multdrc(DryMatter ~ Dose,Herbicide, 
+data=christensenetal2003, fctList=list(l3(), l4()))
+summary(model6)
+
+rm(model1, model2, model3, model4, model5, model6)
 
 }
 \keyword{models}

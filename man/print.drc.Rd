@@ -1,18 +1,27 @@
 \name{print.drc}
+
 \alias{print.drc}
+
 \title{Printing key features}
+
 \description{
   'print' displays brief information on an object of class 'drc'.
 }
+
 \usage{
-print.drc(x, ..., digits = max(3, getOption("digits") - 3))
+
+  \method{print}{drc}(x, ..., digits = max(3, getOption("digits") - 3))
+
 }
+
 \arguments{
   \item{x}{an object of class 'drc'.}
   \item{...}{additional arguments.}
   \item{digits}{an integer giving the number of digits of the parameter coefficients. Default is 3.} 
 }
+
 \author{Christian Ritz}
+
 \examples{
 
 model1<-multdrc(FA)

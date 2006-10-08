@@ -42,7 +42,11 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining flag to indicate if more general ANOVA model
-    anovaYes <- TRUE
+#    anovaYes <- TRUE
+    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
+    if (is.na(binVar)) {binVar <- FALSE}
+    if (!binVar) {binVar <- NULL}
+    anovaYes <- list(bin = binVar, cont = TRUE)
 
 
     ## Defining the self starter function

@@ -52,14 +52,26 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
     ## Defining the self starter function
     ssfct <- function(dataFra)
     {
-        dose2 <- dataFra[,1]
-        resp3 <- dataFra[,2]
+        dose2 <- dataFra[, 1]
+        resp3 <- dataFra[, 2]
 
         startVal <- rep(0, numParm)
-        startVal[3] <- max(resp3)  # +0.001  # the upper bound
-        startVal[2] <- min(resp3)  # -0.001  # the lower bound
-#        startVal[!notFixed] <- fixed[!notFixed] 
 
+        if (is.na(fixed[2]))
+        {
+            startVal[2] <- min(resp3)  # the lower bound
+        } else {
+            startVal[2] <- fixed[2]
+        }
+        
+        if (is.na(fixed[3]))
+        {
+            startVal[3] <- max(resp3)  # the upper bound
+        } else {
+            startVal[3] <- fixed[3]
+        }
+        
+        
         if (length(unique(dose2))==1) {return((c(NA, NA, startVal[3], NA))[notFixed])}  
         # only estimate of upper limit if a single unique dose value 
 
@@ -68,14 +80,41 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
         dose3 <- dose2[indexT2]
         resp3 <- resp3[indexT2]
 
-        loglogTrans <- log(-log((resp3-startVal[2] + 0.001)/(startVal[3]-startVal[2])))  # 0.001 to avoid 0 as argument to log
-        loglogFit <- lm(loglogTrans~log(dose3))
-        startVal[4] <- exp(-coef(loglogFit)[1]/coef(loglogFit)[2])  # the e parameter
-        startVal[1] <- coef(loglogFit)[2]  # the b parameter
+#        loglogTrans <- log(-log((resp3-startVal[2] + 0.001)/(startVal[3]-startVal[2])))  # 0.001 to avoid 0 as argument to log
+        
+#        loglogTrans <- log(-log(abs(resp3 - startVal[2] - startVal[3]/((pi*pi)^2))/(startVal[3] - startVal[2])))
+        loglogTrans <- log(-log((resp3 - startVal[2])/(startVal[3] - startVal[2])))
+
+        isFin <- is.finite(loglogTrans)
+        loglogTrans <- loglogTrans[isFin]
+        dose3 <- dose3[isFin]
+
+#        print(resp3)
+#        print(loglogTrans)
+#        print(log(dose3))
+        loglogFit <- lm(loglogTrans ~ log(dose3))
+        
+        if (is.na(fixed[4]))
+        {
+            startVal[4] <- exp(-coef(loglogFit)[1]/coef(loglogFit)[2])  # the e parameter
+        } else {
+            startVal[4] <- fixed[4]
+        }       
+#        startVal[4] <- exp(-coef(loglogFit)[1]/coef(loglogFit)[2])  # the e parameter
+
+        if (is.na(fixed[1]))
+        {
+            startVal[1] <- coef(loglogFit)[2]  # the b parameter
+        } else {
+            startVal[1] <- fixed[1]
+        }       
+#        startVal[1] <- coef(loglogFit)[2]  # the b parameter
+
 
         ## Avoiding 0 as start value for lower limit (convergence will fail)
         if ( startVal[2] < 1e-12 ) {startVal[2] <- startVal[3]/10}
 
+#        print(startVal)  
         return(startVal[notFixed])
     }
 
@@ -94,7 +133,22 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
     
 
     ## Defining derivatives
-    deriv1 <- NULL
+    ## Defining derivatives
+    deriv1 <- function(dose, parm)
+              {
+                  parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+                  parmMat[, notFixed] <- parm
+
+                  t1 <- parmMat[, 3] - parmMat[, 2]
+                  t2 <- exp(parmMat[, 1]*(log(dose) - log(parmMat[, 4])))
+                  t3 <- exp(-t2)
+
+                  derMat <- as.matrix(cbind( -t1*t3*t2*(log(dose)-log(parmMat[, 4])), 
+                                             1 - t3, 
+                                             t3, 
+                                             t1*t3*t2*parmMat[, 1]/parmMat[, 4] ))
+                  return(derMat[, notFixed])
+              }
     deriv2 <- NULL
 
 

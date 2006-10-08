@@ -1,5 +1,5 @@
 "mixdrc" <- 
-function(object, random, data)
+function(object, random, data, startVal)
 {
 
 #    if (missing(lambda)) {lambda <- 1}
@@ -9,8 +9,8 @@ function(object, random, data)
     ## Defining dose and response
     respVar <- ((eval(object$call[[2]][[2]], envir = data) + bcAdd)^lambda - 1)/lambda  # name of response variable
     doseVar <- eval(object$call[[2]][[3]], envir = data)
-    dataSet <- cbind(data, doseVar, respVar)
-
+#    dataSet <- cbind(data, doseVar, respVar)
+    dataSet <- data.frame(data, doseVar = doseVar, respVar = respVar)
 
     ## Getting parameter names
     parNames <- object$fct$names
@@ -36,32 +36,61 @@ function(object, random, data)
             }
             NLMEfor <- formula(respVar ~ opfct(doseVar, b, c, d, e))
         }
+        if (lenPN < 5)
+        {
+            strVal <- "c + (d-c)/((1+exp(b*(log(DOSE)-log(e))))^f)"
+            namesVec <- c("b", "c", "d", "e", "f")
+
+            fctType <- deparse(object$call$fct[[1]])
+            if (fctType == "l3") {fixedVec <- c(NA, 0, NA, NA, 1); indVec <- c(1, 3, 4)}
+            if (fctType == "l4") {fixedVec <- c(NA, NA, NA, NA, 1); indVec <- c(1, 2, 3, 4)}
+
+            fv <- eval(object$call$fct$fixed)
+#            print(fv)
+            if (!is.null(fv)) {fixedVec[indVec] <- fv}
+#            print(fixedVec)
+
+            retRC <- repChar(strVal, namesVec, fixedVec, keep=c("DOSE", "exp"))
+            opfctStr <- retRC[[1]]
+#            print(opfctStr)
+            opfct <- eval(parse(text = opfctStr))
+            
+            NLMEfor <- eval(parse(text = retRC[[2]]))
+#            print(NLMEfor)
+        }
+        
+        
         if (lenPN == 5) {stop("Not implemented for l5")}       
     }
     assign("opfct", opfct, env = .GlobalEnv)  # assigning object to global environment    
-#    print(opfct(0, -1, 1, 4, 10))
-#    print(opfct(1000, -1, 1, 4, 10))
-#    print(opfct(10, -1, 1, 4, 10))    
-#    print(NLMEfor)
+#    print(opfct)
+#   print(opfct(1, 1, 0.1, 1))
+
 
 
         ## Constructing list for fixed argument
         colEntry <- object$call$collapse
 
         fixedList <- list()
-        if (as.character(colEntry[[1]])=="list")
+        if ( (!is.null(colEntry)) && (as.character(colEntry[[1]])=="list") )
         {
             for (i in 2:(1+lenPN))
             {
                 fixedList[[i-1]] <- eval(parse(text=paste(parNames[i-1], deparse(object$call$collapse[[i]]), sep="")))
             }
         }
-        if (as.character(colEntry[[1]])=="data.frame")
+        if ( (!is.null(colEntry)) && (as.character(colEntry[[1]])=="data.frame"))
         {
             for (i in 2:(1+lenPN))
             {
-                fili <- paste(parNames[i-1], as.character(object$call$collapse[[i]]), sep="~")
-                if (length(grep("1", fili))==0) {fili <- paste(fili, "-1", sep="")}
+                startStr <- as.character(object$call$collapse[[i]])
+                if (length(grep("1", startStr)) == 0) 
+                {
+                    fili <- paste(parNames[i-1], paste("factor(", startStr, ")", sep=""), sep="~")    
+                    fili <- paste(fili, "-1", sep="")
+                } else {
+                    fili <- paste(parNames[i-1], startStr, sep="~")    
+                }
                 
                 fixedList[[i-1]] <- eval(parse(text=fili))
             }
@@ -70,9 +99,9 @@ function(object, random, data)
         {
             for (i in 2:(1+lenPN))
             {
-                fili <- paste(parNames[i-1], as.character(object$call$curve), sep="~")
+                facStr <- paste("factor(", deparse(object$call$curve), ")", sep="")            
+                fili <- paste(parNames[i-1], facStr, sep="~")
                 fili <- paste(fili, "-1", sep="")
-                
                 fixedList[[i-1]] <- eval(parse(text=fili))
             }
         }
@@ -143,19 +172,47 @@ function(object, random, data)
 
 
     found <- FALSE
-    for (i in 1:30)
+    
+    if (missing(startVal))
     {
-        startVal <- c(i/10, coef(object)[-c(1)])
+        coefNames <- names(coef(object))
+        for (i in 1:30)
+        {
+            startVal <- c(i/10, coef(object)[-c(1)])
+            names(startVal) <- coefNames
 
-        options(warn=-1)
-#        modelNLME <- try(nlme(respVar~opfct(doseVar, b ,d, e),
+            options(warn = -1)
+
+#            print(dataSet)
+#            print(fixedList)
+#            print(randomList)
+#            print(startVal)
+            
+#            modelNLME <- nlme(SLOPE ~ c + (d-c)/(1+exp(b*(log(DOSE)-log(e)))),
+#                             fixed = list(b~factor(HERBICIDE)-1, c~1, d~1, e~factor(HERBICIDE)-1),
+#                             random = d~1|CURVE,
+#                             start = as.vector(startVal), data = PestSci)
+#            stop()
+#            
+            modelNLME <- try(nlme(NLMEfor,
+                             fixed = fixedList,
+                             random = randomList,
+                             start = startVal, na.action = na.omit, data = dataSet))  # , silent = TRUE)
+
+            if (!inherits(modelNLME, "try-error")) 
+            {
+                found <- TRUE 
+                break
+            }
+            options(warn = 0)
+        }
+    } else {
         modelNLME <- try(nlme(NLMEfor,
                               fixed = fixedList,
                               random = randomList,
                               start = startVal, na.action = na.omit, data = dataSet), silent = TRUE)
 
-        if (!inherits(modelNLME,"try-error")) {found <- TRUE; break}  # print(c(i)); stop("got it")}
-        options(warn=0)
+        if (!inherits(modelNLME, "try-error")) {found <- TRUE}    
     }
     rm(opfct, envir = .GlobalEnv)  # removing object from global environment            
     
@@ -164,11 +221,19 @@ function(object, random, data)
 #    }
 
 
-
+    modelNLME$nlme <- modelNLME  # storing the original 'nlme' object
+    modelNLME$data <- object$data
+    modelNLME$df.residual <- df.residual(object)  # correct ???
+    modelNLME$fct <- object$fct
+    modelNLME$transformation <- object$transformation
+    modelNLME$parmMat <- t(object$"pmFct"( as.vector((summary(modelNLME$nlme))$tTable[,1]) ))
+    modelNLME$curve <- list( object$"pfFct"(t(modelNLME$parmMat)), object$curve[[2]])
+#    modelNLME$parmMat <- t(modelNLME$parmMat)
     modelNLME$class <- "mixed logistic"
     modelNLME$parNames <- mdrcPNsplit(rownames(summary(modelNLME)$tTable), ".")
+    modelNLME$base <- object
 
-    class(modelNLME) <- c("mixdrc", class(modelNLME))
+    class(modelNLME) <- c("mixdrc", "drc", class(modelNLME))
     return(modelNLME)
 }
 

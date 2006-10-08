@@ -1,11 +1,11 @@
 %PDF-1.1
-%Å‚Å„ÅœÅ”
+%Å‚Å„ÅœÅ”\r
 1 0 obj
 <<
-/CreationDate (D:20060207103747)
-/ModDate (D:20060207103747)
+/CreationDate (D:20061008220604)
+/ModDate (D:20061008220604)
 /Title (R Graphics Output)
-/Producer (R 2.2.1)
+/Producer (R 2.5.0)
 /Creator (R)
 >>
 endobj
@@ -495,7 +495,7 @@ endobj
 4 0 obj
 <<
 /ProcSet [/PDF /Text]
-/Font << /F1 5 0 R /F2 10 0 R /F3 11 0 R /F4 12 0 R /F5 13 0 R /F6 14 0 R >>
+/Font << /F1 5 0 R /F2 10 0 R >>
 /ExtGState << >>
 >>
 endobj
@@ -506,73 +506,32 @@ endobj
 /Differences [ 45/minus ]
 >>
 endobj
-10 0 obj
-<<
+10 0 obj <<
 /Type /Font
 /Subtype /Type1
 /Name /F2
 /BaseFont /Helvetica
 /Encoding 9 0 R
->>
-endobj
-11 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F3
-/BaseFont /Helvetica-Bold
-/Encoding 9 0 R
->>
-endobj
-12 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F4
-/BaseFont /Helvetica-Oblique
-/Encoding 9 0 R
->>
-endobj
-13 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F5
-/BaseFont /Helvetica-BoldOblique
-/Encoding 9 0 R
->>
-endobj
-14 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/Name /F6
-/BaseFont /Symbol
->>
-endobj
+>> endobj
 xref
-0 15
+0 11
 0000000000 65535 f 
-0000000020 00000 n 
-0000000162 00000 n 
-0000009745 00000 n 
-0000009828 00000 n 
-0000000211 00000 n 
-0000000294 00000 n 
-0000000374 00000 n 
-0000009725 00000 n 
-0000009965 00000 n 
-0000010059 00000 n 
-0000010156 00000 n 
-0000010258 00000 n 
-0000010363 00000 n 
-0000010472 00000 n 
+0000000021 00000 n 
+0000000163 00000 n 
+0000009746 00000 n 
+0000009829 00000 n 
+0000000212 00000 n 
+0000000295 00000 n 
+0000000375 00000 n 
+0000009726 00000 n 
+0000009922 00000 n 
+0000010016 00000 n 
 trailer
 <<
-/Size 15
+/Size 11
 /Info 1 0 R
 /Root 2 0 R
 >>
 startxref
-10550
+10113
 %%EOF
