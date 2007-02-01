@@ -286,32 +286,30 @@ To get started we need to load the package \verb+drc+. This is done using the \v
 library(drc)
 
 @
-The data sets that we will use in this paper are all part of the package. In this section we use the data set \verb+FA+
-consisting of a single dose response curve (use \verb+data(FA)+ to load the data set). The first 5 lines (rows) of the data set are 
-displayed by typing \verb+FA[1:5,]+
+The data sets that we will use in this paper are all part of the package. In this section we use the data set 
+\verb+ryegrass+ consisting of a single dose response curve. The first 5 lines (rows) of the data set are 
+displayed by typing \verb+ryegrass[1:5,]+
 
 <<sec4-data, echo=T>>=
-data(FA)
-FA[1:5,]
+ryegrass[1:5,]
 @
-The variable \verb+MM+ is the dose of ferulic acid in mM and \verb+MEANLR+ is the root length of perennial ryegrass 
-\citep{inderjit&streibig&olofsdotter:2002}.
+The variable \verb+conc+ is the concentration of ferulic acid in mM and the variable \verb+rootl+ is the root length of 
+perennial ryegrass \citep{inderjit&streibig&olofsdotter:2002}.
 
-As already mentioned the main function in \verb+drc+ for fitting dose response curves is \verb+multdrc+ which can be used to fit data from one or 
-more dose response curves.
-By default a four-parameter logistic model is fitted to the data. In order to fit this model to 
-the data set \verb+FA+ we write 
+As already mentioned the main function in \verb+drc+ for fitting dose response curves is \verb+multdrc+ which 
+can be used to fit data from one or more dose response curves. By default a four-parameter logistic model is 
+fitted to the data. In order to fit this model to the data set \verb+ryegrass+ we write 
 
 <<sec4-fit1, echo=T>>=
 
-modelex1<-multdrc(FA)
+modelex1<-multdrc(ryegrass)
 
 @ 
-The argument to the function \verb+multdrc+ is a data frame 
-which is a collection of columns of the same length, usually forming a data set or part of 
-a data set. The above \textbf{R} call, \verb+multdrc(FA)+, produces no output. All relevant information of the fit of the model
-to the data is stored in the object \verb+modelex1+. The package \verb+drc+ provides \emph{extractors} for extracting
-various types of information from \verb+modelex1+. We will now introduce some of these extractors.
+The argument to the function \verb+multdrc+ is a data frame which is a collection of columns of the same length, 
+usually forming a data set or part of a data set. The above \textbf{R} call, \verb+multdrc(ryegrass)+, produces 
+no output. All relevant information of the fit of the model to the data is stored in the object \verb+modelex1+. 
+The package \verb+drc+ provides \emph{extractors} for extracting various types of information from 
+\verb+modelex1+. We will now introduce some of these extractors.
 
 The \verb+anova+ function can be used to obtain a lack-of-fit test, comparing the four-parameter logistic model to a one-way ANOVA model
 
@@ -342,7 +340,7 @@ above example the call to \verb+multdrc+ would become
 
 <<sec4-fit2, echo=T>>=
 
-modelex1.boxcox<-multdrc(FA,boxcox=T)
+modelex1.boxcox<-multdrc(ryegrass, boxcox = TRUE) 
 summary(modelex1.boxcox)
 
 @
@@ -365,9 +363,9 @@ transformation.  The fit of the model to the data can be seen in Figure~\ref{fig
 
 <<sec4-plot1, echo=T, fig=T, height=5, width=5>>=
 
-plot(modelex1.boxcox, xlab='Dose (mM)', ylab='Root length(mm)')
+plot(modelex1.boxcox, xlab='Concentration (mM)', ylab='Root length(mm)')
 @
-\caption{Four-parameter logistic fit to the data set \texttt{FA}.} \label{fig-onefit:boxcox}
+\caption{Four-parameter logistic fit to the data set \texttt{ryegrass}.} \label{fig-onefit:boxcox}
 \end{center}
 \end{figure}
 
@@ -767,7 +765,7 @@ compParm(modelex4, "Vm", "-")
 
 <<removal, echo=F>>=
 
-rm(modelex1, modelex1.boxcox, modelex2, modelex3.1, modelex3.2, modelex3.3, modelex3.4, FA, PestSci, TM)
+rm(modelex1, modelex1.boxcox, modelex2, modelex3.1, modelex3.2, modelex3.3, modelex3.4)
 rm(modelex4, MMfct, MMssfct, MMnames)
 detach(package:drc)
 

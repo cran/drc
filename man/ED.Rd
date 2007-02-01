@@ -1,23 +1,31 @@
 \name{ED}
 \alias{ED}
 
-\title{Estimating effective dosage}
+\title{Estimating effective doses}
 
 \description{
-  'ED' estimates effective dosage values (EDx) using a single model fit.
+  'ED' estimates effective doses given (ECp/EDp/ICp) for given reponse levels.
 }
 
 \usage{
-  ED(obj, percVec, bound = TRUE, od = FALSE, ci = FALSE, level = ifelse(ci, 0.95, NULL), ...)
+  ED(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls"), 
+  level = ifelse(!(ci=="none"), 0.95, NULL), logBase = NULL,
+  reference = c("upper", "control"), type = c("relative", "absolute"), ...)
 }
 
 \arguments{
-  \item{obj}{an object of class 'drc'.}
-  \item{percVec}{a numeric vector containing the dosage values.}
+  \item{object}{an object of class 'drc'.}
+  \item{respLev}{a numeric vector containing the response levels.}
   \item{bound}{logical. If TRUE only ED values between 0 and 100\% are allowed. FALSE is useful for hormesis models.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
-  \item{ci}{logical. If TRUE confidence intervals (based on the t-distribution) are produced.}
-  \item{level}{numeric. The level for the confidence intervals. Default is 0.95.}
+  \item{ci}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
+  Use "delta" for asymptotics-based confidence intervals (using the delta method and the t-distribution).
+  Use "fls" for from logarithm scale based confidence intervals (in case the parameter in the model is log(ED50) as for
+  the \code{\link{boltzmann}}) models.}
+  \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
+  \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}
+  \item{reference}{character string. Is the upper limit or the control level the reference?}
+  \item{type}{character string. Whether the specified response levels are absolute or relative (default).}
   \item{...}{additional arguments for the function doing the calculations.}
 }
 
@@ -47,17 +55,18 @@
 
 \examples{
 
-model1<-multdrc(FA)
+model1<-multdrc(ryegrass)
 
 ED(model1, c(10,50,90)) 
 ## first column: the estimates of ED10, ED50 and ED90
 ## second column: the estimated standard errors 
 
 ## Also displaying 95% confidence intervals
-ED(model1, c(10,50,90), ci = TRUE)
+ED(model1, c(10,50,90), ci = "delta")
 
 ## The argument 'bound'
-model2 <- multdrc(weight~conc, data=hormesis, fct=bcl3())
+model2 <- multdrc(weight ~ conc, 
+data = hormesis, fct = bcl3())
 
 ## Calculating ED[-10]
 #ED(model2, -10)  
@@ -68,9 +77,6 @@ ED(model2, -20, bound = FALSE)  # works
 
 #ED(model2, -30, bound = FALSE)  
 # does not work: ED[-30] does not exist 
-
-
-rm(model1, model2)
 
 }
 

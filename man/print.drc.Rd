@@ -24,7 +24,7 @@
 
 \examples{
 
-model1<-multdrc(FA)
+model1<-multdrc(ryegrass)
 print(model1)
 model1  # gives the same output as the previous line
 

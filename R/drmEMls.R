@@ -1,0 +1,75 @@
+"drmEMls" <- 
+function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, dmf = NULL, 
+scaleX = 1, scaleY = 1)
+{
+#    ## Defining lack-of-fit/goodness-of-fit tests
+#    anovaTest <- contAnovaTest()
+#    gofTest <- NULL
+#    if (anovaYes) {return(list(anovaTest = anovaTest, gofTest = gofTest))}
+
+    ## Defining the objective function and its derivative
+    opfct <- function(parm)
+    {
+        sum( robustFct( (resp/scaleY - multCurves(dose/scaleX, parm))*weights ), na.rm = rmNA)  
+        # weights enter multiplicatively under the square!
+    }
+    
+    if (!is.null(dmf))
+    {
+        opdfct1 <- function(parm)
+        {
+#            apply(-2*(resp - multCurves(dose, parm))*dmf(dose, parm), 2, sum)
+#            apply(-2*(resp - multCurves(dose, parm))*dmf(dose, parm), 2, appFct, cid)
+
+            -2*(resp - multCurves(dose, parm))*dmf(dose, parm)
+        }
+    } else {
+        opdfct1 <- NULL
+    }
+       
+    ## Defining additional self starter function (none needed)
+    ssfct <- NULL
+
+    ## Defining the log likelihood function
+    llfct <- function(object)
+    {
+        degfre <- object$"sumList"$"lenData"  # "df.residual"  # object$summary[6]
+        c( -(degfre/2)*(log(2*pi)+log(object$"fit"$"value")-log(degfre)+1), length(object$"fit"$"par") + 1 )
+    }   
+    
+    ## Defining functions returning the residual variance, the variance-covariance matrix and the fixed effects estimates
+    rvfct <- function(object)
+    {
+        object$"fit"$"value"/object$"sumList"$"df.residual"
+    }
+
+    vcovfct <- function(object)
+    {
+#        solve((object$"fit"$"hessian")*(1/rvfct(object))/2)  
+        solve((object$"fit"$"hessian")*(1/(object$"fit"$"ovalue"/object$"sumList"$"df.residual"))/2)   
+    }
+    
+    parmfct <- function(fit, fixed = TRUE)
+    {
+        fit$par
+    }
+
+    rstanfct <- function(object)
+    {
+        rep(1, object$"sumList"$"lenData")*sqrt(summary(object)$"resVar")
+    }
+
+
+    return(list(llfct = llfct, opfct = opfct, opdfct1 = opdfct1, ssfct = ssfct, 
+    rvfct = rvfct, vcovfct = vcovfct, parmfct = parmfct, rstanfct = rstanfct))
+}
+
+
+"drmLOFls" <- function()
+{
+    ## Defining lack-of-fit/goodness-of-fit tests
+    anovaTest <- contAnovaTest()
+    gofTest <- NULL
+    
+    return(list(anovaTest = anovaTest, gofTest = gofTest))
+}

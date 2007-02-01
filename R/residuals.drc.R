@@ -1,7 +1,9 @@
 "residuals.drc" <-
-function(object, rstandard = FALSE, ...)
+function(object, type = c("working", "standardised"), ...)
 {
-    if (rstandard)
+    type <- match.arg(type)
+    
+    if (type == "standardised")
     {
         rstan <- object$"estMethod"$"rstanfct"
         if (is.null(rstan)) 

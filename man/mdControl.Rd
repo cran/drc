@@ -44,9 +44,9 @@ mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxDose = 1e-1, maxIt = 500, m
 mdControl()  
 
 ### Using 'method' argument
-model1 <- multdrc(FA)
+model1 <- multdrc(ryegrass)
 
-model2 <- multdrc(FA, varPower = TRUE, startVal = coef(model1),
+model2 <- multdrc(ryegrass, varPower = TRUE, startVal = coef(model1),
 control = mdControl(method = "Nelder-Mead"))
 
 rm(model1, model2)

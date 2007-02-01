@@ -1,21 +1,24 @@
-\name{w3}
+\name{W1.3}
 
+\alias{W1.3}
 \alias{w3}
+\alias{W2.3}
 
-\title{The three-parameter Weibull function}
+\title{The three-parameter Weibull functions}
 
 \description{
-  'w3' provides the three-parameter Weibull function, self starter function and names of the parameters.  
+  'W1.3' provides the three-parameter Weibull function, self starter function and names of the parameters.  
 }
 
 \usage{
-w3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), useDer = FALSE)
+  W1.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+  
+  W2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
-  \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not implemented!}
 }
 
 \details{
@@ -26,7 +29,7 @@ w3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), useDer = FALSE)
 }
 
 \value{
-  See \code{\link{weibull}}.
+  See \code{\link{weibull1}}.
 }
 
 %\references{ ~put references to the literature/web site here ~ }
@@ -35,12 +38,12 @@ w3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), useDer = FALSE)
 
 \note{This function is for use with the function \code{\link{multdrc}}.}
 
-\seealso{Related functions are \code{\link{w4}} and \code{\link{weibull}}.}
+\seealso{Related functions are \code{\link{W1.4}} and \code{\link{weibull1}}.}
 
 \examples{
 
 ## Fitting a three-parameter Weibull model
-model1 <- multdrc(FA, fct = w3())
+model1 <- multdrc(ryegrass, fct = W1.3())
 model1
 
 rm(model1)

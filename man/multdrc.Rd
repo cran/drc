@@ -76,23 +76,23 @@ and 10 for 10-logarithm).}
 
 \examples{
 
-## Fitting response MEANLR to dose MM in the data set FA 
-##  (type ?FA to learn about the data set)
-model1 <- multdrc(MEANLR~MM, data=FA)
+## Fitting response 'rootl' to dose 'conc' in the dataset 'ryegrass' 
+##  (type ?ryegrass to learn about the data set)
+model1 <- multdrc(rootl~conc, data = ryegrass)
 summary(model1)
 
 ## Fitting a 5-parameter logistic model
-model2 <- multdrc(FA, fct = l5())
+model2 <- multdrc(ryegrass, fct = l5())
 summary(model2)
 
 ## Fitting a 4-parameter logistic model
 ##  with Box-Cox transformation
-model3 <- multdrc(FA, boxcox = TRUE)  
+model3 <- multdrc(ryegrass, boxcox = TRUE)  
 summary(model3)
 
 ## Example using 'varPower' argument 
 ##  modelling variance as power of mean
-model4 <- multdrc(FA, varPower = TRUE)
+model4 <- multdrc(ryegrass, varPower = TRUE)
 summary(model4)
 
 ## Example using 'logDose' argument

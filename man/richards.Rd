@@ -24,7 +24,8 @@
   
   \deqn{ f(x) = c + (d-c) ( 1 + (delta-1)\exp(-kappa(\log(x)-\log(gamma))) )^(1/(1-delta))}
   
-  It is a five-parameter model.
+  It is a five-parameter model suitable for asymmetric dose-response relationships. In fact
+  it is a reparameterisation of the five-parameter log-logistic model.
   
   For delta=2 the model simplifies the four-parameter log-logistic model.
 }
@@ -48,7 +49,7 @@
 \examples{
 
 ## Fitting Richards model
-m1 <- multdrc(FA, fct = richards())
+m1 <- multdrc(ryegrass, fct = richards())
 
 }
 \keyword{models}

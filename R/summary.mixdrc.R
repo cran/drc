@@ -36,16 +36,15 @@ function(object, ...)
     loglik <- ll[1] 
     degfre <- sumObj$dims$N - attr(ll, "df")
 
-    estimates <-  as.vector(sumObj$coefficients$fixed)
+#    estimates <-  as.vector(sumObj$coefficients$fixed)
     parNames <- rownames(resultMat)
-    varMat <- sumObj$varFix
-        
+    varMat <- sumObj$varFix       
     fctName <- paste("mixed", deparse(object$base$call$fct))
         
     ## Defining return list
     retList <- list(varComp, varMat, resultMat, c(loglik, degfre), parNames, "mixed logistic", fctName)
 
-    names(retList) <- c("varComp", "varMat", "estimates", "loglik", "parNames", "class", "fctName") 
+    names(retList) <- c("varComp", "varMat", "coefficients", "loglik", "parNames", "class", "fctName") 
     class(retList) <- c("summary.drc")
     return(retList)
 }

@@ -66,7 +66,7 @@
 
 
     ## Defining the ED function
-    MMedfct <- function(parm, p, upper=NULL)  # upper argument not used in 'logistic'
+    MMedfct <- function(parm, p, ...)
     {
         parmVec[notFixed] <- parm
     
@@ -80,23 +80,22 @@
         return(list(EDp, EDder[notFixed]))
     }
     
-    
-    ## Defining the SI function
-    MMsifct <- function(parm1, parm2, pair)
-    {
+#    
+#    ## Defining the SI function
+#    MMsifct <- function(parm1, parm2, pair)
+#    {
+#
+#        ED1 <- edfct(parm1, pair[1])
+#        ED2 <- edfct(parm2, pair[2])
+#        SIpair <- ED1[[1]]/ED2[[1]]  # calculating the SI value
+#        SIder1 <- ED1[[2]]/ED1[[1]]*SIpair
+#        SIder2 <- ED2[[2]]/ED2[[1]]*SIpair
+#
+#        return(list(SIpair, SIder1, SIder2))
+#    }    
 
-        ED1 <- edfct(parm1, pair[1])
-        ED2 <- edfct(parm2, pair[2])
-        SIpair <- ED1[[1]]/ED2[[1]]  # calculating the SI value
-        SIder1 <- ED1[[2]]/ED1[[1]]*SIpair
-        SIder2 <- ED2[[2]]/ED2[[1]]*SIpair
-
-        return(list(SIpair, SIder1, SIder2))
-    }    
-
-    returnList <- list(fct = MMfct, confct = confct, ssfct = MMssfct, names = MMnames, 
-                       edfct = MMedfct, sifct = MMsifct)
-
+    returnList <- 
+    list(fct = MMfct, confct = confct, ssfct = MMssfct, names = MMnames, edfct = MMedfct)
     class(returnList) <- "Michaelis-Menten"
     invisible(returnList)
 }

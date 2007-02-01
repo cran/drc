@@ -1,8 +1,15 @@
 "multdrc" <-
-function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd = 0, varPower = FALSE, startVal, fct = l4(), 
+function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd = 0, varPower = FALSE, 
+         startVal, fct = l4(), 
          na.action = na.fail, hetvar = NULL, robust = "mean", type = "continuous", cm = NULL, logDose = NULL, 
          fctList = NULL, control = mdControl())
 {
+    
+#    drm(formula=formula, curve=curve, pmodels=collapse, weights=weights, data=data, fct=fct, start=startVal, 
+#    adjust=adjust, bc=bc, bcAdd=bcAdd, type=type, 
+#    na.action=na.action, robust=robust, logDose=logDose, fctList=fctList, control=control)
+
+
     require(MASS, quietly = TRUE)  # used for boxcox and ginv
 
     ## Setting na.action option
@@ -527,7 +534,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
             }  
         } else {pos <- numeric(0)}
 
-        if ((length(pos)>0) & !(upperPos==i)) 
+        if ((length(pos) > 0) && !(upperPos == i)) 
         {
             collapseList2[[i]] <- as.matrix(collapseList[[i]][,-pos])  # column is removed
         } else {
@@ -1509,14 +1516,36 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
         nlsFit$hessian <- nlsFit$hessian[orderVec, orderVec]
     }
  
+ 
+    ## Constructing an index matrix for use in ED and SI
+    hfct1 <- function(x)  # helper function
+    {
+        uniVec <- unique(x[!is.na(x)])
+        rv <- rep(NA, length(x))
+        for (i in 1:length(uniVec))
+        {
+            rv[abs(x-uniVec[i]) < 1e-12] <- i
+        }
+        rv
+    }
+    hfct2 <- function(x)
+    {
+        length(unique(x))
+    }
+    mat1 <- t(apply(t(parmMat), 1, hfct1))  # , 1:ncol(parmMat)))
+    cnccl <- head(cumsum(ncclVec), -1)
+    if (nrow(mat1) == 1) {mat1 <- t(mat1)}  # in case of only one curve
+    mat1[-1, ] <- mat1[-1, ] + cnccl
+
 
     ## Returning the fit
     returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
+#    returnList <- list(varParm, nlsFit, NULL, sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, Xmat, robust, type, bcVec, estMethod, lenData-length(startVec), 
-    anovaModel0, gofTest, sumList, scaleFct2, pmFct, pfFct)
+    anovaModel0, gofTest, sumList, scaleFct2, pmFct, pfFct, mat1)
     names(returnList) <- c("varParm", "fit", "curve", "summary", "startVal", "parNames", "predres", "call", "data", 
     "parmMat", "fct", "transformation", "robust", "type", "boxcox", "estMethod", "df.residual", "anova", "gofTest", 
-    "sumList", "scaleFct", "pmFct", "pfFct")
+    "sumList", "scaleFct", "pmFct", "pfFct", "indexMat")
     class(returnList) <- c("drc", class(fct))
 
     return(returnList)

@@ -45,7 +45,7 @@
 \examples{
 
 ## Fitting a model
-model1 <- multdrc(FA)
+model1 <- multdrc(ryegrass)
 
 ## Confidence interval for a single parameter
 confint(model1, "e")

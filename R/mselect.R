@@ -7,7 +7,7 @@
 #    } else {
         mc <- match.call()
         
-        lenFL <- length(fctList)
+        lenFL <- length(fctList) 
         retMat <- matrix(0, lenFL + 1, 4 + nested)
 
         retMat[1 ,1] <- logLik(object)
@@ -24,20 +24,26 @@
 
         fctList2 <- rep("", lenFL + 1)        
         fctList2[1] <- deparse((object$"call"$"fct"))        
-        
+    
+       
     if (!is.null(fctList))
     {
         prevObj <- object    
         for (i in 1:lenFL)
         {
-            tempObj <- try(update(object, fct=fctList[[i]]), silent = TRUE)
+            tempObj <- update(object, fct=fctList[[i]])  # try(update(object, fct = fctList[[i]]), silent = TRUE)
             
             if (!inherits(tempObj, "try-error"))
-            {
-#                retList[[i+1]] <- tempObj
-            
-                tempChar <- deparse(mc[[3]][i+1])
-                fctList2[i+1] <- substr(tempChar, start = 1, stop = nchar(tempChar) - 2)
+            {   
+#                if (is.null(names(fctList)))
+#                {
+                    tempChar <- deparse(mc[[3]][i+1])
+                    fctList2[i+1] <- substr(tempChar, start = 1, stop = nchar(tempChar) - 2)
+#                } else {
+#                    tempChar <- names(fctList)[i]
+#                    fctList2[i+1] <- as.character(tempChar)
+#                }
+                
             
                 retMat[i+1, 1] <- logLik(tempObj)
                 retMat[i+1, 2] <- AIC(tempObj)

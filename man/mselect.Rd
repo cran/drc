@@ -42,10 +42,10 @@ mselect(object, fctList = NULL, nested = FALSE)
 \examples{
 
 ## Fitting initial model
-m1 <- multdrc(FA)
+m1 <- multdrc(ryegrass)
 
 ## Model selection
-mselect(m1, list(l3(), l5(), w3(), w4(), weibull2(), baro5(), richards()))
+mselect(m1, list(l3(), l5(), W1.3(), W1.4(), weibull2(), baro5(), richards()))
 
 mselect(m1, list(l5()))  # nested models
 

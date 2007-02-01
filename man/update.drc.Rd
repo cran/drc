@@ -29,10 +29,10 @@
 \examples{
 
 ## Fitting a four-parameter Weibull model
-model1 <- multdrc(FA, fct = w4())
+model1 <- multdrc(ryegrass, fct = W1.4())
 
-## Updating 'model1' by fitting a three-parameter Weibull model
-model2 <- update(model1, fct = w3())
+## Updating 'model1' by fitting a three-parameter Weibull model instead
+model2 <- update(model1, fct = W1.3())
 anova(model2, model1)
 
 

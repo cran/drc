@@ -11,7 +11,7 @@
 
 
     ## Retrieving estimates and estimated standard errors
-    estMat <- summary(object)$"estimates"[matchVec, 1:2, drop = FALSE]
+    estMat <- summary(object)$"coefficients"[matchVec, 1:2, drop = FALSE]
 
 
     ## Constructing matrix of confidence intervals

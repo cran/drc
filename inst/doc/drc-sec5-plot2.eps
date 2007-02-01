@@ -25,8 +25,8 @@
 /c   { newpath 0 360 arc } def
 /r   { 4 2 roll moveto 1 copy 3 -1 roll exch 0 exch rlineto 0 rlineto -1 mul 0 exch rlineto closepath } def
 /p1  { stroke } def
-/p2  { gsave bg setrgbcolor fill grestore newpath } def
-/p3  { gsave bg setrgbcolor fill grestore stroke } def
+/p2  { gsave bg fill grestore newpath } def
+/p3  { gsave bg fill grestore stroke } def
 /t   { 6 -2 roll moveto gsave rotate
        ps mul neg 0 2 1 roll rmoveto
        1 index stringwidth pop
@@ -117,7 +117,7 @@ dup length dict begin
 %%Page: 1 1
 bp
 59.04 73.44 329.76 300.96 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -131,7 +131,7 @@ bp
 291.09 106.37 2.70 c p1
 319.73 96.41 2.70 c p1
 0.00 0.00 360.00 360.00 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -146,11 +146,11 @@ np
 o
 0.00 0.00 360.00 360.00 cl
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 194.40 18.72 (Dose) .5 0 0 t
 12.96 187.20 (Rate of Oxygen Evolution) .5 0 90 t
 0.00 0.00 360.00 360.00 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -413,7 +413,7 @@ np
 -3.82 -3.82 l
 -3.81 3.82 l
 o
-0 0 0 rgb
+0 setgray
 np
 69.07 244.51 m
 2.53 -0.53 l
@@ -914,7 +914,7 @@ np
 2.53 -0.02 l
 2.53 -0.02 l
 o
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 np
@@ -949,7 +949,7 @@ np
 275.26 220.53 m
 21.60 0 l
 o
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 286.06 278.13 2.70 c p1
@@ -987,7 +987,7 @@ np
 -3.82 3.82 l
 o
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 307.66 273.83 (1) 0 0 0 t
 307.66 259.43 (2) 0 0 0 t
 307.66 245.03 (3) 0 0 0 t

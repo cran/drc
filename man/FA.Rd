@@ -27,25 +27,25 @@ research, \emph{Physiologia Plantarum}, \bold{114}, 422--428, 2002.
 }
 \examples{
 
-## Displaying the data set
-FA
-
-## Fitting a four-parameter logistic regression 
-## with user-defined parameter names
-model1 <- multdrc(MEANLR~MM, data=FA, 
-fct = l4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
-
-## Getting a summary of the fit
-summary(model1)
-
-
-## Fitting a model with very small dose values
-FA2 <- FA
-FA2[,2] <- FA2[,2]/1e6
-model2 <- multdrc(MEANLR~MM, data=FA2)
-
-## Removing the model objects
-rm(model1, model2, FA2)
+### Displaying the data set
+#FA
+#
+### Fitting a four-parameter logistic regression 
+### with user-defined parameter names
+#model1 <- multdrc(MEANLR~MM, data=FA, 
+#fct = l4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
+#
+### Getting a summary of the fit
+#summary(model1)
+#
+#
+### Fitting a model with very small dose values
+#FA2 <- FA
+#FA2[,2] <- FA2[,2]/1e6
+#model2 <- multdrc(MEANLR~MM, data=FA2)
+#
+### Removing the model objects
+#rm(model1, model2, FA2)
 
 }
 \keyword{datasets}

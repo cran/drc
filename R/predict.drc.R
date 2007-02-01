@@ -63,7 +63,7 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
 
 
     ## Calculating the quantile to be used in the confidence intervals
-    if (!interval=="none")
+    if (!(interval == "none"))
     {    
         tquan <- qt(1 - (1 - level)/2, df.residual(object))   
     }

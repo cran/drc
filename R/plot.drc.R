@@ -103,6 +103,8 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
         plotMat <- plotFct(logDose^(dosePts))
     }
     numCol <- ncol(plotMat)
+#    print(dosePts)
+#    print(plotMat)
 
     maxR <- max(resp)
     options(warn = -1)  # suppressing warning in case maximum of NULL is taken

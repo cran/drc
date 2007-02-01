@@ -1,14 +1,14 @@
 "weibull2" <-
 function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA), 
-         names=c("b","c","d","e"), scaleDose = TRUE, useDer=FALSE)
+         names=c("b","c","d","e"), scaleDose = TRUE)
 {
     ## Checking arguments
     numParm <- 4
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct 'fixed' argument")}    
     
-    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
-    if (useDer) {stop("Derivatives not available")}
+#    if (!is.logical(useD)) {stop("Not logical useD argument")}
+#    if (useD) {stop("Derivatives not available")}
 
     notFixed <- is.na(fixed)
     parmVec <- rep(0, numParm)
@@ -126,9 +126,16 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 #    
 #        return(list(EDp, EDder[notFixed]))
 #    }
-    edfct <- function(parm, p, upper=NULL)  # upper argument not used in 'gompertz'
-    {    
-        weibull(lowerc, upperc, fixed, names, scaleDose, useDer)$edfct(parm, 100-p, upper) 
+    edfct <- function(parm, p, reference, type, ...)
+    {   
+        parmVec[notFixed] <- parm
+        if ( (parmVec[1] > 0) && (reference == "control") ) 
+        {
+            p <- 100 - p
+            reference <- "upper"  # to avoid resetting of p in 'weibull1'    
+        }
+                
+        weibull1(lowerc, upperc, fixed, names, scaleDose)$edfct(parm, 100 - p, reference, type, ...) 
     }
 
 
@@ -148,15 +155,51 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c
 #    
 #        return(list(SIpair, SIder1[notFixed], SIder2[notFixed]))
 #    }
-    sifct <- function(parm1, parm2, pair)
-    {
-        weibull(lowerc, upperc, fixed, names, scaleDose, useDer)$sifct(parm1, parm2, 100-pair)
-    }    
+
+##    sifct <- function(parm1, parm2, pair)
+##    {
+##        weibull(lowerc, upperc, fixed, names, scaleDose, useDer)$sifct(parm1, parm2, 100-pair)
+##    }    
 
 
-    returnList <- list(fct=fct, confct=confct, ssfct=ssfct, names=w2.names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-                       edfct=edfct, sifct=sifct, anovaYes=anovaYes)
+    returnList <- 
+    list(fct=fct, confct=confct, ssfct=ssfct, names=w2.names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
+    edfct=edfct, anovaYes=anovaYes)
 
     class(returnList) <- "Weibull2"
     invisible(returnList)
+}
+
+
+"W2.2" <-
+function(fixed = c(NA, NA), names = c("b", "e"))
+{
+    ## Checking arguments
+    numParm <- 2
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return(weibull2(fixed = c(fixed[1], 0, 1, fixed[2]), names = c(names[1], "c", "d", names[2])))
+}
+
+"W2.3" <-
+function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return(weibull2(fixed = c(fixed[1], 0, fixed[2:3]), names = c(names[1], "c", names[2:3])))
+}
+
+"W2.4" <-
+function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
+{
+    ## Checking arguments
+    numParm <- 4
+    if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+
+    return(weibull2(fixed = fixed, names = names))
 }

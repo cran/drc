@@ -34,7 +34,7 @@
 
 ## Fitting a logistic regression model
 model1 <- multdrc(affected/total~dose, weights=total, data=finney71,
-fct=l2())
+fct=l2(), type="binomial")
 summary(model1)
 plot(model1)
 

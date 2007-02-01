@@ -27,7 +27,7 @@
 
 \examples{
 
-model1 <- multdrc(FA)
+model1 <- multdrc(ryegrass)
 plot(fitted(model1), residuals(model1))  # a residual plot
 
 rm(model1)

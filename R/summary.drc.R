@@ -64,7 +64,7 @@ function(object, od = FALSE, ...)
 
 
     em <- object$"estMethod"
-    parVec <- (em$parmfct)(object$fit, fixed=FALSE)
+    parVec <- (em$parmfct)(object$fit, fixed = FALSE)
     notNA <- !is.na(parVec) 
         
     if (!is.null(em$rvfct)) 
@@ -194,8 +194,10 @@ function(object, od = FALSE, ...)
 #        modelClass <- classObj[length(classObj)]
 #    }
 
-    sumObj <- list(resVar, varMat, resultMat, object$"boxcox", fctName, object$"robust", varParm, object$"type")
-    names(sumObj) <- c("resVar", "varMat", "estimates", "boxcox", "fctName", "robust", "varParm", "type")
+    sumObj <- list(resVar, varMat, resultMat, object$"boxcox", fctName, object$"robust", varParm, object$"type", 
+    df.residual(object))
+    names(sumObj) <- c("resVar", "varMat", "coefficients", "boxcox", "fctName", "robust", "varParm", "type", 
+    "df.residual")
     class(sumObj) <- c("summary.drc")
     return(sumObj)
     }

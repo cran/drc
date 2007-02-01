@@ -123,6 +123,23 @@ function(object, ..., details = TRUE, test = NULL)
 #            rowNames<-c("", "DRC model")
 #            colNames<-c("ModelDf", "", "Df", "Chisq value", "p value")                            
         }
+        if ( (!is.null(anovaModel)) && (!is.null(test)) && (test == "Chisq") )  # overruling any previous calculations!
+        {
+            lv1 <- logLik(anovaModel$"anovaFit")
+            lv2 <- logLik(obj1)            
+        
+            dfModel <- c(attr(lv1, "df"), attr(lv2, "df"))
+            loglik <- c(lv1, lv2)
+            dfDiff <- c(NA, dfModel[1] - dfModel[2])
+        
+            testStat <- -2*(lv2 - lv1)
+            pVal <- c(NA, pchisq(testStat, dfDiff[2], lower.tail = FALSE))
+            testStat <- c(NA, testStat)
+
+            headName <- "Lack-of-fit test\n"
+            rowNames <- c(paste(wayStr, "ANOVA"), "DRC model")
+            colNames <- c("ModelDf", "Log lik", "Df", "Chisq value", "p value")   
+        }
 
 
 #        loglik <- c(anovaSS, nlsSS)

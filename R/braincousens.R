@@ -1,14 +1,14 @@
 "braincousens" <-
 function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA, NA), 
-         names=c("b", "c", "d", "e", "f"), scaleDose = TRUE, useDer=FALSE)
+         names=c("b", "c", "d", "e", "f"), scaleDose = TRUE)
 {
     ## Checking arguments
     numParm <- 5
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct 'fixed' argument")}    
 
-    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
-    if (useDer) {stop("Derivatives not available")}
+#    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
+#    if (useDer) {stop("Derivatives not available")}
 
 
     notFixed <- is.na(fixed)
@@ -93,7 +93,23 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining derivatives
-    deriv1 <- NULL
+    deriv1 <- function(dose, parm)
+    {
+        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+        parmMat[, notFixed] <- parm
+
+        t1 <- parmMat[, 3] - parmMat[, 2] + parmMat[, 5]*dose
+        t2 <- exp(parmMat[, 1]*(log(dose) - log(parmMat[, 4])))
+        t3 <- 1 + t2                          
+        t4 <- (1 + t2)^(-2)
+
+        cbind( -t1*xlogx(dose/parmMat[, 4], parmMat[, 1])*t4, 
+               1 - 1/t3, 
+               1/t3, 
+               t1*t2*(parmMat[, 1]/parmMat[, 4])*t4, 
+               dose/t3 )[, notFixed]
+    }
+        
     deriv2 <- NULL
 
 
@@ -103,7 +119,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining the ED function
-    edfct <- function(parm, p, upper=1000, interval=c(1e-3, 1000))
+    edfct <- function(parm, p, upper=1000, interval=c(1e-3, 1000), ...)
     {
 #        if (is.missing(upper)) {upper <- 1000}
      
@@ -135,56 +151,56 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     }
 
 
-    ## Defining the SI function
-    sifct <- function(parm1, parm2, pair, upper=1000, interval=c(1e-3, 1000))
-    {
-        parmVec1[notFixed] <- parm1
-        parmVec2[notFixed] <- parm2
-    
-        tempVal1 <- (100-pair[1])/100
-        tempVal2 <- (100-pair[2])/100
-
-        helpEqn1 <- function(dose) 
-                    {
-                        expVal <- exp(parmVec1[1]*(log(dose)-log(parmVec1[4])))
-                        parmVec1[5]*(1+expVal*(1-parmVec1[1]))-(parmVec1[3]-parmVec1[2])*expVal*parmVec1[1]/dose
-                    }
-        maxAt1 <- uniroot(helpEqn1, interval)$root
-        helpEqn2 <- function(dose) 
-                    {
-                        expVal <- exp(parmVec2[1]*(log(dose)-log(parmVec2[4])))
-                        parmVec2[5]*(1+expVal*(1-parmVec2[1]))-(parmVec2[3]-parmVec2[2])*expVal*parmVec2[1]/dose}
-        maxAt2 <- uniroot(helpEqn2, interval)$root
-    
-        eqn1 <- function(dose) {tempVal1*(1+exp(parmVec1[1]*(log(dose)-log(parmVec1[4]))))-(1+parmVec1[5]*dose/(parmVec1[3]-parmVec1[2]))}
-        EDp1 <- uniroot(eqn1, lower=maxAt1, upper=upper)$root
-        eqn2 <- function(dose) {tempVal2*(1+exp(parmVec2[1]*(log(dose)-log(parmVec2[4]))))-(1+parmVec2[5]*dose/(parmVec2[3]-parmVec2[2]))}
-        EDp2 <- uniroot(eqn2, lower=maxAt2, upper=upper)$root
-
-        SIpair <- EDp1/EDp2
-
-        EDdose1 <- EDp1
-        EDdose2 <- EDp2
-        tempVal11 <- exp(parmVec1[1]*(log(EDdose1)-log(parmVec1[4])))
-        tempVal12 <- parmVec1[3]-parmVec1[2]
-        derParm1 <- c(tempVal1*tempVal11*(log(EDdose1)-log(parmVec1[4])), -parmVec1[5]*EDdose1/((tempVal12)^2),
-                      parmVec1[5]*EDdose1/((tempVal12)^2), -tempVal1*tempVal11*parmVec1[1]/parmVec1[4],
-                      -EDdose1/tempVal12)
-        derDose1 <- tempVal1*tempVal11*parmVec1[1]/EDdose1-parmVec1[5]/tempVal12 
-
-        SIder1 <- (derParm1/derDose1)/EDp2
-
-        tempVal21 <- exp(parmVec2[1]*(log(EDdose2)-log(parmVec2[4])))
-        tempVal22 <- parmVec2[3]-parmVec2[2]
-        derParm2 <- c(tempVal2*tempVal21*(log(EDdose2)-log(parmVec2[4])), -parmVec2[5]*EDdose2/((tempVal22)^2),
-                      parmVec2[5]*EDdose2/((tempVal22)^2), -tempVal2*tempVal21*parmVec2[1]/parmVec2[4],
-                      -EDdose2/tempVal22)
-        derDose2 <- tempVal2*tempVal21*parmVec2[1]/EDdose2-parmVec2[5]/tempVal22 
-
-        SIder2 <- (derParm2/derDose2)*(-EDp1/(EDp2*EDp2))
-
-        return(list(SIpair, SIder1[notFixed], SIder2[notFixed]))
-    }
+#    ## Defining the SI function
+#    sifct <- function(parm1, parm2, pair, upper=1000, interval=c(1e-3, 1000))
+#    {
+#        parmVec1[notFixed] <- parm1
+#        parmVec2[notFixed] <- parm2
+#    
+#        tempVal1 <- (100-pair[1])/100
+#        tempVal2 <- (100-pair[2])/100
+#
+#        helpEqn1 <- function(dose) 
+#                    {
+#                        expVal <- exp(parmVec1[1]*(log(dose)-log(parmVec1[4])))
+#                        parmVec1[5]*(1+expVal*(1-parmVec1[1]))-(parmVec1[3]-parmVec1[2])*expVal*parmVec1[1]/dose
+#                    }
+#        maxAt1 <- uniroot(helpEqn1, interval)$root
+#        helpEqn2 <- function(dose) 
+#                    {
+#                        expVal <- exp(parmVec2[1]*(log(dose)-log(parmVec2[4])))
+#                        parmVec2[5]*(1+expVal*(1-parmVec2[1]))-(parmVec2[3]-parmVec2[2])*expVal*parmVec2[1]/dose}
+#        maxAt2 <- uniroot(helpEqn2, interval)$root
+#    
+#        eqn1 <- function(dose) {tempVal1*(1+exp(parmVec1[1]*(log(dose)-log(parmVec1[4]))))-(1+parmVec1[5]*dose/(parmVec1[3]-parmVec1[2]))}
+#        EDp1 <- uniroot(eqn1, lower=maxAt1, upper=upper)$root
+#        eqn2 <- function(dose) {tempVal2*(1+exp(parmVec2[1]*(log(dose)-log(parmVec2[4]))))-(1+parmVec2[5]*dose/(parmVec2[3]-parmVec2[2]))}
+#        EDp2 <- uniroot(eqn2, lower=maxAt2, upper=upper)$root
+#
+#        SIpair <- EDp1/EDp2
+#
+#        EDdose1 <- EDp1
+#        EDdose2 <- EDp2
+#        tempVal11 <- exp(parmVec1[1]*(log(EDdose1)-log(parmVec1[4])))
+#        tempVal12 <- parmVec1[3]-parmVec1[2]
+#        derParm1 <- c(tempVal1*tempVal11*(log(EDdose1)-log(parmVec1[4])), -parmVec1[5]*EDdose1/((tempVal12)^2),
+#                      parmVec1[5]*EDdose1/((tempVal12)^2), -tempVal1*tempVal11*parmVec1[1]/parmVec1[4],
+#                      -EDdose1/tempVal12)
+#        derDose1 <- tempVal1*tempVal11*parmVec1[1]/EDdose1-parmVec1[5]/tempVal12 
+#
+#        SIder1 <- (derParm1/derDose1)/EDp2
+#
+#        tempVal21 <- exp(parmVec2[1]*(log(EDdose2)-log(parmVec2[4])))
+#        tempVal22 <- parmVec2[3]-parmVec2[2]
+#        derParm2 <- c(tempVal2*tempVal21*(log(EDdose2)-log(parmVec2[4])), -parmVec2[5]*EDdose2/((tempVal22)^2),
+#                      parmVec2[5]*EDdose2/((tempVal22)^2), -tempVal2*tempVal21*parmVec2[1]/parmVec2[4],
+#                      -EDdose2/tempVal22)
+#        derDose2 <- tempVal2*tempVal21*parmVec2[1]/EDdose2-parmVec2[5]/tempVal22 
+#
+#        SIder2 <- (derParm2/derDose2)*(-EDp1/(EDp2*EDp2))
+#
+#        return(list(SIpair, SIder1[notFixed], SIder2[notFixed]))
+#    }
 
 
     ## Finding the maximal hormesis
@@ -214,8 +230,9 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     }
 
 
-    returnList <- list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-                       edfct=edfct, sifct=sifct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes)
+    returnList <- 
+    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
+    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes)
 
 #    returnList <- switch(return, "fct+ss" = list(fct,ssfct,names),
 #                                 "fct+ss+der" = list(fct,ssfct,names,deriv1,deriv2),
@@ -225,3 +242,26 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     class(returnList) <- "braincousens"
     invisible(returnList)
 }
+
+
+"BC.4" <-
+function(names=c("b", "d", "e", "f"))
+{
+    ## Checking arguments
+    if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
+ 
+    return(braincousens(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA)))
+}
+
+bcl3 <- BC.4
+
+"BC.5" <-
+function(names=c("b", "c", "d", "e", "f"))
+{
+    ## Checking arguments
+    if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
+
+    return(braincousens(names=names, fixed=c(NA, NA, NA, NA, NA)))
+}
+
+bcl4 <- BC.5

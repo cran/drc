@@ -47,12 +47,12 @@
 \examples{
 
 ## Comparing the nonlinear model to a one-way ANOVA model using an F test
-model1 <- multdrc(FA, fct = w4())
+model1 <- multdrc(ryegrass, fct = W1.4())
 anova(model1)   
 
 ## Comparing a Gompertz three- and four-parameter models using an F test
-model2 <- multdrc(FA, fct = w3())
-anova(model2, model1)  # reduction to 'w3' not possible (highly significant)   
+model2 <- multdrc(ryegrass, fct = W1.3())
+anova(model2, model1)  # reduction to 'W1.3' not possible (highly significant)   
 
 anova(model2, model1, details = FALSE)  # without details
 

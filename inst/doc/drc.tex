@@ -7,7 +7,7 @@
 \definecolor{Blue}{rgb}{0,0,0.8}
 
 
-\usepackage{c:/Programmer/R/R-2.5.0dev/share/texmf/Sweave}
+\usepackage{c:/Programmer/R/R-2.5.0dev_b/share/texmf/Sweave}
 \begin{document}
 
 %\VignetteIndexEntry{Bioassay analysis using R}
@@ -293,42 +293,40 @@ Please cite R and 'drc' if used for a publication,
 for references type 'citation()' and 'citation('drc')'.
 \end{Soutput}
 \end{Schunk}
-The data sets that we will use in this paper are all part of the package. In this section we use the data set \verb+FA+
-consisting of a single dose response curve (use \verb+data(FA)+ to load the data set). The first 5 lines (rows) of the data set are 
-displayed by typing \verb+FA[1:5,]+
+The data sets that we will use in this paper are all part of the package. In this section we use the data set 
+\verb+ryegrass+ consisting of a single dose response curve. The first 5 lines (rows) of the data set are 
+displayed by typing \verb+ryegrass[1:5,]+
 
 \begin{Schunk}
 \begin{Sinput}
-> data(FA)
-> FA[1:5, ]
+> ryegrass[1:5, ]
 \end{Sinput}
 \begin{Soutput}
-    MEANLR MM
-1 7.580000  0
-2 8.000000  0
-3 8.328571  0
-4 7.250000  0
-5 7.375000  0
+     rootl conc
+1 7.580000    0
+2 8.000000    0
+3 8.328571    0
+4 7.250000    0
+5 7.375000    0
 \end{Soutput}
 \end{Schunk}
-The variable \verb+MM+ is the dose of ferulic acid in mM and \verb+MEANLR+ is the root length of perennial ryegrass 
-\citep{inderjit&streibig&olofsdotter:2002}.
+The variable \verb+conc+ is the concentration of ferulic acid in mM and the variable \verb+rootl+ is the root length of 
+perennial ryegrass \citep{inderjit&streibig&olofsdotter:2002}.
 
-As already mentioned the main function in \verb+drc+ for fitting dose response curves is \verb+multdrc+ which can be used to fit data from one or 
-more dose response curves.
-By default a four-parameter logistic model is fitted to the data. In order to fit this model to 
-the data set \verb+FA+ we write 
+As already mentioned the main function in \verb+drc+ for fitting dose response curves is \verb+multdrc+ which 
+can be used to fit data from one or more dose response curves. By default a four-parameter logistic model is 
+fitted to the data. In order to fit this model to the data set \verb+ryegrass+ we write 
 
 \begin{Schunk}
 \begin{Sinput}
-> modelex1 <- multdrc(FA)
+> modelex1 <- multdrc(ryegrass)
 \end{Sinput}
 \end{Schunk}
-The argument to the function \verb+multdrc+ is a data frame 
-which is a collection of columns of the same length, usually forming a data set or part of 
-a data set. The above \textbf{R} call, \verb+multdrc(FA)+, produces no output. All relevant information of the fit of the model
-to the data is stored in the object \verb+modelex1+. The package \verb+drc+ provides \emph{extractors} for extracting
-various types of information from \verb+modelex1+. We will now introduce some of these extractors.
+The argument to the function \verb+multdrc+ is a data frame which is a collection of columns of the same length, 
+usually forming a data set or part of a data set. The above \textbf{R} call, \verb+multdrc(ryegrass)+, produces 
+no output. All relevant information of the fit of the model to the data is stored in the object \verb+modelex1+. 
+The package \verb+drc+ provides \emph{extractors} for extracting various types of information from 
+\verb+modelex1+. We will now introduce some of these extractors.
 
 The \verb+anova+ function can be used to obtain a lack-of-fit test, comparing the four-parameter logistic model to a one-way ANOVA model
 
@@ -363,7 +361,7 @@ c:(Intercept)  0.48114    0.21221  2.26727    0.0346
 d:(Intercept)  7.79306    0.18857 41.32711 3.822e-21
 e:(Intercept)  3.05802    0.18574 16.46386 4.270e-13
 
-Estimated residual variance: 0.2700108 
+Residual variance: 0.2700108 (20 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 The \emph{t}-statistics and corresponding p-values are for testing the null hypotheses that the parameters are equal to 0 (not
@@ -379,7 +377,7 @@ above example the call to \verb+multdrc+ would become
 
 \begin{Schunk}
 \begin{Sinput}
-> modelex1.boxcox <- multdrc(FA, boxcox = T)
+> modelex1.boxcox <- multdrc(ryegrass, boxcox = TRUE)
 > summary(modelex1.boxcox)
 \end{Sinput}
 \begin{Soutput}
@@ -393,7 +391,7 @@ c:(Intercept)  0.366576   0.094803  3.866715     0.001
 d:(Intercept)  7.900308   0.338958 23.307638 6.184e-16
 e:(Intercept)  2.989462   0.229544 13.023480 3.159e-11
 
-Estimated residual variance: 0.07634711 
+Residual variance: 0.07634711 (20 degrees of freedom)
 
 Heterogeneity adjustment: Box-Cox transformation
 
@@ -428,11 +426,11 @@ transformation.  The fit of the model to the data can be seen in Figure~\ref{fig
 
 \begin{Schunk}
 \begin{Sinput}
-> plot(modelex1.boxcox, xlab = "Dose (mM)", ylab = "Root length(mm)")
+> plot(modelex1.boxcox, xlab = "Concentration (mM)", ylab = "Root length(mm)")
 \end{Sinput}
 \end{Schunk}
 \includegraphics{drc-sec4-plot1}
-\caption{Four-parameter logistic fit to the data set \texttt{FA}.} \label{fig-onefit:boxcox}
+\caption{Four-parameter logistic fit to the data set \texttt{ryegrass}.} \label{fig-onefit:boxcox}
 \end{center}
 \end{figure}
 
@@ -529,7 +527,7 @@ e:3  1.37277472  0.45262844  3.03289542    0.0032
 e:4  0.19732450  0.01019122 19.36220239 3.277e-33
 e:5  0.20940785  0.01360994 15.38638612 1.352e-26
 
-Estimated residual variance: 0.005408604 
+Residual variance: 0.005408604 (85 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 From the summary it is seen that the lower limit of dose response curve no. 1 and no. 5 are negative which, strictly speaking, is not meaningful,
@@ -570,6 +568,8 @@ estimates of the parameters ED10, ED50 and ED90 and their standard errors for al
 > ED(modelex2, c(10, 50, 90))
 \end{Sinput}
 \begin{Soutput}
+Estimated effect doses
+
        Estimate Std. Error
 1:10   0.026143     0.0127
 1:50   1.794892     0.4783
@@ -597,6 +597,8 @@ The selectivity indices between two curves for ED10 and ED90, SI(90,10), are obt
 > SI(modelex2, c(90, 10))
 \end{Sinput}
 \begin{Soutput}
+Estimated ratios of effect doses
+
             Estimate Std. Error    t-value   p-value
 1/2:90/10 2025.80475 2311.43649    0.87599    0.3835
 1/3:90/10 2250.60975 2216.78443    1.01481    0.3131
@@ -638,6 +640,8 @@ To obtain only the comparison between the 2nd curve and the 4th curve we use \ve
 > SI(modelex2, c(46, 21), c(2, 4))
 \end{Sinput}
 \begin{Soutput}
+Estimated ratios of effect doses
+
           Estimate Std. Error t-value p-value
 2/4:46/21   8.0438     2.2114  3.1853   0.002
 \end{Soutput}
@@ -719,7 +723,7 @@ e:33   6.9765e+03  1.0299e+03  6.7739e+00 2.622e-10
 e:17   8.8385e+03  1.2139e+03  7.2813e+00 1.696e-11
 e:0    1.0199e+04  1.1719e+03  8.7024e+00 5.153e-15
 
-Estimated residual variance: 0.0005600453 
+Residual variance: 0.0005600453 (151 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 By default only the $d$ parameter (the upper limit at dose zero) is estimated for the control group, represented in the summary by the term \verb+d:999+.
@@ -978,7 +982,7 @@ Vm:untreated 1.6028e+02 7.2403e+00 2.2137e+01 4.938e-15
 K:treated    6.4121e-02 8.2832e-03 7.7411e+00 2.722e-07
 K:untreated  4.7708e-02 8.9551e-03 5.3275e+00 3.846e-05
 
-Estimated residual variance: 108.1607 
+Residual variance: 108.1607 (19 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 A comparison of the difference between the two \emph{Vm} parameters is obtained using the \verb+compParm+ function

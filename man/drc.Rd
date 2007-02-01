@@ -25,10 +25,10 @@ environmental sciences, medicine, pharmacology, toxicology.
 Package: \tab drc\cr
 LazyLoad: \tab yes\cr
 LazyData: \tab yes\cr
-Version: \tab 0.9-9\cr
+Version: \tab 1.1-0\cr
 License: \tab GNU GPL (version 2 or any later version)\cr
 Depends: \tab R (>= 2.0.0), MASS\cr
-Date: \tab 2006-07-19\cr
+Date: \tab 2007-02-01\cr
 URL: \tab http://www.r-project.org, http://www.bioassay.dk\cr
 Packaged: \tab Tue Aug 1 18:24:23 2006; ritz\cr
 Built: \tab R 2.3.0; ; 2006-08-01 18:24:25; windows\cr
@@ -140,10 +140,10 @@ Further information is available in the following vignette:
 
 \examples{
 
-model1 <- multdrc(MEANLR ~ MM, data = FA)
+model1 <- multdrc(rootl ~ conc, data = ryegrass)
 plot(model1)
 
-model2 <- multdrc(SLOPE ~ DOSE, CURVE, data = PestSci)
+model2 <- multdrc(SLOPE ~ DOSE, CURVE, data = spinach)
 plot(model2)
 
 }

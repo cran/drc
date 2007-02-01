@@ -3,8 +3,14 @@ function(object, random, data, startVal)
 {
 
 #    if (missing(lambda)) {lambda <- 1}
-    if (!is.null(object$"boxcox")) {lambda <- object$"boxcox"[1]; bcAdd <- object$"boxcox"[4]} else {lambda <- 1; bcAdd <- 0}
-
+    if (!is.null(object$"boxcox")) 
+    {
+        lambda <- object$"boxcox"[1]
+        bcAdd <- object$"boxcox"[4]
+    } else {
+        lambda <- 1 
+        bcAdd <- 1
+    }
 
     ## Defining dose and response
     respVar <- ((eval(object$call[[2]][[2]], envir = data) + bcAdd)^lambda - 1)/lambda  # name of response variable
@@ -18,7 +24,7 @@ function(object, random, data, startVal)
 
 
     ## Defining dose-response function 
-    if (inherits(object, "logistic"))
+    if (inherits(object, "llogistic"))
     {
         if (lenPN == 3)
         {
@@ -76,7 +82,7 @@ function(object, random, data, startVal)
         {
             for (i in 2:(1+lenPN))
             {
-                fixedList[[i-1]] <- eval(parse(text=paste(parNames[i-1], deparse(object$call$collapse[[i]]), sep="")))
+                fixedList[[i-1]] <- eval(parse(text=paste(parNames[i-1], deparse(object$call$collapse[[i]]), sep="")), envir = dataSet)
             }
         }
         if ( (!is.null(colEntry)) && (as.character(colEntry[[1]])=="data.frame"))
@@ -92,7 +98,7 @@ function(object, random, data, startVal)
                     fili <- paste(parNames[i-1], startStr, sep="~")    
                 }
                 
-                fixedList[[i-1]] <- eval(parse(text=fili))
+                fixedList[[i-1]] <- eval(parse(text=fili), envir = dataSet)
             }
         }
         if (is.null(colEntry)) 
@@ -102,7 +108,7 @@ function(object, random, data, startVal)
                 facStr <- paste("factor(", deparse(object$call$curve), ")", sep="")            
                 fili <- paste(parNames[i-1], facStr, sep="~")
                 fili <- paste(fili, "-1", sep="")
-                fixedList[[i-1]] <- eval(parse(text=fili))
+                fixedList[[i-1]] <- eval(parse(text=fili), envir = dataSet)
             }
         }
 
@@ -111,7 +117,7 @@ function(object, random, data, startVal)
 
 
         ## Constructing list for random argument
-        randomList <- eval(parse(text=random))
+        randomList <- eval(parse(text=random), envir = dataSet)
 #        print(randomList)
 
 
@@ -176,6 +182,14 @@ function(object, random, data, startVal)
     if (missing(startVal))
     {
         coefNames <- names(coef(object))
+        
+        print(NLMEfor)
+        print(fixedList)
+        print(randomList)
+        print((dataSet))
+        
+        return(list(NLMEfor, fixedList, randomList, dataSet)) 
+        
         for (i in 1:30)
         {
             startVal <- c(i/10, coef(object)[-c(1)])
@@ -194,6 +208,7 @@ function(object, random, data, startVal)
 #                             start = as.vector(startVal), data = PestSci)
 #            stop()
 #            
+
             modelNLME <- try(nlme(NLMEfor,
                              fixed = fixedList,
                              random = randomList,

@@ -26,8 +26,8 @@
 /c   { newpath 0 360 arc } def
 /r   { 4 2 roll moveto 1 copy 3 -1 roll exch 0 exch rlineto 0 rlineto -1 mul 0 exch rlineto closepath } def
 /p1  { stroke } def
-/p2  { gsave bg setrgbcolor fill grestore newpath } def
-/p3  { gsave bg setrgbcolor fill grestore stroke } def
+/p2  { gsave bg fill grestore newpath } def
+/p3  { gsave bg fill grestore stroke } def
 /t   { 6 -2 roll moveto gsave rotate
        ps mul neg 0 2 1 roll rmoveto
        1 index stringwidth pop
@@ -118,7 +118,7 @@ dup length dict begin
 %%Page: 1 1
 bp
 77.04 91.44 793.65 518.24 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -132,7 +132,7 @@ bp
 709.66 129.55 2.70 c p1
 767.11 111.30 2.70 c p1
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -147,11 +147,11 @@ np
 o
 18.00 18.00 823.89 577.28 cl
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
-435.34 36.72 (Dose \(mM\)) .5 0 0 t
+0 setgray
+435.34 36.72 (Concentration \(mM\)) .5 0 0 t
 30.96 304.84 (Root length\(mm\)) .5 0 90 t
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -207,7 +207,7 @@ o
 286.07 62.87 (0.1) 0 0 0 t
 481.90 62.64 (1) 0 0 0 t
 77.04 91.44 793.65 518.24 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -320,7 +320,7 @@ ep
 bp
 77.04 91.44 793.65 518.24 cl
 77.04 91.44 793.65 518.24 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -348,7 +348,7 @@ bp
 767.11 135.68 2.70 c p1
 767.11 132.81 2.70 c p1
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -363,11 +363,11 @@ np
 o
 18.00 18.00 823.89 577.28 cl
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 435.34 36.72 (DOSE) .5 0 0 t
 30.96 304.84 (Rate of Oxygen Evolutions) .5 0 90 t
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -1051,7 +1051,7 @@ np
 -3.82 -3.82 l
 -3.81 3.82 l
 o
-0 0 0 rgb
+0 setgray
 738.84 488.03 2.70 c p1
 1 0 0 rgb
 np
@@ -1087,7 +1087,7 @@ np
 -3.82 3.82 l
 o
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 755.04 483.72 (1) 0 0 0 t
 755.04 469.32 (2) 0 0 0 t
 755.04 454.92 (3) 0 0 0 t
@@ -1098,7 +1098,7 @@ ep
 bp
 77.04 91.44 793.65 518.24 cl
 77.04 91.44 793.65 518.24 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -1112,7 +1112,7 @@ bp
 691.30 153.21 2.70 c p1
 767.11 134.53 2.70 c p1
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -1127,11 +1127,11 @@ np
 o
 18.00 18.00 823.89 577.28 cl
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 435.34 36.72 (Dose) .5 0 0 t
 30.96 304.84 (Rate of Oxygen Evolution) .5 0 90 t
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -1394,7 +1394,7 @@ np
 -3.82 -3.81 l
 -3.81 3.81 l
 o
-0 0 0 rgb
+0 setgray
 np
 103.58 412.35 m
 6.70 -1.01 l
@@ -1895,7 +1895,7 @@ np
 6.71 -0.04 l
 6.70 -0.03 l
 o
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 np
@@ -1930,7 +1930,7 @@ np
 722.64 430.43 m
 21.60 0 l
 o
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 733.44 488.03 2.70 c p1
@@ -1968,7 +1968,7 @@ np
 -3.82 3.82 l
 o
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 755.04 483.72 (1) 0 0 0 t
 755.04 469.32 (2) 0 0 0 t
 755.04 454.92 (3) 0 0 0 t
@@ -1979,7 +1979,7 @@ ep
 bp
 77.04 91.44 793.65 518.24 cl
 77.04 91.44 793.65 518.24 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -1987,7 +1987,7 @@ bp
 10.00 setmiterlimit
 103.58 398.35 2.70 c p1
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -2002,11 +2002,11 @@ np
 o
 18.00 18.00 823.89 577.28 cl
 /ps 12 def /Font1 findfont 12 s
-0 0 0 rgb
+0 setgray
 435.34 36.72 (dose) .5 0 0 t
 30.96 304.84 (rgr) .5 0 90 t
 18.00 18.00 823.89 577.28 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap
@@ -2077,7 +2077,7 @@ o
 617.72 62.87 (10000) 0 0 0 t
 750.26 62.87 (1e+05) 0 0 0 t
 77.04 91.44 793.65 518.24 cl
-0 0 0 rgb
+0 setgray
 0.75 setlinewidth
 [] 0 setdash
 1 setlinecap

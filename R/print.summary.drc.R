@@ -14,12 +14,13 @@ function(x, ...)
 
     cat("\n")
     cat("Parameter estimates:\n\n")
-    printCoefmat(object$"estimates")
+    printCoefmat(object$"coefficients")
 
     if ((!is.null(object$"resVar")) && (!(object$"type"=="binomial")))
     {
         cat("\n")
-        cat("Estimated residual variance:", object$"resVar", "\n")  # , "\n\n")
+        endText <- paste("(", as.character(df.residual(object)), " degrees of freedom)\n", sep = "")
+        cat("Residual variance:", format(object$"resVar"), endText) 
     }
 
     if (!is.null(object$"varComp"))

@@ -19,6 +19,11 @@
     }
     if (evaluate)
     { 
+#        print(parent.frame(n=2))
+#        print(ls(envir=parent.frame(n=2)))
+#        env2 <- parent.frame(n=2)
+#        print(ls(envir=env2))
+#        eval(call, envir = env2)
         eval(call, parent.frame())
     } else call
 }

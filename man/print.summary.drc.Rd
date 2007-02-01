@@ -28,7 +28,7 @@
 \examples{
 
 ## Invoking the print.summary method for objects of class 'drc'
-summary(multdrc(FA))  
+summary(multdrc(ryegrass))  
 
 }
 \keyword{models}

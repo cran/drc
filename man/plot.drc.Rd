@@ -76,8 +76,8 @@
 \examples{
 
 ## Fitting models to be plotted below
-model1 <- multdrc(MEANLR~MM, data=FA)
-model2 <- multdrc(MEANLR~MM, data=FA, fct=l3())  # lower limit fixed at 0
+model1 <- multdrc(rootl~conc, data = ryegrass)
+model2 <- multdrc(rootl~conc, data = ryegrass, fct=l3())  # lower limit fixed at 0
 
 ## Plotting observations and fitted curve for 'model1'
 plot(model1) 

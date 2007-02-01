@@ -17,7 +17,7 @@ function(object, strVal, operator = "/", od = FALSE)
 
     ## Extracting information from model fit
     sumObj <- summary(object, od = od)
-    parm <- sumObj$"estimates"
+    parm <- sumObj$"coefficients"
     
     if (inherits(object, "bindrc"))
     {

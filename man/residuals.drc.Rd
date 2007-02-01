@@ -10,13 +10,13 @@
 
 \usage{
 
-  \method{residuals}{drc}(object, rstandard = FALSE, ...)
+  \method{residuals}{drc}(object, type = c("working", "standardised"), ...)
 
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
-  \item{rstandard}{logical. If TRUE standardised residuals are returned.}
+  \item{type}{character string. The type of residual to be returned.}
   \item{...}{additional arguments.}
 }
 
@@ -25,7 +25,7 @@
 }
 
 \note{
-  The argument 'rstandard' is available for least squares estimation
+  The 'standardised' residuals are available for least squares estimation
   with or without Box-Cox transformation or variance as a power of the
   mean.
 }
@@ -34,13 +34,13 @@
 
 \examples{
 
-model1 <- multdrc(FA)
+model1 <- multdrc(ryegrass)
 
 ## Displaying the residual plot (raw residuals)
 plot(fitted(model1), residuals(model1))
 
 ## Using the standardised residuals
-plot(fitted(model1), residuals(model1, rstandard = TRUE))
+plot(fitted(model1), residuals(model1, type = "standard"))
 
 rm(model1)
 

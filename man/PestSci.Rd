@@ -8,7 +8,7 @@
 
 \description{
   Inhibition of photosynthesis in response to two synthetic photosystem II inhibitors, the herbicides diuron and bentazone.
-  The effect of oxygen evolution of thylakoid membranes (Chloroplasts) from Spinach
+  The effect of oxygen consumption of thylakoid membranes (Chloroplasts) from Spinach
   was measured after incubation with the synthetic inhibitors, resulting in 5 dose-response curves.
 }
 
@@ -28,7 +28,7 @@
   CURVE denotes a total of five independent assays with two herbicides.
   HERBICIDE denotes the names of the herbicides.
   DOSE is the concentration of the herbicides muMol and SLOPE is 
-  the Oxygen evolution from thylakoid membranes.  
+  the oxygen consumption of thylakoid membranes.  
 }
 
 \source{

@@ -1,7 +1,5 @@
-
-
-
-"isobole" <- function(object1, object2, ename = "e", xaxis = "0", exchange, xlab = "A", ylab = "B", xlim, ylim, ...)
+"isobole" <- 
+function(object1, object2, ename = "e", xaxis = "0", exchange, xlab = "A", ylab = "B", xlim, ylim, ...)
 {
 
     parmVec <- coef(object1)
@@ -10,7 +8,7 @@
 
     indVec <- regexpr(paste(ename, ":", sep = ""), namesPV, fixed = TRUE) > 0
     eVec <- parmVec[indVec]
-    seVec <- (summary(object1)$estimates)[indVec, 2]
+    seVec <- (summary(object1)$"coefficients")[indVec, 2]
 
     mixProp <- unique(object1$data[,4])
     mixProp <- mixProp[ (mixProp >= 0) & (mixProp <= 100) ]/100  # removing control level

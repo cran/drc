@@ -2,17 +2,17 @@
 
 \alias{braincousens}
 
-\title{The Brain-Cousens modification of the logistic function}
+\title{The Brain-Cousens hormesis models}
 
 \description{
   'braincousens' provides a very general way of specifying Brain-Cousens' 
-  modified logistic dose response functions, under various constraints on the parameters.
+  modified log- logistic model for describing hormesis, under various constraints on the parameters.
 }
 
 \usage{
   braincousens(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
   upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-  names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, useDer = FALSE)
+  names = c("b", "c", "d", "e", "f"), scaleDose = TRUE)
 }
 
 \arguments{
@@ -23,7 +23,6 @@
                The order of the parameters is: b, c, d, e, f (see under 'Details').}
   \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
                    this is required for datasets where all dose values are small. }               
-  \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not yet implemented!}
 }
 
 \details{
@@ -35,36 +34,31 @@
 }
 
 \value{
-  The value returned by the 'braincousens' is a list with the following components
-  \item{fct}{The dose response function.}
-  \item{ssfct}{The self starter function.}
-  \item{deriv1}{The first derivative.}  
-  \item{deriv2}{The second derivative.}  
-  \item{lowerc}{The lower bounds on the parameters.}
-  \item{upperc}{The upper bounds on the parameters.}
-  \item{edfct}{The ED function.}
-  \item{sifct}{The SI function.}    
-  \item{maxfct}{The function for calculating the mean maximum of the dose response curve.}  
+  The value returned is a list containing the non-linear function, the self starter function, 
+  the parameter names and additional model specific objects.  
 }
 
-\references{Brain, P. and Cousens, R. (1989) An equation to describe dose responses where there is stimulation of growth at low doses, 
-            \emph{Weed Research}, \bold{29}, 93--96.}
+\references{
+  Brain, P. and Cousens, R. (1989) An equation to describe dose responses 
+  where there is stimulation of growth at low doses, 
+  \emph{Weed Research}, \bold{29}, 93--96.
+}
             
 \author{Christian Ritz}
 
-\note{This function is for use with the function \code{\link{multdrc}}.}
+\note{This function is for use with the function \code{\link{drm}} or \code{\link{multdrc}}.}
 
-\seealso{Special cases of the function 'braincousens' are \code{\link{bcl3}} and \code{\link{bcl4}}.}
+\seealso{A special case of the function 'braincousens' is \code{\link{BC.4}}.}
 \examples{
 
 ## Brain-Cousens model with the constraint b>1
-model1 <- multdrc(FA, fct=braincousens(fixed=c(NA, NA, NA, NA, NA), 
+model1 <- multdrc(ryegrass, fct=braincousens(fixed=c(NA, NA, NA, NA, NA), 
 lowerc=c(1, -Inf, -Inf, -Inf, -Inf)), control=mdControl(constr=TRUE))
 
 summary(model1)
 
 ## Brain-Cousens model with the constraint f>0
-model2 <- multdrc(FA, fct=braincousens(fixed=c(NA, NA, NA, NA, NA), 
+model2 <- multdrc(ryegrass, fct=braincousens(fixed=c(NA, NA, NA, NA, NA), 
 lowerc=c(-Inf, -Inf, -Inf, -Inf, 0)), control=mdControl(constr=TRUE))
 
 summary(model2)

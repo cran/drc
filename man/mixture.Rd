@@ -56,8 +56,9 @@ and 10 for 10-logarithm).}
 }
 
 \references{
-  S{\o}rensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2006) An isobole-based statistical model and test 
-  for synergism/antagonism in binary mixture toxicity experiments, \emph{Statistical Ecology and Environmental Statistics}, \bold{13}. ?--??.
+  S{\o}rensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
+  An isobole-based statistical model and test for synergism/antagonism in binary mixture toxicity experiments, 
+  \emph{Statistical Ecology and Environmental Statistics}, \bold{13}. ?--??.
 }
 
 \author{Christian Ritz}
