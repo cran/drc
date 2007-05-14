@@ -12,7 +12,7 @@
   drm(formula, curve, pmodels, weights, data = NULL, subset, fct, 
   adjust = c("none", "bc1", "bc2", "vp"), bc = NULL, bcAdd = 0,
   type = c("continuous", "binomial", "Poisson", "survival"), 
-  start, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
+  start, start2, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
   fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 }
 
@@ -33,8 +33,9 @@
   \item{bcAdd}{a numeric value specifying the constant to be added on both sides prior to Box-Cox transformation. 
   The default is 0.}
   \item{type}{a character string specifying the data type: continuous is the only option currently.}
-  \item{start}{an optional numeric vector containing start values for all parameters in the model. 
+  \item{start}{an optional numeric vector containing starting values for all mean parameters in the model. 
   Overrules any self starter function.}
+  \item{start2}{an optional numeric vector containing starting values for all variance parameters in the model.}
   \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  The default is 'na.fail'. To omit 'NA's use
   'na.omit'.}
   \item{hetvar}{a vector specifying the grouping for heterogeneous variances.}

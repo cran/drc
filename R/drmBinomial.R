@@ -84,6 +84,7 @@ function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, zeroTol = 1
             return(NULL)
         }
     }
+    anovaTest <- NULL  # lack-of-fit test not meaningful in most situations
     
     return(list(anovaTest = anovaTest, gofTest = gofTest))
 }

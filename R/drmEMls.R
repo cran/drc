@@ -45,8 +45,24 @@ scaleX = 1, scaleY = 1)
 
     vcovfct <- function(object)
     {
+        scaledH <- (object$"fit"$"hessian")*(1/(object$"fit"$"ovalue"/object$"sumList"$"df.residual"))/2
+        invMat <- try(solve(scaledH), silent = TRUE)
+    
+        if (inherits(invMat, "try-error"))
+        {
+            ## More stable than 'solve' (suggested by Nicholas Lewin-Koh - 2007-02-12)
+            ch <- try(chol(scaledH))
+            if(inherits(ch, "try-error")) 
+            {
+                ch <- try(chol(0.99*object$fit$hessian+0.01*diag(dim(object$fit$hessian)[1])))
+            }
+            ## Try regularizing if the varcov is unstable
+            if(!inherits(ch, "try-error")) return(chol2inv(ch))
+        } else {
+            return(invMat)
+        }
 #        solve((object$"fit"$"hessian")*(1/rvfct(object))/2)  
-        solve((object$"fit"$"hessian")*(1/(object$"fit"$"ovalue"/object$"sumList"$"df.residual"))/2)   
+#        solve((object$"fit"$"hessian")*(1/(object$"fit"$"ovalue"/object$"sumList"$"df.residual"))/2)   
     }
     
     parmfct <- function(fit, fixed = TRUE)

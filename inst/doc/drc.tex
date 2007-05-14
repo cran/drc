@@ -7,7 +7,7 @@
 \definecolor{Blue}{rgb}{0,0,0.8}
 
 
-\usepackage{c:/Programmer/R/R-2.5.0dev_b/share/texmf/Sweave}
+\usepackage{c:/Programmer/R/R-2.5.0/share/texmf/Sweave}
 \begin{document}
 
 %\VignetteIndexEntry{Bioassay analysis using R}
@@ -361,7 +361,7 @@ c:(Intercept)  0.48114    0.21221  2.26727    0.0346
 d:(Intercept)  7.79306    0.18857 41.32711 3.822e-21
 e:(Intercept)  3.05802    0.18574 16.46386 4.270e-13
 
-Residual variance: 0.2700108 (20 degrees of freedom)
+Residual standard error: 0.5196256 (20 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 The \emph{t}-statistics and corresponding p-values are for testing the null hypotheses that the parameters are equal to 0 (not
@@ -391,9 +391,9 @@ c:(Intercept)  0.366576   0.094803  3.866715     0.001
 d:(Intercept)  7.900308   0.338958 23.307638 6.184e-16
 e:(Intercept)  2.989462   0.229544 13.023480 3.159e-11
 
-Residual variance: 0.07634711 (20 degrees of freedom)
+Residual standard error: 0.2763098 (20 degrees of freedom)
 
-Heterogeneity adjustment: Box-Cox transformation
+Non-normality/heterogeneity adjustment through optimal Box-Cox transformation
 
 Estimated lambda: 0.4 
 Confidence interval for lambda: [0.126,0.782] 
@@ -510,7 +510,7 @@ b:1  0.51954579  0.07637915  6.80219383 1.355e-09
 b:2  0.80082699  0.22571773  3.54791357    0.0006
 b:3  0.68200370  0.12858791  5.30379337 8.859e-07
 b:4  1.84486652  0.16639052 11.08756974 1.714e-18
-b:5  1.67107651  0.17602264  9.49353171 5.371e-15
+b:5  1.67107651  0.17602264  9.49353168 5.371e-15
 c:1 -0.01656176  0.10784269 -0.15357332    0.8783
 c:2  0.13259441  0.04720028  2.80918702    0.0062
 c:3  0.14645523  0.06042448  2.42377301    0.0175
@@ -520,14 +520,14 @@ d:1  1.87954967  0.04237996 44.34996782 7.540e-61
 d:2  0.94599411  0.04227580 22.37672971 1.101e-37
 d:3  1.09032061  0.04056922 26.87556476 1.288e-43
 d:4  2.15356998  0.02819071 76.39289139 2.051e-80
-d:5  1.80502033  0.02909071 62.04800035 7.160e-73
+d:5  1.80502033  0.02909071 62.04800031 7.160e-73
 e:1  1.79489240  0.47830988  3.75257230    0.0003
 e:2  0.94558000  0.24956415  3.78892556    0.0003
 e:3  1.37277472  0.45262844  3.03289542    0.0032
 e:4  0.19732450  0.01019122 19.36220239 3.277e-33
-e:5  0.20940785  0.01360994 15.38638612 1.352e-26
+e:5  0.20940785  0.01360994 15.38638611 1.352e-26
 
-Residual variance: 0.005408604 (85 degrees of freedom)
+Residual standard error: 0.07354321 (85 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 From the summary it is seen that the lower limit of dose response curve no. 1 and no. 5 are negative which, strictly speaking, is not meaningful,
@@ -723,7 +723,7 @@ e:33   6.9765e+03  1.0299e+03  6.7739e+00 2.622e-10
 e:17   8.8385e+03  1.2139e+03  7.2813e+00 1.696e-11
 e:0    1.0199e+04  1.1719e+03  8.7024e+00 5.153e-15
 
-Residual variance: 0.0005600453 (151 degrees of freedom)
+Residual standard error: 0.02366528 (151 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 By default only the $d$ parameter (the upper limit at dose zero) is estimated for the control group, represented in the summary by the term \verb+d:999+.
@@ -982,7 +982,7 @@ Vm:untreated 1.6028e+02 7.2403e+00 2.2137e+01 4.938e-15
 K:treated    6.4121e-02 8.2832e-03 7.7411e+00 2.722e-07
 K:untreated  4.7708e-02 8.9551e-03 5.3275e+00 3.846e-05
 
-Residual variance: 108.1607 (19 degrees of freedom)
+Residual standard error: 10.40003 (19 degrees of freedom)
 \end{Soutput}
 \end{Schunk}
 A comparison of the difference between the two \emph{Vm} parameters is obtained using the \verb+compParm+ function

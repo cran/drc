@@ -39,35 +39,33 @@ mixdrc(object, random, data, startVal)
 
 ## First fitting a model without random effects
 
-#model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
-#collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE))
+model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE))
 
 ## Then fitting the same model (the same fixed effects)
 ##  but with random effects (assigned to d)
 
-#model2 <- mixdrc(model1, random="d~1|CURVE", data=PestSci)
-#compParm(model2, "e", "-")
+model2 <- mixdrc(model1, random="d~1|CURVE", data=PestSci)
+compParm(model2, "e", "-")
 
 ## Fitting a model without random effects
 ##  but with a Box-Cox transformation
 
-#model3 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
-#collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE)
+model3 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE)
 
 ## Then fitting the same model with random effects assigned to d
 
-#model4 <- mixdrc(model3, random="d~1|CURVE", data=PestSci)
-#compParm(model4, "e", "-")
+model4 <- mixdrc(model3, random="d~1|CURVE", data=PestSci)
+compParm(model4, "e", "-")
 
 ## Fitting a model without random effects, but fixing the c parameter at 0
-#model5 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
-#collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE,
-#fct=l4(fixed=c(NA,0,NA,NA)))
+model5 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE,
+fct=l4(fixed=c(NA,0,NA,NA)))
 
 ## Fitting the corresponding mixed model with random effects on d
-#model6 <- mixdrc(model5, random="d~1|CURVE", data=PestSci)
-
-#rm(model1, model2, model3, model4, model5, model6)
+model6 <- mixdrc(model5, random="d~1|CURVE", data=PestSci)
 
 }
 \keyword{models}

@@ -10,7 +10,7 @@
 
 \usage{
   drmc(constr = FALSE, errorm = TRUE, maxDose = 1e-1, maxIt = 500, method="BFGS", 
-  noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, warnVal = -1, zeroTol=0)
+  noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, trace = FALSE, warnVal = -1, zeroTol=0)
 }
 
 \arguments{
@@ -26,6 +26,7 @@
   \item{rmNA}{logical. Should NAs be removed from sum of squares used for estimation? 
     Default is FALSE (not removed).}
   \item{useD}{logical. If TRUE derivatives are used for estimation (if available).}  
+  \item{trace}{logical. If TRUE the trace from \code{\link{optim}} is displayed.}  
   \item{warnVal}{numeric. If equal to 0 then the warnings are stored and displayed at the end. 
     See under 'warn' in \code{\link{options}}. The default results in suppression of warnings.}
   \item{zeroTol}{numeric. The threshold below which doses are considered as control.}

@@ -28,7 +28,7 @@
 }
 
 \source{
-  Nina Cedergreen, Royal Veterinary and Agricultural University, Denmark.
+  Nina Cedergreen, Faculty of Life Sciences, University of Copenhagen, Denmark.
 }
 
 %\references{}
@@ -37,20 +37,28 @@
 
 ## Fitting a model with different parameters
 ##  for different curves
-model1.daphnids <- multdrc(no/total~dose, time, weights=total, 
+##  using 'multdrc'
+daphnids.m1 <- multdrc(no/total~dose, time, weights=total, 
 data=daphnids, fct=l2(), type="binomial")
 
+summary(daphnids.m1)
 
 ## Goodness-of-fit test
-anova(model1.daphnids)
-
+anova(daphnids.m1)
 
 ## Fitting a model with a common intercept parameter
-model2.daphnids <- multdrc(no/total~dose, time, weights=total, 
+##  using 'multdrc'
+daphnids.m2 <- multdrc(no/total~dose, time, weights=total, 
 data=daphnids, fct=l2(), type="binomial", 
 collapse=list(~1, ~time))
 
+## The same fits using 'drm'
+daphnids.m1 <- drm(no/total~dose, time, weights=total, 
+data=daphnids, fct=LL.2(), type="binomial")
 
-rm(model1.daphnids, model2.daphnids)
+daphnids.m2 <- drm(no/total~dose, time, weights=total, 
+data=daphnids, fct=LL.2(), type="binomial", 
+pmodels=list(~1, ~time))
+
 }
 \keyword{datasets}

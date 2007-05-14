@@ -20,7 +20,8 @@ function(x, ...)
     {
         cat("\n")
         endText <- paste("(", as.character(df.residual(object)), " degrees of freedom)\n", sep = "")
-        cat("Residual variance:", format(object$"resVar"), endText) 
+#        cat("Residual variance:", format(object$"resVar"), endText) 
+        cat("Residual standard error:", format(sqrt(object$"resVar")), endText) 
     }
 
     if (!is.null(object$"varComp"))
@@ -35,7 +36,7 @@ function(x, ...)
         if (object$"varParm"$"type" == "varPower")
         {
             cat("\n")
-            cat("Heterogeneity adjustment: variance is a power of mean\n\n")    
+            cat("Heterogeneity adjustment through power-of-the-mean variance model\n\n")    
             if (dim(object$"varParm"$"estimates")[1] > 1)
             {
                 printCoefmat(object$"varParm"$"estimates"[2, , drop=FALSE])  
@@ -63,7 +64,7 @@ function(x, ...)
             boxcoxci <- c(format(object$"boxcox"[2], digits=3), format(object$"boxcox"[3], digits=3))
 
             cat("\n")
-            cat("Heterogeneity adjustment: Box-Cox transformation\n\n")
+            cat("Non-normality/heterogeneity adjustment through optimal Box-Cox transformation\n\n")
 
             if (!is.na(boxcoxci[1]))
             {        

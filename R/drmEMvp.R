@@ -7,11 +7,11 @@
     {
         lenc <- length(cVec)
         c1 <- cVec[-c(lenc-1,lenc)]
-        c2 <- cVec[lenc-1]  # standard error
+        c2 <- cVec[lenc-1]  # residual standard error
         c3 <- cVec[lenc]
                 
         mc <- multCurves(dose, c1)
-        return( 2*(lenData)*log(c2) + sum( c3*log(mc) + ((resp-mc)/(c2*(mc^(c3/2))))^2) )
+        return( 2*(lenData)*log(c2) + sum( c3*log(mc) + ((resp-mc)/(c2*(mc^(c3/2))))^2 ) )
     }
 
     
@@ -26,8 +26,11 @@
 
         linModel <- lm(yp~xp)
         coefLM <- coef(linModel)
+        retVal <- c(exp(coefLM[1]/2), coefLM[2])
+#        if (retVal[1] < 0.001) {retVal[1] <- 0.001}  
+#        # convergence fails if sigma becomes to small
 
-        return(c(exp(coefLM[1]), coefLM[2]))
+        return(retVal)
     }
 
 

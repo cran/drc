@@ -48,7 +48,9 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
 
     ## Constructing variance-covariance matrix
     sumObj <- summary(object, od = od)
-    varMat <- object$"transformation" %*% sumObj$"varMat" %*% t(object$"transformation") 
+    
+    varMat <- sumObj$"varMat"    
+#    varMat <- object$"transformation" %*% sumObj$"varMat" %*% t(object$"transformation") 
     ncPM2 <- ncol(parmMat)
     nrPM2 <- nrow(parmMat)
     indexMat <- matrix(1:(nrPM2*ncPM2), nrPM2, ncPM2, byrow = TRUE)   
@@ -77,6 +79,7 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
         {
             parmInd <- indexMat[, i]
             varCov <- varMat[parmInd, parmInd]
+#            print(varCov)
             parmChosen <- t(parmMat[, i, drop = FALSE])
 
 #            print(parmChosen)

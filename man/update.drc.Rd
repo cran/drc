@@ -29,14 +29,13 @@
 \examples{
 
 ## Fitting a four-parameter Weibull model
-model1 <- multdrc(ryegrass, fct = W1.4())
+model1 <- drm(ryegrass, fct = W1.4())
 
 ## Updating 'model1' by fitting a three-parameter Weibull model instead
 model2 <- update(model1, fct = W1.3())
 anova(model2, model1)
 
 
-rm(model1, model2)
 }
 \keyword{models}
 \keyword{nonlinear}

@@ -130,7 +130,9 @@ Further information is available in the following vignette:
   Ritz, C. and Streibig, J. C. (2005) Bioassay Analysis using R. \emph{J. Statist. Software}, \bold{12}, Issue 5.
 }
 
-\keyword{ package }
+\keyword{package}
+\keyword{models}
+\keyword{nonlinear}
 %~~ Optionally other keywords from doc/KEYWORDS, one per line
 
 \seealso{

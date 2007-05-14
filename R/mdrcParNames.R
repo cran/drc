@@ -21,7 +21,7 @@
         pos <- regexpr("factor(collapse[, i])", parmVec[i], fixed=TRUE)
         if (pos>0) 
         {
-            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos+21), sep="")
+            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos+20), sep="")
         }
             
         pos <- regexpr("factor(assayNo)", parmVec[i], fixed=TRUE)

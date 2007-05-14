@@ -58,9 +58,20 @@ function(fixed = c(NA, NA, NA), names = c("span", "K", "plateau"))
     ## Defining names
     pnames <- names[notFixed]
 
+    ## Defining derivatives
+    deriv1 <- function(x, parm)
+    {
+        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+        parmMat[, notFixed] <- parm
+
+        helper1 <- exp(-parmMat[, 2]*x)
+        cbind(helper1, -parmMat[, 1]*helper1*x, 1)
+    }
+    
+    deriv2 <- NULL
 
     ## Returning the function with self starter and names
-    returnList <- list(fct = fct, ssfct = ssfct, names = pnames) 
+    returnList <- list(fct = fct, ssfct = ssfct, names = pnames, deriv1 = deriv1, deriv2 = deriv2) 
     class(returnList) <- "Exponential decay"
     invisible(returnList)
 }

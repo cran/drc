@@ -1,6 +1,7 @@
 \name{cedergreen}
 
 \alias{cedergreen}
+\alias{CRS.6}
 \alias{ucedergreen}
 
 \title{The Cedergreen-Ritz-Streibig model}
@@ -8,6 +9,8 @@
 \description{
   'cedergreen' provides a very general way of specifying then Cedergreen-Ritz-Streibig 
   modified log-logistic model for describing hormesis, under various constraints on the parameters.
+
+  \code{\link{CRS.6}} is the extension of \code{link{cedergreen}} with freely varying alpha parameter.
 
   For u-shaped hormesis data 'ucedergreen' provides a very general way of specifying the 
   Cedergreen-Ritz-Streibig modified log-logistic model, under various constraints on the parameters.
@@ -17,6 +20,11 @@
   cedergreen(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
   upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"), alpha, scaleDose = TRUE)
+  
+  CRS.6(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf, -Inf), 
+  upperc=c(Inf, Inf, Inf, Inf, Inf, Inf), 
+  fixed=c(NA, NA, NA, NA, NA, NA), 
+  names=c("b","c","d","e","f","g"))
   
   ucedergreen(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
   upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
@@ -41,13 +49,14 @@ The model is given by the expression
   
   \deqn{ f(x) = c + \frac{d-c+f exp(-1/(x^{\alpha}))}{1+exp(b(log(x)-log(e)))}}
   
-which is a five-parameter model (alpha is fixed).
+which is a five-parameter model (alpha is fixed or freely varying). Not all features (eg EC/ED calculation) 
+are available for the model with freely varying alpha.
   
 It is a modification of the four-parameter logistic curve to take hormesis into account.
   
 The u-shaped model is given by the expression
   
-  \deqn{ f(x) = c + d - \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}}
+  \deqn{ f(x) = cd - \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}}
   
 }
 
@@ -58,7 +67,7 @@ The u-shaped model is given by the expression
 
 \references{
   Cedergreen, N. and Ritz, C. and Streibig, J. C. (2005) Improved empirical models describing hormesis, 
-  \emph{Environmental Toxicology and Chemistry} {\bold 24}, 3166--3172.
+  \emph{Environmental Toxicology and Chemistry} \bold{24}, 3166--3172.
 }
 
 \author{Christian Ritz}
@@ -82,8 +91,11 @@ control=mdControl(constr=TRUE))
 summary(model1)
 ED(model1, c(10, 50, 90))
 
-rm(model1)
 
+## Estimating alpha
+m2<-drm(weight~conc,data=hormesis,fct=CRS.6())
+summary(m2)
+plot(m2)  # oops: not increasing until hormesis peak
 
 }
 

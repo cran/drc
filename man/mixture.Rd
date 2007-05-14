@@ -47,8 +47,8 @@ and 10 for 10-logarithm).}
 }
 
 \details{
-  The function is a wrapper to \code{\link{multdrc}}, implementing the models described in S{\o}rensen et al. (2006). See the paper for a
-  discussion of the merits of the different models.
+  The function is a wrapper to \code{\link{multdrc}}, implementing the models described in S{\o}rensen et al. (2007). 
+  See the paper for a discussion of the merits of the different models.
 }
 
 \value{
@@ -58,7 +58,7 @@ and 10 for 10-logarithm).}
 \references{
   S{\o}rensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
   An isobole-based statistical model and test for synergism/antagonism in binary mixture toxicity experiments, 
-  \emph{Statistical Ecology and Environmental Statistics}, \bold{13}. ?--??.
+  \emph{Statistical Ecology and Environmental Statistics}, \bold{14}. ???--???.
 }
 
 \author{Christian Ritz}

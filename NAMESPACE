@@ -7,11 +7,13 @@ boltzmann, B.3, B.4, B.5, b3, b4, b5,
 
 braincousens, BC.5, BC.4, bcl3, bcl4, 
 
-cedergreen, CRS.4a, CRS.4b, CRS.4c, CRS.5a, CRS.5b, CRS.5c, ml3a, ml3b, ml3c, ml4a, ml4b, ml4c, 
+cedergreen, CRS.4a, CRS.4b, CRS.4c, CRS.5a, CRS.5b, CRS.5c, CRS.6, ml3a, ml3b, ml3c, ml4a, ml4b, ml4c, 
 
 ucedergreen, UCRS.4a, UCRS.4b, UCRS.4c, UCRS.5a, UCRS.5b, UCRS.5c, uml3a, uml3b, uml3c, uml4a, uml4b, uml4c, 
 
 expDecay, 
+
+gompertzd,
 
 llogistic, LL.2, LL.3, LL.3u, LL.4, LL.5, l2, l3, l3u, l4, l5,
 

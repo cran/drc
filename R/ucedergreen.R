@@ -60,6 +60,25 @@ scaleDose = TRUE)
 
 
     ## Defining derivatives
+    
+    ## Constructing a helper function
+    xlogx <- function(x, p)
+    {
+        lv <- (x < 1e-12)
+        nlv <- !lv
+        
+        rv <- rep(0, length(x))
+        
+        xlv <- x[lv] 
+        rv[lv] <- log(xlv^(xlv^p[lv]))
+        
+        xnlv <- x[nlv]
+        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
+    
+        rv
+    }
+    
+    ## Specifying the derivatives    
     deriv1 <- function(dose, parm)
     {
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
@@ -104,8 +123,9 @@ scaleDose = TRUE)
     maxfct <- function(parm, upper)
     {
        retVal <- cedergreen(alpha = alpha)$maxfct(parm, upper)
-       retVal[2] <- (parm[2] + parm[3]) - (retVal[2] - parm[2])
-       
+#       retVal[2] <- (parm[2] + parm[3]) - (retVal[2] - parm[2])
+       retVal[2] <- (parm[2] + parm[3]) - retVal[2]
+              
        return(retVal)
     }
 

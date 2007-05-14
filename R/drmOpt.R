@@ -1,6 +1,6 @@
 "drmOpt" <- 
 function(opfct, opdfct1, startVec, optMethod, constrained, warnVal, 
-upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec) 
+upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, trace) 
 {
     ## Controlling the warnings
     options(warn = warnVal)
@@ -14,6 +14,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec)
     psVec <- abs(startVec)
     psVec[psVec < 1e-4] <- 1
 
+    ## Derivatives are used
     {if (!is.null(opdfct1))
     {
         if (constrained)
@@ -40,7 +41,8 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec)
         }
         if (!hes) {nlsFit$hessian <- opdfct2(parmVal)}
 
-    } else {  # in case no derivatives are used
+    ## Derivatives are not used
+    } else {  
 
         if (constrained)
         {
@@ -50,8 +52,9 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec)
         } else {
 #            psVec <- abs(startVec)
 #            psVec[psVec<1e-4] <- 1
+
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = optMethod, 
-            control=list(maxit = maxIt, reltol = relTol, parscale = psVec)))  # , silent = TRUE)
+            control=list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = trace)) , silent = TRUE)
 #            nlsObj0 <- try(optim(startVec, opfct, method=optMethod, 
 #            control=list(maxit=maxIt, reltol=relTol, parscale=psVec)), silent=TRUE)
 #            nlsObj <- try(optim(nlsObj0$par, opfct, hessian=TRUE, method=optMethod, 

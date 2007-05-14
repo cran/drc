@@ -2,7 +2,7 @@
 function(formula, curve, pmodels, weights, data = NULL, subset, fct, 
 adjust = c("none", "bc1", "bc2", "vp"), bc = NULL, bcAdd = 0, 
 type = c("continuous", "binomial", "Poisson", "survival"),
-start, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
+start, start2, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
 fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 {
     ## Matching 'adjust' argument
@@ -31,6 +31,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     rmNA <- control$"rmNA"
     errorMessage <- control$"errorm"
     noMessage <- control$"noMessage"
+#    trace <- control$"trace"
     
     
     ## Setting warnings policy
@@ -129,7 +130,6 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     mt <- attr(mf, "terms")
         
     dose <- model.matrix(mt, mf)[,-c(1)]  # with no intercept
-#    print(dose)
     resp <- model.response(mf, "numeric")
     origResp <- resp  # in case of transformation of the response    
     lenData <- length(resp)
@@ -139,7 +139,6 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     varNames <- names(mf)
     varNames <- varNames[c(2:dimData,1)]
 
-
     ## Retrieving weights
     weights <- model.weights(mf)
     if (is.null(weights))
@@ -147,15 +146,12 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         weights <- rep(1, lenData)
     }
 
-
     ## Extracting variable for heterogeneous variances
-    vvar <- model.extract(mf, "hetvar")   
-    
+    vvar <- model.extract(mf, "hetvar")    
     
     ## Finding indices for missing values
     missingIndices <- attr(mf, "na.action")
     if (is.null(missingIndices)) {removeMI <- function(x){x}} else {removeMI <- function(x){x[-missingIndices,]}}
-
 
     ## Handling situation where no 'curve' or 'pmodels' argument is given
     assayNo <- model.extract(mf, "curve")   
@@ -250,10 +246,8 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     pmodels <- as.data.frame(pmodelsMat)  # pmodelsMat not used any more
     }
     
-
     ## Re-setting na.action
     options(na.action = "na.omit")  # the default
-
 
     ## Transforming dose value if they are provided as log dose
     if ( !is.null(logDose) && is.numeric(logDose) ) 
@@ -262,10 +256,8 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
        dose <- logDose^dose
     }
 
-
     ## Re-enumerating the levels in 'assayNo' and 'pmodels'
     assayNoOld <- assayNo
-
 
     ## Defining helper function     
     colConvert <- function(vec)
@@ -284,7 +276,6 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     assayNames <- as.character(unique(assayNoOld))
     numAss <- length(assayNames)
     for (i in 1:numNames) {pmodels[, i] <- colConvert(pmodels[, i])}
-
 
     ## Handling one-dimensional x     
     if (xDim == 1)
@@ -651,6 +642,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
             fctEval
         }
     }
+#    print(multCurves(dose, startVec))
 
 
     ## Defining objective function
@@ -684,7 +676,8 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
             bcfct(multCurves(dose, parm), lambda, bcTol)
         } 
     } else {multCurves2 <- multCurves}
-    
+#    print(startVec)
+#    print(multCurves2(dose, startVec))
     
     ## Defining first derivative (if available)
     if (!is.null(dfct1))
@@ -708,11 +701,22 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         estMethod <- drmEMls(dose, resp, multCurves2, startVec, robustFct, weights, rmNA, dmf = dmatfct, 
         scaleX = scaleXConstant, scaleY = scaleYConstant)
         
-        if (varPower)
+        if (adjust == "vp")  #(varPower)
         {        
             estMethod <- drmEMvp(dose, resp, multCurves2)  # mdrcVp(dose, resp, multCurves2)
             lenStartVec <- length(startVec)
-            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
+            
+            start2ss <- estMethod$"ssfct"(cbind(dose, resp))
+            if (missing(start2))
+            {
+                startVec <- c(startVec, start2ss)            
+            } else {
+                if (length(start2) == 2)  # canonical 2?
+                {
+                    startVec <- c(startVec, start2)            
+                }
+            }
+#            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
             parmVec <- c(parmVec, "Sigma", "Power")
 
         }
@@ -720,7 +724,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         if (!is.null(vvar))
         {
             estMethod <- mdrcHetVar(dose, resp, multCurves2, vvar)
-            lenStartVec <- length(startVec)
+            lenStartVec <- length(startVec)            
             startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
             parmVec <- c(parmVec, as.character(unique(vvar)))        
         }
@@ -738,13 +742,15 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 
 
     ## Re-fitting the ANOVA model to incorporate Box-Cox transformation (if necessary)
-    if (!is.na(lambda))
-    {
-        dset <- data.frame(dose, doseFactor, resp, assayNo, bcc)  # dataset with new resp values        
-        anovaModel0 <- (testList$"anovaTest")(anovaFormula, dset)            
-#        anovaModel <- anovaModel0$"anovaFit"
+    if (type == "continuous")
+    {    
+        if (!is.na(lambda))
+        {
+            dset <- data.frame(dose, doseFactor, resp, assayNo, bcc)  # dataset with new resp values        
+            anovaModel0 <- (testList$"anovaTest")(anovaFormula, dset)            
+#            anovaModel <- anovaModel0$"anovaFit"
+        }
     }
-
 
     ## Defining lower and upper limits of parameters
     if (constrained)
@@ -803,11 +809,12 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         opdfct1 <- NULL
     }  
 
-
     ## Manipulating before optimisation
 #    print(startVec)  # 1
         
     ## Scaling x values
+if (FALSE)
+{
     sxInd <- fct$"sxInd"
     sxYN <- !is.null(sxInd) && ((max(dose)<1e-2) || (min(dose)>1e2) || (diff(range(dose))>1e2) )
     if ( sxYN && (is.null(fctList)) )
@@ -826,39 +833,56 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     
         scaleXConstant <- median(dose)
         sxFct <- scaleX(scaleXConstant)  # , scaleX(dose, maxDose)        
-#        dose <- sxFct(dose)
+        if (adjust == "vp")
+        {
+            dose <- sxFct(dose)    
+            opfct <- drmEMvp(dose, resp, multCurves2)$"opfct"
+        }
+        
         startVec[parmIndX] <- sxFct(startVec[parmIndX])
     }
 #    print(startVec)  # 2
+}
 
-    ## Scaling y values
-    syInd <- fct$"syInd"
-    lensy <- length(syInd)
-    parmIndY <- list()
-    syYN <- !is.null(syInd) && ((max(resp)<1e-2) || (min(resp)>1e2) || (diff(range(resp))>1e2)) 
-    if ( syYN && (is.null(fctList)) )
-    {
-#        if (!is.null(fctList))
-#        {
-#            parmIndY <- rep(0, numAss)
-#            for (i in 1:numAss)
+#    ## Scaling y values
+#    ##  based on the original response value
+#    ##  not the transformed values
+#    syInd <- fct$"syInd"
+#    lensy <- length(syInd)
+#    parmIndY <- list()
+#    
+#    lyLim <- 1e-2
+#    uyLim <- 1e2
+#    syYN <- !is.null(syInd) && ((max(origResp)<lyLim) || (min(origResp)>uyLim) || (diff(range(origResp))>uyLim)) 
+#    if ( syYN && (is.null(fctList)) )
+#    {
+##        if (!is.null(fctList))
+##        {
+##            parmIndY <- rep(0, numAss)
+##            for (i in 1:numAss)
+##            {
+##                parmIndY[[i]] <- fctList[[i]]$"syInd"
+##            }
+##            parmIndY <- cumsum(as.vector(unlist(parmIndY)))
+##        } else {
+#            for (i in 1:lensy)
 #            {
-#                parmIndY[[i]] <- fctList[[i]]$"syInd"
+#                parmIndY[[i]] <- parmPos[syInd[i]] + c(1:ncclVec[syInd[i]])
 #            }
-#            parmIndY <- cumsum(as.vector(unlist(parmIndY)))
+#            tempPIY <- as.vector(unlist(parmIndY))
+#            parmIndY <- tempPIY
+##        }
+#        if (adjust == "bc1")
+#        { 
+#            scaleYConstant <- bcfct(median(origResp), lambda, bcTol)  # median(origResp)
 #        } else {
-            for (i in 1:lensy)
-            {
-                parmIndY[[i]] <- parmPos[syInd[i]] + c(1:ncclVec[syInd[i]])
-            }
-            tempPIY <- as.vector(unlist(parmIndY))
-            parmIndY <- tempPIY
-#        }
-        scaleYConstant <- median(resp) 
-        syFct <- scaleY(scaleYConstant)
-        startVec[parmIndY] <- syFct(startVec[parmIndY])
-    }
-#    print(startVec)  # 3
+#            scaleYConstant <- median(origResp)  
+#        }        
+#        syFct <- scaleY(median(origResp))  # scaleY(scaleYConstant)
+#        startVec[parmIndY] <- syFct(startVec[parmIndY])
+#    }
+#    # scaling of y values through 'opfct' definition
+##    print(startVec)  # 3
 
 
     ## Testing nonlinear function
@@ -867,40 +891,59 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 #    print(opfct(startVec))
 #    print(dose)
 #    print(resp)
+   
     
+    ## Scaling objective function
+    if (type == "continuous")
+    {
+        ofVal <- opfct(startVec)
+        if ( !is.nan(ofVal) && ( (ofVal < 1e-2) || (ofVal >1e2) ) )
+        {
+            opfct2 <- function(c){opfct(c)/opfct(startVec)}
+        } else {
+            opfct2 <- opfct
+        }
+    } else {
+        opfct2 <- opfct
+    }
 
     ## Optimising
-    nlsFit <- drmOpt(opfct, opdfct1, startVec, optMethod, constrained, warnVal, 
-    upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec) 
+    nlsFit <- drmOpt(opfct2, opdfct1, startVec, optMethod, constrained, warnVal, 
+    upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, trace = control$"trace") 
     
-    nlsFit$ovalue <- nlsFit$value    
-
+    nlsFit$ovalue <- nlsFit$value  # used in the var-cov matrix
+    nlsFit$value <- opfct(nlsFit$par)  # used in the residual variance
 
     ## Manipulating after optimisation
     
-    ## Adjusting for scaling of y values
-    if ( syYN && (is.null(fctList)) )
-    {
-        nlsFit$value <- syFct(syFct(nlsFit$value, down = FALSE), down = FALSE)
-        startVec[parmIndY] <- syFct(startVec[parmIndY], down = FALSE)
-        nlsFit$par[parmIndY] <- syFct(nlsFit$par[parmIndY], down = FALSE)
-
-        scaleFct1 <- function(hessian) 
-                     {
-                         newHessian <- hessian
-                         newHessian[, parmIndY] <- syFct(newHessian[, parmIndY], down = FALSE)
-                         newHessian[parmIndY, ] <- syFct(newHessian[parmIndY, ], down = FALSE)
-                         return(newHessian)
-                     }                
-    } else {
-        scaleFct1 <- function(x) {x}    
-    }
+#    ## Adjusting for scaling of y values
+#    if ( syYN && (is.null(fctList)) )
+#    {
+#        nlsFit$value <- syFct(syFct(nlsFit$value, down = FALSE), down = FALSE)
+#        startVec[parmIndY] <- syFct(startVec[parmIndY], down = FALSE)
+#        nlsFit$par[parmIndY] <- syFct(nlsFit$par[parmIndY], down = FALSE)
+#
+#        scaleFct1 <- function(hessian) 
+#                     {
+#                         newHessian <- hessian
+#                         newHessian[, parmIndY] <- syFct(newHessian[, parmIndY], down = FALSE)
+#                         newHessian[parmIndY, ] <- syFct(newHessian[parmIndY, ], down = FALSE)
+#                         return(newHessian)
+#                     }                
+#    } else {
+#        scaleFct1 <- function(x) {x}    
+#    }
 
     
     ## Adjusting for scaling of x values
+if (FALSE)
+{    
     if ( sxYN && (is.null(fctList)) )  # (!is.null(sxInd))
     {
-#        dose <- sxFct(dose, down = FALSE)
+        if (adjust == "vp")
+        {
+            dose <- sxFct(dose, down = FALSE)
+        }
         startVec[parmIndX] <- sxFct(startVec[parmIndX], down = FALSE)
         nlsFit$par[parmIndX] <- sxFct(nlsFit$par[parmIndX], down = FALSE)
 
@@ -917,7 +960,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
             scaleFct1(hessian)
         }
     }
-
+}
 
     ## Handling variance parameters
     varParm <- NULL
@@ -1176,7 +1219,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     ## Returning the fit
     returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, robust, bcVec, estMethod, lenData-length(startVec), 
-    anovaModel0, gofTest, sumList, scaleFct2, pmFct, pfFct, type, mat1, logDose)
+    anovaModel0, gofTest, sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose)
     names(returnList) <- c("varParm", "fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
     "parmMat", "fct", "robust", "boxcox", "estMethod", "df.residual", "anova", "gofTest", 
     "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose")

@@ -13,7 +13,7 @@
   llogistic(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf),
   fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
-  ss = c("1", "2"))
+  ss = c("1", "2", "3"), ssfct = NULL)
 }
 
 \arguments{
@@ -25,6 +25,7 @@
   The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e, f 
     (see under 'Details').}
   \item{ss}{character string indicating the self starter function to use.}
+  \item{ssfct}{a self starter function to be used.}  
 }
 
 \details{
@@ -32,7 +33,8 @@
   
   \deqn{ f(x) = c + \frac{d-c}{(1+\exp(b(\log(x)-\log(e))))^f}}
   
-  If the parameter \eqn{f} is different from 1 then the function is asymmetric.
+  If the parameter \eqn{f} differs from 1 then the function is asymmetric; otherwise it
+  is symmetric (on log scale).
 }
 
 \value{

@@ -127,20 +127,16 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
 
 
     ## Cutting away y values (determined by the fitted model) outside the limits
-#    print(plotMat)
-    naPlot <- FALSE
-    for (i in 1:numCol)
-    {
-        logVec <- !(plotMat[, i] >= yLimits[1]  & plotMat[, i] <= yLimits[2])
-#        print(logVec)
-        if ( any(!is.na(logVec)) && any(logVec) )
-        {
-            plotMat[logVec, i] <- NA
-            naPlot <- TRUE
-        }
-    }
-#    print(plotMat)
-
+    naPlot <- FALSE  # remove naPlot further down
+#    for (i in 1:numCol)
+#    {
+#        logVec <- !(plotMat[, i] >= yLimits[1]  & plotMat[, i] <= yLimits[2])
+#        if ( any(!is.na(logVec)) && any(logVec) )
+#        {
+#            plotMat[logVec, i] <- NA
+#            naPlot <- TRUE
+#        }
+#    }
 
     ## Determining presence of legend
     if (missing(legend))

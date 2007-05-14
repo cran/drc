@@ -130,7 +130,7 @@ function(object, ..., details = TRUE, test = NULL)
         
             dfModel <- c(attr(lv1, "df"), attr(lv2, "df"))
             loglik <- c(lv1, lv2)
-            dfDiff <- c(NA, dfModel[1] - dfModel[2])
+            dfDiff <- c(NA, diff(dfModel))  # dfModel[1] - dfModel[2])
         
             testStat <- -2*(lv2 - lv1)
             pVal <- c(NA, pchisq(testStat, dfDiff[2], lower.tail = FALSE))

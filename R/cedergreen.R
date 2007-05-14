@@ -100,6 +100,25 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining derivatives
+    
+    ## Constructing a helper function
+    xlogx <- function(x, p)
+    {
+        lv <- (x < 1e-12)
+        nlv <- !lv
+        
+        rv <- rep(0, length(x))
+        
+        xlv <- x[lv] 
+        rv[lv] <- log(xlv^(xlv^p[lv]))
+        
+        xnlv <- x[nlv]
+        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
+    
+        rv
+    }
+    
+    ## Specifying the derivatives    
     deriv1 <- function(dose, parm)
     {
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)

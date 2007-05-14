@@ -1,10 +1,11 @@
 "SI" <-
 function(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
 ci = c("none", "delta", "fieller", "fls"), level = ifelse(!(ci == "none"), 0.95, NULL), 
-type = c("relative", "absolute"), logBase = NULL, ...)
+reference = c("upper", "control"), type = c("relative", "absolute"), logBase = NULL, ...)
 {
      ## Matching the argument 'method'
      ci <- match.arg(ci)
+     reference <- match.arg(reference)
      type <- match.arg(type)     
      
 #     if( (ci == "fieller") && !(percVec == c(50, 50)) )
@@ -46,7 +47,10 @@ type = c("relative", "absolute"), logBase = NULL, ...)
 
 
     ## Checking contain of percVec vector ... should be numbers between 0 and 100
-    if ( (type == "relative") && any(percVec<=0 | percVec>=100) ) {stop("Percentages outside the interval [0, 100] not allowed")}
+    if ( (type == "relative") && any(percVec<=0 | percVec>=100) ) 
+    {
+        stop("Percentages outside the interval [0, 100] not allowed")
+    }
 
     if (missing(compMatch)) {matchNames <- FALSE} else {matchNames <- TRUE}
 
@@ -220,7 +224,7 @@ type = c("relative", "absolute"), logBase = NULL, ...)
 #                    SIeval <- SIlist(parmChosen1, parmChosen2, pVec, ...)
                     SIeval <- 
                     sifct(parmChosen1, parmChosen2, pVec, 
-                    splInd[[1]][, 1], splInd[[2]][, 1], splInd[[3]][, 1], splInd[[3]][, 2], type, ...)
+                    splInd[[1]][, 1], splInd[[2]][, 1], splInd[[3]][, 1], splInd[[3]][, 2], reference, type, ...)
 #                    print(SIeval)
                     indInOrder <- c(splInd[[1]][, 2], splInd[[2]][, 2], splInd[[3]][, 3])
                                        
@@ -402,13 +406,13 @@ createsifct <- function(edfct, logBase = NULL, fls = FALSE)
         {
             if (is.null(logBase))
             {
-                "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, type, ...)
+                "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, reference, type, ...)
                 {
-                    ED1 <- edfct(parm1, pair[1], type = type, ...)
+                    ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                     ED1v <- ED1[[1]]
                     ED1d <- ED1[[2]]
         
-                    ED2 <- edfct(parm2, pair[2], type = type, ...)
+                    ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
                     ED2v <- ED2[[1]]
                     ED2d <- ED2[[2]]
         
@@ -424,13 +428,13 @@ createsifct <- function(edfct, logBase = NULL, fls = FALSE)
                 }
             } else {
         
-                "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, type, ...)
+                "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, reference, type, ...)
                 {
-                    ED1 <- edfct(parm1, pair[1], type = type, ...)
+                    ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                     ED1v <- ED1[[1]]
                     ED1d <- ED1[[2]]
         
-                    ED2 <- edfct(parm2, pair[2], type = type, ...)
+                    ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
                     ED2v <- ED2[[1]]
                     ED2d <- ED2[[2]]
         
@@ -447,13 +451,13 @@ createsifct <- function(edfct, logBase = NULL, fls = FALSE)
             }
         } else {
             
-            "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, type, ...)
+            "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, reference, type, ...)
             {
-                ED1 <- edfct(parm1, pair[1], type = type, ...)
+                ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                 ED1v <- ED1[[1]]
                 ED1d <- ED1[[2]]
         
-                ED2 <- edfct(parm2, pair[2], type = type, ...)
+                ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
                 ED2v <- ED2[[1]]
                 ED2d <- ED2[[2]]
         

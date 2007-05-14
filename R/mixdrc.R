@@ -183,12 +183,12 @@ function(object, random, data, startVal)
     {
         coefNames <- names(coef(object))
         
-        print(NLMEfor)
-        print(fixedList)
-        print(randomList)
-        print((dataSet))
+#        print(NLMEfor)
+#        print(fixedList)
+#        print(randomList)
+#        print((dataSet))
         
-        return(list(NLMEfor, fixedList, randomList, dataSet)) 
+#        return(list(NLMEfor, fixedList, randomList, dataSet)) 
         
         for (i in 1:30)
         {
@@ -208,6 +208,14 @@ function(object, random, data, startVal)
 #                             start = as.vector(startVal), data = PestSci)
 #            stop()
 #            
+
+#print(as.vector(startVal))
+
+#            modelNLME <- nlme(SLOPE ~ c + (d-c)/(1+exp(b*(log(DOSE)-log(e)))),
+#            fixed = list(b~factor(HERBICIDE)-1, c~1, d~1, e~factor(HERBICIDE)-1),
+#            random = d~1|CURVE, start = as.vector(startVal), data = PestSci)
+#
+#stop()
 
             modelNLME <- try(nlme(NLMEfor,
                              fixed = fixedList,

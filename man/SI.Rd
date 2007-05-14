@@ -12,7 +12,8 @@
 \usage{
   SI(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
   ci = c("none", "delta", "fieller", "fls"), 
-  level = ifelse(!(ci=="none"), 0.95, NULL), 
+  level = ifelse(!(ci=="none"), 0.95, NULL),
+  reference = c("upper", "control"),  
   type = c("relative", "absolute"), logBase = NULL, ...)
 }
 
@@ -28,6 +29,7 @@
   Use "fls" for from logarithm scale based confidence intervals (in case the parameter in the model is 
   log(ED50) as for the \code{\link{boltzmann}}) models.}
   \item{level}{numeric. The level for the confidence intervals. Default is 0.95.}
+  \item{reference}{character string. Is the upper limit or the control level the reference?}  
   \item{type}{character string specifying whether absolute or relative response levels are supplied.}
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}
   \item{...}{additional arguments to the function doing the calculations. 

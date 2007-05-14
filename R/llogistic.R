@@ -1,6 +1,6 @@
 "llogistic" <- function(
 lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf), 
-fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "2"))
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "2", "3"), ssfct = NULL)
 {
     ## Matching 'adjust' argument
     ss <- match.arg(ss)
@@ -33,6 +33,48 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
 
 
     ## Defining the self starter function
+    
+    ## Defining self starter function based on supplied function
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {
+        
+    ## Version 1 (default)    
+    if (ss == "1")
+    {
+        ssfct <- function(dataFra)
+        {
+            x <- dataFra[, 1]
+            y <- dataFra[, 2]
+
+            startVal <- rep(0, numParm)
+
+            startVal[3] <- max(y) + 0.001  # the d parameter
+            startVal[2] <- min(y) - 0.001  # the c parameter
+            startVal[5] <- 1  # better choice may be possible!        
+        
+            if (length(unique(x))==1) {return((c(NA, NA, startVal[3], NA, NA))[notFixed])}  
+            # only estimate of upper limit if a single unique dose value 
+
+            indexT2 <- (x > 0)
+#            if (!any(indexT2)) {return((rep(NA, numParm))[notFixed])}  # for negative dose value
+            x2 <- x[indexT2]
+            y2 <- y[indexT2]
+
+            startVal[c(1,4)] <- find.be2(x2, y2, startVal[2] - 0.001, startVal[3])
+            # 0.001 to avoid 0 in the denominator
+
+#            logitTrans <- log((startVal[3]-resp3)/(resp3-startVal[2]+0.001))  
+#            logitFit <- lm(logitTrans ~ log(dose3))
+#            startVal[4] <- exp((-coef(logitFit)[1]/coef(logitFit)[2]))  # the e parameter
+#            startVal[1] <- coef(logitFit)[2]  # the b parameter
+        
+            return(startVal[notFixed])
+        }
+    }
+
+    ## Version 2
     if (ss == "2")
     {
         ssfct <- function(dframe)
@@ -74,61 +116,87 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
             if ( length(unique(x)) == 1 ) {return((c(NA, NA, dVal, NA, NA))[notFixed])}  
             # only estimate of upper limit if a single unique dose value 
 
-
             # Cutting away response values close to d
             indexT1a <- x > 0
-            indexT1b <- !(y > 0.95*max(y))
-            indexT2 <- c(max((1:length(y))[!(indexT1a & indexT1b)]):length(y))
-#            print(indexT2)
-#            stop()
-        
-            x2 <- x[indexT2]
-            y2 <- y[indexT2]
-#            logitTrans <- log((startVal[3] - y)/(y - startVal[2]))
-            logitTrans <- log((dVal - y2)/(y2 - cVal))
-            logitFit <- lm(logitTrans ~ log(x2))
-#            startVal[4] <- exp((-coef(logitFit)[1]/coef(logitFit)[2]))  # the e parameter
-#            startVal[1] <- coef(logitFit)[2]  # the b parameter
-        
-            coefVec <- coef(logitFit)
-            bVal <- coefVec[2]        
-            eVal <- exp(-coefVec[1]/bVal)        
-        
-        
-            return(c(bVal, cVal, dVal, eVal, fVal)[notFixed])
+#            indexT1b <- !(y > 0.95*max(y))
+#            indexT2 <- c(max((1:length(y))[!(indexT1a | indexT1b)]):length(y))
+#            x2 <- x[indexT2]
+#            y2 <- y[indexT2]
+            x2 <- x[indexT1a]
+            y2 <- y[indexT1a]
+            
+            beVec <- find.be2(x2, y2, cVal, dVal)
+            bVal <- beVec[1]
+            eVal <- beVec[2]
+            
+#            logitTrans <- log((dVal - y2)/(y2 - cVal))
+#            logitFit <- lm(logitTrans ~ log(x2))       
+#            coefVec <- coef(logitFit)
+#            bVal <- coefVec[2]        
+#            eVal <- exp(-coefVec[1]/bVal)        
+            
+            return(as.vector(c(bVal, cVal, dVal, eVal, fVal)[notFixed]))
         }
     }
-    
-    if (ss == "1")
+
+    ## Version 3
+    if (ss == "3")
     {
-        ssfct <- function(dataFra)
+        ssfct <- function(dframe)
         {
-            dose2 <- dataFra[,1]
-            resp3 <- dataFra[,2]
+            x <- dframe[, 1]
+            y <- dframe[, 2]
 
-            startVal <- rep(0, numParm)
-
-            startVal[3] <- max(resp3) + 0.001  # the d parameter
-            startVal[2] <- min(resp3) - 0.001  # the c parameter
-            startVal[5] <- 1  # better choice may be possible!        
+            cVal <- ifelse(notFixed[2], 0.99 * min(y), fixed[2])
+            dVal <- ifelse(notFixed[3], 1.01 * max(y), fixed[3])
+            fVal <- 1  # need not be updated with value in 'fixed[5]'
         
-            if (length(unique(dose2))==1) {return((c(NA, NA, startVal[3], NA, NA))[notFixed])}  
+            if ( length(unique(x)) == 1 ) {return((c(NA, NA, dVal, NA, NA))[notFixed])}  
             # only estimate of upper limit if a single unique dose value 
-
-            indexT2 <- (dose2>0)
-            if (!any(indexT2)) {return((rep(NA, numParm))[notFixed])}  # for negative dose value
-            dose3 <- dose2[indexT2]
-            resp3 <- resp3[indexT2]
-
-            logitTrans <- log((startVal[3]-resp3)/(resp3-startVal[2]+0.001))  
-            # 0.001 to avoid 0 in the denominator
-
-            logitFit <- lm(logitTrans ~ log(dose3))
-            startVal[4] <- exp((-coef(logitFit)[1]/coef(logitFit)[2]))  # the e parameter
-            startVal[1] <- coef(logitFit)[2]  # the b parameter
-        
-            return(startVal[notFixed])
+           
+            beVec <- find.be1(x, y, cVal, dVal)
+            bVal <- beVec[1]
+            eVal <- beVec[2]
+            
+            return(as.vector(c(bVal, cVal, dVal, eVal, fVal)[notFixed]))
         }
+    }
+    }
+
+    ## Finding b and e based on stepwise increments
+    find.be1 <- function(x, y, c, d)
+    {
+        unix <- unique(x)
+        uniy <- tapply(y, x, mean)
+        lenx <- length(unix)
+        
+        j <- 2
+        for (i in 2:lenx)
+        {
+            crit1 <- (uniy[i] > (d + c)/2) && (uniy[i-1] < (d + c)/2)
+            crit2 <- (uniy[i] < (d + c)/2) && (uniy[i-1] > (d + c)/2)
+            if (crit1 || crit2) break
+            j <- j + 1
+        }
+        eVal <- (unix[j] + unix[j-1])/2
+        bVal <- -sign(uniy[j] - uniy[j-1])  # -(uniy[j] - uniy[j-1]) / (unix[j] - unix[j-1])
+        return(as.vector(c(bVal, eVal)))  
+    }
+    
+    ## Finding b and e based on linear regression
+    find.be2 <- function(x, y, c, d)
+    {
+        logitTrans <- log((d - y)/(y - c))  
+
+        lmFit <- lm(logitTrans ~ log(x))
+#        eVal <- exp((-coef(logitFit)[1]/coef(logitFit)[2]))
+#        bVal <- coef(logitFit)[2]
+
+        coefVec <- coef(lmFit)
+        bVal <- coefVec[2]        
+        eVal <- exp(-coefVec[1]/bVal)    
+
+        return(as.vector(c(bVal, eVal)))
     }
 
    
@@ -158,7 +226,7 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
         
     deriv1 <- function(dose, parm)
     {
-        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
 
         t1 <- parmMat[, 3] - parmMat[, 2]
@@ -183,7 +251,7 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
 #    }
 
 
-    ##Defining the first derivatives (in the parameters)
+    ##Defining the first derivative (in the dose)
     derivx <- function(x, parm)
     {
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
@@ -279,8 +347,10 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
 #        return(list(SIpair, SIder1, SIder2))
 #    }
     
-    
-    ## Identifying parameters that are on the same scale as x and y (not used)
+if (FALSE)
+{    
+    ## Identifying parameters that are on the same scale as x and y 
+    ##  not used in 'multdrc', but in 'drm'
     if (is.na(fixed[4]))
     {
         sxInd <- sum(is.na(fixed[1:4]))  # sxInd <- c(4)
@@ -290,19 +360,21 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
     if ( (is.na(fixed[2])) || (is.na(fixed[3])) )
     {
         syInd <- c(sum(is.na(fixed[1:2])), sum(is.na(fixed[1:3])))  # syInd <- c(2, 3)
-        if (syInd[1] == 0) {syInd <- syInd[2]}
         if (syInd[2] == 0) {syInd <- syInd[1]}
+        if (syInd[1] == 0) {syInd <- syInd[2]}
+        if (is.na(syInd)) {syInd <- NULL}
     } else {
         syInd <- NULL
     }
-    
+}    
     
     ## Returning the function with self starter and names
     returnList <- 
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx,
-    edfct = edfct, bfct = bfct, sxInd = sxInd, syInd = syInd,
+    edfct = edfct, bfct = bfct,
     scaleInd = scaleInd, confct=confct, anovaYes=anovaYes, lowerc=lowerLimits, upperc=upperLimits)
     # the last line is not needed in the future ('drm')
+    #     , sxInd = sxInd, syInd = syInd,
     class(returnList) <- "llogistic"
     invisible(returnList)
 }
