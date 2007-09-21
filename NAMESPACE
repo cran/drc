@@ -17,6 +17,8 @@ gompertzd,
 
 llogistic, LL.2, LL.3, LL.3u, LL.4, LL.5, l2, l3, l3u, l4, l5,
 
+llogistic2, LL2.2, LL2.3, LL2.3u, LL2.4, LL2.5,
+
 MM,
 
 richards, 
@@ -25,7 +27,7 @@ weibull1, W1.2, W1.3, W1.4, w2, w3, w4,
 
 weibull2, W2.2, W2.3, W2.4,
 
-colFct, compParm, diagnostics, drm, drmc, ED, isobole, MAX, mdControl, mixdrc, mixture, mselect, multdrc, plotraw, PR, searchdrc, SI)
+boxcox.drc, colFct, compParm, diagnostics, drm, drmc, ED, isobole, MAX, mdControl, mixdrc, mixture, mselect, multdrc, plotraw, PR, rdrm, searchdrc, SI)
 
 #importFrom(MASS, boxcox, ginv)
 

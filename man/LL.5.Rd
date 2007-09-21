@@ -3,16 +3,20 @@
 \alias{LL.5}
 \alias{l5}
 
+\alias{LL2.5}
+
 \title{The five-parameter log-logistic function}
 
 \description{
-  'LL.5' provides the five-parameter log-logistic function, self starter function and names of the parameters.
+  'LL.5' and 'LL2.5' provide the five-parameter log-logistic function, self starter function and names of the parameters.
 }
 
 \usage{
   LL.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
 
   l5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
+  
+  LL2.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)  
 }
 
 \arguments{
@@ -24,6 +28,9 @@
 \details{
   The five-parameter logistic function is given by the expression
   \deqn{ f(x) = c + \frac{d-c}{(1+\exp(b(\log(x)-\log(e))))^f}}
+  
+  or in another parameterisation
+  \deqn{ f(x) = c + \frac{d-c}{(1+\exp(b(\log(x)-e)))^f}}
   
   The function is asymmetric for \eqn{f} different from 1.
   

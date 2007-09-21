@@ -8,9 +8,10 @@
 }
 
 \usage{
-  ED(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls"), 
+  ED(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
   level = ifelse(!(ci=="none"), 0.95, NULL), logBase = NULL,
-  reference = c("upper", "control"), type = c("relative", "absolute"), ...)
+  reference = c("upper", "control"), type = c("relative", "absolute"), 
+  display = TRUE, ...)
 }
 
 \arguments{
@@ -26,6 +27,7 @@
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}
   \item{type}{character string. Whether the specified response levels are absolute or relative (default).}
+  \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{...}{additional arguments for the function doing the calculations.}
 }
 
@@ -77,6 +79,17 @@ ED(model2, -20, bound = FALSE)  # works
 
 #ED(model2, -30, bound = FALSE)  
 # does not work: ED[-30] does not exist 
+
+## Comparing delta method and back-transformed 
+##  confidence intervals for ED values
+
+m1 <- drm(ryegrass, fct=LL2.4())  # using LL2.4
+m2 <- drm(ryegrass, fct=LL.4())
+
+ED(m1, c(10,50,90), ci="fls")
+ED(m2, c(10,50,90), ci="delta")
+
+
 
 }
 

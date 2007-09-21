@@ -1219,10 +1219,10 @@ if (FALSE)
     ## Returning the fit
     returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, robust, bcVec, estMethod, lenData-length(startVec), 
-    anovaModel0, gofTest, sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose)
+    anovaModel0, gofTest, sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose, cm)
     names(returnList) <- c("varParm", "fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
     "parmMat", "fct", "robust", "boxcox", "estMethod", "df.residual", "anova", "gofTest", 
-    "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose")
+    "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose", "cm")
     class(returnList) <- c("drc", class(fct))
 
     return(returnList)

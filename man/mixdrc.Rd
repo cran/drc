@@ -62,7 +62,7 @@ compParm(model4, "e", "-")
 ## Fitting a model without random effects, but fixing the c parameter at 0
 model5 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
 collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE,
-fct=l4(fixed=c(NA,0,NA,NA)))
+fct=LL.3())
 
 ## Fitting the corresponding mixed model with random effects on d
 model6 <- mixdrc(model5, random="d~1|CURVE", data=PestSci)

@@ -1,7 +1,8 @@
 "plot.drc" <-
 function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName, 
-         grid = 100, legend, legendText, legendPos, type = "average", obs, lty, log = "x", pch, xlab, ylab, xlim, ylim,
-         bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL, add = FALSE)
+         grid = 100, legend, legendText, legendPos, type = "average", obs, lty, log = "x", 
+         cex, pch, xlab, ylab, xlim, ylim,
+         bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL, add = FALSE, axes = TRUE)
 {    
 #    breakCurve <- FALSE
     colour <- col  # replace 'colour' throughout the file
@@ -60,7 +61,6 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
     {
         logX <- FALSE
     }      
-      
 
     ## Determining range of dose values
     if (missing(xlim)) 
@@ -69,7 +69,6 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
     } else {
         xLimits <- xlim  # if (abs(xLimits[1])<zeroEps) {xLimits[1] <- xLimits[1] + zeroEps}
     }
-
 
     ## Handling small dose values
     conNameYes <- FALSE
@@ -181,6 +180,13 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
         pchVec <- 1:numCol
     }
 
+    ## Defining cex vector
+    if (!missing(cex)) 
+    {
+        if (length(cex)==1) {cexVec <- rep(cex, numCol)} else {cexVec <- cex}
+    } else {
+        cexVec <- rep(1, numCol)
+    }
 
     ## Creating a broken axis
     if (broken && logX)
@@ -254,13 +260,13 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
             if (is.null(level) || uniAss[i]%in%level)
             {           
                 plot(plotPoints, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, axes = FALSE, 
-                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], ...) 
+                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], cex = cexVec[i], ...) 
                              
                 yaxisTicks <- axTicks(2)
                 yLabels <- TRUE
                 if (!is.null(yt)) {yaxisTicks <- yt; yLabels <- yt}
                 if (!is.null(ytlab)) {yLabels <- ytlab}                
-                axis(2, at = yaxisTicks, labels = yLabels)
+                if (axes) {axis(2, at = yaxisTicks, labels = yLabels)}
                 
                 xaxisTicks <- axTicks(1)
 #                xLabels <- as.character(xaxisTicks)
@@ -294,7 +300,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                     }
                 }
                 if (!is.null(xtlab)) {xLabels <- xtlab}
-                axis(1, at = xaxisTicks, labels = xLabels)
+                if (axes) {axis(1, at = xaxisTicks, labels = xLabels)}
 
                 if (broken) 
                 {
@@ -308,7 +314,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
             if ( (!is.null(level)) && (!is.na(matchLevel)) && (matchLevel == 1) )
             {           
                 plot(plotPoints, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, axes = FALSE, 
-                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], ...) 
+                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], cex = cexVec[i], ...) 
 
                 yaxisTicks <- axTicks(2)
                 yLabels <- TRUE

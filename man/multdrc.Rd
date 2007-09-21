@@ -72,7 +72,7 @@ and 10 for 10-logarithm).}
       The data frame argument allows collapsing parameters for some or all curves (using \code{\link{colFct}}), whereas the list argument 
       allows specification of additive models for the parameters.}
 
-\seealso{The function \code{\link{nls}} can also be used for nonlinear regression.}
+\seealso{The function \code{\link{nls}} can be used for fitting general nonlinear regression models.}
 
 \examples{
 
@@ -103,10 +103,8 @@ plot(model5, conLevel=-9)  # the default level is too high
 
 ## Example using 'fctLink'
 model6 <- multdrc(DryMatter ~ Dose,Herbicide, 
-data=christensenetal2003, fctList=list(l3(), l4()))
+data=S.alba, fctList=list(l3(), l4()))
 summary(model6)
-
-rm(model1, model2, model3, model4, model5, model6)
 
 }
 \keyword{models}

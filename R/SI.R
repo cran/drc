@@ -72,7 +72,7 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
 #    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
     strParm <- unique(object$"data"[, ncol(object$"data") - 1])  # second last column contains original curve levels
 #    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
-    
+    strParm <- strParm[!(strParm %in% object$"cm")]
 
 #    indexVec <- in1fct()
 #    ncPM <- ncol(parmMat)
@@ -153,14 +153,15 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
 #    indexVec <- 1:ncol(indexMat)
     lenEB <- ncol(indexMat)  # length(indexVec)
     lenM <- ncol(indexMat)  # length(indexVec)
-
+#    print(lenM)
+#    print(head(indexMat))
 
     ## Retrieving curve numbers 
 #    parmName <- unique((unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2-1])[lenEB] 
 #    compNamesTemp <- obj[[6]][grep(paste(parmName,":",sep=""), obj[[6]])]
 #    compNames <- (unlist(strsplit(compNamesTemp, ":")))[(1:length(compNamesTemp))*2]
     compNames <- as.character(strParm)  # converting a factor
-
+#print(compNames)
 
     ## Calculating SI values
 #    numComp <- (lenPV*(lenPV+1)/2)*(lenM*(lenM-1)/2)
@@ -199,6 +200,9 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
                     matchVec[rowIndex] <- (is.null(compMatch) || all(c(compNames[j],compNames[k])%in%compMatch))  
 #                    # this is a canonical 2 as PAIRS are matched
 
+#                    print(c(compNames[j],compNames[k]))
+#                    print(compMatch)
+ 
                     jInd <- j
                     kInd <- k
                     if (reverse) {jInd <- k; kInd <- j}
@@ -310,6 +314,8 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
     }
     dimnames(siMat)<-list(rNames, cNames)
     siMat <- siMat[matchVec, , drop = FALSE]
+    
+#    print(matchVec)
  
     cat("\n")
     cat("Estimated ratios of effect doses\n")

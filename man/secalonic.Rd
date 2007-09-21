@@ -1,6 +1,6 @@
-\name{onecurve}
+\name{secalonic}
 
-\alias{onecurve}
+\alias{secalonic}
 
 \docType{data}
 
@@ -10,41 +10,38 @@
   Data are from an experiment assessing the inhibitory effect effect of secalonic acids on plant growth.
 }
 
-\usage{data(onecurve)}
+\usage{data(secalonic)}
 
 \format{
   A data frame with 7 observations on the following 2 variables.
   \describe{
-    \item{\code{Dose}}{a numeric vector containing dose values}
-    \item{\code{Root}}{a numeric vector containing root lengths}
+    \item{\code{dose}}{a numeric vector containing dose values}
+    \item{\code{rootl}}{a numeric vector containing average root lengths}
   }
 }
 
 \details{
-  The root lengths are each averages of three measured root lengths.
+  Data are averages of three root length measurements.
 }
 
 \source{
-  The dataset is analysed in Gong \emph{et al} (2004).
-}
-
-\references{
-  Gong, X. and Zeng, R. and Luo, S. and Yong, C. and Zheng, Q. (2004) Two new 
+    Gong, X. and Zeng, R. and Luo, S. and Yong, C. and Zheng, Q. (2004) Two new 
   secalonic acids from \emph{Aspergillus Japonicus} and their allelopathic effects on higher plants,
   \emph{Proceedings of International Symposium on Allelopathy Research and Application, 27-29 April, 
   Shanshui, Guangdong, China (Editors: R. Zeng and S. Luo)}, 209--217.
 }
 
+%\references{}
+
 \examples{
 
 ## Fitting a 4-parameter log-logistic model
-model.onecurve <- multdrc(Root~Dose, data=onecurve)
+secalonic.m1 <- multdrc(rootl~dose, data=secalonic)
 
 ## Fitting a 3-parameter log-logistic model
 ##  lower limit fixed at 0
-model.onecurve.noC <- multdrc(Root~Dose, data=onecurve, fct=l3())
+secalonic.m2 <- multdrc(rootl~dose, data=secalonic, fct=LL.3())
 
 
-rm(model.onecurve, model.onecurve.noC)
 }
 \keyword{datasets}

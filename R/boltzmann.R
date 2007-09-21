@@ -127,9 +127,19 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
 #        return(list(SIpair, SIder1, SIder2))
 #    }
 
+
+    ## Defining the inverse function
+    invfct <- function(y, parm) 
+    {
+        parmVec[notFixed] <- parm
+        
+        log(((parmVec[3] - parmVec[2])/(y - parmVec[2]))^(1/parmVec[5]) - 1)/parmVec[1] + parmVec[4]
+    }
+
     ## Defining return list
     returnList <- list(fct = fct, ssfct = ssfct, names = names, 
-    deriv1 = deriv1, deriv2 = deriv2, derivx = derivx, edfct = edfct)
+    deriv1 = deriv1, deriv2 = deriv2, derivx = derivx, edfct = edfct,
+    inversion = invfct)
 
     class(returnList) <- "Boltzmann"
     invisible(returnList)
@@ -148,6 +158,7 @@ function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
 }
 
 b3 <- B.3
+L.3 <- B.3
 
 "B.4" <-
 function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
@@ -161,6 +172,7 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
 }
 
 b4 <- B.4
+L.4 <- B.4
 
 "B.5" <-
 function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
@@ -169,3 +181,4 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
 }
 
 b5 <- B.5
+L.5 <- B.5

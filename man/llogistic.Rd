@@ -1,6 +1,7 @@
 \name{llogistic}
 
 \alias{llogistic}
+\alias{llogistic2}
 
 \title{The log-logistic function}
 
@@ -14,6 +15,11 @@
   fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
   ss = c("1", "2", "3"), ssfct = NULL)
+
+  llogistic2(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf),
+  fixed = c(NA, NA, NA, NA, NA), 
+  names = c("b", "c", "d", "e", "f"),
+  ss = c("1", "2", "3"), ssfct = NULL)  
 }
 
 \arguments{
@@ -34,7 +40,13 @@
   \deqn{ f(x) = c + \frac{d-c}{(1+\exp(b(\log(x)-\log(e))))^f}}
   
   If the parameter \eqn{f} differs from 1 then the function is asymmetric; otherwise it
-  is symmetric (on log scale).
+  is symmetric (on log scale). This function is fitted using \code{\link{llogistic}}.
+  
+  The log-logistic function with log(e) rather than e as a parameter, that is using the parameterisation
+  
+  \deqn{ f(x) = c + \frac{d-c}{(1+\exp(b(\log(x)-e)))^f}}
+  
+  is fitted using \code{\link{llogistic2}}.
 }
 
 \value{

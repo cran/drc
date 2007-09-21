@@ -1,7 +1,7 @@
 "ED" <-
-function(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls"), 
+function(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
 level = ifelse(!(ci == "none"), 0.95, NULL), logBase = NULL, reference = c("upper", "control"), 
-type = c("relative", "absolute"), ...)
+type = c("relative", "absolute"), display = TRUE,...)
 {
     ci <- match.arg(ci)
     reference <- match.arg(reference)
@@ -224,18 +224,27 @@ type = c("relative", "absolute"), ...)
         colNames <- c( colNames, "Lower", "Upper") 
         ciLabel <- "To and from log scale"       
     }
-    if ( (!is.null(logBase)) && (ci == "fls") )
-    {
+#    if ( (!is.null(logBase)) && (ci == "fls") )
+    if (ci == "fls")
+    {        
         ciMat <- matrix(0, lenEB*lenPV, 2)
         tquan <- qt(1 - (1 - level)/2, df.residual(object)) 
         
+        if (is.null(logBase)) 
+        {
+            logBase <- exp(1)
+            EDmat[, 1] <- exp(EDmat[, 1])  # back-transforming log ED values
+        }
+
 #        oriVal <- log(EDeval[[1]], base = logBase)
 #        oridVal1 <- EDeval[[2]]
 #        oridVal2 <- sqrt(oridVal1%*%varCov%*%oridVal1)
         ciMat[, 1] <- logBase^(oriMat[, 1] - tquan * oriMat[, 2])
         ciMat[, 2] <- logBase^(oriMat[, 1] + tquan * oriMat[, 2])
-        colNames <- c( colNames, "Lower", "Upper")
-        ciLabel <- "From log scale"        
+        
+        EDmat <- EDmat[, -2, drop = FALSE]  # standard errors not relevant        
+        colNames <- c( colNames[-2], "Lower", "Upper")
+        ciLabel <- "From log scale"  
     }
     if (!(ci == "none"))
     {
@@ -245,15 +254,18 @@ type = c("relative", "absolute"), ...)
 
 
     ## Displaying the ED values
-    cat("\n")
-    cat("Estimated effect doses\n")
-    if (!(ci == "none")) 
+    if (display)
     {
-        ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
-        cat(ciText)
+        cat("\n")
+        cat("Estimated effect doses\n")
+        if (!(ci == "none")) 
+        {
+            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
+            cat(ciText)
+        }
+        cat("\n") 
+        printCoefmat(EDmat)
     }
-    cat("\n") 
-    printCoefmat(EDmat)
     invisible(EDmat)    
 #    }
 }

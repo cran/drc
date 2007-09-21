@@ -6,12 +6,15 @@
 \alias{l3}
 \alias{l3u}
 
+\alias{LL2.3}
+\alias{LL2.3u}
+
 \title{The three-parameter log-logistic function}
 
 \description{
-  'LL.3' provides the three-parameter log-logistic function where the lower limit is equal to 0. 
+  'LL.3' and 'LL2.3' provide the three-parameter log-logistic function where the lower limit is equal to 0. 
   
-  'LL.3u' provides three-parameter logistic function where the upper limit is equal to 1, mainly
+  'LL.3u' and 'LL2.3u' provide three-parameter logistic function where the upper limit is equal to 1, mainly
   for use with binomial/quantal response. 
 }
 
@@ -23,6 +26,10 @@
   l3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
 
   l3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
+  
+  LL2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
+  
+  LL2.3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
 }
 
 \arguments{
@@ -36,8 +43,14 @@
   The three-parameter logistic function with lower limit 0 is
   \deqn{ f(x) = 0 + \frac{d-0}{1+\exp(b(\log(x)-\log(e)))}}
   
+  or in another parameterisation
+  \deqn{ f(x) = 0 + \frac{d-0}{1+\exp(b(\log(x)-e))}}
+    
   The three-parameter logistic function with upper limit 1 is
   \deqn{ f(x) = c + \frac{1-c}{1+\exp(b(\log(x)-\log(e)))}}
+  
+  or in another parameterisation
+  \deqn{ f(x) = c + \frac{1-c}{1+\exp(b(\log(x)-e))}}
   
   Both functions are symmetric about the inflection point (\eqn{e}).  
 }

@@ -3,10 +3,12 @@
 \alias{LL.2}
 \alias{l2}
 
+\alias{LL2.2}
+
 \title{The two-parameter log-logistic function}
 
 \description{
-  'LL.2' provides the two-parameter log-logistic function where the lower limit is fixed at 0 and the upper limit
+  'LL.2' and 'LL2.2' provide the two-parameter log-logistic function where the lower limit is fixed at 0 and the upper limit
   is fixed at 1, mostly suitable for binomial/quantal responses. 
 }
 
@@ -14,6 +16,8 @@
   LL.2(fixed = c(NA, NA), names = c("b", "e"), ...)
   
   l2(fixed = c(NA, NA), names = c("b", "e"), ...)
+  
+  LL2.2(fixed = c(NA, NA), names = c("b", "e"), ...)  
 }
 
 \arguments{
@@ -25,6 +29,9 @@
 \details{
   The two-parameter logistic function is given by the expression
   \deqn{ f(x) = \frac{1}{1+\exp(b(\log(x)-\log(e)))}}
+  
+  or in another parameterisation
+  \deqn{ f(x) = \frac{1}{1+\exp(b(\log(x)-e))}}  
   
   The function is symmetric about the inflection point (\eqn{e}).  
 }

@@ -6,7 +6,10 @@
 \title{data name/kind}
 
 \description{
-  A concise (1-5 lines) description of the dataset.
+  Small plants, growing in pots in a green house, were sprayed with techincal 
+  grade phenmidipham herbicide either alone or in mixture with an ester of oleic acid. 
+  The plants were allowed to grow in the green house 14 days
+  after treatment; then the dry matter was measured per pot.
 }
 
 \usage{data(cabanne)}
@@ -25,16 +28,18 @@
 }
 
 \source{
-  reference to a publication or URL from which the data were obtained
+Cabanne, F, Gaudry,JC & Streibig, JC (1999) Influence of alkyl oleates on efficacy 
+of phenmedipham applied as an acetone:water solution on Galium aparine. 
+Weed Research 39: 57-67.
+
 }
 
-\references{
-  possibly secondary sources and usages
+\references{  possibly secondary sources and usages
 }
 
 \examples{
 
-model1 <- multdrc(drymat~dose, curve, data=cabanne, cm="0")
+model1 <- multdrc(drymat~dose, curve, data=cabanne)
 plot(fitted(model1), residuals(model1))
 
 ## Fitting one curve with variance as a power of the mean

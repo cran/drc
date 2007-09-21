@@ -3,10 +3,12 @@
 \alias{LL.4}
 \alias{l4}
 
+\alias{LL2.4}
+
 \title{The four-parameter log-logistic function}
 
 \description{
-  'LL.4' provides the four-parameter logistic function, self starter function, names of the parameters and, optionally,
+  'LL.4' and 'LL2.4' provide the four-parameter log-logistic function, self starter function, names of the parameters and, optionally,
   first and second derivatives for a faster estimation.  
 }
 
@@ -14,6 +16,8 @@
   LL.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
 
   l4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
+  
+  LL2.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)  
 }
 
 \arguments{
@@ -25,6 +29,9 @@
 \details{
   The four-parameter logistic function is given by the expression
   \deqn{ f(x) = c + \frac{d-c}{1+\exp(b(\log(x)-\log(e)))}}
+  
+  or in another parameterisation
+  \deqn{ f(x) = c + \frac{d-c}{1+\exp(b(\log(x)-e))}}  
   
   The function is symmetric about the inflection point (\eqn{e}).  
 }

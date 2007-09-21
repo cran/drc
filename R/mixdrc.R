@@ -48,8 +48,8 @@ function(object, random, data, startVal)
             namesVec <- c("b", "c", "d", "e", "f")
 
             fctType <- deparse(object$call$fct[[1]])
-            if (fctType == "l3") {fixedVec <- c(NA, 0, NA, NA, 1); indVec <- c(1, 3, 4)}
-            if (fctType == "l4") {fixedVec <- c(NA, NA, NA, NA, 1); indVec <- c(1, 2, 3, 4)}
+            if (fctType %in% c("l3", "LL.3")) {fixedVec <- c(NA, 0, NA, NA, 1); indVec <- c(1, 3, 4)}
+            if (fctType %in% c("l4", "LL.4")) {fixedVec <- c(NA, NA, NA, NA, 1); indVec <- c(1, 2, 3, 4)}
 
             fv <- eval(object$call$fct$fixed)
 #            print(fv)
@@ -105,9 +105,16 @@ function(object, random, data, startVal)
         {
             for (i in 2:(1+lenPN))
             {
-                facStr <- paste("factor(", deparse(object$call$curve), ")", sep="")            
-                fili <- paste(parNames[i-1], facStr, sep="~")
-                fili <- paste(fili, "-1", sep="")
+                if (!is.null(object$call$curve))
+                {
+                    facStr <- paste("factor(", deparse(object$call$curve), ")", sep="")            
+                    fili <- paste(parNames[i-1], facStr, sep="~")
+                    fili <- paste(fili, "-1", sep="")
+                } else {
+                    facStr <- "1"            
+                    fili <- paste(parNames[i-1], facStr, sep="~")
+                }
+                
                 fixedList[[i-1]] <- eval(parse(text=fili), envir = dataSet)
             }
         }
@@ -220,7 +227,7 @@ function(object, random, data, startVal)
             modelNLME <- try(nlme(NLMEfor,
                              fixed = fixedList,
                              random = randomList,
-                             start = startVal, na.action = na.omit, data = dataSet))  # , silent = TRUE)
+                             start = startVal, na.action = na.omit, data = dataSet), silent = TRUE)
 
             if (!inherits(modelNLME, "try-error")) 
             {
@@ -230,10 +237,13 @@ function(object, random, data, startVal)
             options(warn = 0)
         }
     } else {
+        print(fixedList)
+        print(randomList)
+    
         modelNLME <- try(nlme(NLMEfor,
                               fixed = fixedList,
                               random = randomList,
-                              start = startVal, na.action = na.omit, data = dataSet), silent = TRUE)
+                              start = startVal, na.action = na.omit, data = dataSet)) ## , silent = TRUE)
 
         if (!inherits(modelNLME, "try-error")) {found <- TRUE}    
     }

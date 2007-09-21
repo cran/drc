@@ -84,7 +84,7 @@ SI(m1, c(10,50), reverse = TRUE)
 
 ## Relative potency of two herbicides
 m2 <- multdrc(DryMatter~Dose, Herbicide, 
-data = christensenetal2003, fct = l3())
+data = S.alba, fct = l3())
 
 SI(m2, c(50, 50))
 SI(m2, c(50, 50), ci = "fieller")

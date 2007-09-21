@@ -22,7 +22,7 @@
 
 \details{
   The dataset is an example of an asymmetric dose-response curve, that is not
-  easily handling using the log-logistic or Weibull models, whereas the baro5 models
+  easily handling using the log-logistic or Weibull models, whereas the baro5 model
   provides a nice fit.
 }
 

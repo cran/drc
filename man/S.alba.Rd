@@ -1,6 +1,6 @@
-\name{christensenetal2003}
+\name{S.alba}
 
-\alias{christensenetal2003}
+\alias{S.alba}
 
 \docType{data}
 
@@ -11,7 +11,7 @@
   \emph{Sinapis alba}.
 }
 
-\usage{data(christensenetal2003)}
+\usage{data(S.alba)}
 
 \format{
   A data frame with 68 observations on the following 3 variables.
@@ -28,26 +28,25 @@
 }
 
 \source{
-  The dataset is analysed in Christensen \emph{et al} (2003).
-}
-
-\references{
   Christensen, M. G. and Teicher, H. B. and Streibig, J. C. (2003) Linking fluorescence 
   induction curve and biomass in herbicide screening, \emph{Pest Management Science},
   \bold{59},  1303--1310.
+
+}
+
+\seealso{
+  See the examples in the examples sections in \code{\link{multdrc}} and \code{\link{SI}}.
 }
 
 \examples{
 
 ## Fitting a log-logistic model with
 ##  common lower and upper limits
-model1<-multdrc(DryMatter~Dose, Herbicide, data=christensenetal2003,
-collapse=data.frame(Herbicide,1,1,Herbicide), boxcox=TRUE) 
+model1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
+pmodels=data.frame(Herbicide,1,1,Herbicide), adjust="bc1") 
 
 ## Plotting fitted curve and data
 plot(model1)
 
-
-rm(model1)
 }
 \keyword{datasets}

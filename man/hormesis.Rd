@@ -36,8 +36,24 @@
 
 \examples{
 
+## Look at data
 head(hormesis)
-plotraw(weight~conc, data=hormesis)
+
+## Monotonous dose-response model
+hm.m1 <- drm(weight~conc, data=hormesis, fct=LL.3())
+
+plot(hm.m1)
+
+## Model fit in van Ewijk and Hoekstra (1994)
+hm.m2 <- drm(weight~conc, data=hormesis, fct=BC.4())
+
+plot(hm.m2, type = "fit", add = TRUE, lty = 2)
+
+## Hormesis effect only slightly significant
+summary(hm.m2)
+
+## Hormesis effect highly significant
+anova(hm.m1,hm.m2)
 
 }
 \keyword{datasets}
