@@ -2,53 +2,50 @@
 
 \alias{PR}
 
-\title{Expected response}
+\title{Expected or predicted response}
 
 \description{
-  'PR' returns the expected response for specified dose values.
+  The function returns the expected or predicted response for specified dose values.
 }
 
 \usage{
-PR(object, xVec, ...)
+  PR(object, xVec, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 
 \arguments{
-  \item{object}{ ~~Describe \code{object} here~~ }
-  \item{xVec}{ ~~Describe \code{xVec} here~~ }
-  \item{\dots}{ ~~Describe \code{\dots} here~~ }
+  \item{object}{object of class \code{drc} obtaining fitting a dose-response model.}
+  \item{xVec}{numeric vector of dose values.}
+  \item{\dots}{additional arguments to be supplied to \code{\link[drc]{predict}}. No effect at the moment.}
 }
 
 \details{
-  ~~ If necessary, more details than the description above ~~
+  This function is a convenience function for easy access to predicted values.
 }
 
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  A numeric vector of predicted values or possibly a matrix of predicted values and corresponding standard errors.
 }
 
-\references{ ~put references to the literature/web site here ~ }
+%\references{}
 
-\author{Christian Ritz after a suggestion from Andrew Kniss}
-
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
+\author{
+  Christian Ritz after a suggestion from Andrew Kniss
 }
 
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+%\note{ ~~further notes~~ }
+
+\seealso{Predictions can also be obtained using \code{\link[drc]{predict}}.}
 
 \examples{
 
-m1 <- multdrc(ryegrass)
-PR(m1, c(5, 10))
+ryegrass.m1 <- drm(ryegrass, fct = LL.4())
+PR(ryegrass.m1, c(5, 10))
 
-m2 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci)
-PR(m2, c(5, 10))
+ryegrass.m2 <- drm(ryegrass, fct = LL2.4())
+PR(ryegrass.m2, c(5, 10))
+
+spinach.m1 <- drm(SLOPE~DOSE, CURVE, data=spinach, fct = LL.4())
+PR(spinach.m1, c(5, 10))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

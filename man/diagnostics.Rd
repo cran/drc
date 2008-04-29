@@ -1,29 +1,34 @@
 \name{diagnostics}
+
 \alias{diagnostics}
-\title{Display information on estimation procedure}
+
+\title{Information on estimation}
+
 \description{
   Displays information on the convergence of the estimation procedure.
 }
 \usage{
 diagnostics(object)
 }
+
 \arguments{
   \item{object}{an object of class 'drc'.}
 }
+
 \details{
-  Currently this function displays the convergence status and the number of evaluations used.
+  The function displays the convergence status and the number of evaluations used.
 }
+
 \author{Christian Ritz}
+
 \examples{
 
-model1 <- multdrc(rgr~dose, data=TerMet)
-diagnostics(model1)
+terbuthylazin.m1 <- drm(rgr~dose, data = terbuthylazin, fct = LL.4())
+diagnostics(terbuthylazin.m1)
 
-model2 <- multdrc(rgr~dose, data=TerMet, startVal=c(1,0.01,0.38,130)) 
-diagnostics(model2)  
-## the start values given yield swifter convergence
-
-rm(model1, model2)
+terbuthylazin.m2 <- drm(rgr~dose, data = terbuthylazin, start=c(1,0.01,0.38,130), fct = LL.4()) 
+diagnostics(terbuthylazin.m2)  
+## the start values given result in faster convergence
 
 }
 \keyword{models}

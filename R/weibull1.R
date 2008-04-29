@@ -1,6 +1,6 @@
 "weibull1" <-
 function(lowerc=c(-Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA), 
-names=c("b", "c", "d", "e"), scaleDose = TRUE)
+names=c("b", "c", "d", "e"), scaleDose = TRUE, fctName, fctText)
 {
     ## Checking arguments
     numParm <- 4
@@ -143,10 +143,10 @@ names=c("b", "c", "d", "e"), scaleDose = TRUE)
                   t2 <- exp(parmMat[, 1]*(log(dose) - log(parmMat[, 4])))
                   t3 <- exp(-t2)
 
-                  derMat <- as.matrix(cbind( -t1*t3*t2*(log(dose)-log(parmMat[, 4])), 
+                  derMat <- as.matrix(cbind( -t1 * divAtInf(xlogx(dose/parmMat[, 4], parmMat[, 1]), exp(t2)), 
                                              1 - t3, 
                                              t3, 
-                                             t1*t3*t2*parmMat[, 1]/parmMat[, 4] ))
+                                             t1 * divAtInf(t2, exp(t2)) * parmMat[, 1]/parmMat[, 4] ))
                   return(derMat[, notFixed])
               }
     deriv2 <- NULL
@@ -193,7 +193,10 @@ names=c("b", "c", "d", "e"), scaleDose = TRUE)
 
     returnList <- 
     list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,
-    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, scaleInd=scaleInd)
+    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, scaleInd=scaleInd,
+    name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
+    text = ifelse(missing(fctText), "Weibull (type 1)", fctText),     
+    noParm = sum(is.na(fixed)))
 
     class(returnList) <- "Weibull1"
     invisible(returnList)
@@ -201,14 +204,16 @@ names=c("b", "c", "d", "e"), scaleDose = TRUE)
 
 
 "W1.2" <-
-function(fixed = c(NA, NA), names = c("b", "e"))
+function(upper = 1, fixed = c(NA, NA), names = c("b", "e"))
 {
     ## Checking arguments
     numParm <- 2
     if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return(weibull1(fixed = c(fixed[1], 0, 1, fixed[2]), names = c(names[1], "c", "d", names[2])))
+    return(weibull1(fixed = c(fixed[1], 0, upper, fixed[2]), names = c(names[1], "c", "d", names[2]),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowupFixed("Weibull (type 1)", upper)))
 }
 
 w2 <- W1.2
@@ -221,10 +226,26 @@ function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
     if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return(weibull1(fixed = c(fixed[1], 0, fixed[2:3]), names = c(names[1], "c", names[2:3])))
+    return(weibull1(fixed = c(fixed[1], 0, fixed[2:3]), names = c(names[1], "c", names[2:3]),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("Weibull (type 1)")))
 }
 
 w3 <- W1.3
+
+"W1.3u" <-
+function(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"))
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( weibull1(fixed = c(fixed[1:2], upper, fixed[3]), 
+    names = c(names[1:2], "d", names[3]), 
+    fctName = as.character(match.call()[[1]]),
+    fctText = upFixed("Weibull (type 1)", upper)) )
+}
 
 "W1.4" <-
 function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
@@ -234,7 +255,9 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
     if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
     if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
 
-    return(weibull1(fixed = fixed, names = names))
+    return(weibull1(fixed = fixed, names = names,
+    fctName = as.character(match.call()[[1]]),
+    fctText = "Weibull (type 1)"))
 }
 
 w4 <- W1.4

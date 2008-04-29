@@ -1,6 +1,7 @@
 "llogistic" <- function(
 lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf), 
-fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "2", "3"), ssfct = NULL)
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "2", "3"), ssfct = NULL,
+fctName, fctText)
 {
     ## Matching 'adjust' argument
     ss <- match.arg(ss)
@@ -28,7 +29,8 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
         parmMat[, notFixed] <- parm
         
         cParm <- parmMat[, 2]
-        cParm + (parmMat[, 3] - cParm)/((1+exp(parmMat[, 1]*(log(dose)-log(parmMat[, 4]))))^parmMat[, 5])
+#        cParm + (parmMat[, 3] - cParm)/((1+exp(parmMat[, 1]*(log(dose)-log(parmMat[, 4]))))^parmMat[, 5])
+        cParm + (parmMat[, 3] - cParm)/((1+exp(parmMat[, 1]*(log(dose/parmMat[, 4]))))^parmMat[, 5])
     }
 
 
@@ -207,22 +209,6 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
     ##Defining the first derivatives (in the parameters) 
 #    if (useD)
 #    {
-    ## Constructing a helper function
-    xlogx <- function(x, p)
-    {
-        lv <- (x < 1e-12)
-        nlv <- !lv
-        
-        rv <- rep(0, length(x))
-        
-        xlv <- x[lv] 
-        rv[lv] <- log(xlv^(xlv^p[lv]))
-        
-        xnlv <- x[nlv]
-        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
-    
-        rv
-    }
         
     deriv1 <- function(dose, parm)
     {
@@ -233,15 +219,15 @@ fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "
         t2 <- exp(parmMat[, 1]*(log(dose) - log(parmMat[, 4])))
 #        t3 <- (1 + t2)^(2*parmMat[, 5])
 #        t4 <- parmMat[, 5]*((1 + t2)^(parmMat[, 5] - 1))
-        t3 <- parmMat[, 5]*((1 + t2)^(-parmMat[, 5] - 1))
+##        t3 <- parmMat[, 5]*((1 + t2)^(-parmMat[, 5] - 1))
         t5 <- (1 + t2)^parmMat[, 5]                  
 
-        cbind( -t1*xlogx(dose/parmMat[, 4], parmMat[, 1])*t3,  # *t4/t3, 
+        cbind( -t1 * xlogx(dose/parmMat[, 4], parmMat[, 1], parmMat[, 5] + 1) * parmMat[, 5],  # *t4/t3, 
                1 - 1/t5, 
                1/t5, 
 #               t1*t2*t4*parmMat[, 1]/parmMat[, 4]/t3, 
-               t1*t2*t3*parmMat[, 1]/parmMat[, 4], 
-               -t1*log(1+t2)/t5 )[, notFixed]
+               t1 * parmMat[, 5] * divAtInf(t2, (1 + t2)^(parmMat[, 5] + 1)) * parmMat[, 1] / parmMat[, 4], 
+               -t1 * divAtInf(log(1+t2), t5) )[, notFixed]
     }
         
     deriv2 <- NULL
@@ -374,28 +360,41 @@ if (FALSE)
         parmVec[notFixed] <- parm
         
         exp(log(((parmVec[3] - parmVec[2])/(y - parmVec[2]))^(1/parmVec[5]) - 1)/parmVec[1] + log(parmVec[4]))
-    }    
+    } 
     
+    ## Defining functions returning lower and upper limit and monotonicity
+    lowerAs <- pickParm(parmVec, notFixed, 2)
+    upperAs <- pickParm(parmVec, notFixed, 3)
+    monoton <- monoParm(parmVec, notFixed, 1, -1)
+
     ## Returning the function with self starter and names
     returnList <- 
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx,
-    edfct = edfct, bfct = bfct, inversion = invfct,
-    scaleInd = scaleInd, confct=confct, anovaYes=anovaYes, lowerc=lowerLimits, upperc=upperLimits)
-    # the last line is not needed in the future ('drm')
-    #     , sxInd = sxInd, syInd = syInd,
+    edfct = edfct, inversion = invfct,
+    scaleInd = scaleInd, confct=confct, anovaYes=anovaYes, lowerc=lowerLimits, upperc=upperLimits,
+    name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
+    text = ifelse(missing(fctText), "Log-logistic (ED50 as parameter)", fctText), 
+    noParm = sum(is.na(fixed)), lowerAs = lowerAs, upperAs = upperAs, monoton = monoton)
+    # the 4th last line is not needed in the future ('drm')
+    #     , sxInd = sxInd, syInd = syInd,    
+    
     class(returnList) <- "llogistic"
     invisible(returnList)
 }
 
 "LL.2" <-
-function(fixed = c(NA, NA), names = c("b", "e"), ...)
+function(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
 {
     ## Checking arguments
     numParm <- 2
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( llogistic(fixed = c(fixed[1], 0, 1, fixed[2], 1), names = c(names[1], "c", "d", names[2], "f"), ...) )
+    return( llogistic(fixed = c(fixed[1], 0, upper, fixed[2], 1), 
+    names = c(names[1], "c", "d", names[2], "f"), 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowupFixed("Log-logistic (ED50 as parameter)", upper),
+    ...) )
 }
 
 l2 <- LL.2
@@ -408,33 +407,42 @@ function(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( llogistic(fixed = c(fixed[1], 0, fixed[2:3], 1), names = c(names[1], "c", names[2:3], "f"), ...) )
+    return( llogistic(fixed = c(fixed[1], 0, fixed[2:3], 1), 
+    names = c(names[1], "c", names[2:3], "f"),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("Log-logistic (ED50 as parameter)"), 
+    ...) )
 }
 
 l3 <- LL.3
 
 "LL.3u" <-
-function(fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)
+function(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)
 {
     ## Checking arguments
     numParm <- 3
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( llogistic(fixed = c(fixed[1:2], 1, fixed[3], 1), names = c(names[1:2], "d", names[3], "f"), ...) )
+    return( llogistic(fixed = c(fixed[1:2], upper, fixed[3], 1), 
+    names = c(names[1:2], "d", names[3], "f"),
+    fctName = as.character(match.call()[[1]]),
+    fctText = upFixed("Log-logistic (ED50 as parameter)", upper), 
+    ...) )
 }
 
 l3u <- LL.3u
 
 "LL.4" <-
-function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)  #, reps = FALSE)
+function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 4
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( llogistic(fixed = c(fixed, 1), names = c(names, "f"), ...) )  # , reps = reps) )
+    return( llogistic(fixed = c(fixed, 1), names = c(names, "f"),
+    fctName = as.character(match.call()[[1]]), ...) )
 }
 
 l4 <- LL.4
@@ -442,7 +450,9 @@ l4 <- LL.4
 "LL.5" <-
 function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
 {
-    return(llogistic(fixed = fixed, names = names, ...))
+    return( llogistic(fixed = fixed, names = names,
+    fctName = as.character(match.call()[[1]]),
+    fctText = "Generalized log-logistic (ED50 as parameter)", ...) )
 }
 
 l5 <- LL.5

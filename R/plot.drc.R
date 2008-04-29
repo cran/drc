@@ -1,6 +1,7 @@
 "plot.drc" <-
 function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName, 
-         grid = 100, legend, legendText, legendPos, type = "average", obs, lty, log = "x", 
+         grid = 100, legend, legendText, legendPos, legendCex = 1,
+         type = "average", obs, lty, log = "x", 
          cex, pch, xlab, ylab, xlim, ylim,
          bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL, add = FALSE, axes = TRUE)
 {    
@@ -31,7 +32,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
 
     assayNo <- origData[, 3]
     assayNoOld <- origData[, 4]
-    numAss <- length(unique(assayNo))
+    numAss <- length(unique(assayNoOld))
     doPlot <- is.null(level) || any(unique(assayNoOld)%in%level)
     if (!doPlot) {stop("Nothing to plot")}
 
@@ -57,7 +58,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
 
     ## Determining logarithmic scales
     logX <- TRUE
-    if ( (log == "") || (log == "y") ) 
+    if ( (log == "") || (log == "y") )  # || (!is.null(logDose)) ) 
     {
         logX <- FALSE
     }      
@@ -183,7 +184,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
     ## Defining cex vector
     if (!missing(cex)) 
     {
-        if (length(cex)==1) {cexVec <- rep(cex, numCol)} else {cexVec <- cex}
+        if (length(cex) == 1) {cexVec <- rep(cex, numCol)} else {cexVec <- cex}
     } else {
         cexVec <- rep(1, numCol)
     }
@@ -243,24 +244,62 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
 #    if (!add)
 #    {
     
+    ## Calculating predicted values for error bars
+    if (identical(type, "bars"))
+    {
+        predictMat <- predict(object, interval = "confidence")[, 3:4]
+    
+        barFct <- function(plotPoints)
+        {
+            pp3 <- plotPoints[, 3]
+            pp4 <- plotPoints[, 4]
+            plotCI(plotPoints[, 1], pp3 + 0.5 * (pp4 - pp3), 
+            li = pp3, ui = pp4, add = TRUE, pch = NA)
+        }
+        
+        pointFct <- function(plotPoints, cexVal, colVal, pchVal, ...){invisible(NULL)}    
+    }  else {
+        barFct <- function(plotPoints){invisible(NULL)}
+        
+        pointFct <- function(plotPoints, cexVal, colVal, pchVal, ...)
+        {
+            points(plotPoints, cex = cexVal, col = colVal, pch = pchVal, ...)                
+        }
+    }                
+    
+    ## Setting the plot type
+    if ( (identical(type, "none")) || (identical(type, "bars")) )
+    {
+        plotType <- "n"
+    } else {
+        plotType <- "p"
+    }
+    
     uniAss <- unique(assayNoOld)    
     for (i in 1:numCol)
     {
-        plotPoints <- switch(type, "average" = cbind(as.numeric(names(tapVec <- tapply(resp[assayNo == i], 
-                                                     dose[assayNo == i], mean))), tapVec),
-                                   "none"    = c(max(dosePts) + 10, max(c(maxPM, max(resp))) + 10),
-                                   "points"  = cbind(dose[assayNo == i], resp[assayNo == i]),
-                                   "all"     = cbind(dose[assayNo == i], resp[assayNo == i]),
-                                   "obs"     = cbind(dose[assayNo == i], resp[assayNo == i]))
+        indVec <- uniAss[i] == assayNoOld
+        plotPoints <- 
+        switch(
+            type, 
+            "average" = cbind(as.numeric(names(tapVec <- tapply(resp[indVec], 
+            dose[indVec], mean))), tapVec),
+            "bars"    = cbind(as.numeric(names(tapVec <- tapply(resp[indVec], 
+            dose[indVec], mean))), tapVec, tapply(predictMat[indVec, 1], dose[indVec], head, 1),
+            tapply(predictMat[indVec, 2], dose[indVec], head, 1)),
+            "none"    = cbind(dose[indVec], resp[indVec]),
+            "all"     = cbind(dose[indVec], resp[indVec]),
+            "obs"     = cbind(dose[indVec], resp[indVec])
+        )
         
         if (!add)
         {
-        if (i==1)
+        if (i == 1)
         {            
             if (is.null(level) || uniAss[i]%in%level)
             {           
-                plot(plotPoints, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, axes = FALSE, 
-                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], cex = cexVec[i], ...) 
+                plot(plotPoints, type = plotType, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, 
+                axes = FALSE, frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], cex = cexVec[i], ...) 
                              
                 yaxisTicks <- axTicks(2)
                 yLabels <- TRUE
@@ -302,28 +341,33 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                 if (!is.null(xtlab)) {xLabels <- xtlab}
                 if (axes) {axis(1, at = xaxisTicks, labels = xLabels)}
 
-                if (broken) 
+                ## Adding axis break
+                if (broken && logX) 
                 {
                     require(plotrix, quietly = TRUE)
                     axis.break(1, brokenx, style = breakStyle, brw = breakWidth)
                 }
+                
+                ## Adding error bars
+                barFct(plotPoints)
             }
         } else {
 
             matchLevel <- match(unique(assayNoOld)[i], level)
             if ( (!is.null(level)) && (!is.na(matchLevel)) && (matchLevel == 1) )
             {           
-                plot(plotPoints, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, axes = FALSE, 
-                     frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], cex = cexVec[i], ...) 
+                plot(plotPoints, type = plotType, xlab = xlab, ylab = ylab, log = log, xlim = xLimits, ylim = yLimits, 
+                axes = FALSE, frame.plot = TRUE, col = colourVec[i], pch = pchVec[i], cex = cexVec[i], ...) 
 
+                ## Adding y axis
                 yaxisTicks <- axTicks(2)
                 yLabels <- TRUE
                 if (!is.null(yt)) {yaxisTicks <- yt; yLabels <- yt}
                 if (!is.null(ytlab)) {yLabels <- ytlab}                
-                axis(2, at=yaxisTicks)
-                
+                axis(2, at = yaxisTicks)
+
+                ## Adding x axis                
                 xaxisTicks <- axTicks(1)                                            
-#                xLabels <- as.character(xaxisTicks)
                 xLabels <- as.expression(xaxisTicks)
                 if (conNameYes) {xLabels[1] <- conName}
                 
@@ -342,72 +386,59 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                     }
                 }
                 if (!is.null(xtlab)) {xLabels <- xtlab}
-                axis(1, at=xaxisTicks, labels=xLabels)
+                axis(1, at = xaxisTicks, labels = xLabels)
+                
+                ## Adding error bars
+                barFct(plotPoints)                            
             }
-            if (is.null(level) || ((!is.na(matchLevel)) && (matchLevel>1)) )
-            {           
-                 points(plotPoints, col = colourVec[i], pch = pchVec[i])
+            
+            if ( (!identical(type, "none")) && (is.null(level) || ((!is.na(matchLevel)) && (matchLevel>1))) )
+            {   
+#                if (!identical(type, "bars"))
+#                {        
+#                    points(plotPoints, cex = cexVec[i], col = colourVec[i], pch = pchVec[i], ...)        
+#                }
+                pointFct(plotPoints, cexVec[i], colourVec[i], pchVec[i], ...)        
+
+                ## Adding error bars
+                barFct(plotPoints)    
             }
+          
         }
+        ## Plotting in the case "add = TRUE"
+        } else {  
         
-        } else {  # add = TRUE
-        
-#            if (i == 1) 
-#            {
-                if (is.null(level) || uniAss[i] %in% level) 
-                {
-                    points(plotPoints, pch = i,col = colourVec[i], ...)
-                }
-#            } else {
-#                matchLevel <- match(uniAss[i], level)
-#                if ((!is.null(level)) && (!is.na(matchLevel)) && (matchLevel == 1)) 
-#                {
-#                    points(plotPoints, xlab = xlab, ylab = ylab, 
-#                           xlim = xLimits, ylim = yLimits, 
-#                           pch = i, 
-#                           col = colourVec[i], ...)
-#                }
-#                if (is.null(level) || ((!is.na(matchLevel)) && (matchLevel > 1))) 
-#                {
-#                    points(plotPoints, pch = i, col = colourVec[i])
-#                }
-#            }     
+            if (is.null(level) || uniAss[i] %in% level) 
+            {
+#                points(plotPoints, cex = cexVec[i], col = colourVec[i], pch = pchVec[i], ...)
+                pointFct(plotPoints, cexVec[i], colourVec[i], pchVec[i], ...)
+            
+                ## Adding error bars
+                barFct(plotPoints)
+            }
         }
     }
-#    } else {
-#       #added by Xiaoyan--begin 
-#       if (type == "add") {
-#        for (i in 1:numCol) 
-#        {
-#            plotPoints <-  cbind(as.numeric(names(tapVec <- tapply(resp[assayNo == i], dose[assayNo == i], mean))), tapVec)
-#                
-#        }
-#        }
-#         #added by Xiaoyan--end    
-#    }
     
     noPlot <- rep(FALSE, numCol)
     if (!(type == "obs"))
     {
-    for (i in 1:numCol)
-    {
-        if ( any(is.na(plotMat[,i])) & (!naPlot) ) 
+        for (i in 1:numCol)
         {
-            noPlot[i] <- TRUE
-            next
-        }
+            if ( any(is.na(plotMat[,i])) & (!naPlot) ) 
+            {
+                noPlot[i] <- TRUE
+                next
+            }
 
-        if (is.null(level) || unique(assayNoOld)[i]%in%level)
-        {                 
-#        print(dosePts[ivMid])
-            lines(dosePts[ivMid], plotMat[ivMid, i], lty = ltyVec[i], col = colourVec[i], ...)
+            if (is.null(level) || unique(assayNoOld)[i]%in%level)
+            {                 
+                lines(dosePts[ivMid], plotMat[ivMid, i], lty = ltyVec[i], col = colourVec[i], ...)
 #            lines(dosePts[ivLeft], plotMat[ivLeft, i], lty = ltyVec[i], col = colourVec[i])
 #            lines(dosePts[ivRight], plotMat[ivRight, i], lty = ltyVec[i], col = colourVec[i])
+            }      
         }
     }
-    }
-
-
+    
     ## Defining legend and legend text    
     legendLevels <- as.character(unique(assayNoOld))
     if (!missing(legendText)) 
@@ -426,21 +457,18 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
     } 
     ltyVec[noPlot] <- 0
     
-    
     ## Removing line types when lines are not drawn
     if (type == "obs")
     {
         ltyVec[levInd] <- 0
     }
     
-    
     ## Removing plot symbol when no points are drawn
-    if (type == "none")
+    if ( (identical(type, "none")) || (identical(type, "bars")) )
     {
         pchVec[levInd] <- NA
     }
-    
-    
+      
     ## Adding legends
     if (legend)
     {
@@ -456,7 +484,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
         }
     
         legend(xlPos, ylPos, legendLevels, lty = ltyVec[levInd], pch = pchVec[levInd], 
-               col = colourVec[levInd], bty = "n", xjust = 1, yjust = 1)
+               col = colourVec[levInd], bty = "n", xjust = 1, yjust = 1, cex = legendCex)
     }
     par(las=0)
 

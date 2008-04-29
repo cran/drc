@@ -22,21 +22,21 @@
 
 \details{
   The dataset is an example of an asymmetric dose-response curve, that is not
-  easily handling using the log-logistic or Weibull models, whereas the baro5 model
-  provides a nice fit.
+  easily handled using the log-logistic or Weibull models (\code{\link{LL.4}}, \code{\link{LL.5}}, 
+  \code{\link{W1.4}} and \code{\link{W2.4}}), whereas the \code{baro5} model provides a nice fit.
 }
 
-\source{Ricketts, J. H. and Head, G. A. (1999) A five-parameter logistic equation for investigating asymmetry of
-curvature in baroreflex studies. \emph{Am. J. Physiol. (Regulatory
-Integrative Comp. Physiol. 46)}, \bold{277}, 441--454.}
+\source{
+  Ricketts, J. H. and Head, G. A. (1999) A five-parameter logistic equation for investigating asymmetry of
+  curvature in baroreflex studies, 
+  \emph{Am. J. Physiol. (Regulatory Integrative Comp. Physiol. 46)}, \bold{277}, 441--454.
+}
 
 \examples{
 
 ## Fitting the baro5 model
-model1 <- multdrc(rate~pressure, data=heartrate, fct=baro5())
-plot(model1)
-
-rm(model1)
+heartrate.m1 <- drm(rate~pressure, data=heartrate, fct=baro5())
+plot(heartrate.m1)
 
 }
 \keyword{datasets}

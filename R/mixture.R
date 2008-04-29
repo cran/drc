@@ -1,6 +1,7 @@
-"mixture" <- function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd = 0, varPower = FALSE, startVal, fct = l4(), 
-                      na.action = na.fail, robust = "mean", type = "continuous", cm = NULL, logDose = NULL, control = mdControl(), 
-                      model = "Hewlett", startVal2)
+"mixture" <- function(
+formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd = 0, varPower = FALSE, startVal, fct = l4(), 
+na.action = na.fail, robust = "mean", type = "continuous", cm = NULL, logDose = NULL, control = mdControl(), 
+model = "Hewlett", startVal2)
 {
     ## Setting na.action option
     options(na.action=deparse(substitute(na.action)))
@@ -67,8 +68,11 @@
     eCol0 <- deparse(substitute(curve))
     eCol <- eval(parse(text=paste("~factor(", eCol0, ")", sep = "")), envir = data)
 #    print(eCol)
-    
-    if (length(fct$names) == 3)  # l3 function 
+
+    if (length(fct$names) == 2)  # LL.2 
+    {
+        collapseNew <- list(bCol, eCol)        
+    } else if (length(fct$names) == 3)  # l3 function 
     {
 #        HPfct <- hpfct(fixed = c( NA, 0, NA, NA, NA, NA))
         collapseNew <- list(bCol, ~1, eCol)
@@ -114,7 +118,14 @@
 
     if (model == "CA")
     {
-        if (length(fct$names) == 3)  # l3 function 
+        if (length(fct$names) == 2)  # LL.2 
+        {
+            mixtfct <- hewlett(fixed = c( NA, 0, 1, NA, NA, 1))
+            collapseNew2 <- list(bCol, eCol1, eCol2)
+        
+            eName <- fct$names[2]
+            noLim <- 0  # number of c and d parameters
+        } else if (length(fct$names) == 3)  # l3 function 
         {
             mixtfct <- hewlett(fixed = c( NA, 0, NA, NA, NA, 1))
             collapseNew2 <- list(bCol, ~1, eCol1, eCol2)
@@ -136,7 +147,14 @@
     
     if (model == "Hewlett")
     {
-        if (length(fct$names) == 3)  # l3 function 
+        if (length(fct$names) == 2)  # LL.2 
+        {
+            mixtfct <- hewlett(fixed = c( NA, 0, 1, NA, NA, NA))
+            collapseNew2 <- list(bCol, eCol1, eCol2, ~1)
+        
+            eName <- fct$names[2]
+            noLim <- 0  # number of c and d parameters
+        } else if (length(fct$names) == 3)  # l3 function 
         {
             mixtfct <- hewlett(fixed = c( NA, 0, NA, NA, NA, NA))
             collapseNew2 <- list(bCol, ~1, eCol1, eCol2, ~1)
@@ -156,7 +174,14 @@
 
     if (model == "Voelund")
     {
-        if (length(fct$names) == 3)  # l3 function 
+        if (length(fct$names) == 2)  # LL.2 
+        {
+            mixtfct <- voelund(fixed = c( NA, 0, 1, NA, NA, NA, NA))
+            collapseNew2 <- list(bCol, eCol1, eCol2, ~1, ~1)
+        
+            eName <- fct$names[2]
+            noLim <- 0  # number of c and d parameters
+        } else if (length(fct$names) == 3)  # l3 function 
         {
             mixtfct <- voelund(fixed = c( NA, 0, NA, NA, NA, NA, NA))
             collapseNew2 <- list(bCol, ~1, eCol1, eCol2, ~1, ~1)
@@ -209,15 +234,19 @@
 
 
     ## Fitting Hewlett-Plackett model
-    model2 <- multdrc(formula=formula, curve=assayNo, collapse=collapseNew2, weights=weights, data=cbind(data2, assayNo, weights), boxcox=boxcox, bcAdd=bcAdd,
-                      varPower=varPower, startVal = sv3, fct = mixtfct, robust=robust, type=type, cm=cm, logDose=logDose, control=conList)
+    model2 <- multdrc(
+    formula=formula, curve=assayNo, collapse=collapseNew2, weights=weights, 
+    data=cbind(data2, assayNo, weights), boxcox=boxcox, bcAdd=bcAdd,
+    varPower=varPower, startVal = sv3, fct = mixtfct, robust=robust, 
+    type=type, cm=cm, logDose=logDose, control=conList)
     
     rm(collapseNew2, envir = .GlobalEnv)    
 
     model1$deviance <- model1$"fit"$"value"
     
     model2$"anova"$"test" <- "F"
-    model2$"anova"$"anovaFit" <- model1
+    model2$"anova"$"anovaFit" <- model1$"anova"$"anovaFit"  # model1
+    model2$"text" <- paste(model, "model")
 
     return(model2)
 }

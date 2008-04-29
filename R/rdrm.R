@@ -1,8 +1,6 @@
 "rdrm" <- function(nosim, fct, mpar, xerror, xpar = 1, yerror = "rnorm", ypar = c(0, 1), 
-onlyY = FALSE, seedVal = 20070527)
-{
-    set.seed(seedVal)
-        
+onlyY = FALSE)
+{        
     ## Constructing the predictor values
     if (is.numeric(xerror))
     {
@@ -25,6 +23,8 @@ onlyY = FALSE, seedVal = 20070527)
         if (length(ypar) == 1)
         {
             ypar <- rep(ypar, lenx*nosim)
+            wMat <- matrix(ypar, nosim, lenx, byrow = TRUE)
+        } else {
             wMat <- matrix(ypar, nosim, lenx, byrow = TRUE)
         }
         evalStr2 <- paste(deparse(substitute(yerror)), "(", lenx*nosim, ", ypar, meanVec)")

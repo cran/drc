@@ -12,7 +12,7 @@
 \usage{
   
   \method{plot}{drc}(x, ..., level = NULL, broken = FALSE, col = FALSE, 
-  conLevel, conName, grid = 100, legend, legendText, legendPos,
+  conLevel, conName, grid = 100, legend, legendText, legendPos, legendCex = 1,
   type = "average", obs, lty, log = "x", cex, pch, xlab, ylab, xlim, ylim,
   bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL,
   add = FALSE, axes = TRUE)
@@ -33,9 +33,12 @@
   \item{legendText}{a character string or vector of character strings specifying the legend text 
   (the position of the upper right corner of the legend box).}
   \item{legendPos}{numeric vector of length 2 giving the position of the legend.}
-  \item{type}{a character string specifying how the originals observations should be plotted. There are 4 options: 
-  "average" (default), "none" (only the fitted curve(s)), "obs" (only the data points), "all" or "points" 
-  (all data points).}
+  \item{legendCex}{numeric specifying the legend text size.}
+  \item{type}{a character string specifying how the originals observations should be plotted. There are currently
+  5 options:  "average" (averages and fitted curve(s); default), 
+  "none" (only the fitted curve(s)), "obs" (only the data points), 
+  "all" (all data points and fitted curve(s)) and 
+  "bars" (averages and fitted curve(s) with model-based error ).}
   \item{obs}{Outdated argument. Use \code{type}.}  
   \item{lty}{a numeric vector specifying the line types.}
   \item{log}{a character string which contains '"x"' if the x axis is to be logarithmic, '"y"' if the y axis is to be logarithmic and '"xy"' or
@@ -103,7 +106,7 @@ plot(model2, add = TRUE, type = "none",
 col = 2, lty = 2)
 
 ## Fitting model to be plotted below
-model3 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci)
+model3 <- multdrc(SLOPE~DOSE, CURVE, data=spinach)
 
 ## Plot with no colours
 plot(model3, main="Different line types (default)")
@@ -121,7 +124,7 @@ plot(model3, level=c(1,2), main="User-specified curves")
 plot(model3, cex=c(1,2,3,4,5), main="User-specified curves")
 
 ## Fitting another model to be plotted below
-model4 <- multdrc(weight~conc, data=hormesis)
+model4 <- multdrc(weight~conc, data=lettuce)
 
 ## Using the argument 'conLevel'. Compare the plots!
 par(mfrow=c(2, 2))

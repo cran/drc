@@ -16,7 +16,7 @@
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
-  The order of the parameters is: c, d, delta, kappa, gamma (see under 'Details').}}
+  The order of the parameters is: c, d, delta, kappa, gamma (see under 'Details').}
 }
 
 \details{

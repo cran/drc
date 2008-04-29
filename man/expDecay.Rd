@@ -2,46 +2,54 @@
 
 \alias{expDecay}
 
-\title{ ~~function to do ... ~~ }
+\title{Exponential decay model}
 
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Exponential decay model with a lower limit
 }
 
 \usage{
-expDecay(fixed = c(NA, NA, NA), names = c("span", "K", "plateau"))
+expDecay(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 }
 
 \arguments{
-  \item{fixed}{ ~~Describe \code{fixed} here~~ }
-  \item{names}{ ~~Describe \code{names} here~~ }
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
+  NAs for parameter that are not fixed.}
+  \item{names}{vector of character strings giving the names of the parameters (should not contain ":").
+  The default parameter names are: init, plateau, k.}
 }
+
 \details{
-  ~~ If necessary, more details than the description above ~~
+  The exponential decay model is a three-parameter model with mean function:
+  
+  \deqn{ f(x) = init + (plateau-init)(\exp(-k x))}
+  
+  The parameter init is the upper limit (attained at x=0), the parameter plateau is the lower limit 
+  reached for x going to infinity and the parameter k (>0) is determining the steepness of the 
+  decay. Thus the curve is monotonously decreasing in x.
 }
 
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  A list of class \code{drcMean}, containing the mean function, the self starter function,
+  the parameter names and other components such as derivatives and a function for calculating ED values.
 }
 
-\references{ ~put references to the literature/web site here ~ }
+%\references{}
 
-\author{ ~~who you are~~ }
+\author{Christian Ritz}
 
-\note{ ~~further notes~~ 
-}
+%\note{}
 
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\seealso{Similar models giving exponential increasing curves are \code{\link{AR.2}} and \code{\link{AR.3}}.}
 
 \examples{
 
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--    or do  help(data=index)  for the standard data sets.
+## Fitting an exponential decay model
+ryegrass.m1<-drm(rootl~conc, data=ryegrass, fct=expDecay())
+
+plot(ryegrass.m1)
+
+summary(ryegrass.m1)
 
 }
 \keyword{models}

@@ -9,12 +9,13 @@
 }
 
 \usage{
-rdrm(nosim, fct, mpar, xerror, xpar = 1, yerror = "rnorm", ypar = c(0, 1), onlyY = FALSE, seedVal = 20070527)
+  rdrm(nosim, fct, mpar, xerror, xpar = 1, yerror = "rnorm", ypar = c(0, 1), 
+  onlyY = FALSE)
 }
 
 \arguments{
   \item{nosim}{numeric. The number of simulated curves to be returned.}
-  \item{fct}{list. Any built-in function in \code{\link{drc}} or a list with similar components.}
+  \item{fct}{list. Any built-in function in the package \emph{drc} or a list with similar components.}
   \item{mpar}{numeric. The model parameters to be supplied to \code{fct}.}
   \item{xerror}{numeric or character. The distribution for the dose values.}
   \item{xpar}{numeric vector supplying the parameter values defining the distribution for the dose values. 
@@ -25,7 +26,6 @@ rdrm(nosim, fct, mpar, xerror, xpar = 1, yerror = "rnorm", ypar = c(0, 1), onlyY
   response values.}
   \item{onlyY}{logical. If TRUE then only the response values are returned (useful in simulations). 
   Otherwise both dose values and response values (and for binomial data also the weights) are returned.}
-  \item{seedVal}{numeric. The seed to be used.}
 }
 
 \details{
@@ -34,7 +34,8 @@ rdrm(nosim, fct, mpar, xerror, xpar = 1, yerror = "rnorm", ypar = c(0, 1), onlyY
   varying dose values from curve to curve.
   
   The error distribution for the response values can be any continuous distribution
-  like \code{\link{rnorm}} or \code{\link{rgamma}}. Alternatively it can be the binomial distribution.
+  like \code{\link{rnorm}} or \code{\link{rgamma}}. Alternatively it can be the binomial distribution 
+  \code{\link{rbinom}}.
 }
 
 \value{
@@ -51,12 +52,24 @@ rdrm(nosim, fct, mpar, xerror, xpar = 1, yerror = "rnorm", ypar = c(0, 1), onlyY
 
 \examples{
 
-## Model fit
-m1 <- drm(rootl~conc, data = ryegrass, fct = LL.4())
+## Simulating normally distributed dose-response data
+
+## Model fit to simulate from
+ryegrass.m1 <- drm(rootl~conc, data = ryegrass, fct = LL.4())
 
 ## 10 random dose-response curves based on the model fit
-sim10 <- rdrm(10, LL.4(), coef(m1), xerror = ryegrass$conc)
-sim10
+sim10a <- rdrm(10, LL.4(), coef(ryegrass.m1), xerror = ryegrass$conc)
+sim10a
+
+
+## Simulating binomial dose-response data
+
+## Model fit to simulate from
+deguelin.m1 <- drm(r/n~dose, weights=n, data=deguelin, fct=LL.2(), type="binomial")
+
+## 10 random dose-response curves
+sim10b <- rdrm(10, LL.2(), coef(deguelin.m1), deguelin$dose, yerror="rbinom", ypar=deguelin$n)
+sim10b
 
 }
 

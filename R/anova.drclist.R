@@ -80,6 +80,9 @@
         cat("\n")
 
         collapse1 <- obj1[[8]]$collapse
+        if (is.null(collapse1)) {collapse1 <- obj1[[8]]$pmodels}
+#        print(collapse1)
+        
 #        if (is.null(collapse1)) {collapse1 <- paste(deparse(obj1[[8]]$assayNo), "(for all parameters)")} else {collapse1 <- deparse(obj1[[8]]$collapse)}
         if (is.null(collapse1)) 
         {
@@ -90,7 +93,8 @@
                 collapse1 <- paste(deparse(obj1[[8]]$curve), "(for all parameters)")
             }
         } else {
-            collapse1 <- paste(deparse(obj1[[8]]$collapse), collapse="")
+#            collapse1 <- paste(deparse(obj1[[8]]$collapse), collapse="")
+            collapse1 <- paste(deparse(collapse1), collapse = "")
             collapse1 <- gsub("    ", "", collapse1, fixed=TRUE)  # removing extra spaces
         }
 
@@ -113,6 +117,9 @@
         }      
 
         collapse2 <- obj2[[8]]$collapse
+        if (is.null(collapse2)) {collapse2 <- obj2[[8]]$pmodels} 
+#        print(collapse2)       
+        
 #        if (is.null(collapse2)) {collapse2 <- paste(deparse(obj2[[8]]$assayNo), "(for all parameters)")} else {collapse2 <- deparse(obj2[[8]]$collapse)}
         if (is.null(collapse2)) 
         {
@@ -123,7 +130,8 @@
                 collapse2 <- paste(deparse(obj2[[8]]$curve), "(for all parameters)")
             }
         } else {
-            collapse2 <- paste(deparse(obj2[[8]]$collapse), collapse = "")
+#            collapse2 <- paste(deparse(obj2[[8]]$collapse), collapse = "")
+            collapse2 <- paste(deparse(collapse2), collapse = "")
             collapse2 <- gsub("    ", "", collapse2, fixed = TRUE)  # removing extra spaces
         }
     
@@ -149,12 +157,22 @@
         ## Omitting collapse line if content is the same in both lines
         if (identical(collapse1, collapse2)) {colLine <- FALSE} else {colLine <- TRUE}
     
+        if ( (!is.null(obj1[[8]]$pmodels)) || (!is.null(obj2[[8]]$pmodels)) )
+        {
+            fctStart <- " fct:     "
+            colStart <- " pmodels: "
+        } else {
+            fctStart <- " fct:      "
+            colStart <- " collapse: "
+        }
         cat("1st model\n")
-        cat(paste(" fct:      ", deparse(obj1[[8]]$fct), "\n", sep=""))
-        if (colLine) {cat(paste(" collapse: ", collapse1, "\n", sep=""))}
+        cat(paste(fctStart, deparse(obj1[[8]]$fct), "\n", sep=""))
+#        if (colLine) {cat(paste(" collapse: ", collapse1, "\n", sep=""))}
+        if (colLine) {cat(paste(colStart, collapse1, "\n", sep=""))}
         cat("2nd model\n")
-        cat(paste(" fct:      ", deparse(obj2[[8]]$fct), "\n", sep=""))
-        if (colLine) {cat(paste(" collapse: ", collapse2, "\n", sep=""))}
+        cat(paste(fctStart, deparse(obj2[[8]]$fct), "\n", sep=""))
+#        if (colLine) {cat(paste(" collapse: ", collapse2, "\n", sep=""))}
+        if (colLine) {cat(paste(colStart, collapse2, "\n", sep=""))}
         cat("\n")
         }
     }

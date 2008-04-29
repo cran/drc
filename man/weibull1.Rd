@@ -15,13 +15,13 @@
            upperc = c(Inf, Inf, Inf, Inf), 
            fixed = c(NA, NA, NA, NA), 
            names = c("b", "c", "d", "e"),
-           scaleDose = TRUE)
+           scaleDose = TRUE, fctName, fctText)
  
   weibull2(lowerc = c(-Inf, -Inf, -Inf, -Inf),
            upperc = c(Inf, Inf, Inf, Inf), 
            fixed = c(NA, NA, NA, NA), 
            names = c("b", "c", "d", "e"),
-           scaleDose = TRUE)
+           scaleDose = TRUE, fctName, fctText)
 }
 
 \arguments{
@@ -32,7 +32,9 @@
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
   The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e (see under 'Details').}
   \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
-                   this is required for datasets where all dose values are small. }  
+                   this is required for datasets where all dose values are small. } 
+  \item{fctName}{optional character string used internally by convenience functions.}  
+  \item{fctText}{optional character string used internally by convenience functions.}                      
 }
 
 \details{
@@ -72,22 +74,21 @@
 \examples{
 
 ## Fitting two different Weibull models
-model1 <- multdrc(ryegrass, fct = weibull1())
-plot(model1, conLevel=0.5, legend=FALSE)
-model2 <- multdrc(ryegrass, fct = weibull2())
-plot(model2, conLevel=0.5, type="add", col=2)
+ryegrass.m1 <- drm(ryegrass, fct = weibull1())
+plot(ryegrass.m1, conLevel=0.5, legend=FALSE)
+ryegrass.m2 <- drm(ryegrass, fct = weibull2())
+plot(ryegrass.m2, conLevel=0.5, add = TRUE, type = "fit", col=2)
 # you could also look at the ED values to see the difference
 
 ## A four-parameter Weibull model with b fixed at 1
-model3 <- multdrc(ryegrass, fct = weibull1(fixed=c(1, NA, NA, NA)))
-summary(model3)
+ryegrass.m3 <- drm(ryegrass, fct = weibull1(fixed=c(1, NA, NA, NA)))
+summary(ryegrass.m3)
 
 ## A four-parameter Weibull model with the constraint b>3
-model4 <- multdrc(ryegrass, fct = weibull1(lowerc=c(3, -Inf, -Inf, -Inf)), 
-control=mdControl(constr=TRUE))
-summary(model4)
+ryegrass.m4 <- drm(ryegrass, fct = weibull1(), lowerl = c(3, -Inf, -Inf, -Inf), 
+control=drmc(constr=TRUE))
+summary(ryegrass.m4)
 
-rm(model1, model2, model3, model4)
 }
 \keyword{models}
 \keyword{nonlinear}

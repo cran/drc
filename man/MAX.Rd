@@ -9,12 +9,14 @@
 }
 
 \usage{
-MAX(obj, upper=NULL)
+MAX(object, upper = 1000, interval = c(1e-3, 1000))
 }
 
 \arguments{
-  \item{obj}{an object of class 'drc'.}
+  \item{object}{an object of class 'drc'.}
   \item{upper}{numeric. Upper limit for bisection method. Need to be larger than EDx level to be calculated.}
+  \item{interval}{numeric vector of length 2 specifying the interval wherein the dose resulting in 
+  the maximum hormesis response is to be found.}
 }
 
 \details{
@@ -37,10 +39,8 @@ MAX(obj, upper=NULL)
 
 \examples{
 
-model1 <- multdrc(hormesis[,c(2,1)], fct=ml3c())
-MAX(model1)
-
-rm(model1)
+lettuce.m1 <- drm(lettuce[,c(2,1)], fct=CRS.4c())
+MAX(lettuce.m1)
 
 }
 \keyword{models}

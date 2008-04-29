@@ -70,7 +70,10 @@
 
     
     ## Returning functions
-    returnList <- list(fct = Rfct, ssfct = Rssfct, names = Rnames)
+    returnList <- list(fct = Rfct, ssfct = Rssfct, names = Rnames,
+    name = "richards",
+    text = "Richards", 
+    noParm = sum(is.na(fixed)))
 
     class(returnList) <- "Richards"
     invisible(returnList)

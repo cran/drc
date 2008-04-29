@@ -119,8 +119,13 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     sifct <- NULL
     
     
-    returnList <- list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, 
-                       upperc=upperLimits, edfct=edfct, sifct=sifct, scaleInd=scaleInd)
+    returnList <- 
+    list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, 
+    deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, 
+    upperc=upperLimits, edfct=edfct, sifct=sifct, scaleInd=scaleInd,
+    name = "baro5",
+    text = "Baroflex", 
+    noParm = sum(is.na(fixed)))
 
     class(returnList) <- "baro5"
     invisible(returnList)

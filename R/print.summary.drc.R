@@ -4,7 +4,15 @@ function(x, ...)
     object <- x
     
     cat("\n")
-    cat(paste("Model fitted: ", object$"fctName", "\n", sep=""))
+#    cat(paste("Model fitted: ", object$"fctName", "\n", sep = ""))
+
+    if (!is.null(object$"noParm"))
+    {
+        modelText <- paste("Model fitted: ", object$"text", " (", object$"noParm", " parms)", "\n", sep = "")
+    } else {
+        modelText <- paste("Model fitted: ", object$"text", "\n", sep = "")
+    }
+    cat(modelText)
 
     if (!is.null(object$"robust"))
     {
@@ -16,7 +24,7 @@ function(x, ...)
     cat("Parameter estimates:\n\n")
     printCoefmat(object$"coefficients")
 
-    if ((!is.null(object$"resVar")) && (!(object$"type"=="binomial")))
+    if ((!is.null(object$"resVar")) && (!(object$"type" == "binomial")))
     {
         cat("\n")
         endText <- paste("(", as.character(df.residual(object)), " degrees of freedom)\n", sep = "")

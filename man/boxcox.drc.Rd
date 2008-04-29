@@ -13,7 +13,7 @@ boxcox.drc(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, eps = 1/50, bcAdd =
 }
 
 \arguments{
-  \item{object}{object of class \code{\link{drc}}.}
+  \item{object}{object of class \code{drc}.}
   \item{lambda}{numeric vector of lambda values; the default is (-2, 2) in steps of 0.1.}
   \item{plotit}{logical which controls whether the result should be plotted.}
   \item{eps}{numeric value: the tolerance for lambda = 0; defaults to 0.02.}

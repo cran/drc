@@ -36,7 +36,7 @@ mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxDose = 1e-1, maxIt = 500, m
 
 \note{The use of a non-zero constant \code{bcAdd} may in some cases make it more difficult to obtain convergence of the estimation procedure.}
 
-\seealso{See the documentation on the data set \code{\link{PestSci}}.}
+\seealso{See the documentation on the data set \code{\link{spinach}}.}
 
 \examples{
 
@@ -44,34 +44,29 @@ mdControl(bcAdd=0, constr = FALSE, errorm = TRUE, maxDose = 1e-1, maxIt = 500, m
 mdControl()  
 
 ### Using 'method' argument
-model1 <- multdrc(ryegrass)
+ryegrass.model1 <- multdrc(ryegrass)
 
-model2 <- multdrc(ryegrass, varPower = TRUE, startVal = coef(model1),
+ryegrass.model2 <- multdrc(ryegrass, varPower = TRUE, startVal = coef(ryegrass.model1),
 control = mdControl(method = "Nelder-Mead"))
-
-rm(model1, model2)
-
 
 ### Using 'relTol' argument to improve accuracy
 
 ## Fitting a model to the PestSci dataset
-model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci)
+spinach.model1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach)
 
 ## Fitting the same model in a different parametrisation
-model2 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+spinach.model2 <- multdrc(SLOPE~DOSE, CURVE, data = spinach,
 collapse = list(~factor(CURVE),~factor(CURVE),~factor(CURVE),~factor(CURVE)))
 
 ## Reducing the relative tolerance
-model3 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+spinach.model3 <- multdrc(SLOPE~DOSE, CURVE, data = spinach,
 collapse = list(~factor(CURVE),~factor(CURVE),~factor(CURVE),~factor(CURVE)),
 control = mdControl(relTol = 1e-12))
 
 ## Comparing the parameter estimates
-coef(model1)
-coef(model2)
-coef(model3)  # model3 is closer to model1 than model2 is 
-
-rm(model1, model2, model3)
+coef(spinach.model1)
+coef(spinach.model2)
+coef(spinach.model3)  # model3 is closer to model1 than model2 is 
 
 }
 \keyword{models}

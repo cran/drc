@@ -8,7 +8,7 @@
 
 \description{
   Data are from an experiment, comparing the potency of the two herbicides glyphosate and bentazone in
-  \emph{Sinapis alba}.
+  white mustard \emph{Sinapis alba}.
 }
 
 \usage{data(S.alba)}
@@ -16,9 +16,9 @@
 \format{
   A data frame with 68 observations on the following 3 variables.
   \describe{
-    \item{\code{Dose}}{a numeric vector giving the dose in g/ha}
-    \item{\code{Herbicide}}{a factor with levels \code{Bentazone} \code{Glyphosate}}
-    \item{\code{DryMatter}}{a numeric vector containing the response}
+    \item{\code{Dose}}{a numeric vector containing the dose in g/ha.}
+    \item{\code{Herbicide}}{a factor with levels \code{Bentazone} \code{Glyphosate} (the two herbicides applied).}
+    \item{\code{DryMatter}}{a numeric vector containing the response (dry matter in g/pot).}
   }
 }
 
@@ -35,18 +35,18 @@
 }
 
 \seealso{
-  See the examples in the examples sections in \code{\link{multdrc}} and \code{\link{SI}}.
+  See the examples in the examples sections in \code{\link{drm}} and \code{\link{SI}}.
 }
 
 \examples{
 
 ## Fitting a log-logistic model with
 ##  common lower and upper limits
-model1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
+S.alba.m1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
 pmodels=data.frame(Herbicide,1,1,Herbicide), adjust="bc1") 
 
-## Plotting fitted curve and data
-plot(model1)
+## Plotting fitted regression curves together with the data
+plot(S.alba.m1)
 
 }
 \keyword{datasets}

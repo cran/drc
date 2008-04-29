@@ -19,37 +19,63 @@
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Either of the form 'response \eqn{~} dose' 
   or as a data frame with response value in first column and dose in second column.}
+  
   \item{curve}{a numeric vector or factor containing the grouping of the data.}
+  
   \item{pmodels}{a data frame with a many columns as there are parameters in the non-linear function. 
   Or a list containing a formula for each parameter in the non-linear function.}
+  
   \item{weights}{a numeric vector containing weights.}
+  
   \item{data}{an optional data frame containing the variables in the model.}
+  
   \item{subset}{an optional vector specifying a subset of observations to be used in the fitting process.}
-  \item{fct}{a list with three or 5 elements specifying the non-linear 
-  function, the accompanying self starter function, the names of the parameter in the non-linear f
-  unction and, optionally, the first and second derivatives.}
+  
+  \item{fct}{a list with three or more elements specifying the non-linear
+  function, the accompanying self starter function, the names of the parameter in the non-linear function and, 
+  optionally, the first and second derivatives as well as information used for calculation of ED values.
+  Currently available functions include, among others, the four- and five-parameter log-logistic models 
+  \code{\link{LL.4}}, \code{\link{LL.5}} and the Weibull model \code{\link{W1.4}}. Use
+  \code{\link{getMeanFunctions}} for a full list.}
+  
   \item{adjust}{a character string specifying the type of adjustment for variance inhomogeneity.}
+  
   \item{bc}{a numeric value specifying the lambda parameter to be used in the Box-Cox transformation.}
+  
   \item{bcAdd}{a numeric value specifying the constant to be added on both sides prior to Box-Cox transformation. 
   The default is 0.}
+  
   \item{type}{a character string specifying the data type: continuous is the only option currently.}
+  
   \item{start}{an optional numeric vector containing starting values for all mean parameters in the model. 
   Overrules any self starter function.}
+  
   \item{start2}{an optional numeric vector containing starting values for all variance parameters in the model.}
-  \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  The default is 'na.fail'. To omit 'NA's use
-  'na.omit'.}
+  
+  \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  
+  The default is \code{link{na.fail}}. To omit 'NA's use \code{\link{na.omit}}.}
+  
   \item{hetvar}{a vector specifying the grouping for heterogeneous variances.}
+  
   \item{robust}{a character string specifying the rho function for robust estimation. Default is non-robust 
   least squares estimation ("mean"). Available robust methods are: median estimation ("median"), 
   least median of squares ("lms"), least trimmed squares ("lts"), metric trimming ("trimmed"), 
   metric winsorizing ("winsor") and Tukey's biweight ("tukey").}
+  
   \item{logDose}{a numeric value or NULL. If log doses value are provided the base of the logarithm should be specified (exp(1) for the natural logarithm
-and 10 for 10-logarithm).}
+  and 10 for 10-logarithm).}
+
   \item{fctList}{a list of functions in case different functions need to be fit to different curves.}
-  \item{control}{a list of arguments controlling constrained optimisation (zero as boundary), maximum number of iteration in the optimisation,
+  
+  \item{control}{a list of arguments controlling constrained optimisation (zero as boundary), 
+  maximum number of iteration in the optimisation,
   relative tolerance in the optimisation, warnings issued during the optimisation.}
-  \item{lowerl}{ ~~Describe \code{method} here~~ }  
-  \item{upperl}{ ~~Describe \code{method} here~~ }
+  
+  \item{lowerl}{a numeric vector of lower limits for all parameters in the model 
+  (the default corresponds to minus infinity for all parameters).}  
+  
+  \item{upperl}{a numeric vector of upper limits for all parameters in the model 
+  (the default corresponds to plus infinity for all parameters).}
 }
 
 \details{
@@ -65,6 +91,8 @@ and 10 for 10-logarithm).}
   If \code{adjust} is "vp" then \code{robust} is set to "mean".
   
   For robust estimation MAD (median abslolute deviance) is used to estimate the residual variance.  
+  
+  Setting \code{lowerl} and/or \code{upperl} automatically invokes constrained optimisation.
 }
 
 \value{
@@ -87,13 +115,13 @@ and 10 for 10-logarithm).}
   additive models for the parameters.
 }
 
-\seealso{The function \code{\link{nls}} can also be used for nonlinear regression.}
+\seealso{The function \code{\link{nls}} can be used for fitting general nonlinear regression models.}
 
 \examples{
 
 m1 <- drm(ryegrass, fct = LL.4())
-m2 <- drm(SLOPE~DOSE, CURVE, data=PestSci, fct = LL.4())
-m3 <- drm(rgr~dose, pct, data=TM, fct = LL.4())
+
+m2 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
 
 }
 \keyword{models}

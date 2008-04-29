@@ -1,7 +1,8 @@
 "SI" <-
 function(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
 ci = c("none", "delta", "fieller", "fls"), level = ifelse(!(ci == "none"), 0.95, NULL), 
-reference = c("upper", "control"), type = c("relative", "absolute"), logBase = NULL, ...)
+reference = c("control", "upper"), type = c("relative", "absolute"), logBase = NULL,
+display = TRUE, ...)
 {
      ## Matching the argument 'method'
      ci <- match.arg(ci)
@@ -68,11 +69,11 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
 #    parm<-c((sumObj[[3]])[,1])
     parm <- c((sumObj$"estimates")[,1])    
     lenPV<-length(percVec)
-#    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
-#    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
-    strParm <- unique(object$"data"[, ncol(object$"data") - 1])  # second last column contains original curve levels
-#    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
-    strParm <- strParm[!(strParm %in% object$"cm")]
+###    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
+###    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
+##    strParm <- unique(object$"data"[, ncol(object$"data") - 1])  # second last column contains original curve levels
+###    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
+##    strParm <- strParm[!(strParm %in% object$"cm")]
 
 #    indexVec <- in1fct()
 #    ncPM <- ncol(parmMat)
@@ -126,7 +127,7 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
     parmMat0 <- object$"parmMat"  # [[10]]
     parmMat <-  t((t(parmMat0))[noNA, ])
 #    print(indexMat)
-
+    strParm <- colnames(parmMat0)
 
     ## Finding out which parameter occurs most times; this determines the number of SI values
 #    maxIndex <- 0
@@ -190,7 +191,7 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
         for (ii in 1:lenPV)
         {
             if (i>=ii) {next}
-            pVec <- percVec[c(i,ii)]
+            pVec <- percVec[c(i, ii)]
 
             for (j in 1:lenM)
             {
@@ -198,15 +199,14 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
                 {
                     if (j>=k) {next}
                     matchVec[rowIndex] <- (is.null(compMatch) || all(c(compNames[j],compNames[k])%in%compMatch))  
-#                    # this is a canonical 2 as PAIRS are matched
-
-#                    print(c(compNames[j],compNames[k]))
-#                    print(compMatch)
  
                     jInd <- j
                     kInd <- k
-                    if (reverse) {jInd <- k; kInd <- j}
-                    
+                    if (reverse) 
+                    {
+                        jInd <- k; kInd <- j; pVec <- pVec[c(2, 1)]
+                    }
+                   
                     parmInd1 <- indexMat[, jInd]
                     parmInd2 <- indexMat[, kInd]
                     
@@ -245,6 +245,17 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
                     siMat[rowIndex, 1] <- SIval
                     rNames[rowIndex] <- paste(strParm[jInd], "/", strParm[kInd], ":", pVec[1], "/", pVec[2], sep="")
 
+                    ## Using t-distribution for continuous data
+                    ##  only under the normality assumption
+                    if (object$"type" == "continuous")
+                    {
+                        qFct <- function(x) {qt(x, degfree)}
+                        pFct <- function(x) {pt(x, degfree)}
+                    } else {
+                        qFct <- qnorm
+                        pFct <- pnorm
+                    }
+
                     if (ci == "none")
                     {
 #                        derEval1 <- SIeval[[2]]
@@ -254,8 +265,9 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
                         siMat[rowIndex, 2] <- oriMat[rowIndex, 2]  # sqrt(dSIval%*%varCov%*%dSIval)
 
                         ## Testing SI equal to 1
-                        siMat[rowIndex, 3] <- (siMat[rowIndex, 1] - 1)/siMat[rowIndex, 2]
-                        siMat[rowIndex, 4] <- (pt(-abs(siMat[rowIndex,3]), degfree))+(1-pt(abs(siMat[rowIndex, 3]), degfree))
+                        tempStat <- (siMat[rowIndex, 1] - 1)/siMat[rowIndex, 2]
+                        siMat[rowIndex, 3] <- tempStat
+                        siMat[rowIndex, 4] <- pFct(-abs(tempStat)) + (1 - pFct(abs(tempStat)))
                     }
                     if ( (ci == "delta") || (ci == "fls") )
                     {
@@ -263,7 +275,7 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
 #                        derEval2 <- SIeval[[3]]
 #                        derEval <- c(derEval1, derEval2)
                         stErr <- oriMat[rowIndex, 2]  # sqrt(derEval%*%varCov%*%derEval)
-                        tquan <- qt(1 - (1 - level)/2, degfree)  # df.residual(obj))
+                        tquan <- qFct(1 - (1 - level)/2)
                         
                         siMat[rowIndex, 2] <- siMat[rowIndex, 1] - tquan * stErr
                         siMat[rowIndex, 3] <- siMat[rowIndex, 1] + tquan * stErr
@@ -273,7 +285,7 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
                     {
                         lsVal <- log(oriMat[rowIndex, 1])
                         lsdVal <- oriMat[rowIndex, 2]/oriMat[rowIndex, 1]
-                        tquan <- qt(1 - (1 - level)/2, degfree)  # df.residual(obj))
+                        tquan <- qFct(1 - (1 - level)/2)
                         
                         siMat[rowIndex, 2] <- exp(lsVal - tquan * lsdVal)
                         siMat[rowIndex, 3] <- exp(lsVal + tquan * lsdVal)
@@ -286,7 +298,7 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
                         siMat[rowIndex, 3] <- logBase^(siMat[rowIndex, 3])
                         ciLabel <- "From log scale"
                     }
-                    if (ci == "fieller")
+                    if (ci == "fieller")  # using t-distribution
                     {
 #                        lenp <- length(parmChosen1)  # model depedent!!!
 #                        EDind <- c(parmInd1[lenp], parmInd2[lenp])
@@ -312,20 +324,23 @@ reference = c("upper", "control"), type = c("relative", "absolute"), logBase = N
             }
         }
     }
-    dimnames(siMat)<-list(rNames, cNames)
+    dimnames(siMat) <- list(rNames, cNames)
     siMat <- siMat[matchVec, , drop = FALSE]
     
 #    print(matchVec)
- 
-    cat("\n")
-    cat("Estimated ratios of effect doses\n")
-    if (!(ci == "none")) 
-    {
-        ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
-        cat(ciText)
-    } 
-    cat("\n")
-    printCoefmat(siMat)
+
+    if (display)
+    { 
+        cat("\n")
+        cat("Estimated ratios of effect doses\n")
+        if (!(ci == "none")) 
+        {
+            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
+            cat(ciText)
+        } 
+        cat("\n")
+        printCoefmat(siMat)
+    }
     invisible(siMat)   
 #    return(siMat[matchVec, ,drop=FALSE])
 }
@@ -339,7 +354,7 @@ function(mu, df, vcMat, level = 0.95, finney = FALSE, resVar)
     if (!finney)
     {
         ## Based on the entry on Fieller's theorem 
-        ##  in Encyclopedia of Statistical Sciences Vol. 3, p. 86 (1983)
+        ##  in Encyclopedia of Statistical Sciences Vol. 3 (1983), p. 86 
         ##  essentially same formula as in Finney (see below)
 
         mup <- prod(mu)
@@ -492,4 +507,16 @@ commonParm <- function(SIder1, SIder2, cmonInd1, cmonInd2)
     
     }
     return(retVec)
+}
+
+commatFct <- function(object, compMatch)
+{
+    parmMat <- object$parmMat
+
+    if (!is.null(compMatch))
+    {
+        return(parmMat[, (colnames(parmMat) %in% c(compMatch[1], compMatch[2])), drop = FALSE ])
+    } else {
+        parmMat
+    }
 }

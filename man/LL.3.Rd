@@ -21,18 +21,19 @@
 \usage{  
   LL.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
   
-  LL.3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)
+  LL.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)
   
   l3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
 
-  l3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
+  l3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
   
   LL2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
   
-  LL2.3u(fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
+  LL2.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
 }
 
 \arguments{
+  \item{upper}{numeric value. The fixed, upper limit in the model. Default is 1.}
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
@@ -89,10 +90,10 @@ n <- c(142,127,128,126,129,125,117,127,51,132)
 r <- c(142,126,115,58,21,125,115,114,40,37)
 treatment <- factor(c("w213","w213","w213","w213",
 "control","w214","w214","w214","w214","w214"))
-finney_ex19 <- data.frame(logdose, n, r, treatment)
+finney.ex19 <- data.frame(logdose, n, r, treatment)
 
 ## Fitting model where the lower limit is estimated
-model2 <- multdrc(r/n~logdose, treatment, weights=n, data=finney_ex19, 
+model2 <- multdrc(r/n~logdose, treatment, weights=n, data=finney.ex19, 
 logDose=10, fct=LL.3u(), type="binomial", 
 collapse=data.frame(treatment, 1, treatment))
 
@@ -101,7 +102,6 @@ anova(model2)
 plot(model2, conLevel=-1, ylim=c(0.1, 1.3))
 abline(h=1, lty=2)
 
-rm(model1, model2, n, r, treatment, finney_ex19)
 
 }
 \keyword{models}

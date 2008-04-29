@@ -83,19 +83,19 @@ The u-shaped model is given by the expression
 \examples{
 
 ## Modified logistic model with the constraint f>0
-model1 <- multdrc(hormesis[,c(2,1)], 
+lettuce.m1 <- multdrc(weight~conc,data=lettuce, 
 fct=cedergreen(fixed=c(NA, NA, NA, NA, NA), 
 lowerc=c(-Inf, -Inf, -Inf, -Inf, 0), alpha=1), 
 control=mdControl(constr=TRUE))
 
-summary(model1)
-ED(model1, c(10, 50, 90))
+summary(lettuce.m1)
+ED(lettuce.m1, c(10, 50, 90))
 
 
 ## Estimating alpha
-m2<-drm(weight~conc,data=hormesis,fct=CRS.6())
-summary(m2)
-plot(m2)  # oops: not increasing until hormesis peak
+lettuce.m2<-drm(weight~conc,data=lettuce,fct=CRS.6())
+summary(lettuce.m2)
+plot(lettuce.m2)  # oops: not increasing until hormesis peak
 
 }
 

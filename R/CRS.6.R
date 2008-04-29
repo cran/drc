@@ -79,7 +79,10 @@ fixed=c(NA, NA, NA, NA, NA, NA), names=c("b","c","d","e","f","g"))
     
     returnList <- 
     list(fct=fct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-    edfct=edfct, maxfct=maxfct)
+    edfct=edfct, maxfct=maxfct,
+    name = "CRS.6",
+    text = "Generalised Cedergreen-Ritz-Streibig (hormesis)", 
+    noParm = sum(is.na(fixed)))
 
     class(returnList) <- "cedergreen.extended"
     invisible(returnList)

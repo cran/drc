@@ -51,22 +51,20 @@
 
 \note{This function is for use with the function \code{\link{drm}} or \code{\link{multdrc}}.}
 
-%\seealso{The related function \code{\link{bcl3}}.}
+%\seealso{The related function \code{\link{BC.4}}.}
 
 \examples{
 
-model1 <- multdrc(hormesis[,c(2,1)], fct=BC.5())
-anova(model1)
-plot(model1)
+lettuce.m1 <- drm(lettuce[,c(2,1)], fct=BC.5())
+anova(lettuce.m1)
+plot(lettuce.m1)
 
-model2 <- multdrc(hormesis[,c(2,1)], fct=BC.4())
-summary(model2)
-ED(model2, c(50))  # compare the parameter estimate and 
+lettuce.m2 <- drm(lettuce[,c(2,1)], fct=BC.4())
+summary(lettuce.m2)
+ED(lettuce.m2, c(50))  # compare the parameter estimate and 
                    # its estimated standard error 
                    # to the values in the paper by 
                    # van Ewijk and Hoekstra
-
-rm(model1, model2)
 
 }
 \keyword{models}

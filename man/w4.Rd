@@ -23,7 +23,7 @@
 }
 
 \details{
-  The mean functions are given at \code{\link{weibull1}}.
+  The equations for the mean functions are given at \code{\link{weibull1}}.
 }
 
 \value{
@@ -36,19 +36,17 @@
 
 \author{Christian Ritz}
 
-\note{This function is for use with the function \code{\link{multdrc}}.}
+\note{This function is for use with the model fitting function \code{\link{drm}}.}
 
 \seealso{Setting \eqn{c=0} yields \code{\link{W1.3}}. A more flexible function, allowing 
-fixing or constraining parameters, is \code{\link{weibull1}}.}
+fixing or constraining parameters, is available through \code{\link{weibull1}}.}
 
 \examples{
 
-## Fitting a four-parameter Weibull model
-model1 <- multdrc(rgr~dose, pct, data = TM, fct = W1.4())
-summary(model1)
+## Fitting a four-parameter Weibull (type 1) model
+terbuthylazin.m1 <- drm(rgr~dose, data = terbuthylazin, fct = W1.4())
+summary(terbuthylazin.m1)
 
-
-rm(model1)
 }
 \keyword{models}
 \keyword{nonlinear}

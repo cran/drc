@@ -14,20 +14,25 @@
         parmVecList[[i]] <- (parmVecList[[i]])[1:ncol(collapseList2[[i]])]  # min(maxParm[i], length(colNames1))]
     }
     parmVec <- unlist(parmVecList)
+#    print(parmVec)
         
     parmVec2 <- parmVec
     for (i in 1:length(parmVec))
     {
-        pos <- regexpr("factor(collapse[, i])", parmVec[i], fixed=TRUE)
+        posStr <- "factor(collapse[, i])"
+        psLen <- nchar(posStr)
+        pos <- regexpr(posStr, parmVec[i], fixed=TRUE)
         if (pos>0) 
         {
-            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos+20), sep="")
+            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos + psLen), sep = "")
         }
             
-        pos <- regexpr("factor(assayNo)", parmVec[i], fixed=TRUE)
+        posStr <- "factor(assayNo)"
+        psLen <- nchar(posStr)
+        pos <- regexpr(posStr, parmVec[i], fixed=TRUE)
         if (pos>0) 
         {
-            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos+15), sep="")
+            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos + psLen), sep = "")
         }
 
     }
@@ -47,4 +52,21 @@
     return(mdrcPNsplit(parmVec2, ":"))
 
 #    return(list(parmVec2, parmVecA, parmVecB))
+}
+
+"mdrcPNsplit" <- function(parmVec, sep) 
+{
+    lenPV <- length(parmVec)
+    parmVecA <- rep(0, lenPV)
+    parmVecB <- rep(0, lenPV)
+
+    splitList <- strsplit(parmVec, sep, fixed = TRUE)
+    for (i in 1:lenPV)
+    {
+        parmVecA[i] <- splitList[[i]][1]
+        
+        lenSL <- length(splitList[[i]])
+        parmVecB[i] <- paste(splitList[[i]][2:lenSL], collapse = "")  # 'paste' is needed in case several ":" occur
+    }
+    return(list(parmVec, parmVecA, parmVecB))
 }

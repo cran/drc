@@ -40,12 +40,12 @@ scaleX = 1, scaleY = 1)
     ## Defining functions returning the residual variance, the variance-covariance matrix and the fixed effects estimates
     rvfct <- function(object)
     {
-        object$"fit"$"value"/object$"sumList"$"df.residual"
+        object$"fit"$"value" / df.residual(object)  # object$"sumList"$"df.residual"
     }
 
     vcovfct <- function(object)
     {
-        scaledH <- (object$"fit"$"hessian")*(1/(object$"fit"$"ovalue"/object$"sumList"$"df.residual"))/2
+        scaledH <- (object$"fit"$"hessian")*(1/(2*object$"fit"$"ovalue"/object$"sumList"$"df.residual"))  # /2
         invMat <- try(solve(scaledH), silent = TRUE)
     
         if (inherits(invMat, "try-error"))

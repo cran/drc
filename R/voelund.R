@@ -111,8 +111,12 @@
     sifct <- NULL
 
 
-    returnList <- list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, 
-                       lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, sifct=sifct)
+    returnList <- 
+    list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, 
+    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, sifct=sifct,
+    name = "voelund",
+    text = "Voelund mixture", 
+    noParm = sum(is.na(fixed)))
                        
     class(returnList) <- "Voelund"
     invisible(returnList)

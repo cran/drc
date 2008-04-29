@@ -1,5 +1,5 @@
-"drm" <-
-function(formula, curve, pmodels, weights, data = NULL, subset, fct, 
+"drm" <-function(
+formula, curve, pmodels, weights, data = NULL, subset, fct, 
 adjust = c("none", "bc1", "bc2", "vp"), bc = NULL, bcAdd = 0, 
 type = c("continuous", "binomial", "Poisson", "survival"),
 start, start2, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
@@ -32,11 +32,9 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     errorMessage <- control$"errorm"
     noMessage <- control$"noMessage"
 #    trace <- control$"trace"
-    
-    
+        
     ## Setting warnings policy
     options(warn = warnVal)
-
 
     ## Setting adjustment
     if (adjust == "none") {boxcox <- FALSE; varPower <- FALSE}
@@ -50,10 +48,8 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         varPower <- FALSE
     }
 
-
     ## Handling 'start' argument
     if (missing(start)) {selfStart <- TRUE} else {selfStart <- FALSE}
-
 
     ## Handling 'fct' argument
     if ( (!is.list(fct)) && (!is.function(fct)) ) {stop("No function or list given in argument 'fct'")}
@@ -97,7 +93,8 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     }
 
     ## Checking whether or not first derivates are supplied    
-    if ( (useD) && (is.function(fct$"deriv1")) )
+    isDF <- is.function(fct$"deriv1")
+    if ( (useD) && (isDF) )
     {
         dfct1 <- fct$"deriv1"  # deriv1  # [[4]]
 #        drcDer2 <- fct$deriv2  # [[5]]
@@ -157,7 +154,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     assayNo <- model.extract(mf, "curve")   
     pmodelsList <- list()
 
-    if (is.null(assayNo)) {assayNo <- rep(1,lenData)}
+    if (is.null(assayNo)) {assayNo <- rep(1, lenData)}
     uniqueNames <- unique(assayNo)
     colOrder <- order(uniqueNames)
     uniqueNames <- as.character(uniqueNames)
@@ -287,8 +284,31 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         {
             cm <- udNames
             if (!noMessage) {cat(paste("Control measurements detected for level: ", udNames, "\n", sep = ""))}
+            ## add a check to see if at least one component in pmodels results in a single column
+            
+#            conInd <- assayNoOld%in%udNames
+#            assayNo[conInd] <- (assayNo[!conInd])[1]
+#            cm <- NULL
+#assayNew <- assayNo
+#assayNew[conInd] <- (assayNo[!conInd])[1]
+#print(assayNew)
+
+            conInd <- assayNoOld%in%udNames
+            assayNo[conInd] <- (assayNo[!conInd])[1]
+            ciOrigIndex <- unique(assayNo)
+            ciOrigLength <- numAss
+            
+            ## Updating names, number of curves and the enumeration (starting from 1)
+            assayNames <- as.character(unique(assayNoOld[!conInd]))
+            numAss <- length(assayNames) 
+            assayNo <- colConvert(assayNo)
+                       
+            cm <- NULL
+
         } else {
             cm <- NULL
+            ciOrigIndex <- unique(assayNo)
+            ciOrigLength <- numAss            
         }
 
 
@@ -488,6 +508,18 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         } else {
             pmodelsList2[[i]] <- as.matrix(pmodelsList[[i]])  # column is kept
         } 
+    }
+    
+    for (i in 1:numNames)
+    {
+        if (ncol(pmodelsList[[i]]) > numAss) 
+        {
+            pmodelsList2[[i]] <- model.matrix(~factor(assayNo) - 1)
+            colnames(pmodelsList2[[i]]) <- assayNames 
+        } else {
+            pmodelsList2[[i]] <- as.matrix(pmodelsList[[i]])  # columns are kept
+        }
+    
     }  
    
     
@@ -753,44 +785,51 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     }
 
     ## Defining lower and upper limits of parameters
-    if (constrained)
+#    if (constrained)
+#    {
+    if (!is.null(lowerl)) 
     {
-        if (!is.null(lowerl)) 
+        if (!is.numeric(lowerl) || !((length(lowerl) == sum(ncclVec)) || (length(lowerl) == numNames)))
         {
-            if (!is.numeric(lowerl) || !((length(lowerl) == sum(ncclVec)) || (length(lowerl) == numNames)))
+            stop("Not correct 'lowerl' argument")
+        } else {
+            if (length(lowerl) == numNames) 
             {
-                stop("Not correct 'lowerl' argument")
+                lowerLimits <- rep(lowerl, ncclVec)
             } else {
-                if (length(lowerl) == numNames) 
-                {
-                    lowerLimits <- rep(lowerl, ncclVec)
-                } else {
-                    lowerLimits <- lowerl
-                }
-            } 
+                lowerLimits <- lowerl
+            }
         }
-
-        if (!is.null(upperl)) 
-        {
-            if (!is.numeric(upperl) || !((length(upperl) == sum(ncclVec)) || (length(upperl) == numNames)))
-            {
-                stop("Not correct 'upperl' argument")
-            } else {
-                if (length(upperl) == numNames) 
-                {
-                    upperLimits <- rep(upperl, ncclVec)
-                } else {
-                    upperLimits <- upperl
-                }
-            } 
-        }
+        constrained <- TRUE 
         
-        if (all(!is.finite(lowerLimits)) && all(!is.finite(upperLimits))) 
-        {
-            stop("No constraints are imposed via 'lowerl' and 'upperl' arguments")
-        }
+    } else {  ## In case lower limits are not specified
+        lowerLimits <- rep(-Inf, length(startVec))
     }
 
+    if (!is.null(upperl)) 
+    {
+        if (!is.numeric(upperl) || !((length(upperl) == sum(ncclVec)) || (length(upperl) == numNames)))
+        {
+            stop("Not correct 'upperl' argument")
+        } else {
+            if (length(upperl) == numNames) 
+            {
+                upperLimits <- rep(upperl, ncclVec)
+            } else {
+                upperLimits <- upperl
+            }
+        } 
+        constrained <- TRUE
+                
+    } else {  ## In case upper limits are not specified
+        upperLimits <- rep(Inf, length(startVec))
+    }
+        
+#    if (all(!is.finite(lowerLimits)) && all(!is.finite(upperLimits))) 
+#    {
+#        stop("No constraints are imposed via 'lowerl' and 'upperl' arguments")
+#    }
+#    }
 
     ## Optimising
     
@@ -1083,7 +1122,7 @@ if (FALSE)
         {
             if (xDim == 1) {lenPts <- length(dose)} else {lenPts <- nrow(dose)}
 
-            curvePts <- matrix(NA, lenPts, numAss)
+            curvePts <- matrix(NA, lenPts, ciOrigLength)  # numAss)
             for (i in 1:numAss)
             {
                 if (!is.null(fctList)) 
@@ -1100,7 +1139,7 @@ if (FALSE)
                     
                     parmMat2 <- matrix(parmChosen, lenPts, numNames, byrow = TRUE)
 #                    print(parmMat2)
-                    curvePts[, i] <- drcFct(dose, parmMat2)
+                    curvePts[, ciOrigIndex[i]] <- drcFct(dose, parmMat2)
                 } else { curvePts[, i] <- rep(NA, lenPts)}
             }
             return(curvePts)
@@ -1175,21 +1214,21 @@ if (FALSE)
     if (!is.null(gofTest)) {gofTest <- gofTest(resp, weights, predVec, sumList$"df.residual")}
 
 
-    ## Adjusting in case 'fctList' is specified
-    if (!is.null(fctList))
-    {
-        omitAllVec <- as.vector(unlist(omitList))
-
-        parmVec <- parmVec[omitAllVec] 
-        parmVecA <- parmVecA[omitAllVec] 
-        parmVecB <- parmVecB[omitAllVec] 
-        
-        orderVec <- match(as.vector(parmMat), nlsFit$par)
-        orderVec <- orderVec[complete.cases(orderVec)]       
-        
-        nlsFit$par <- nlsFit$par[orderVec]
-        nlsFit$hessian <- nlsFit$hessian[orderVec, orderVec]
-    }
+#    ## Adjusting in case 'fctList' is specified
+#    if (!is.null(fctList))
+#    {
+#        omitAllVec <- as.vector(unlist(omitList))
+#
+#        parmVec <- parmVec[omitAllVec] 
+#        parmVecA <- parmVecA[omitAllVec] 
+#        parmVecB <- parmVecB[omitAllVec] 
+#        
+#        orderVec <- match(as.vector(parmMat), nlsFit$par)
+#        orderVec <- orderVec[complete.cases(orderVec)]       
+#        
+#        nlsFit$par <- nlsFit$par[orderVec]
+#        nlsFit$hessian <- nlsFit$hessian[orderVec, orderVec]
+#    }
 
 
     ## Constructing an index matrix for use in ED and SI
@@ -1214,15 +1253,26 @@ if (FALSE)
     if (nrow(mat1) == 1) {mat1 <- t(mat1)}  # in case of only one curve
     mat1[-1, ] <- mat1[-1, ] + cnccl
 
-    
+    ## Matrix of first derivatives evaluated at the parameter estimates
+    if (isDF)
+    {
+#        print(parmMat[assayNo, ])
+        deriv1Mat <- fct$"deriv1"(dose, parmMat[assayNo, , drop = FALSE])
+    } else {
+        deriv1Mat <- NULL
+    }
+#    deriv1Mat <- NULL
 
     ## Returning the fit
     returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, robust, bcVec, estMethod, lenData-length(startVec), 
-    anovaModel0, gofTest, sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose, cm)
+    anovaModel0, gofTest, sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
+    deparse(substitute(curve)))
+    
     names(returnList) <- c("varParm", "fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
     "parmMat", "fct", "robust", "boxcox", "estMethod", "df.residual", "anova", "gofTest", 
-    "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose", "cm")
+    "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose", "cm", "deriv1",
+    "curveVarNam")
     class(returnList) <- c("drc", class(fct))
 
     return(returnList)

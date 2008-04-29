@@ -12,7 +12,8 @@
 \usage{
   braincousens(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
   upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-  names = c("b", "c", "d", "e", "f"), scaleDose = TRUE)
+  names = c("b", "c", "d", "e", "f"), scaleDose = TRUE,
+  fctName, fctText)
 }
 
 \arguments{
@@ -22,7 +23,9 @@
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). The default is reasonable (see under 'Usage').
                The order of the parameters is: b, c, d, e, f (see under 'Details').}
   \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
-                   this is required for datasets where all dose values are small. }               
+                   this is required for datasets where all dose values are small. } 
+  \item{fctName}{optional character string used internally by convenience functions.}  
+  \item{fctText}{optional character string used internally by convenience functions.}                            
 }
 
 \details{
@@ -48,7 +51,8 @@
 
 \note{This function is for use with the function \code{\link{drm}} or \code{\link{multdrc}}.}
 
-\seealso{A special case of the function 'braincousens' is \code{\link{BC.4}}.}
+\seealso{The convenience functions of \code{braincousens} are \code{\link{BC.4}} and \code{\link{BC.5}}.}
+
 \examples{
 
 ## Brain-Cousens model with the constraint b>1

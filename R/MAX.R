@@ -1,5 +1,5 @@
 "MAX" <-
-function(obj, upper=NULL)
+function(object, upper = 1000, interval = c(1e-3, 1000))
 {
 #    typeStr <- "ED"
 #
@@ -16,22 +16,26 @@ function(obj, upper=NULL)
 #    outfct <- inOut[[3]]
 
 
-    ## Checking class of 'obj'
-    MAXlist <- obj[[11]]$"maxfct"
+    ## Checking class of 'object'
+    MAXlist <- object[[11]]$"maxfct"
     if (is.null(MAXlist)) {stop("No method available")}
 
 
     ## Retrieving relevant quantities
-    assayNo<-obj[[9]][,3]
-    numAss<-length(unique(assayNo))
+    assayNo <- object$data[, 3]  # obj[[9]][,3]
+    numAss <- length(unique(assayNo))    
+#    assayNo<-obj[[9]][,3]
+#    numAss<-length(unique(assayNo))
 
-    parmMat <- obj[[10]]
-    sumObj<-summary(obj)
-    resVar<-sumObj[[1]]
-    varMat<-obj[[12]]%*%sumObj[[2]]%*%t(obj[[12]])
+#    parmMat <- obj[[10]]
+    sumObj<-summary(object)
+#    resVar<-sumObj[[1]]
+#    varMat<-obj[[12]]%*%sumObj[[2]]%*%t(obj[[12]])
+    varMat <- sumObj$"varMat"
+    
     parm<-c((sumObj[[3]])[,1])
 #    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
-    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
+#    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
 #    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
 
 #    ncPM <- ncol(parmMat)
@@ -56,24 +60,35 @@ function(obj, upper=NULL)
 #        indexMat <- indexMat[,-naVec[!is.na(naVec)]]
 #    }
     
-    ncPM <- ncol(obj[[10]])
-    nrPM <- nrow(obj[[10]])
+#    ncPM <- ncol(object[[10]])
+#    nrPM <- nrow(object[[10]])
+#    
+#    options(warn=-1)  # to avoid warnings when filling in matrix with elements in excess in the vector 
+#    indexMat <- t(matrix(NA, nrPM, ncPM))
+#    indexMat[!is.na(t(object[[10]]))] <- 1:(nrPM*ncPM)
+#    indexMat <- t(indexMat)
+#    options(warn=0)
+##    print(indexMat)
+#    
+#    naVec <- rep(FALSE, ncPM)
+#    for (i in 1:ncPM)
+#    {
+#        naVec[i] <- any(is.na(indexMat[,i]))
+#    }
+#    indexMat <- indexMat[, !naVec, drop=FALSE]
+#    parmMat <- parmMat[, !naVec, drop=FALSE] 
+##    print(indexMat)   
+
+    oData <- object$"data"
+    strParm <- unique(oData[, ncol(oData) - 1])  # second last column contains original curve levels
+    indexMat0 <- object$"indexMat"
+    noNA <- complete.cases(t(indexMat0))
+    indexMat <- t((t(indexMat0))[noNA, , drop = FALSE])
+    parmMat0 <- object$"parmMat"  # [[10]]
+    parmMat <-  t((t(parmMat0))[noNA, , drop = FALSE])
     
-    options(warn=-1)  # to avoid warnings when filling in matrix with elements in excess in the vector 
-    indexMat <- t(matrix(NA, nrPM, ncPM))
-    indexMat[!is.na(t(obj[[10]]))] <- 1:(nrPM*ncPM)
-    indexMat <- t(indexMat)
-    options(warn=0)
-#    print(indexMat)
-    
-    naVec <- rep(FALSE, ncPM)
-    for (i in 1:ncPM)
-    {
-        naVec[i] <- any(is.na(indexMat[,i]))
-    }
-    indexMat <- indexMat[, !naVec, drop=FALSE]
-    parmMat <- parmMat[, !naVec, drop=FALSE] 
-#    print(indexMat)   
+    strParm <- strParm[noNA]
+
 
     ## Finding out which parameter occurs most times; this determines the number of ED values
 #    maxIndex <- 0
@@ -115,7 +130,7 @@ function(obj, upper=NULL)
         parmChosen <- parmMat[,i]
 
 #        print(parmChosen)
-        MAXmat[i, ] <- MAXlist(parmChosen, upper)
+        MAXmat[i, ] <- MAXlist(parmChosen, upper, interval)
         dimNames[i] <- strParm[i]
     }
 

@@ -51,7 +51,7 @@
 \examples{
 
 ## Fitting a model
-model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci)
+model1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach)
 
 ## Predicting values a dose=2 (with standard errors)
 predict(model1, data.frame(dose=2, CURVE=c("1", "2", "3")))

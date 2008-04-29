@@ -13,7 +13,7 @@
 \usage{data(secalonic)}
 
 \format{
-  A data frame with 7 observations on the following 2 variables.
+  A data frame with 7 observations on the following 2 variables:
   \describe{
     \item{\code{dose}}{a numeric vector containing dose values}
     \item{\code{rootl}}{a numeric vector containing average root lengths}
@@ -25,7 +25,7 @@
 }
 
 \source{
-    Gong, X. and Zeng, R. and Luo, S. and Yong, C. and Zheng, Q. (2004) Two new 
+  Gong, X. and Zeng, R. and Luo, S. and Yong, C. and Zheng, Q. (2004) Two new 
   secalonic acids from \emph{Aspergillus Japonicus} and their allelopathic effects on higher plants,
   \emph{Proceedings of International Symposium on Allelopathy Research and Application, 27-29 April, 
   Shanshui, Guangdong, China (Editors: R. Zeng and S. Luo)}, 209--217.
@@ -41,7 +41,6 @@ secalonic.m1 <- multdrc(rootl~dose, data=secalonic)
 ## Fitting a 3-parameter log-logistic model
 ##  lower limit fixed at 0
 secalonic.m2 <- multdrc(rootl~dose, data=secalonic, fct=LL.3())
-
 
 }
 \keyword{datasets}

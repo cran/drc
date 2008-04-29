@@ -1,6 +1,6 @@
 "ED" <-
 function(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
-level = ifelse(!(ci == "none"), 0.95, NULL), logBase = NULL, reference = c("upper", "control"), 
+level = ifelse(!(ci == "none"), 0.95, NULL), logBase = NULL, reference = c("control", "upper"), 
 type = c("relative", "absolute"), display = TRUE,...)
 {
     ci <- match.arg(ci)
@@ -122,7 +122,7 @@ type = c("relative", "absolute"), display = TRUE,...)
     parmMat <-  t((t(parmMat0))[noNA, , drop = FALSE])
     
     strParm <- strParm[noNA]
-    
+    strParm <- colnames(parmMat0)    
 
     ## Finding out which parameter occurs most times; this determines the number of ED values
 #    maxIndex <- 0
@@ -200,11 +200,20 @@ type = c("relative", "absolute"), display = TRUE,...)
         }
     }
     colNames <- c("Estimate", "Std. Error")
+    
+    ## Using t-distribution for continuous data
+    ##  only under the normality assumption
+    if (object$"type" == "continuous")
+    {
+        qFct <- function(x) {qt(x, df.residual(object))}
+    } else {
+        qFct <- qnorm
+    }
 
     if (ci == "delta")
     {
         ciMat <- matrix(0, lenEB*lenPV, 2)
-        tquan <- qt(1 - (1 - level)/2, df.residual(object))        
+        tquan <- qFct(1 - (1 - level)/2)        
 #        ciMat[, 1] <- EDmat[, 1] - qnorm(level + (1-level)/2)*EDmat[, 2]
 #        ciMat[, 2] <- EDmat[, 1] + qnorm(level + (1-level)/2)*EDmat[, 2]
         ciMat[, 1] <- EDmat[, 1] - tquan * EDmat[, 2]
@@ -216,7 +225,7 @@ type = c("relative", "absolute"), display = TRUE,...)
     {
         lsVal <- log(oriMat[, 1])
         lsdVal <- oriMat[, 2]/oriMat[, 1]
-        tquan <- qt(1 - (1 - level)/2, df.residual(object))
+        tquan <- qFct(1 - (1 - level)/2)
                         
         ciMat <- matrix(0, lenEB*lenPV, 2)
         ciMat[, 1] <- exp(lsVal - tquan * lsdVal)
@@ -228,7 +237,7 @@ type = c("relative", "absolute"), display = TRUE,...)
     if (ci == "fls")
     {        
         ciMat <- matrix(0, lenEB*lenPV, 2)
-        tquan <- qt(1 - (1 - level)/2, df.residual(object)) 
+        tquan <- qFct(1 - (1 - level)/2) 
         
         if (is.null(logBase)) 
         {
@@ -257,7 +266,7 @@ type = c("relative", "absolute"), display = TRUE,...)
     if (display)
     {
         cat("\n")
-        cat("Estimated effect doses\n")
+        cat("Estimated effective doses\n")
         if (!(ci == "none")) 
         {
             ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")

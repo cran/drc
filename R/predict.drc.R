@@ -4,18 +4,16 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     ## Checking arguments
     interval <- match.arg(interval)
 
+    ## Assigning dataset from object if no data frame is provided
     if (missing(newdata)) 
     {
         predValues <- fitted(object)
-        newdata <- data.frame(object$data[, 1], object$data[, 4])
+        newdata <- data.frame(object$data[, 1], object$data[, 3])
     } 
-#    else {
     if (ncol(newdata) > 2) {stop("More than 2 variables in 'newdata' argument")}
     
-    
     ## Defining dose values    
-    doseVec <- newdata[ ,1]
-
+    doseVec <- newdata[ , 1]
 
     ## Constructing matrix of parameter estimates
     parmMat <- object$"parmMat"        
@@ -23,7 +21,6 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     lenCN <- length(parmNames)
     indVec <- 1:lenCN
     names(indVec) <- parmNames
-       
     if (lenCN > 1)
     {
         indVec <- indVec[as.character(newdata[, 2])]
@@ -34,10 +31,7 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
         pm <- matrix(parmMat[, 1], length(parmMat[, 1]), lenDV)
     }
 
-
     ## Checking for NAs in matrix of parameter estimates
-#    ncPM <- ncol(parmMat) 
-#    naVec <- rep(FALSE, ncPM)
     naVec <- rep(FALSE, lenCN)
     for (i in 1:lenCN)
     {
@@ -45,31 +39,33 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     }
     parmMat <- parmMat[, !naVec, drop=FALSE] 
 
-
     ## Constructing variance-covariance matrix
     sumObj <- summary(object, od = od)
-    
     varMat <- sumObj$"varMat"    
-#    varMat <- object$"transformation" %*% sumObj$"varMat" %*% t(object$"transformation") 
-    ncPM2 <- ncol(parmMat)
-    nrPM2 <- nrow(parmMat)
-    indexMat <- matrix(1:(nrPM2*ncPM2), nrPM2, ncPM2, byrow = TRUE)   
-    
+
+    ## Defining index matrix for parameter estimates
+    indexMat <- object$"indexMat"
     
     ## Calculating predicted values  
     indexVec <- as.vector(indVec)    
     lenIV <- length(indexVec)    
     retMat <- matrix(0, lenIV, 4)
-    colnames(retMat) <- c("Fit", "SE", "Lower", "Upper")
-    retMat[, 1] <- object$"fct"$"fct"(doseVec, t(pm))
-
+    colnames(retMat) <- c("Prediction", "SE", "Lower", "Upper")
+    objFct <- object$"fct"
+    retMat[, 1] <- objFct$"fct"(doseVec, t(pm))
+    
+    ## Checking if derivatives are available
+    deriv1 <- objFct$"deriv1"
+    if (is.null(deriv1))
+    {
+        return(retMat[, 1])        
+    }    
 
     ## Calculating the quantile to be used in the confidence intervals
     if (!(interval == "none"))
     {    
         tquan <- qt(1 - (1 - level)/2, df.residual(object))   
-    }
-    
+    }  
     
     ## Calculating standard errors and/or confidence intervals
     if (se.fit || (!interval == "none") )
@@ -77,18 +73,14 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
         rowIndex <- 1    
         for (i in indexVec)
         {
-            parmInd <- indexMat[, i]
+            parmInd <- indexMat[, i]        
             varCov <- varMat[parmInd, parmInd]
-#            print(varCov)
-            parmChosen <- t(parmMat[, i, drop = FALSE])
 
-#            print(parmChosen)
-            dfEval <- object$"fct"$"deriv1"(doseVec[rowIndex], parmChosen)
-#            print(dfEval)
-            varVal <- dfEval%*%varCov%*%dfEval
-#            print(varVal)
+            parmChosen <- t(parmMat[, i, drop = FALSE])
+            dfEval <- deriv1(doseVec[rowIndex], parmChosen)
+            varVal <- dfEval %*% varCov %*% dfEval
             retMat[rowIndex, 2] <- sqrt(varVal)  
-            
+
             if (interval == "confidence")
             {
                 retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal)
@@ -96,17 +88,20 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
             }
             if (interval == "prediction")
             {
-                retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal + sumObj$"resVar")
-                retMat[rowIndex, 4] <- retMat[rowIndex, 1] + tquan * sqrt(varVal + sumObj$"resVar")                        
+                sumObjRV <- sumObj$"resVar"
+                retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal + sumObjRV)
+                retMat[rowIndex, 4] <- retMat[rowIndex, 1] + tquan * sqrt(varVal + sumObjRV)                        
             }          
             rowIndex <- rowIndex + 1        
         }
     }
+    
+    ## Keeping relevant indices
     keepInd <- 1
     if (se.fit) {keepInd <- c( keepInd, 2)}
     if (!interval == "none") {keepInd <- c( keepInd, 3, 4)}
     
-    return(retMat[, keepInd])
+    return(retMat[, keepInd, drop = FALSE])
 }
 
 

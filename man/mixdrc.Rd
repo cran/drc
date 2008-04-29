@@ -39,33 +39,33 @@ mixdrc(object, random, data, startVal)
 
 ## First fitting a model without random effects
 
-model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+model1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach,
 collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE))
 
 ## Then fitting the same model (the same fixed effects)
 ##  but with random effects (assigned to d)
 
-model2 <- mixdrc(model1, random="d~1|CURVE", data=PestSci)
+model2 <- mixdrc(model1, random="d~1|CURVE", data = spinach)
 compParm(model2, "e", "-")
 
 ## Fitting a model without random effects
 ##  but with a Box-Cox transformation
 
-model3 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+model3 <- multdrc(SLOPE~DOSE, CURVE, data = spinach,
 collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE)
 
 ## Then fitting the same model with random effects assigned to d
 
-model4 <- mixdrc(model3, random="d~1|CURVE", data=PestSci)
+model4 <- mixdrc(model3, random="d~1|CURVE", data = spinach)
 compParm(model4, "e", "-")
 
 ## Fitting a model without random effects, but fixing the c parameter at 0
-model5 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
+model5 <- multdrc(SLOPE~DOSE, CURVE, data = spinach,
 collapse=data.frame(HERBICIDE, 1, 1, HERBICIDE), boxcox=TRUE,
 fct=LL.3())
 
 ## Fitting the corresponding mixed model with random effects on d
-model6 <- mixdrc(model5, random="d~1|CURVE", data=PestSci)
+model6 <- mixdrc(model5, random="d~1|CURVE", data = spinach)
 
 }
 \keyword{models}

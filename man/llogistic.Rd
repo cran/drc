@@ -14,12 +14,14 @@
   llogistic(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf),
   fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
-  ss = c("1", "2", "3"), ssfct = NULL)
+  ss = c("1", "2", "3"), ssfct = NULL,
+  fctName, fctText)
 
   llogistic2(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf),
   fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
-  ss = c("1", "2", "3"), ssfct = NULL)  
+  ss = c("1", "2", "3"), ssfct = NULL,
+  fctName, fctText)  
 }
 
 \arguments{
@@ -32,6 +34,8 @@
     (see under 'Details').}
   \item{ss}{character string indicating the self starter function to use.}
   \item{ssfct}{a self starter function to be used.}  
+  \item{fctName}{optional character string used internally by convenience functions.}  
+  \item{fctText}{optional character string used internally by convenience functions.}  
 }
 
 \details{
@@ -69,12 +73,10 @@
 
 \seealso{
   For convenience several special cases are available: 
-  \code{\link{LL.3}}, \code{\link{LL.4}} and \code{\link{LL.5}}. 
+  \code{\link{LL.3}}, \code{\link{LL.4}} and \code{\link{LL.5}}. See the examples under these functions.
 }
 
 \examples{
-
-
 }
 \keyword{models}
 \keyword{nonlinear}

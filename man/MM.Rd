@@ -1,33 +1,39 @@
 \name{MM}
-\alias{MM}
+
+\alias{MM.2}
+\alias{MM.3}
 
 \title{Michaelis-Menten model}
 
 \description{
-  'MM' specifies the Michaelis-Menten model or the shifted Michaelis-Menten model
-  for modelling enzyme kinetics, weed densities etc.
+  The functions can be used to fit (shifted) Michaelis-Menten models that are used
+  for modeling enzyme kinetics, weed densities etc.
 }
 
-\usage{
-MM(fixed = c(NA, NA, 0), names = c("Vm", "K", "y0"))
+\usage{ 
+  MM.2(fixed = c(NA, NA), names = c("Vm", "K"))
+  
+  MM.3(fixed = c(NA, NA, NA), names = c("y0", "Vm", "K"))  
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
-  The order of the parameters is: Vm, K, y0 (see under 'Details').}}
+  The order of the parameters is: y0, Vm, K (see under 'Details').}}
 
 \details{
   The model is given by the expression
   
   \deqn{ f(x) = y0 + \frac{Vm x}{K + x}}
   
-  It is a three-parameter model.
+  It is a three-parameter model. A commonly used derived two-parameter model (\code{MM.2}) is obtained by
+  setting y0=0.
 }
 
 \value{
-  An object containing with all components needed in \code{\link{multdrc}}.
+  A list of class \code{drcMean}, containing the mean function, the self starter function,
+  the parameter names and other components such as derivatives and a function for calculating ED values.
 }
 
 %\references{}
@@ -38,21 +44,26 @@ MM(fixed = c(NA, NA, 0), names = c("Vm", "K", "y0"))
   At the moment the implementation cannot deal with infinite concentrations.
 }
 
-%\seealso{}
+\seealso{Related models are the asymptotic regression models \code{\link{AR.2}} and \code{\link{AR.3}}.}
 
 \examples{
 
-ctl <- data.frame(list(conc=c(0,0,0), rate=c(55,60,65), state=c('ctl','ctl','ctl')))
-pu <- rbind(Puromycin, ctl)
+met.mm.m1<-drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~factor(product), ~factor(product)))
+plot(met.mm.m1, log = "", ylim=c(1450, 1800))
+summary(met.mm.m1)
 
-model1<-multdrc(rate~conc, state, 
-collapse=data.frame(state,state,1), 
-data=pu, fct=MM(fixed=c(NA,NA,NA)))
+## Calculating bioefficacy: approach 1
+coef(met.mm.m1)[4] / coef(met.mm.m1)[5] * 100
 
-summary(model1)
-plot(model1) 
+## Calculating bioefficacy: approach 2
+SI(met.mm.m1, c(50,50))
 
-rm(ctl, pu, model1)
+## Simplified models
+met.mm.m2<-drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~factor(product), ~1))
+anova(met.mm.m2, met.mm.m1)  # model reduction not possible
+
+met.mm.m3<-drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~1, ~factor(product)))
+anova(met.mm.m3, met.mm.m1)  # model reduction not possible
 
 }
 \keyword{models}

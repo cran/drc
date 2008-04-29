@@ -237,9 +237,10 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Finding the maximal hormesis
-    maxfct <- function(parm, upper)
+    maxfct <- function(parm, upper, interval)
     {
-        if (is.null(upper)) {upper <- 1000}    
+        if (is.null(upper)) {upper <- 1000}
+        if (is.null(interval)) {interval <- c(1e-3, 1000)}            
 #        alpha <- 0.5
         parmVec[notFixed] <- parm
         
@@ -251,7 +252,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
             return(expTerm1*alpha/(t^(alpha+1))*(1+expTerm2)-(parmVec[3]-parmVec[2]+expTerm1)*expTerm2*parmVec[1]/t)
         }
     
-        ED1 <- edfct(parm, 1, upper)[[1]]
+        ED1 <- edfct(parm, 1, upper, interval)[[1]]
                
         doseVec <- exp(seq(log(1e-6), log(ED1), length=100))
 #        print((doseVec[optfct(doseVec)>0])[1])
@@ -263,7 +264,10 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     
     returnList <- 
     list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes)
+    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes,
+    name = "cedergreen",
+    text = "Cedergreen-Ritz-Streibig", 
+    noParm = sum(is.na(fixed)))
 
     class(returnList) <- "mllogistic"
     invisible(returnList)

@@ -10,7 +10,7 @@
 \usage{
   ED(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
   level = ifelse(!(ci=="none"), 0.95, NULL), logBase = NULL,
-  reference = c("upper", "control"), type = c("relative", "absolute"), 
+  reference = c("control", "upper"), type = c("relative", "absolute"), 
   display = TRUE, ...)
 }
 
@@ -57,39 +57,49 @@
 
 \examples{
 
-model1<-multdrc(ryegrass)
+### How to use 'ED'
 
-ED(model1, c(10,50,90)) 
+## Fitting 4-parameter log-logistic model
+ryegrass.m1<-drm(ryegrass, fct=LL.4())
+
+## Calculating EC/ED values
+ED(ryegrass.m1, c(10,50,90)) 
 ## first column: the estimates of ED10, ED50 and ED90
 ## second column: the estimated standard errors 
 
+### How to use the argument 'ci'
+
 ## Also displaying 95% confidence intervals
-ED(model1, c(10,50,90), ci = "delta")
-
-## The argument 'bound'
-model2 <- multdrc(weight ~ conc, 
-data = hormesis, fct = bcl3())
-
-## Calculating ED[-10]
-#ED(model2, -10)  
-# does not work
-
-ED(model2, -10, bound = FALSE)  # works
-ED(model2, -20, bound = FALSE)  # works
-
-#ED(model2, -30, bound = FALSE)  
-# does not work: ED[-30] does not exist 
+ED(ryegrass.m1, c(10,50,90), ci = "delta")
 
 ## Comparing delta method and back-transformed 
 ##  confidence intervals for ED values
 
-m1 <- drm(ryegrass, fct=LL2.4())  # using LL2.4
-m2 <- drm(ryegrass, fct=LL.4())
+## Fitting 4-parameter log-logistic 
+##  in different parameterisation (using LL2.4)
+ryegrass.m2 <- drm(ryegrass, fct=LL2.4())  
 
-ED(m1, c(10,50,90), ci="fls")
-ED(m2, c(10,50,90), ci="delta")
+ED(ryegrass.m1, c(10,50,90), ci="fls")
+ED(ryegrass.m2, c(10,50,90), ci="delta")
 
 
+### How to use the argument 'bound'
+
+## Fitting the Brain-Cousens model
+lettuce.m1 <- multdrc(weight ~ conc, 
+data = lettuce, fct = BC.4())
+
+### Calculating ED[-10]
+
+# It does not work
+#ED(lettuce.m1, -10)  
+
+## Now it does work
+ED(lettuce.m1, -10, bound = FALSE)  # works
+ED(lettuce.m1, -20, bound = FALSE)  # works
+
+## It does not work for another reason: ED[-30] does not exist 
+#ED(lettuce.m1, -30, bound = FALSE)  
 
 }
 

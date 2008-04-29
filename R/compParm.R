@@ -46,19 +46,20 @@ function(object, strVal, operator = "/", od = FALSE)
 
     ## Calculating differences or ratios
     lenRV <- lenPV*(lenPV-1)/2
-#    seRP <- rep(0,lenRV)
-#    estRP <- rep(0,lenRV)
-#    tVec <- rep(0,lenRV)
-#    pVec <- rep(0,lenRV)
-
     cpMat <- matrix(0, lenRV, 4)
     compParm <- rep("", lenRV)
+    
     degfree <- df.residual(object)  # $"summary"[6]  # sumObj$loglik[2]
-    if (is.null(degfree)) {degfree <- 100}  # ad hoc solution for mixdrc
-    
-#    getCurveInd <- object$"getCurveInd"
-#    curveLevels <- unique(object$data[,4])
-    
+    if (is.null(degfree)) {degfree <- 100}  # ad hoc solution for mixdrc    
+    ## Using t-distribution for continuous data
+    ##  only under the normality assumption
+    if (object$"type" == "continuous")
+    {
+        pFct <- function(x) {pt(x, degfree)}
+    } else {
+        pFct <- pnorm
+    }        
+   
     k <- 1
     for (i in 1:lenPV) 
     {
@@ -72,14 +73,9 @@ function(object, strVal, operator = "/", od = FALSE)
 #            seRP[k] <- dfct(presentVec[c(i,j)])
             cpMat[k, 2] <- dfct(presentVec[c(i,j)])
 
-            
-
-#            tVec[k] <- (estRP[k]-hypVal)/seRP[k]
-            cpMat[k, 3] <- (cpMat[k, 1] - hypVal)/cpMat[k, 2]
-#            pVec[k] <- (pt(-abs(tVec[k]),degfree))+(1-pt(abs(tVec[k]),degfree))
-
-            tVal <- cpMat[k, 3]
-            cpMat[k, 4] <- (pt(-abs(tVal), degfree)) + (1 - pt(abs(tVal), degfree))
+            tVal <- (cpMat[k, 1] - hypVal)/cpMat[k, 2]
+            cpMat[k, 3] <- tVal
+            cpMat[k, 4] <- pFct(-abs(tVal)) + (1 - pFct(abs(tVal)))
 
             compParm[k] <- paste(strParm2[presentVec[c(i,j)]], collapse = operator)
             k <- k+1
@@ -87,13 +83,9 @@ function(object, strVal, operator = "/", od = FALSE)
     }
     dimnames(cpMat) <- list(compParm, c("Estimate", "Std. Error", "t-value", "p-value"))
     
-#    cpMat <- matrix(c(estRP,seRP,tVec,pVec),lenRV,4,dimnames=list(compParm,c("Estimate","Std. Error","t-value","p-value")))
-    
     cat("\n")
     cat("Comparison of parameter", paste("'",strVal,"'",sep=""), "\n")
     cat("\n")
     printCoefmat(cpMat)
     invisible(cpMat)
-    
-#    return(matrix(c(estRP,seRP,tVec,pVec),lenRV,4,dimnames=list(compParm,c("Estimate","Std. Error","t-value","p-value"))))
 }

@@ -25,7 +25,7 @@
   of phenolic acids on root growth inhibition of perennial ryegrass (\emph{Lolium perenne L}).
 
   \code{conc} is the concentration of ferulic acid is in mM, and \code{rootl} is the root length 
-  of perennial ryegrass.} 
+  of perennial ryegrass. 
 }
 
 \source{
@@ -39,13 +39,24 @@
 ## Displaying the data set
 ryegrass
 
-## Fitting a four-parameter logistic regression 
-## with user-defined parameter names
-model1 <- drm(rootl ~ conc, data = ryegrass, 
-fct = LL.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
+## Fitting a four-parameter Weibull model (type 2)
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = W2.4())
 
-## Displaying a summary of the fit
-summary(model1)
+## Displaying a summary of the model fit
+summary(ryegrass.m1)
+
+## Plotting the fitted curve together with the original data
+plot(ryegrass.m1)
+
+## Fitting a four-parameter Weibull model (type 1)
+ryegrass.m2 <- drm(rootl ~ conc, data = ryegrass, fct = W1.4())
+plot(ryegrass.m2)
+
+## Fitting a four-parameter log-logistic model
+## with user-defined parameter names
+ryegrass.m3 <- drm(rootl ~ conc, data = ryegrass, 
+fct = LL.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
+summary(ryegrass.m3)
 
 }
 \keyword{datasets}

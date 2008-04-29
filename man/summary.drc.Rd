@@ -27,10 +27,8 @@
 
 \examples{
 
-model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci)
-summary(model1)
-
-rm(model1)
+spinach.m1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach)
+summary(spinach.m1)
 
 }
 \keyword{models}

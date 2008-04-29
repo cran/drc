@@ -4,20 +4,32 @@
 \alias{w3}
 \alias{W2.3}
 
+\alias{W1.3u}
+\alias{W2.3u}
+
 \title{The three-parameter Weibull functions}
 
 \description{
-  'W1.3' provides the three-parameter Weibull function, self starter function and names of the parameters.  
+  'W1.3' and \code{W2.3} provide the three-parameter Weibull function, self starter function and names of the parameters.
+  
+  'W1.3u' and 'W2.3u' provide three-parameter Weibull function where the upper limit is equal to 1, mainly
+  for use with binomial/quantal response.     
 }
 
 \usage{
   W1.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
   
   W2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+  
+  W1.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"))  
+  
+  W2.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"))    
 }
 
 \arguments{
-  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
+  \item{upper}{numeric value. The fixed, upper limit in the model. Default is 1.}
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
+  NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
 }
 
@@ -26,6 +38,10 @@
   \deqn{ f(x) = 0 + (d-0)\exp(-\exp(b(\log(x)-e))).}
   
   The function is asymmetric about the inflection point, that is the parameter \eqn{\exp(e)}.
+
+  The three-parameter Weibull model with upper limit 1 is given by the expression
+  \deqn{ f(x) = 0 + (1-0)\exp(-\exp(b(\log(x)-e))).}
+
 }
 
 \value{

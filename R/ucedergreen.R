@@ -120,16 +120,21 @@ scaleDose = TRUE)
 
 
     ## Finding the maximal hormesis
-    maxfct <- function(parm, upper)
+    maxfct <- function(parm, upper, interval)
     {
-       retVal <- cedergreen(alpha = alpha)$maxfct(parm, upper)
+       retVal <- cedergreen(alpha = alpha)$maxfct(parm, upper, interval)
 #       retVal[2] <- (parm[2] + parm[3]) - (retVal[2] - parm[2])
        retVal[2] <- (parm[2] + parm[3]) - retVal[2]
               
        return(retVal)
     }
 
-    returnList <- list(fct = fct, ssfct = ssfct, names = names, edfct = edfct, maxfct = maxfct)
+    returnList <- 
+    list(fct = fct, ssfct = ssfct, names = names, edfct = edfct, maxfct = maxfct,
+    name = "ucedergreen",
+    text = "U-shaped Cedergreen-Ritz-Streibig", 
+    noParm = sum(is.na(fixed)))
+    
     class(returnList) <- "UCRS"
     invisible(returnList)
 }

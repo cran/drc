@@ -4,14 +4,19 @@
     
     curveId <- as.character(unique(object$data[, 3]))
     lenCI <- length(curveId)
-
-    retMat <- predict(object, data.frame(xVec, rep(curveId, rep(lenXV, lenCI))), ...)
     
     if (lenCI > 1)
     {
+        retMat <- predict(object, data.frame(xVec, rep(curveId, rep(lenXV, lenCI))), ...)
         rownames(retMat) <- paste(rep(curveId, rep(lenXV, lenCI)), rep(as.character(xVec), lenCI), sep = ":")
     } else {
-        rownames(retMat) <- rep(as.character(xVec), lenCI)
+        retMat <- predict(object, data.frame(xVec))
+        if (is.matrix(retMat))
+        {
+            rownames(retMat) <- rep(as.character(xVec), lenCI)
+        } else {
+            names(retMat) <- rep(as.character(xVec), lenCI)
+        }
     }
     
     return(retMat)

@@ -4,6 +4,8 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
          na.action = na.fail, hetvar = NULL, robust = "mean", type = "continuous", cm = NULL, logDose = NULL, 
          fctList = NULL, control = mdControl())
 {
+#    print(c('multdrc' is deprecated, so start using the succesor 'drm'))
+    
     
 #    drm(formula=formula, curve=curve, pmodels=collapse, weights=weights, data=data, fct=fct, start=startVal, 
 #    adjust=adjust, bc=bc, bcAdd=bcAdd, type=type, 
@@ -723,6 +725,7 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
 #        parmVec <- parmVec2 
 
         pnList <- mdrcParNames(numNames, parNames, collapseList2)
+#        print(pnList)
         parmVec <- pnList[[1]]
         parmVecA <- pnList[[2]]
         parmVecB <- pnList[[3]]
@@ -1542,10 +1545,10 @@ function(formula, curve, collapse, weights, data = NULL, boxcox = FALSE, bcAdd =
     returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
 #    returnList <- list(varParm, nlsFit, NULL, sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, Xmat, robust, type, bcVec, estMethod, lenData-length(startVec), 
-    anovaModel0, gofTest, sumList, scaleFct2, pmFct, pfFct, mat1)
+    anovaModel0, gofTest, sumList, scaleFct2, pmFct, pfFct, mat1, deparse(substitute(curve)))
     names(returnList) <- c("varParm", "fit", "curve", "summary", "startVal", "parNames", "predres", "call", "data", 
     "parmMat", "fct", "transformation", "robust", "type", "boxcox", "estMethod", "df.residual", "anova", "gofTest", 
-    "sumList", "scaleFct", "pmFct", "pfFct", "indexMat")
+    "sumList", "scaleFct", "pmFct", "pfFct", "indexMat", "curveVarNam")
     class(returnList) <- c("drc", class(fct))
 
     return(returnList)

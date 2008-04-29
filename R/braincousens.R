@@ -1,6 +1,6 @@
 "braincousens" <-
-function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA, NA), 
-         names=c("b", "c", "d", "e", "f"), scaleDose = TRUE)
+function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
+names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
 {
     ## Checking arguments
     numParm <- 5
@@ -91,7 +91,24 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
         scaleInd <- NULL
     }
 
-
+    ## Constructing a helper function
+    ##  also used in 'llogistic' and 'llogistic2'
+    xlogx <- function(x, p)
+    {
+        lv <- (x < 1e-12)
+        nlv <- !lv
+        
+        rv <- rep(0, length(x))
+        
+        xlv <- x[lv] 
+        rv[lv] <- log(xlv^(xlv^p[lv]))
+        
+        xnlv <- x[nlv]
+        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
+    
+        rv
+    }
+    
     ## Defining derivatives
     deriv1 <- function(dose, parm)
     {
@@ -119,7 +136,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Defining the ED function
-    edfct <- function(parm, p, upper=1000, interval=c(1e-3, 1000), ...)
+    edfct <- function(parm, p, upper = 1000, interval = c(1e-3, 1000), ...)
     {
 #        if (is.missing(upper)) {upper <- 1000}
      
@@ -204,9 +221,10 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Finding the maximal hormesis
-    maxfct <- function(parm, upper)
+    maxfct <- function(parm, upper, interval)
     {
-        if (is.null(upper)) {upper <- 1000}    
+        if (is.null(upper)) {upper <- 1000}
+        if (is.null(interval)) {interval <- c(1e-3, 1000)}     
 #        alpha <- 0.5
         parmVec[notFixed] <- parm
         if (parmVec[1]<1) {stop("Brain-Cousens model with b<1 not meaningful")}
@@ -220,7 +238,7 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
             return(parmVec[5]*(1+expTerm2)-(parmVec[3]-parmVec[2]+expTerm1)*expTerm2*parmVec[1]/t)
         }
     
-        ED1 <- edfct(parm, 1, upper)[[1]]
+        ED1 <- edfct(parm, 1, upper, interval)[[1]]
                
         doseVec <- exp(seq(log(1e-6), log(ED1), length=100))
 #        print((doseVec[optfct(doseVec)>0])[1])
@@ -231,8 +249,12 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     returnList <- 
-    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes)
+    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, 
+    lowerc=lowerLimits, upperc=upperLimits, 
+    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes,
+    name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
+    text = ifelse(missing(fctText), "Brain-Cousens (hormesis)", fctText),
+    noParm = sum(is.na(fixed)))
 
 #    returnList <- switch(return, "fct+ss" = list(fct,ssfct,names),
 #                                 "fct+ss+der" = list(fct,ssfct,names,deriv1,deriv2),
@@ -245,23 +267,26 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
 "BC.4" <-
-function(names=c("b", "d", "e", "f"))
+function(names = c("b", "d", "e", "f"))
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
  
-    return(braincousens(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA)))
+    return(braincousens(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA),
+    fctName = as.character(match.call()[[1]]),
+    fctText = "Brain-Cousens (hormesis) with lower limit fixed at 0"))
 }
 
 bcl3 <- BC.4
 
 "BC.5" <-
-function(names=c("b", "c", "d", "e", "f"))
+function(names = c("b", "c", "d", "e", "f"))
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(braincousens(names=names, fixed=c(NA, NA, NA, NA, NA)))
+    return(braincousens(names = names, fixed = c(NA, NA, NA, NA, NA),
+    fctName = as.character(match.call()[[1]])))
 }
 
 bcl4 <- BC.5

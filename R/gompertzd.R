@@ -104,7 +104,10 @@ if (FALSE)
     ## Returning the function with self starter and names
     returnList <- 
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx,
-    edfct = edfct, lowerc = lowerLimits, upperc = upperLimits)
+    edfct = edfct, lowerc = lowerLimits, upperc = upperLimits,
+    name = "gompertzd",
+    text = "Gompertz derivative", 
+    noParm = sum(is.na(fixed)))
     
     class(returnList) <- "gompertzd"
     invisible(returnList)

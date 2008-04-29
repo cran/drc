@@ -265,6 +265,7 @@ function(object, random, data, startVal)
     modelNLME$class <- "mixed logistic"
     modelNLME$parNames <- mdrcPNsplit(rownames(summary(modelNLME)$tTable), ".")
     modelNLME$base <- object
+    modelNLME$"type" <- object$"type"
 
     class(modelNLME) <- c("mixdrc", "drc", class(modelNLME))
     return(modelNLME)

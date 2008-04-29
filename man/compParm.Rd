@@ -36,16 +36,14 @@ compParm(object, strVal, operator = "/", od = FALSE)
 \examples{
 
 # Fitting a model with names assigned to the parameters!
-model1 <- multdrc(SLOPE~DOSE, CURVE, data=PestSci,
-fct=l4(names = c("b", "lower", "upper", "ed50")))
+spinach.m1 <- drm(SLOPE~DOSE, CURVE, data = spinach,
+fct = LL.4(names = c("b", "lower", "upper", "ed50")))
 
 ## Calculating ratios of parameter estimates for the parameter named "ed50"
-compParm(model1, "ed50")      
+compParm(spinach.m1, "ed50")      
 
 ## Calculating differences between parameter estimates for the parameter named "ed50"
-compParm(model1, "ed50", "-")  
-
-rm(model1)
+compParm(spinach.m1, "ed50", "-")  
 
 }
 \keyword{models}

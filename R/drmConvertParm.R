@@ -1,6 +1,7 @@
 "drmConvertParm" <- 
 function(startVec, startMat, factor1, colList)
 {
+#print(startMat)
     startMat2 <- startMat
 #    print(factor1)
     if (length(unique(factor1)) == 1) {return(startVec)}

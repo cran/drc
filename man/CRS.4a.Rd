@@ -69,19 +69,17 @@
 \examples{
 
 ## Modified logistic model
-model1 <- multdrc(hormesis[,c(2,1)], fct=CRS.4a())
-summary(model1)
-ED(model1, c(50))
+lettuce.m1 <- drm(lettuce[,c(2,1)], fct=CRS.4a())
+summary(lettuce.m1)
+ED(lettuce.m1, c(50))
 
-model2 <- multdrc(hormesis[,c(2,1)], fct=CRS.4b())
-summary(model2)
-ED(model2, c(50))
+lettuce.m2 <- drm(lettuce[,c(2,1)], fct=CRS.4b())
+summary(lettuce.m2)
+ED(lettuce.m2, c(50))
 
-model3 <- multdrc(hormesis[,c(2,1)], fct=CRS.4c())
-summary(model3)
-ED(model3, c(50))
-
-rm(model1, model2, model3)
+lettuce.m3 <- drm(lettuce[,c(2,1)], fct=CRS.4c())
+summary(lettuce.m3)
+ED(lettuce.m3, c(50))
 
 }
 \keyword{models}

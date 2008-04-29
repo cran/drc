@@ -46,15 +46,16 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 
         if (constrained)
         {
-            nlsObj <- try(optim(startVec, opfct, hessian=TRUE, method="L-BFGS-B", 
-            lower=lowerLimits, upper=upperLimits, 
-            control=list(maxit=maxIt)), silent=TRUE)
+            nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = "L-BFGS-B", 
+            lower = lowerLimits, upper = upperLimits, 
+            control = list(maxit = maxIt)), silent = TRUE)
+            ## no to add: ", reltol = relTol, parscale = psVec, trace = trace"
         } else {
 #            psVec <- abs(startVec)
 #            psVec[psVec<1e-4] <- 1
 
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = optMethod, 
-            control=list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = trace)) , silent = TRUE)
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = trace)) , silent = TRUE)
 #            nlsObj0 <- try(optim(startVec, opfct, method=optMethod, 
 #            control=list(maxit=maxIt, reltol=relTol, parscale=psVec)), silent=TRUE)
 #            nlsObj <- try(optim(nlsObj0$par, opfct, hessian=TRUE, method=optMethod, 
@@ -66,7 +67,12 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
         {
             nlsFit <- nlsObj
         } else {  # to avoid an error if used in a loop
-            if (errorMessage) {stop("Convergence failed")} else {warning("Convergence failed. The model was not fitted!", call. = FALSE)}
+            if (errorMessage) 
+            {
+                stop("Convergence failed")
+            } else {
+                warning("Convergence failed. The model was not fitted!", call. = FALSE)
+            }
 
             callDetail <- match.call()
             if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}

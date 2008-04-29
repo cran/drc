@@ -7,60 +7,76 @@
 \title{Glyphosate and metsulfuron-methyl tested on algae.}
 
 \description{
-  The dataset has 7 mixtures, 8 dilutions, two replicates and 5 common control controls. Four observations are missing, giving a total
-  of 113 observations.
+  The dataset has 7 mixtures, 8 dilutions, two replicates and 5 common control controls. 
+  Four observations are missing, giving a total of 113 observations.
 }
 
 \usage{data(glymet)}
 
 \format{
-  A data frame with 113 observations on the following 4 variables.
+  A data frame with 113 observations on the following 3 variables.
   \describe{
-    \item{\code{cell}}{a numeric vector}
-    \item{\code{dose1}}{a numeric vector}
-    \item{\code{pct1}}{a numeric vector}
-    \item{\code{rgr1}}{a numeric vector}
+    \item{\code{dose}}{a numeric vector of dose values}
+    \item{\code{pct}}{a numeric vector denoting the grouping according to the mixtures percentages}
+    \item{\code{rgr}}{a numeric vector of response values (relative growth rates)}
   }
 }
 
 \details{
-  The dataset is analysed in S{\o}rensen et al (2006). The hypothesis of concentration addition can be entertained for this dataset.
+  The dataset is analysed in Soerensen et al (2007). 
+  The concentration addition model can be entertained for this dataset.
 }
 
 \source{
-  The dataset is kindly provided by Nina Cedergreen, Department of Agricultural Sciences, Royal Veterinary and Agricultural University, Denmark.
+  The dataset is kindly provided by Nina Cedergreen, Department of Agricultural Sciences, 
+  Royal Veterinary and Agricultural University, Denmark.
 }
 
 \references{
-  S{\o}rensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2006) An isobole-based statistical model and test 
-  for synergism/antagonism in binary mixture toxicity experiments, \emph{Statistical Ecology and Environmental Statistics}, \bold{13}. ?--??.
+  Soerensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
+  An isobole-based statistical model and test for synergism/antagonism in binary mixture toxicity experiments, 
+  \emph{Environmental and Ecological Statistics}, \bold{14}, 383--397.
 }
 
 \examples{
 
-## Fitting the concentration addition model
-model1ca <- mixture(rgr1~dose1, pct1, data=glymet, collapse=~factor(pct1), 
-fct=l3(), model="CA", boxcox=TRUE)
-anova(model1ca)  # comparison to model with freely varying e parameter
-summary(model1ca)
 
+## Fitting the model with freely varying ED50 values
+glymet.mfree <- drm(rgr~dose, pct, data = glymet, 
+fct = LL.3(), pmodels = list(~factor(pct),~1,~factor(pct) - 1),
+adjust = "bc1") 
+
+
+## Lack-of-fit test
+anova(glymet.mfree)  # not really acceptable
+summary(glymet.mfree)
+
+## Plotting isobole structure
+isobole(glymet.mfree, exchange=0.01)
+
+## Fitting the concentration addition model
+glymet.mca <- mixture(rgr~dose, pct, data = glymet, collapse = ~factor(pct), 
+fct = LL.3(), model = "CA", boxcox = TRUE)
+
+## Comparing to model with freely varying e parameter
+anova(glymet.mca, glymet.mfree)  # borderline accepted
+
+## Plotting isobole based on concentration addition
+isobole(glymet.mfree, glymet.mca, exchange=0.01)  # acceptable fit
 
 ## Fitting the Hewlett model
-model1h <- mixture(rgr1~dose1, pct1, data=glymet, collapse=~factor(pct1), 
-fct=l3(), model="Hewlett", boxcox=TRUE)
-anova(model1h)  # comparison to a model with freely varying e parameter
-anova(model1ca, model1h)  # concentration addition is accepted
-summary(model1h)
+glymet.mhew <- mixture(rgr~dose, pct, data = glymet, collapse = ~factor(pct), 
+fct = LL.3(), model = "Hewlett", boxcox = TRUE)
 
+## Comparing to model with freely varying e parameter
+anova(glymet.mca, glymet.mhew)  
+# borderline accepted
+# the Hewlett model offers no improvement over concentration addition
 
-## Fitting the Voelund model
-model1v <- mixture(rgr1~dose1, pct1, data=glymet, collapse=~factor(pct1), 
-fct=l3(), model="Voelund", boxcox=TRUE)
-anova(model1v)  # comparison to a model with freely varying e parameter
-summary(model1v)
+## Plotting isobole based on concentration addition
+isobole(glymet.mfree, glymet.mhew, exchange=0.01)  
+# no improvement over concentration addition
 
-
-rm(model1ca, model1h, model1v)
 }
 
 \keyword{datasets}
