@@ -26,7 +26,9 @@ function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, zeroTol = 1
     {
         total <- (object$"data")[iv, 5]
         success <- total*(object$"data")[iv, 2]    
-        c( sum(log(choose(total, success))) - object$"fit"$"ofvalue", object$"sumList"$"df.residual" )
+        
+        c(sum(log(choose(total, success))) - object$"fit"$"ovalue",  # object$"fit"$"ofvalue", 
+        object$"sumList"$"lenData" - df.residual(object))  # object$"sumList"$"df.residual")
     }
     
        

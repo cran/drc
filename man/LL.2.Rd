@@ -63,5 +63,8 @@ data=earthworms, fct = LL.2(), type = "binomial")
 plot(model1)  # not fitting at the upper limit!
 
 }
+
 \keyword{models}
 \keyword{nonlinear}
+
+\concept{Hill 2-parameter two-parameter}

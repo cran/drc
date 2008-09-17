@@ -8,10 +8,15 @@ scaleX = 1, scaleY = 1)
 #    if (anovaYes) {return(list(anovaTest = anovaTest, gofTest = gofTest))}
 
     ## Defining the objective function and its derivative
-    opfct <- function(parm)
+    opfct <- function(parm)  # , scaling = TRUE)
     {
-        sum( robustFct( (resp/scaleY - multCurves(dose/scaleX, parm))*weights ), na.rm = rmNA)  
-        # weights enter multiplicatively under the square!
+#        if (scaling)
+#        { 
+#            sum( robustFct(((resp - multCurves(dose/scaleX, parm)) / scaleY)*weights), na.rm = rmNA)  
+            # weights enter multiplicatively under the square!
+#        } else {
+            sum(robustFct((resp - multCurves(dose, parm))*weights), na.rm = rmNA)          
+#        }
     }
     
     if (!is.null(dmf))
@@ -34,7 +39,9 @@ scaleX = 1, scaleY = 1)
     llfct <- function(object)
     {
         degfre <- object$"sumList"$"lenData"  # "df.residual"  # object$summary[6]
-        c( -(degfre/2)*(log(2*pi)+log(object$"fit"$"value")-log(degfre)+1), length(object$"fit"$"par") + 1 )
+        c( -(degfre/2)*(log(2*pi)+log(object$"fit"$"value")-log(degfre)+1), 
+        object$"sumList"$"lenData" - object$"sumList"$"df.residual" + 1)
+#        length(object$"fit"$"par") + 1 )
     }   
     
     ## Defining functions returning the residual variance, the variance-covariance matrix and the fixed effects estimates
@@ -45,7 +52,8 @@ scaleX = 1, scaleY = 1)
 
     vcovfct <- function(object)
     {
-        scaledH <- (object$"fit"$"hessian")*(1/(2*object$"fit"$"ovalue"/object$"sumList"$"df.residual"))  # /2
+#        scaledH <- (object$"fit"$"hessian")*(1/(2*object$"fit"$"ovalue"/object$"sumList"$"df.residual"))  # /2
+        scaledH <- (object$"fit"$"hessian") / (2 * rvfct(object))
         invMat <- try(solve(scaledH), silent = TRUE)
     
         if (inherits(invMat, "try-error"))

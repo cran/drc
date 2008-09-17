@@ -1,6 +1,7 @@
-\name{expDecay}
+\name{expdecay}
 
-\alias{expDecay}
+\alias{ED.2}
+\alias{ED.3}
 
 \title{Exponential decay model}
 
@@ -9,7 +10,9 @@
 }
 
 \usage{
-expDecay(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
+ED.2(fixed = c(NA, NA), names = c("plateau", "k"))
+
+ED.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 }
 
 \arguments{
@@ -34,7 +37,11 @@ expDecay(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
   the parameter names and other components such as derivatives and a function for calculating ED values.
 }
 
-%\references{}
+\references{
+  Organisation for Economic Co-operation and Development (OECD) (2006)
+  \emph{CURRENT APPROACHES IN THE STATISTICAL ANALYSIS OF ECOTOXICITY DATA: A GUIDANCE TO APPLICATION - ANNEXES},
+  Paris (p. 80).
+}
 
 \author{Christian Ritz}
 
@@ -45,7 +52,7 @@ expDecay(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 \examples{
 
 ## Fitting an exponential decay model
-ryegrass.m1<-drm(rootl~conc, data=ryegrass, fct=expDecay())
+ryegrass.m1<-drm(rootl~conc, data=ryegrass, fct=ED.3())
 
 plot(ryegrass.m1)
 

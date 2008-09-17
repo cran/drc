@@ -259,13 +259,20 @@ function(object, random, data, startVal)
     modelNLME$df.residual <- df.residual(object)  # correct ???
     modelNLME$fct <- object$fct
     modelNLME$transformation <- object$transformation
-    modelNLME$parmMat <- t(object$"pmFct"( as.vector((summary(modelNLME$nlme))$tTable[,1]) ))
-    modelNLME$curve <- list( object$"pfFct"(t(modelNLME$parmMat)), object$curve[[2]])
+#    modelNLME$parmMat <- t(object$"pmFct"( as.vector((summary(modelNLME$nlme))$tTable[,1]) ))
 #    modelNLME$parmMat <- t(modelNLME$parmMat)
     modelNLME$class <- "mixed logistic"
-    modelNLME$parNames <- mdrcPNsplit(rownames(summary(modelNLME)$tTable), ".")
+#    modelNLME$parNames <- mdrcPNsplit(rownames(summary(modelNLME)$tTable), ".")
+    modelNLME$parNames <- object$parNames
     modelNLME$base <- object
     modelNLME$"type" <- object$"type"
+    
+    iMat <- object$"indexMat"
+    modelNLME$"indexMat" <- iMat
+    pMat <- matrix(as.vector((summary(modelNLME))$tTable[,1])[iMat], ncol=ncol(iMat))
+    colnames(pMat) <- colnames(object$parmMat)    
+    modelNLME$"parmMat" <- pMat
+    modelNLME$curve <- list( object$"pfFct"(t(modelNLME$parmMat)), object$curve[[2]])
 
     class(modelNLME) <- c("mixdrc", "drc", class(modelNLME))
     return(modelNLME)

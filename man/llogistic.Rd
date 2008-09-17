@@ -51,6 +51,8 @@
   \deqn{ f(x) = c + \frac{d-c}{(1+\exp(b(\log(x)-e)))^f}}
   
   is fitted using \code{\link{llogistic2}}.
+  
+  Sometimes the log-logistic models are also called Hill models.
 }
 
 \value{
@@ -73,10 +75,14 @@
 
 \seealso{
   For convenience several special cases are available: 
-  \code{\link{LL.3}}, \code{\link{LL.4}} and \code{\link{LL.5}}. See the examples under these functions.
+  \code{\link{LL.2}}, \code{\link{LL.3}}, \code{\link{LL.4}} and \code{\link{LL.5}}. 
+  Examples are provided in the help pages for these functions.
 }
 
 \examples{
 }
+
 \keyword{models}
 \keyword{nonlinear}
+
+\concept{Hill}

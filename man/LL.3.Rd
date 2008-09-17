@@ -102,7 +102,9 @@ anova(model2)
 plot(model2, conLevel=-1, ylim=c(0.1, 1.3))
 abline(h=1, lty=2)
 
-
 }
+
 \keyword{models}
 \keyword{nonlinear}
+
+\concept{Hill 3-parameter three-parameter}

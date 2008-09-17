@@ -47,7 +47,8 @@ names = c("a", "b", "c"))
   The functions are for use with the function \code{\link{drm}}.
 }
 
-\seealso{A very similar, but decaying model is the exponential decay model \code{\link{expDecay}}.}
+\seealso{A very similar, but monotonously decreasing model is the exponential decay model:
+ \code{\link{ED.2}} and \code{\link{ED.3}}.}
 
 \examples{
 

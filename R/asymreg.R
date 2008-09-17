@@ -91,7 +91,7 @@ fixed = c(NA, NA, NA), names = c("a", "b", "c"), fctName, fctText)
         t1 <- parmMat[, 2] - parmMat[, 1]
         t2 <- exp(-parmMat[, 3]*dose)
         
-        cbind(t2, 1 - t2, t1*t2*dose)
+        cbind(t2, 1 - t2, t1*t2*dose)[, notFixed]
     }
 
     ## Defining first derivatives in parameters

@@ -10,7 +10,7 @@
 }
 
 \usage{
-isobole(object1, object2, ename = "e", xaxis = "0", exchange = 1, cifactor = 2, xlab = "0", ylab = "100", xlim, ylim, ...)
+isobole(object1, object2, exchange = 1, cifactor = 2, ename = "e", xaxis = "100", xlab, ylab, xlim, ylim, ...)
 }
 
 \arguments{
@@ -37,19 +37,14 @@ isobole(object1, object2, ename = "e", xaxis = "0", exchange = 1, cifactor = 2, 
   No value is returned. Only used for the side effect: the isobologram shown.
 }
 
-\references{
-  Soerensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
-  An isobole-based statistical model and test for synergism/antagonism in binary mixture toxicity experiments, 
-  \emph{Environmental and Ecological Statistics}, \bold{14}, 383--397.
-}
+%\references{}
 
 \author{Christian Ritz}
 
 %\note{}
 
 \seealso{
-  The examples in \code{\link{acidiq}} (the Hewlett model), \code{\link{glymet}} (concentration addition) 
-  and \code{\link{mecter}} (the Voelund model).
+  The examples in \code{\link{acidiq}}, \code{\link{glymet}} and \code{\link{mecter}}.
 }
 
 \examples{

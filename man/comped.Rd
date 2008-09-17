@@ -51,8 +51,8 @@
 \author{Christian Ritz}
 
 \note{
-   The development of the function \code{comped} is offspin of a project on statistical analysis of toxicity data 
-   funded by the Danish EPA ("Statistisk analyse og biologisk tolkning af toksicitetsdata", MST j.nr. 669-00079).
+   The development of the function \code{comped} is a side effect of the project on statistical analysis of 
+   toxicity data funded by the Danish EPA ("Statistisk analyse og biologisk tolkning af toksicitetsdata", MST j.nr. 669-00079).
 }
 
 \seealso{
@@ -62,11 +62,19 @@
 
 \examples{
 
-comped(c(21.173, 44.718), sqrt(c(11.87, 8.42)), log=FALSE, operator="/", level=0.99)
+## Fitting the model
+S.alba.m1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
+pmodels=data.frame(Herbicide,1,1,Herbicide), adjust="bc1") 
 
-comped(c(21.173, 44.718), sqrt(c(11.87, 8.42)), log=FALSE, operator="/", level=0.99, interval=FALSE)
+## Displaying estimated ED values
+ED(S.alba.m1, c(10, 90))
 
-comped(c(21.173, 44.718), sqrt(c(11.87, 8.42)), log=FALSE, operator="-", level=0.99)
+## Making comparisons of ED10 and ED90
+comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator="/")
+
+comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator="/", interval=FALSE)
+
+comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator="-")
 
 }
 \keyword{models}

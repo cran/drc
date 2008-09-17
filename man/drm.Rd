@@ -18,7 +18,7 @@
 
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Either of the form 'response \eqn{~} dose' 
-  or as a data frame with response value in first column and dose in second column.}
+  or as a data frame with response values in first column and dose values in second column.}
   
   \item{curve}{a numeric vector or factor containing the grouping of the data.}
   

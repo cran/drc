@@ -2,7 +2,7 @@
 function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName, 
          grid = 100, legend, legendText, legendPos, legendCex = 1,
          type = "average", obs, lty, log = "x", 
-         cex, pch, xlab, ylab, xlim, ylim,
+         cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1,
          bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL, add = FALSE, axes = TRUE)
 {    
 #    breakCurve <- FALSE
@@ -237,7 +237,8 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
     logVec <- !( (dose < xLimits[1] - eps1) | (dose > xLimits[2] + eps1) )
     dose <- dose[logVec]
     resp <- resp[logVec]
-    
+    assayNo <- assayNo[logVec]
+    assayNoOld <- assayNoOld[logVec]    
     
     ## Plotting    
 #    if (!type=="add")
@@ -275,7 +276,9 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
         plotType <- "p"
     }
     
-    uniAss <- unique(assayNoOld)    
+#    ppList <- split(data.frame(dose, resp), assayNo)
+    uniAss <- unique(assayNoOld)
+#    uniAss2 <- unique(assayNo)    
     for (i in 1:numCol)
     {
         indVec <- uniAss[i] == assayNoOld
@@ -291,6 +294,22 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
             "all"     = cbind(dose[indVec], resp[indVec]),
             "obs"     = cbind(dose[indVec], resp[indVec])
         )
+ 
+        ## New approach
+#        plotPointsRaw <- ppList[uniAss2[i]]
+#        plotPoints <- with(plotPointsRaw,
+#        switch(
+#            type, 
+#            "average" = cbind(as.numeric(names(tapVec <- tapply(resp, 
+#            dose, mean))), tapVec),
+#            "bars"    = cbind(as.numeric(names(tapVec <- tapply(resp, 
+#            dose, mean))), tapVec, tapply(predictMat[indVec, 1], dose[indVec], head, 1),
+#            tapply(predictMat[indVec, 2], dose[indVec], head, 1)),
+#            "none"    = cbind(dose[indVec], resp[indVec]),
+#            "all"     = cbind(dose[indVec], resp[indVec]),
+#            "obs"     = cbind(dose[indVec], resp[indVec])
+#        ))
+        
         
         if (!add)
         {
@@ -305,7 +324,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                 yLabels <- TRUE
                 if (!is.null(yt)) {yaxisTicks <- yt; yLabels <- yt}
                 if (!is.null(ytlab)) {yLabels <- ytlab}                
-                if (axes) {axis(2, at = yaxisTicks, labels = yLabels)}
+                if (axes) {axis(2, at = yaxisTicks, labels = yLabels, cex.axis = cex.axis)}
                 
                 xaxisTicks <- axTicks(1)
 #                xLabels <- as.character(xaxisTicks)
@@ -339,7 +358,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                     }
                 }
                 if (!is.null(xtlab)) {xLabels <- xtlab}
-                if (axes) {axis(1, at = xaxisTicks, labels = xLabels)}
+                if (axes) {axis(1, at = xaxisTicks, labels = xLabels, cex.axis = cex.axis)}
 
                 ## Adding axis break
                 if (broken && logX) 
@@ -364,7 +383,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                 yLabels <- TRUE
                 if (!is.null(yt)) {yaxisTicks <- yt; yLabels <- yt}
                 if (!is.null(ytlab)) {yLabels <- ytlab}                
-                axis(2, at = yaxisTicks)
+                axis(2, at = yaxisTicks, cex.axis = cex.axis)
 
                 ## Adding x axis                
                 xaxisTicks <- axTicks(1)                                            
@@ -386,7 +405,7 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
                     }
                 }
                 if (!is.null(xtlab)) {xLabels <- xtlab}
-                axis(1, at = xaxisTicks, labels = xLabels)
+                axis(1, at = xaxisTicks, labels = xLabels, cex.axis = cex.axis)
                 
                 ## Adding error bars
                 barFct(plotPoints)                            
@@ -398,6 +417,8 @@ function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName,
 #                {        
 #                    points(plotPoints, cex = cexVec[i], col = colourVec[i], pch = pchVec[i], ...)        
 #                }
+#                print(pchVec[i])
+#                print(plotPoints)
                 pointFct(plotPoints, cexVec[i], colourVec[i], pchVec[i], ...)        
 
                 ## Adding error bars

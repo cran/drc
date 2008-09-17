@@ -98,7 +98,6 @@ model = "Hewlett", startVal2)
     conList <- control
     conList$"noMessage" <- TRUE
 
-
     ## Fitting model where ED50 vary freely
     model1 <- multdrc(formula=formula, curve=assayNo, collapse=collapseNew, weights=weights, 
                       data=cbind(data2, assayNo, weights), fct=fct, boxcox=boxcox, bcAdd=bcAdd, 
@@ -107,7 +106,6 @@ model = "Hewlett", startVal2)
                       # no need for an 'na.action' argument as NAs have already been removed
 
     rm(collapseNew, envir = .GlobalEnv)
-
 
     ## Constructing new collapse argument ... in common for Hewlett and Voelund
     eCol1 <- eval(parse(text=paste("~I(1/(", eCol0, "/100))-1", sep = "")), envir = data)    

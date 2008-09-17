@@ -5,7 +5,8 @@
 \title{Printing summary of non-linear model fits}
 
 \description{
-  'print.summary' displays the summary.  
+  This method produces formatted output of the summary statistics: parameter estimates, estimated standard errors, 
+  z-test statistics and corresponding p-values.  
 }
 
 \usage{
@@ -20,15 +21,16 @@
 }
 
 \value{
-  'print.summary.drc' produces a formatted output of the summary statistics.
+  The object (argument \code{x}) is returned invisibly.
 }
 
 \author{Christian Ritz}
 
 \examples{
 
-## Invoking the print.summary method for objects of class 'drc'
-summary(multdrc(ryegrass))  
+ryegrass.m1 <- drm(rootl~conc, data=ryegrass, fct= LL.4())
+
+summary(ryegrass.m1)  
 
 }
 \keyword{models}

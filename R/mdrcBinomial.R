@@ -56,7 +56,8 @@
     {
         total <- (object$"data")[iv, 5]
         success <- total*(object$"data")[iv, 2]    
-        c( sum(log(choose(total, success))) - object$"fit"$"ofvalue", object$"sumList"$"df.residual" )
+        c( sum(log(choose(total, success))) - object$"fit"$"ofvalue", 
+        object$"sumList"$"lenData" - object$"sumList"$"df.residual")
     }
     
        

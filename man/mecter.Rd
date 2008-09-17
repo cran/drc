@@ -67,7 +67,7 @@ fct=LL.4(), model="Hewlett")
 ## Comparing to model with freely varying e parameter
 anova(mecter.mhew, mecter.mfree)  # rejected
 
-## Plotting isobole based on concentration addition
+## Plotting isobole based on the Hewlett model
 isobole(mecter.mfree, mecter.mhew, exchange=0.02)  # poor fit
 
 ## Fitting the Voelund model
@@ -77,7 +77,7 @@ fct=LL.4(), model="Voelund")
 ## Comparing to model with freely varying e parameter
 anova(mecter.mvoe, mecter.mfree)  # accepted
 
-## Plotting isobole based on concentration addition
+## Plotting isobole based on the Voelund model
 isobole(mecter.mfree, mecter.mvoe, exchange=0.02)  # good fit
 
 

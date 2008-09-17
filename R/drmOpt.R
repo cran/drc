@@ -3,12 +3,10 @@ function(opfct, opdfct1, startVec, optMethod, constrained, warnVal,
 upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, trace) 
 {
     ## Controlling the warnings
-    options(warn = warnVal)
-    
+    options(warn = warnVal)   
     
     ## Calculating hessian
     if (is.null(opdfct2)) {hes <- TRUE} else {hes <- FALSE}
-
 
     ## Optimising
     psVec <- abs(startVec)
@@ -30,14 +28,14 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
         if (!inherits(nlsObj, "try-error")) 
         {
             nlsFit <- nlsObj
+            nlsFit$convergence <- TRUE
         } else {
 #            stop("Convergence failed")
             warning("Convergence failed. The model was not fitted!", call. = FALSE)
 
             callDetail <- match.call()
             if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
-
-            return(list(call = callDetail, parNames = parmVec, startVal = startVec))
+            return(list(call = callDetail, parNames = parmVec, startVal = startVec, convergence = FALSE))
         }
         if (!hes) {nlsFit$hessian <- opdfct2(parmVal)}
 
@@ -66,6 +64,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
         if (!inherits(nlsObj, "try-error")) 
         {
             nlsFit <- nlsObj
+            nlsFit$convergence <- TRUE            
         } else {  # to avoid an error if used in a loop
             if (errorMessage) 
             {
@@ -76,10 +75,14 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 
             callDetail <- match.call()
             if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
-            return(list(call=callDetail, parNames=parmVec, startVal=startVec))
+            return(list(call = callDetail, parNames = parmVec, startVal = startVec, convergence = FALSE))
         }
     }}
-    nlsFit$ofvalue <- nlsFit$value
+    
+#    nlsFit$ofvalue <- nlsFit$value
+    nlsFit$ovalue <- nlsFit$value  # used in the var-cov matrix ... check
+#    nlsFit$value <- opfct(nlsFit$par, scaling = FALSE)  # used in the residual variance ... check    
+    nlsFit$value <- opfct(nlsFit$par)
 
     ## returning the fit
     return(nlsFit)

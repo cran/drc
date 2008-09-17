@@ -13,7 +13,7 @@
   
   \method{plot}{drc}(x, ..., level = NULL, broken = FALSE, col = FALSE, 
   conLevel, conName, grid = 100, legend, legendText, legendPos, legendCex = 1,
-  type = "average", obs, lty, log = "x", cex, pch, xlab, ylab, xlim, ylim,
+  type = "average", obs, lty, log = "x", cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1,
   bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL,
   add = FALSE, axes = TRUE)
   
@@ -50,6 +50,8 @@
   \item{ylab}{an optional label for the y axis.}
   \item{xlim}{a numeric vector of length two, containing the lower and upper limit for the x axis.}
   \item{ylim}{a numeric vector of length two, containing the lower and upper limit for the y axis.}
+  \item{cex.axis}{numeric value specifying the magnification to be used for axis annotation 
+  relative to the current setting of cex.}  
   \item{bcontrol}{a list with components \code{factor}, \code{style} and \code{width}. 
   Controlling the appearance of the break (in case \code{broken} is \code{TRUE}). 
   The component \code{factor} is the distance from the control to the break as a 

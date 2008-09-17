@@ -1,6 +1,6 @@
 "isobole" <- 
-function(object1, object2, ename = "e", xaxis = "0", exchange = 1, cifactor = 2, 
-xlab = "0", ylab = "100", xlim, ylim, ...)
+function(object1, object2, exchange = 1, cifactor = 2, ename = "e", xaxis = "100",  
+xlab, ylab, xlim, ylim, ...)
 {
 
     parmVec <- coef(object1)
@@ -28,42 +28,94 @@ xlab = "0", ylab = "100", xlim, ylim, ...)
 #        list(xPos, yPos)
 #    }
 
-    if (!identical(xaxis, "0")) {eVec <- rev(eVec)}
+#    if (identical(xaxis, "0")) 
+#    {
+#        eVec <- rev(eVec)
+#        seVec <- rev(seVec)
+#        mixProp <- rev(mixProp)
+#    }
+
+    Ex <- eVec * mixProp
+    Ey <- eVec * (1-mixProp) * exchange
 
     lowerE <- eVec - cifactor*seVec
 #    lowerEx <- lowerE*mixProp
-    lowerEx <- lowerE*cos(mixProp*pi/2)
+#    lowerEx <- lowerE*cos(mixProp*pi/2)
 #    lowerEy <- lowerE*(1-mixProp)*exchange    
-    lowerEy <- lowerE*sin(mixProp*pi/2)*exchange    
+#    lowerEy <- lowerE*sin(mixProp*pi/2)*exchange    
+
     upperE <- eVec + cifactor*seVec
 #    upperEx <- upperE*mixProp
-    upperEx <- upperE*cos(mixProp*pi/2)
+#    upperEx <- upperE*cos(mixProp*pi/2)
 #    upperEy <- upperE*(1-mixProp)*exchange
-    upperEy <- upperE*sin(mixProp*pi/2)*exchange
+#    upperEy <- upperE*sin(mixProp*pi/2)*exchange
+
+#    lowerE <- eVec - 2 * seVec
+    lowerEx <- lowerE * mixProp
+    lowerEy <- lowerE * (1 - mixProp) * exchange
+#    upperE <- eVec + 2 * seVec
+    upperEx <- upperE * mixProp
+    upperEy <- upperE * (1 - mixProp) * exchange
 
 
     ## Defining plotting frame
     if (missing(xlim)) {xLimits <- c(0, max(upperEx))} else {xLimits <- xlim}       
-    if (missing(ylim)) {yLimits <- c(0, max(upperEy))} else {yLimits <- ylim}    
-    plot(0, type = "n", xlab = xlab, ylab = ylab, xlim = xLimits, ylim = yLimits, ...)  # empty plot
+    if (missing(ylim)) {yLimits <- c(0, max(upperEy))} else {yLimits <- ylim}
+    
+    if (missing(xlab)) {xLab <- ifelse(identical(xaxis, "100"), "100", "0")} else {xLab <- xlab}
+    if (missing(ylab)) {yLab <- ifelse(identical(xaxis, "100"), "0", "100")} else {yLab <- ylab}
+
+    ## Swapping axes
+    if (identical(xaxis, "0")) 
+    {
+        ETemp <- Ex
+        Ex <- Ey
+        Ey <- ETemp
+        
+        lowerTemp <- lowerEx
+        lowerEx <- lowerEy
+        lowerEy <- lowerTemp
+
+        upperTemp <- upperEx
+        upperEx <- upperEy
+        upperEy <- upperTemp
+
+        limTemp <- xLimits
+        xLimits <- yLimits
+        yLimits <- limTemp 
+        
+        mixProp <- 1 - mixProp
+    }
+    
+    ## Drawing the plot frame    
+    plot(0, type = "n", xlab = xLab, ylab = yLab, xlim = xLimits, ylim = yLimits, ...)  # empty plot
     
     ## Plotting rays in first quadrant
+    raySlopes <- (1 - mixProp) / mixProp
 #    raySlopes <- mixProp/(1 - mixProp) 
-    raySlopes <- tan(mixProp * pi/2)
+#    raySlopes <- tan(mixProp * pi/2)
     for (i in raySlopes[is.finite(raySlopes)]) {abline(0, exchange*i, lty = 3)}
     abline(v = 0, , lty = 3)  # adding vertical line (for infinite slope)       
 
-    ## Plotting ED50 values with confidence intervals
+#    raySlopes <- mixProp/(1 - mixProp)
+#    for (i in raySlopes[is.finite(raySlopes)]) 
+#    {
+#        abline(0, exchange * i, lty = 3)
+#    }
+
+    ## Plotting ED50 values with confidence intervals  
+    points(Ex, Ey, pch = 19)
+    segments(lowerEx, lowerEy, upperEx, upperEy, lwd = 2)    
+    
+#    points(eVec*cos(mixProp*pi/2), eVec*sin(mixProp*pi/2)*exchange, pch = 19)
+
 #    katx <- function(eVal, slope) {cos(atan(slope))*eVal}
 #    katy <- function(eVal, slope) {sin(atan(slope))*eVal}    
-    
-#    points(eVec*mixProp, eVec*(1-mixProp)*exchange, pch = 19)
-    points(eVec*cos(mixProp*pi/2), eVec*sin(mixProp*pi/2)*exchange, pch = 19)
 
 #    points(katx(eVec, raySlopes), katy(eVec, raySlopes)*exchange, pch = 19)
-    segments(lowerEx, lowerEy, upperEx, upperEy, lwd=2)
-#    segments(katx(lowerE, raySlopes), katy(lowerE, raySlopes)*exchange, 
-#    katx(upperE, raySlopes), katy(upperE, raySlopes)*exchange, lwd = 2)
+#    segments(lowerEx, lowerEy, upperEx, upperEy, lwd = 2)
+# old    segments(katx(lowerE, raySlopes), katy(lowerE, raySlopes)*exchange, 
+#        katx(upperE, raySlopes), katy(upperE, raySlopes)*exchange, lwd = 2)
 
     if (!missing(object2))
     {
@@ -106,10 +158,10 @@ xlab = "0", ylab = "100", xlim, ylim, ...)
                                      
             mixVec <- seq(1, 0, length = 100)  # oops hardcoded "100"
             voeVec <- exp(Voelund2(ED50.1, ED50.2, tail(parmVec, 2), mixVec))        
-#            tvals <- mixVec * voeVec
-#            mvals <- (1 - mixVec) * voeVec
-            tvals <- voeVec * cos(mixVec*pi/2)
-            mvals <- voeVec * sin(mixVec*pi/2)
+            tvals <- mixVec * voeVec
+            mvals <- (1 - mixVec) * voeVec
+#            tvals <- voeVec * cos(mixVec*pi/2)
+#            mvals <- voeVec * sin(mixVec*pi/2)
 
             xVal <- tvals
 #            yVal <- tvals
@@ -132,8 +184,17 @@ xlab = "0", ylab = "100", xlim, ylim, ...)
             } else {
                 lambda <- 1
             }
-            yVal <- seq(0, ED50.1, length = 100)
-            xVal <- exchange*Hewlett(yVal, ED50.1, ED50.2, lambda)
+#            yVal <- seq(0, ED50.1, length = 100)
+#            xVal <- exchange*Hewlett(yVal, ED50.1, ED50.2, lambda)
+
+            xVal <- seq(0, ED50.1, length = 100)
+            yVal <- exchange * Hewlett(xVal, ED50.1, ED50.2, lambda)
+        }
+        if (identical(xaxis, "0")) 
+        {
+            tempVal <- xVal
+            xVal <- yVal
+            yVal <- tempVal
         }    
         lines(xVal, yVal)        
     }

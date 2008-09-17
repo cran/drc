@@ -1,5 +1,5 @@
-"expDecay" <-
-function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
+"expdecay" <-
+function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"), fctName, fctText)
 {
     ## Checking arguments
     numParm <- 3
@@ -67,7 +67,7 @@ function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
         parmMat[, notFixed] <- parm
 
         tempVal <- exp(-parmMat[, 3] * x)
-        cbind(1 - tempVal, tempVal, (parmMat[, 1] - parmMat[, 2]) * tempVal * x)
+        cbind(1 - tempVal, tempVal, (parmMat[, 1] - parmMat[, 2]) * tempVal * x)[, notFixed]
     }
     
     deriv2 <- NULL
@@ -111,11 +111,37 @@ function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
     
     ## Returning the function with self starter and names
     returnList <- list(fct = fct, ssfct = ssfct, names = pnames, deriv1 = deriv1, deriv2 = deriv2,
-    edfct = edfct, inversion = invfct, 
-    name = "expDecay",
-    text = "Exponential decay",    
-    noParm = sum(is.na(fixed))) 
+    edfct = edfct, inversion = invfct,
+    name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName), 
+    text = ifelse(missing(fctText), "Exponential decay", fctText), 
+    noParm = sum(is.na(fixed)))     
     
     class(returnList) <- "drcMean"
     invisible(returnList)
+}
+
+"ED.2" <-
+function(fixed = c(NA, NA), names = c("plateau", "k"))
+{
+    ## Checking arguments
+    numParm <- 2
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( expdecay(fixed = c(0, fixed[1:2]), 
+    names = c("init", names[1:2]), 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("Exponential decay")) )
+}
+
+"ED.3" <-
+function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( expdecay(fixed, names, 
+    fctName = as.character(match.call()[[1]])) )
 }

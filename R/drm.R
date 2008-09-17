@@ -592,6 +592,8 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         for (i in 1:numNames)
         {
 #           print(as.matrix(pmodelsList2[[i]]))
+#           print(parmPos[i] + 1:ncclVec[i])
+#           print(parm[parmPos[i] + 1:ncclVec[i]])          
            parmMatrix[, i] <- pmodelsList2[[i]] %*% parm[parmPos[i] + 1:ncclVec[i]]
         }
         return(parmMatrix)
@@ -674,6 +676,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
             fctEval
         }
     }
+#    print(startVec)
 #    print(multCurves(dose, startVec))
 
 
@@ -725,7 +728,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
    
     ## Defining estimation method
     scaleXConstant <- 1
-    scaleYConstant <- 1
+    scaleYConstant <- 1 ## mean(resp) 
     
     if (type == "continuous")
     {
@@ -930,28 +933,29 @@ if (FALSE)
 #    print(opfct(startVec))
 #    print(dose)
 #    print(resp)
-   
-    
+     
     ## Scaling objective function
-    if (type == "continuous")
-    {
-        ofVal <- opfct(startVec)
-        if ( !is.nan(ofVal) && ( (ofVal < 1e-2) || (ofVal >1e2) ) )
-        {
-            opfct2 <- function(c){opfct(c)/opfct(startVec)}
-        } else {
-            opfct2 <- opfct
-        }
-    } else {
-        opfct2 <- opfct
-    }
+#    if (type == "continuous")
+#    {
+#        ofVal <- opfct(startVec)
+#        if ( !is.nan(ofVal) && ( (ofVal < 1e-2) || (ofVal >1e2) ) )
+#        {
+#            opfct2 <- function(c){opfct(c)/opfct(startVec)}
+#        } else {
+#            opfct2 <- opfct
+#        }
+#    } else {
+#        opfct2 <- opfct
+#    }
+    opfct2 <- opfct
 
     ## Optimising
     nlsFit <- drmOpt(opfct2, opdfct1, startVec, optMethod, constrained, warnVal, 
     upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, trace = control$"trace") 
-    
-    nlsFit$ovalue <- nlsFit$value  # used in the var-cov matrix
-    nlsFit$value <- opfct(nlsFit$par)  # used in the residual variance
+        
+    if (!nlsFit$convergence) {return(nlsFit)}
+#    print(nlsFit$par)
+#    nlsFit$value <- opfct(nlsFit$par)  # used in the residual variance
 
     ## Manipulating after optimisation
     

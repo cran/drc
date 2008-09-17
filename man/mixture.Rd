@@ -56,19 +56,19 @@ and 10 for 10-logarithm).}
 }
 
 \references{
-  S{\o}rensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
+  Soerensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
   An isobole-based statistical model and test for synergism/antagonism in binary mixture toxicity experiments, 
-  \emph{Statistical Ecology and Environmental Statistics}, \bold{14}. ???--???.
+  \emph{Environmental and Ecological Statistics}, \bold{14}, 383--397.
 }
 
 \author{Christian Ritz}
 
-\seealso{The function has argument similar to those in \code{\link{multdrc}}.}
-
-\examples{
-
-## See the example under ?acidiq
-
+\seealso{
+  The examples in \code{\link{acidiq}} (the Hewlett model), \code{\link{glymet}} (concentration addition) 
+  and \code{\link{mecter}} (the Voelund model).
 }
+
+\examples{}
+
 \keyword{models}
 \keyword{nonlinear}
