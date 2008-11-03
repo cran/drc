@@ -7,7 +7,7 @@
     
     if (lenCI > 1)
     {
-        retMat <- predict(object, data.frame(xVec, rep(curveId, rep(lenXV, lenCI))), ...)
+        retMat <- predict(object, data.frame(xVec, rep(curveId, rep(lenXV, lenCI))), se.fit = TRUE, ...)
         rownames(retMat) <- paste(rep(curveId, rep(lenXV, lenCI)), rep(as.character(xVec), lenCI), sep = ":")
     } else {
         retMat <- predict(object, data.frame(xVec))

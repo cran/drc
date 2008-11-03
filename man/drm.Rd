@@ -106,7 +106,7 @@
 \note{
   The \code{curve} argument is subsequently used for plotting dose-response curves. For large datasets 
   it need not represent the actual curves, but it could represent several curves having the parameters 
-  (to avoid too many curves in the plot). The same applies for use with the function \code{\link{ED}} 
+  (to avoid too many curves in the plot). The same applies for use with the function \code{\link{ED.drc}} 
   and \code{\link{SI}}.
 
   The columns of a data frame argument to \code{pmodels} are automatically converted into factors. 

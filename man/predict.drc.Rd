@@ -1,18 +1,21 @@
 \name{predict.drc}
 
 \alias{predict.drc}
+\alias{predict.mrdrc}
 
 \title{Prediction}
 
 \description{
-  Predicted values for models of class 'drc'.
+  Predicted values for models of class 'drc' or class 'mrdrc'.
 }
 
 \usage{
 
-  \method{predict}{drc}(object, newdata, se.fit = TRUE, interval = c("none", "confidence", "prediction"), 
+  \method{predict}{drc}(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"), 
   level = 0.95, na.action = na.pass, od = FALSE, ...)
 
+  \method{predict}{mrdrc}(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"), 
+  level = 0.95, pava = FALSE, ...)
 }
 
 \arguments{
@@ -25,6 +28,7 @@
   \item{na.action}{function determining what should be done with missing values in 'newdata'. 
   The default is to predict 'NA'.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
+  \item{pava}{logical. If TRUE the fit is monotoniosed using pool adjacent violators algorithm.}
   \item{\dots}{further arguments passed to or from other methods.}
 }
 
@@ -51,20 +55,18 @@
 \examples{
 
 ## Fitting a model
-model1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach)
+spinach.model1 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
 
 ## Predicting values a dose=2 (with standard errors)
-predict(model1, data.frame(dose=2, CURVE=c("1", "2", "3")))
+predict(spinach.model1, data.frame(dose=2, CURVE=c("1", "2", "3")), se.fit = TRUE)
 
 ## Getting confidence intervals
-predict(model1, data.frame(dose=2, CURVE=c("1", "2", "3")), 
+predict(spinach.model1, data.frame(dose=2, CURVE=c("1", "2", "3")), 
 interval = "confidence")
 
 ## Getting prediction intervals
-predict(model1, data.frame(dose=2, CURVE=c("1", "2", "3")), 
+predict(spinach.model1, data.frame(dose=2, CURVE=c("1", "2", "3")), 
 interval = "prediction")
-
-rm(model1)
 
 }
 

@@ -1,7 +1,7 @@
 \name{expdecay}
 
-\alias{ED.2}
-\alias{ED.3}
+\alias{EXD.2}
+\alias{EXD.3}
 
 \title{Exponential decay model}
 
@@ -10,9 +10,9 @@
 }
 
 \usage{
-ED.2(fixed = c(NA, NA), names = c("plateau", "k"))
+EXD.2(fixed = c(NA, NA), names = c("plateau", "k"))
 
-ED.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
+EXD.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 }
 
 \arguments{
@@ -52,7 +52,7 @@ ED.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 \examples{
 
 ## Fitting an exponential decay model
-ryegrass.m1<-drm(rootl~conc, data=ryegrass, fct=ED.3())
+ryegrass.m1<-drm(rootl~conc, data=ryegrass, fct=EXD.3())
 
 plot(ryegrass.m1)
 

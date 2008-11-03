@@ -42,12 +42,12 @@
 head(O.mykiss)
 
 ## Fitting exponential model
-O.mykiss.m1<-drm(weight~conc, data=O.mykiss, fct=ED.2(), na.action=na.omit)
+O.mykiss.m1<-drm(weight~conc, data=O.mykiss, fct=EXD.2(), na.action=na.omit)
 summary(O.mykiss.m1)
 anova(O.mykiss.m1)
 
 ## Fitting same model with transform-both-sides approach
-O.mykiss.m2<-drm(weight~conc, data=O.mykiss, fct=ED.2(), na.action=na.omit, adjust="bc1")
+O.mykiss.m2<-drm(weight~conc, data=O.mykiss, fct=EXD.2(), na.action=na.omit, adjust="bc1")
 summary(O.mykiss.m2)
 # no need for a transformation
 

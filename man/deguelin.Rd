@@ -41,12 +41,12 @@
 \examples{
 
 ## Log-logistic fit
-deguelin.m1<-drm(r/n~dose, weights=n, data=deguelin, fct=LL.2(), type="binomial")
+deguelin.m1 <- drm(r/n~dose, weights=n, data=deguelin, fct=LL.2(), type="binomial")
 anova(deguelin.m1)
 summary(deguelin.m1)
 
 ## Loess fit
-deguelin.m2<-loess(r/n~dose, data=deguelin, degree=1)
+deguelin.m2 <- loess(r/n~dose, data=deguelin, degree=1)
 
 ## Plot of data with fits superimposed
 plot(deguelin.m1, ylim=c(0.2,1))

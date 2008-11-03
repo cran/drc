@@ -87,7 +87,7 @@
 }
 
 \seealso{
-  A related functions \code{\link{ED}} (for calculating effective doses) and 
+  A related functions \code{\link{ED.drc}} (for calculating effective doses) and 
   \code{\link{relpot}} (for displaying relative potencies).
 }
 

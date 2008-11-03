@@ -48,7 +48,7 @@ names = c("a", "b", "c"))
 }
 
 \seealso{A very similar, but monotonously decreasing model is the exponential decay model:
- \code{\link{ED.2}} and \code{\link{ED.3}}.}
+ \code{\link{EXD.2}} and \code{\link{EXD.3}}.}
 
 \examples{
 

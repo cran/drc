@@ -66,7 +66,7 @@ and 10 for 10-logarithm).}
 
 \note{The \code{curve} argument is subsequently used for plotting dose-response curves. For large datasets it need not represent the actual
       curves, but it could represent several curves having the parameters (to avoid too many curves in the plot). The same applies for use
-      with the function \code{\link{ED}} and \code{\link{SI}}.
+      with the function \code{\link{ED.drc}} and \code{\link{SI}}.
 
       The columns of a data frame argument to \code{collapse} are automatically converted into factors. This does not happen if a list is specified.
       The data frame argument allows collapsing parameters for some or all curves (using \code{\link{colFct}}), whereas the list argument 

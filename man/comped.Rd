@@ -56,7 +56,7 @@
 }
 
 \seealso{
-  The function \code{\link{ED}} calculates arbitrary effective dose values based on a model fit. The function
+  The function \code{\link{ED.drc}} calculates arbitrary effective dose values based on a model fit. The function
   \code{\link{SI}} calculates relative potencies based on arbitrary effective dose values.
 }
 

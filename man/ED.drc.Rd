@@ -1,17 +1,25 @@
-\name{ED}
+\name{ED.drc}
+
 \alias{ED}
+\alias{ED.drc}
+\alias{ED.mrdrc}
 
 \title{Estimating effective doses}
 
 \description{
+
   'ED' estimates effective doses given (ECp/EDp/ICp) for given reponse levels.
 }
 
 \usage{
-  ED(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
+  \method{ED}{drc}(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
   level = ifelse(!(ci=="none"), 0.95, NULL), logBase = NULL,
   reference = c("control", "upper"), type = c("relative", "absolute"), 
   display = TRUE, ...)
+  
+  \method{ED}{mrdrc}(object, respLev, level = 0.95, interval = c("none", "approximate", "bootstrap"), 
+  method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, display = TRUE, lower, upper,
+  intType = c("confidence", "prediction"), minmax = c("response", "dose"), n = 1000, seedVal = 200810311, ...) 
 }
 
 \arguments{
@@ -28,11 +36,27 @@
   \item{reference}{character string. Is the upper limit or the control level the reference?}
   \item{type}{character string. Whether the specified response levels are absolute or relative (default).}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
-  \item{...}{additional arguments for the function doing the calculations.}
+  \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none".
+  The only alternative for model-robust fits is using inverse regression.}
+  \item{method}{character string specifying if bisection or grid search should be used to determine ED estimates.
+  Grid search may give better results for ED level close to the boundaries of the dose range or in case of
+  a non-monotonous dose-response curves. The bisection method is faster than the grid search.}
+  \item{cgridsize}{numeric specifying the number of grid points in the initial grid used for both bisection and grid
+  search to narrow down the interval where the ED estimate is to be found.}
+  \item{gridsize}{numeric specifying the number of grid points in the second finer grid search.}
+  \item{lower}{numeric value specifying the lower reference limit.}
+  \item{upper}{numeric specifying the upper reference limit.}  
+  \item{intType}{character string specifying whether confidence or prediction intervals are requested.} 
+  \item{minmax}{character string indicating if the control level should be based on the the minimum dose or the maximum
+  response. The latter is more suitable for dose-response data showing hormesis.} 
+  \item{n}{numeric specifying the number of simulations for the bootstrap confidence intervals.}       
+  \item{seedVal}{numeric giving the seed for the random number generator used for the bootstrap confidence intervals.}   
+  \item{...}{further arguments (none at the moment).}
 }
 
 \details{
-  This function is only implemented for the built-in functions of class 'braincousens', 'gompertz', 'logistic' and 'mlogistic'.
+  This function is only implemented for the built-in functions of class 'braincousens', 'gompertz', 
+  'logistic' and 'mlogistic'.
 
   For objects of class 'braincousens' or 'mlogistic' the additional argument may be the 'upper' argument
   or the 'interval' argument. 
@@ -42,6 +66,10 @@
   The 'interval' argument should specify a rough interval in which the dose
   yielding the maximum hormetical response lies. The default interval is 'c(0.001, 1000)'. Notice that the lower limit
   should not be set to 0 (use something like 1e-3, 1e-6, ...).
+  
+  For model-robust fits the arguments \code{lower} and \code{upper} can be used to specify reference values for the
+  lower and upper limits of the dose-response relationship. This only applies for the continuous responses. For
+  quantal responses, the reference values are fixed 0 and 1, respectively.
 }
 
 \value{
@@ -53,7 +81,10 @@
 
 %\note{This function is only implemented for the built-in functions of class 'braincousens', 'gompertz', 'logistic' and 'mlogistic'.}
 
-\seealso{The related function \code{\link{SI}}.}
+\seealso{
+  The related function \code{\link{SI}}. For model-robust fits, examples are found 
+  in the help of \code{\link{mrdrm}}.
+}
 
 \examples{
 

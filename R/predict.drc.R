@@ -1,4 +1,4 @@
-"predict.drc" <- function(object, newdata, se.fit = TRUE, interval = c("none", "confidence", "prediction"), 
+"predict.drc" <- function(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"), 
 level = 0.95, na.action = na.pass, od = FALSE, ...)
 {
     ## Checking arguments
@@ -101,7 +101,7 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     if (se.fit) {keepInd <- c( keepInd, 2)}
     if (!interval == "none") {keepInd <- c( keepInd, 3, 4)}
     
-    return(retMat[, keepInd, drop = FALSE])
+    return(retMat[, keepInd])  # , drop = FALSE])
 }
 
 

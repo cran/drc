@@ -120,7 +120,7 @@ function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"), fctName, fctT
     invisible(returnList)
 }
 
-"ED.2" <-
+"EXD.2" <-
 function(fixed = c(NA, NA), names = c("plateau", "k"))
 {
     ## Checking arguments
@@ -134,7 +134,7 @@ function(fixed = c(NA, NA), names = c("plateau", "k"))
     fctText = lowFixed("Exponential decay")) )
 }
 
-"ED.3" <-
+"EXD.3" <-
 function(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 {
     ## Checking arguments

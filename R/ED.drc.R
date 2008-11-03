@@ -1,7 +1,9 @@
-"ED" <-
+ED <- function (object, ...) UseMethod("ED", object)
+
+"ED.drc" <-
 function(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
 level = ifelse(!(ci == "none"), 0.95, NULL), logBase = NULL, reference = c("control", "upper"), 
-type = c("relative", "absolute"), display = TRUE,...)
+type = c("relative", "absolute"), display = TRUE, ...)
 {
     ci <- match.arg(ci)
     reference <- match.arg(reference)
@@ -39,7 +41,6 @@ type = c("relative", "absolute"), display = TRUE,...)
         }
     }
     lenPV <- length(respLev)
-    
 
     ## Retrieving relevant quantities
     EDlist <- object$fct$"edfct"  
@@ -218,7 +219,7 @@ type = c("relative", "absolute"), display = TRUE,...)
 #        ciMat[, 2] <- EDmat[, 1] + qnorm(level + (1-level)/2)*EDmat[, 2]
         ciMat[, 1] <- EDmat[, 1] - tquan * EDmat[, 2]
         ciMat[, 2] <- EDmat[, 1] + tquan * EDmat[, 2]
-        colNames <- c( colNames, "Lower", "Upper")
+        colNames <- c(colNames, "Lower", "Upper")
         ciLabel <- "Delta method"
     }
     if (ci == "tfls")
@@ -261,20 +262,19 @@ type = c("relative", "absolute"), display = TRUE,...)
     }    
     dimnames(EDmat) <- list(dimNames, colNames)
 
-
-    ## Displaying the ED values
-    if (display)
-    {
-        cat("\n")
-        cat("Estimated effective doses\n")
-        if (!(ci == "none")) 
-        {
-            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
-            cat(ciText)
-        }
-        cat("\n") 
-        printCoefmat(EDmat)
-    }
-    invisible(EDmat)    
+    EDprint(EDmat, ci, ciLabel, display)
+#    ## Displaying the ED values
+#    if (display)
+#    {
+#        cat("\n")
+#        cat("Estimated effective doses\n")
+#        if (!(ci == "none")) 
+#        {
+#            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
+#            cat(ciText)
+#        }
+#        cat("\n") 
+#        printCoefmat(EDmat)
 #    }
+#    invisible(EDmat)    
 }

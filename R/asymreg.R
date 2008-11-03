@@ -100,7 +100,7 @@ fixed = c(NA, NA, NA), names = c("a", "b", "c"), fctName, fctText)
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
   
-        (parmMat[, 2] - parmMat[, 1])*exp(-parmMat[, 3]*dose)*parmMat[, 3]
+        (parmMat[, 2] - parmMat[, 1]) * exp(-parmMat[, 3] * x) * parmMat[, 3]
     }
     
     ## Returning the function components
