@@ -16,7 +16,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     resp <- origData[, doseDim+1]
 
     assayNo <- origData[, 3]
-    assayNoOld <- origData[, 4]
+    assayNoOld <- as.vector(origData[, 4])  # as.vector() to remove factor structure
     numAss <- length(unique(assayNoOld))
     doPlot <- is.null(level) || any(unique(assayNoOld)%in%level)
     if (!doPlot) {stop("Nothing to plot")}
@@ -89,7 +89,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     } else {
         plotMat <- plotFct(logDose^(dosePts))
     }
-    numCol <- ncol(plotMat)
+#    numCol <- ncol(plotMat)
 
     maxR <- max(resp)
     options(warn = -1)  # suppressing warning in case maximum of NULL is taken
@@ -170,7 +170,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     }
 
     ## Determining levels to be plotted
-    uniAss <- unique(assayNoOld)    
+    uniAss <- unique(assayNoOld)
     if (is.null(level)) 
     {
         level <-  uniAss
@@ -271,7 +271,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     {
         for (i in levelInd)
         {
-            indVal <- levelInd[uniAss %in% level[i]]
+            indVal <- uniAss %in% level[i]
             if ( (!naPlot) && (any(is.na(plotMat[, indVal]))) ) 
             {
                 noPlot[i] <- TRUE

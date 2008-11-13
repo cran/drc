@@ -568,15 +568,26 @@ response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("sp"),
 doseVec = dVec, resVar = 0.25, seedVal = 200810213, span = 0.75)
 coverFct(NULL, true.sp.1, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
+true.sp.1a<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("sp"), 
+doseVec = dVec, resVar = 0.0025, seedVal = 200810213, span = 0.75)
+coverFct(NULL, true.sp.1a, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+
+
 ## More help by fixing lower and upper limits
 true.sp.1b <- simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
 response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("sp"), 
-doseVec = dVec, resVar = 0.25, seedVal = 200810213, lower = 0.5, upper = 8, span = 0.75)
-coverFct(NULL, true.sp.1b, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+doseVec = dVec, resVar = 0.0025, seedVal = 200810213, lower = 0.5, upper = 8, span = 0.75)
+coverFct(NULL, true.sp.1ab, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+
+true.sp.1ab <- simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("sp"), 
+doseVec = dVec, resVar = 0.0025, seedVal = 200810213, lower = 0.05, upper = 0.8, span = 0.75)
+coverFct(NULL, true.sp.1ab, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
 true.p.1<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
-response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("p"), 
-doseVec = dVec, resVar = 0.25, seedVal = 200810191)
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("p"), 
+doseVec = dVec, resVar = 0.0025, seedVal = 200810191)
 coverFct(NULL, true.p.1, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
 ## No. replicates: 3
@@ -596,10 +607,21 @@ response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("sp"),
 doseVec = rep(dVec, rep(3, 14)), resVar = 0.25, seedVal = 200811081, lower = 0.5, upper = 8, span = 0.75)
 coverFct(NULL, true.sp.3b, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
-true.p.2<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
-response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("p"), 
-doseVec =  rep(dVec, rep(3, 14)), resVar = 0.25, seedVal = 200810192)
-coverFct(ryegrass.m1, true.p.2, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+## Response between 0 and 1
+true.sp.3a<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("sp"), 
+doseVec =  rep(dVec, rep(3, 14)), resVar = 0.0025, seedVal = 200811081, span = 0.75)
+coverFct(NULL, true.sp.3a, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+
+true.sp.3ab <- simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("sp"), 
+doseVec = rep(dVec, rep(3, 14)), resVar = 0.0025, seedVal = 200811081, lower = 0.05, upper = 0.8, span = 0.75)
+coverFct(NULL, true.sp.3ab, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+
+true.p.3<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("p"), 
+doseVec =  rep(dVec, rep(3, 14)), resVar = 0.0025, seedVal = 200810192)
+coverFct(ryegrass.m1, true.p.3, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
 ## No. replicates: 5
 ryegrass.true.sp3new<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
@@ -618,10 +640,21 @@ response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("sp"),
 doseVec =  rep(dVec, rep(5, 14)), resVar = 0.25, seedVal = 200811081, lower = 0.5, upper = 8, span = 0.75)
 coverFct(NULL, true.sp5b, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
-true.p.3<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
-response = c("con"), fct = LL.4(), coefVec = c(3, 0.5, 8, 60), method = c("p"), 
-doseVec =  rep(dVec, rep(5, 14)), resVar = 0.25, seedVal = 200810193)
-coverFct(ryegrass.m1, true.p.3, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+## Response between 0 and 1
+true.sp5a<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("sp"), 
+doseVec =  rep(dVec, rep(5, 14)), resVar = 0.0025, seedVal = 200811081, span = 0.75)
+coverFct(NULL, true.sp5a, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+
+true.sp5ab<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("sp"), 
+doseVec =  rep(dVec, rep(5, 14)), resVar = 0.0025, seedVal = 200811081, lower = 0.05, upper = 0.8, span = 0.75)
+coverFct(NULL, true.sp5ab, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
+
+true.p.5<-simFct(1000, edVal = c(10, 20, 50), type = c("parametric"), 
+response = c("con"), fct = LL.4(), coefVec = c(3, 0.05, 0.8, 60), method = c("p"), 
+doseVec =  rep(dVec, rep(5, 14)), resVar = 0.0025, seedVal = 200810193)
+coverFct(ryegrass.m1, true.p.5, c(60*(10/90)^(1/3), 60*(20/80)^(1/3), 60))
 
 
 
@@ -678,18 +711,17 @@ fVec3 <- horFct(dVec5)
 
 
 ## No. replicates:1
-mis.sp.1b <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.1ab <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec3, rep(1, 14)), 
-pVec = rep(fVec, rep(1, 14)),  seedVal = 200710221, pfct = LL.4(), resVar = 1, span = 0.35, minmax = "dose",
-lower = 0, upper = 8)
-coverFct(NULL, mis.sp.1, c(158.96, 169.39, 211.35))
+pVec = rep(fVec/10, rep(1, 14)),  seedVal = 200710221, pfct = LL.4(), resVar = 0.01, span = 0.35, minmax = "dose")
+coverFct(NULL, mis.sp.1ab, c(158.96, 169.39, 211.35))
 
 ## More help by fixing lower and upper limits
-mis.sp.1b <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.1aab <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec3, rep(1, 14)), 
-pVec = rep(fVec, rep(1, 14)),  seedVal = 200710221, pfct = LL.4(), resVar = 1, span = 0.35, minmax = "dose",
-lower = 0, upper = 8)
-coverFct(NULL, mis.sp.1b, c(158.96, 169.39, 211.35))
+pVec = rep(fVec/10, rep(1, 14)),  seedVal = 200710221, pfct = LL.4(), resVar = 0.01, span = 0.35, minmax = "dose",
+lower = 0, upper = 0.8)
+coverFct(NULL, mis.sp.1aab, c(158.96, 169.39, 211.35))
 
 mis.p.1 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("p"),  doseVec = rep(dVec3, rep(1, 14)), 
@@ -697,11 +729,11 @@ pVec = rep(fVec, rep(1, 14)),  seedVal = 200710222, pfct = LL.4(), resVar = 1)
 coverFct(NULL, mis.p.1, c(158.96, 169.39, 211.35))
 
 ## No. replicates:1 - 100 doses
-mis.sp.1.100 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.1.100a <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec5, rep(1, 100)), 
-pVec = rep(fVec3, rep(1, 100)), seedVal = 200811032, pfct = LL.4(), resVar = 1, span = 0.2, minmax = "dose", 
-lower = 0, upper = 8)
-coverFct(NULL, mis.sp.1.100, c(158.96, 169.39, 211.35))
+pVec = rep(fVec3/10, rep(1, 100)), seedVal = 200811032, pfct = LL.4(), resVar = 0.01, span = 0.2, minmax = "dose", 
+lower = 0, upper = 0.8)
+coverFct(NULL, mis.sp.1.100a, c(158.96, 169.39, 211.35))
 
 mis.p.1 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("p"),  doseVec = rep(dVec3, rep(1, 14)), 
@@ -710,21 +742,21 @@ coverFct(NULL, mis.p.1, c(158.96, 169.39, 211.35))
 
 
 ## No. replicates:3
-mis.sp.3 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.3a <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec3, rep(3, 14)), 
-pVec = rep(fVec, rep(3, 14)), seedVal = 200810216, pfct = LL.4(), resVar = 1, span = 0.35, minmax = "dose")
-coverFct(NULL, mis.sp.3, c(158.96, 169.39, 211.35))
+pVec = rep(fVec/10, rep(3, 14)), seedVal = 200810216, pfct = LL.4(), resVar = 0.01, span = 0.35, minmax = "dose")
+coverFct(NULL, mis.sp.3a, c(158.96, 169.39, 211.35))
 
 ## More help by fixing lower and upper limits
-mis.sp.3b <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.3ab <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec3, rep(3, 14)), 
-pVec = rep(fVec, rep(3, 14)),  seedVal = 200810216, pfct = LL.4(), resVar = 1, span = 0.35, minmax = "dose",
-lower = 0, upper = 8)
-coverFct(NULL, mis.sp.3b, c(158.96, 169.39, 211.35))
+pVec = rep(fVec/10, rep(3, 14)),  seedVal = 200810216, pfct = LL.4(), resVar = 0.01, span = 0.35, minmax = "dose",
+lower = 0, upper = 0.8)
+coverFct(NULL, mis.sp.3ab, c(158.96, 169.39, 211.35))
 
 mis.p.3 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("p"),  doseVec = rep(dVec3, rep(3, 14)), 
-pVec = rep(fVec, rep(3, 14)),  seedVal = 200810227, pfct = LL.4(), resVar = 1)
+pVec = rep(fVec/10, rep(3, 14)),  seedVal = 200810227, pfct = LL.4(), resVar = 0.01)
 coverFct(NULL, mis.p.3, c(158.96, 169.39, 211.35))
 
 mis.sp.3.100 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
@@ -736,21 +768,21 @@ coverFct(NULL, mis.sp.3.100, c(158.96, 169.39, 211.35))
 
 
 ## No. replicates:5
-mis.sp.5 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.5a <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec3, rep(5, 14)), 
-pVec = rep(fVec, rep(5, 14)), seedVal = 200810228, pfct = LL.4(), resVar = 1, span = 0.35, minmax = "dose")
+pVec = rep(fVec/10, rep(5, 14)), seedVal = 200810228, pfct = LL.4(), resVar = 0.01, span = 0.35, minmax = "dose")
 coverFct(NULL, mis.sp.5, c(158.96, 169.39, 211.35))
 
 ## More help by fixing lower and upper limits
-mis.sp.5b <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
+mis.sp.5ab <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("sp"),  doseVec = rep(dVec3, rep(5, 14)), 
-pVec = rep(fVec, rep(5, 14)),  seedVal = 200810228, pfct = LL.4(), resVar = 1, span = 0.35, minmax = "dose",
-lower = 0, upper = 8)
+pVec = rep(fVec/10, rep(5, 14)),  seedVal = 200810228, pfct = LL.4(), resVar = 0.01, span = 0.35, minmax = "dose",
+lower = 0, upper = 0.8)
 coverFct(NULL, mis.sp.5b, c(158.96, 169.39, 211.35))
 
 mis.p.5 <- simFct(1000, edVal = c(10, 20, 50), type = c("non-parametric"), 
 response = c("con"), method = c("p"),  doseVec = rep(dVec3, rep(5, 14)), 
-pVec = rep(fVec, rep(5, 14)),  seedVal = 200810229, pfct = LL.4(), resVar = 1)
+pVec = rep(fVec/10, rep(5, 14)),  seedVal = 200810229, pfct = LL.4(), resVar = 0.01)
 coverFct(NULL, mis.p.5, c(158.96, 169.39, 211.35))
 
 
