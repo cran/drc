@@ -47,7 +47,7 @@
   Another four-parameter Weibull model ('weibull2') is
   \deqn{ f(x) = c + (d-c) (1 - \exp(-\exp(b(\log(x)-\log(e))))).}  
   
-  Both four-parameter functions are asymmetric about the inflection point, that is the parameter \eqn{\exp(e)}. 
+  Both four-parameter functions are asymmetric with inflection point at the dose \eqn{e}. 
 }
 
 \value{
@@ -75,7 +75,8 @@
 
 ## Fitting two different Weibull models
 ryegrass.m1 <- drm(ryegrass, fct = weibull1())
-plot(ryegrass.m1, conLevel=0.5, legend=FALSE)
+plot(ryegrass.m1, conLevel=0.5)
+
 ryegrass.m2 <- drm(ryegrass, fct = weibull2())
 plot(ryegrass.m2, conLevel=0.5, add = TRUE, type = "fit", col=2)
 # you could also look at the ED values to see the difference

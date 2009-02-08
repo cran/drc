@@ -1,6 +1,6 @@
 "drmOpt" <- 
 function(opfct, opdfct1, startVec, optMethod, constrained, warnVal, 
-upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, trace) 
+upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, traceVal, silentVal = TRUE) 
 {
     ## Controlling the warnings
     options(warn = warnVal)   
@@ -8,7 +8,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
     ## Calculating hessian
     if (is.null(opdfct2)) {hes <- TRUE} else {hes <- FALSE}
 
-    ## Optimising
+    ## Setting scaling parameters for optim()
     psVec <- abs(startVec)
     psVec[psVec < 1e-4] <- 1
 
@@ -18,10 +18,11 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
         if (constrained)
         {
             nlsObj <- try(optim(startVec, opfct, opdfct1, hessian = hes, method = "L-BFGS-B", 
-            lower = lowerLimits, upper = upperLimits, control = list(maxit = maxIt)), silent = TRUE)
+            lower = lowerLimits, upper = upperLimits, 
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec)), silent = silentVal)
         } else {
             nlsObj <- try(optim(startVec, opfct, opdfct1, hessian = hes, method = optMethod, 
-            control = list(maxit = maxIt, reltol = relTol, parscale = psVec)), silent = TRUE)
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec)), silent = silentVal)
         }
         options(warn = 0)
         
@@ -44,16 +45,21 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 
         if (constrained)
         {
+#            print(lowerLimits)
+#            print(upperLimits)
+#            print(startVec)
+#            print(opfct)
+#            print(opfct(startVec))                    
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = "L-BFGS-B", 
             lower = lowerLimits, upper = upperLimits, 
-            control = list(maxit = maxIt)), silent = TRUE)
-            ## no to add: ", reltol = relTol, parscale = psVec, trace = trace"
+            control = list(maxit = maxIt, parscale = psVec, reltol = relTol, trace = traceVal)), silent = silentVal)
+            # parscale is needed for the example in methionine.Rd
         } else {
 #            psVec <- abs(startVec)
 #            psVec[psVec<1e-4] <- 1
 
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = optMethod, 
-            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = trace)) , silent = TRUE)
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)) , silent = silentVal)
 #            nlsObj0 <- try(optim(startVec, opfct, method=optMethod, 
 #            control=list(maxit=maxIt, reltol=relTol, parscale=psVec)), silent=TRUE)
 #            nlsObj <- try(optim(nlsObj0$par, opfct, hessian=TRUE, method=optMethod, 
@@ -84,6 +90,6 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 #    nlsFit$value <- opfct(nlsFit$par, scaling = FALSE)  # used in the residual variance ... check    
     nlsFit$value <- opfct(nlsFit$par)
 
-    ## returning the fit
+    ## Returning the fit
     return(nlsFit)
 }

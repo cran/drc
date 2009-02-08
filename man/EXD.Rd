@@ -1,4 +1,4 @@
-\name{expdecay}
+\name{EXD}
 
 \alias{EXD.2}
 \alias{EXD.3}
@@ -6,13 +6,13 @@
 \title{Exponential decay model}
 
 \description{
-  Exponential decay model with a lower limit
+  Exponential decay model with or without a nonzero lower limit.
 }
 
 \usage{
-EXD.2(fixed = c(NA, NA), names = c("plateau", "k"))
+  EXD.2(fixed = c(NA, NA), names = c("d", "e"))
 
-EXD.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
+  EXD.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
 }
 
 \arguments{
@@ -25,11 +25,11 @@ EXD.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 \details{
   The exponential decay model is a three-parameter model with mean function:
   
-  \deqn{ f(x) = init + (plateau-init)(\exp(-k x))}
+  \deqn{f(x) = c + (d-c)(\exp(-x/e))}
   
-  The parameter init is the upper limit (attained at x=0), the parameter plateau is the lower limit 
-  reached for x going to infinity and the parameter k (>0) is determining the steepness of the 
-  decay. Thus the curve is monotonously decreasing in x.
+  The parameter init is the upper limit (attained at \eqn{x=0}), the parameter plateau is the lower limit 
+  reached for x going to infinity and the parameter \eqn{e>0} is determining the steepness of the 
+  decay. The curve is monotonously decreasing in \eqn{x}.
 }
 
 \value{
@@ -39,15 +39,17 @@ EXD.3(fixed = c(NA, NA, NA), names = c("init", "plateau", "k"))
 
 \references{
   Organisation for Economic Co-operation and Development (OECD) (2006)
-  \emph{CURRENT APPROACHES IN THE STATISTICAL ANALYSIS OF ECOTOXICITY DATA: A GUIDANCE TO APPLICATION - ANNEXES},
-  Paris (p. 80).
+  \emph{Current approaches in the statistical analysis of ecotoxicity data: A guidance to application - annexes},
+  Paris: OECD (p. 80).
 }
 
 \author{Christian Ritz}
 
 %\note{}
 
-\seealso{Similar models giving exponential increasing curves are \code{\link{AR.2}} and \code{\link{AR.3}}.}
+\seealso{
+  Similar models giving exponential increasing curves are \code{\link{AR.2}} and \code{\link{AR.3}}.
+}
 
 \examples{
 

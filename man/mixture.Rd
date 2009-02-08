@@ -47,7 +47,7 @@ and 10 for 10-logarithm).}
 }
 
 \details{
-  The function is a wrapper to \code{\link{multdrc}}, implementing the models described in S{\o}rensen et al. (2007). 
+  The function is a wrapper to \code{\link{multdrc}}, implementing the models described in Soerensen et al. (2007). 
   See the paper for a discussion of the merits of the different models.
 }
 

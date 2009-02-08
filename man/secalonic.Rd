@@ -7,7 +7,7 @@
 \title{Root length}
 
 \description{
-  Data are from an experiment assessing the inhibitory effect effect of secalonic acids on plant growth.
+  Data are from an experiment assessing the inhibitory effect of secalonic acids on plant growth.
 }
 
 \usage{data(secalonic)}
@@ -41,6 +41,16 @@ secalonic.m1 <- multdrc(rootl~dose, data=secalonic)
 ## Fitting a 3-parameter log-logistic model
 ##  lower limit fixed at 0
 secalonic.m2 <- multdrc(rootl~dose, data=secalonic, fct=LL.3())
+
+
+## Fitting logistic and log-logistic models
+secalonic.m1 <- drm(rootl~dose, data=secalonic, fct=LL.4())
+secalonic.m2 <- drm(rootl~dose, data=secalonic, fct=L.4())
+
+plot(secalonic.m1, conLevel=0.001, broken=TRUE, ylim=c(0,7), xlab="Dose", ylab="Root length", cex=1.2, lwd=2)
+plot(secalonic.m2, conLevel=0.001, broken=TRUE, ylim=c(0,7), add=TRUE, lty=2, lwd=2)
+
+abline(h=coef(secalonic.m2)[3], lty=3, lwd=2)
 
 }
 \keyword{datasets}

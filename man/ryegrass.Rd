@@ -58,6 +58,22 @@ ryegrass.m3 <- drm(rootl ~ conc, data = ryegrass,
 fct = LL.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
 summary(ryegrass.m3)
 
+
+ryegrass.m0 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = W1.4())
+ryegrass.m2 <- drm(rootl ~ conc, data = ryegrass, fct = W2.4())
+
+plot(ryegrass.m0, conLevel=0.1, broken=TRUE, xlab="Dose", ylab="Root length", lwd=2, cex=1.2)
+plot(ryegrass.m1, add=TRUE, conLevel=0.1, broken=TRUE, lty=2, lwd=2)
+plot(ryegrass.m2, add=TRUE, conLevel=0.1, broken=TRUE, lty=3, lwd=2)
+
+arrows(3,7.5,1.4,7.5, 0.15, lwd=2)
+text(3,7.5, "Weibull-2", pos=4, cex=1.2)
+
+arrows(2.5,0.9,5.7,0.9, 0.15, lwd=2)
+text(3,0.9, "Weibull-1", pos=2, cex=1.2)
+
+
 }
 \keyword{datasets}
 

@@ -25,7 +25,8 @@
 }
 
 \details{
-  The dataset contains a common control measurement for the two treatments.
+  The dataset contains a common control measurement for the two treatments. More examples using this
+  dataset are found under \code{\link{AR.2}} and \code{\link{MM.2}}.
 }
 
 \source{
@@ -33,20 +34,23 @@
   Dose Responses of Methionine Sources, \emph{Poultry Science}, \bold{85}, 947--954.
 }
 
-\references{
-  Schutte, J. B. and de Jong, J. (1996) Biological efficacy of DL-methinonine hydroxy analog free acid compared
-  to DL-methionine in broiler chicks as determined by performance and breast meat yield,
-  \emph{Agribiol. Res.}, \bold{49}, 74--82.
-}
+%\references{
+%  Schutte, J. B. and de Jong, J. (1996) Biological efficacy of DL-methinonine hydroxy analog free acid compared
+%  to DL-methionine in broiler chicks as determined by performance and breast meat yield,
+%  \emph{Agribiol. Res.}, \bold{49}, 74--82.
+%}
 
 \examples{
 
 ## Fitting model with constraint on one parameter 
-met.m1<-drm(gain~dose, product, data=methionine, 
-fct=AR.3(), pmodels = list(~1, ~factor(product), ~factor(product)), 
-upperl=c(Inf, Inf,1700,Inf,Inf)) 
+met.ar.m1 <- drm(gain~dose, product, data = methionine, 
+fct = AR.3(), pmodels = list(~1, ~factor(product), ~factor(product)), 
+upperl = c(Inf, Inf, 1700, Inf, Inf)) 
 
-summary(met.m1)
+plot(met.ar.m1, xlim=c(0,0.3), ylim=c(1450, 1800))
+abline(h=1700, lty=1)
+
+summary(met.ar.m1)
 
 }
 \keyword{datasets}

@@ -1,4 +1,4 @@
-\name{asymreg}
+\name{AR}
 
 \alias{AR.2}
 \alias{AR.3}
@@ -10,13 +10,9 @@
 }
 
 \usage{
+  AR.2(fixed = c(NA, NA), names = c("d", "e"))
 
-AR.2(fixed = c(NA, NA), 
-names = c("b", "c"))
-
-AR.3(fixed = c(NA, NA, NA), 
-names = c("a", "b", "c"))
-
+  AR.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
 }
 
 \arguments{
@@ -28,10 +24,10 @@ names = c("a", "b", "c"))
 \details{
   The asymptotic regression model is a three-parameter model with mean function:
   
-  \deqn{ f(x) = a + (b-a)(1-\exp(-c x))}
+  \deqn{ f(x) = c + (d-c)(1-\exp(-x/e))}
   
-  The parameter a is the lower limit (at x=0), the parameter b is the upper limit 
-  and the parameter c (>0) is determining the steepness of the increase as x.
+  The parameter \eqn{c} is the lower limit (at \eqn{x=0}), the parameter \eqn{d} is the upper limit 
+  and the parameter \eqn{e>0} is determining the steepness of the increase as \eqn{x}.
 }
 
 \value{
@@ -47,8 +43,10 @@ names = c("a", "b", "c"))
   The functions are for use with the function \code{\link{drm}}.
 }
 
-\seealso{A very similar, but monotonously decreasing model is the exponential decay model:
- \code{\link{EXD.2}} and \code{\link{EXD.3}}.}
+\seealso{
+  A very similar, but monotonously decreasing model is the exponential decay model:
+  \code{\link{EXD.2}} and \code{\link{EXD.3}}.
+}
 
 \examples{
 

@@ -110,6 +110,7 @@ names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
               }
     deriv2 <- NULL
 
+    derivx <- NULL
 
     ## Limits
     if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
@@ -168,14 +169,15 @@ names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
 ##    }    
 
 
-    returnList <- 
-    list(fct=fct, confct=confct, ssfct=ssfct, names=w2.names, deriv1=deriv1, deriv2=deriv2, 
-    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, anovaYes=anovaYes,
+    returnList <-
+    list(fct = fct, ssfct = ssfct, names = w2.names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx, edfct = edfct, 
+#    list(fct=fct, confct=confct, ssfct=ssfct, names=w2.names, deriv1=deriv1, deriv2=deriv2, 
+#    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, anovaYes=anovaYes,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Weibull (type 2)", fctText),     
     noParm = sum(is.na(fixed)))
 
-    class(returnList) <- "Weibull2"
+    class(returnList) <- "Weibull-2"
     invisible(returnList)
 }
 
@@ -231,4 +233,32 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
     return(weibull2(fixed = fixed, names = names,    
     fctName = as.character(match.call()[[1]]),
     fctText = "Weibull (type 2)"))
+}
+
+"AR.2" <-
+function(fixed = c(NA, NA), names = c("d", "e"))
+{
+    ## Checking arguments
+    numParm <- 2
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( weibull2(fixed = c(1, 0, fixed[1:2]), 
+    names = c("b", "c", names[1:2]), 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("Asymptotic regression")) )
+}
+
+"AR.3" <-
+function(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( weibull2(fixed = c(1, fixed[1:3]), 
+    names = c("b", names[1:3]), 
+    fctName = as.character(match.call()[[1]]),
+    fctText = "Shifted asymptotic regression") )
 }

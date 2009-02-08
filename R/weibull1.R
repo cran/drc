@@ -20,10 +20,10 @@ names=c("b", "c", "d", "e"), scaleDose = TRUE, fctName, fctText)
     ## Defining the non-linear function
     fct <- function(dose, parm)
     {
-        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
     
-        parmMat[,2] + ( parmMat[,3] - parmMat[,2] ) * exp( - exp( parmMat[,1] *( log(dose) - log(parmMat[,4])) ) )
+        parmMat[, 2] + ( parmMat[, 3] - parmMat[, 2] ) * exp( - exp( parmMat[, 1] *( log(dose) - log(parmMat[, 4])) ) )
     }
 
 
@@ -33,11 +33,11 @@ names=c("b", "c", "d", "e"), scaleDose = TRUE, fctName, fctText)
         if (drcSign>0) {conPos <- 2} else {conPos <- 3}
         confct2 <- function(parm)
         { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
             parmMat[, notFixed] <- parm
             parmMat[, conPos]
         }
-        return(list(pos=conPos, fct=confct2))
+        return(list(pos = conPos, fct = confct2))
     }
 
 
@@ -198,7 +198,7 @@ names=c("b", "c", "d", "e"), scaleDose = TRUE, fctName, fctText)
     text = ifelse(missing(fctText), "Weibull (type 1)", fctText),     
     noParm = sum(is.na(fixed)))
 
-    class(returnList) <- "Weibull1"
+    class(returnList) <- "Weibull-1"
     invisible(returnList)
 }
 
@@ -261,3 +261,32 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
 }
 
 w4 <- W1.4
+
+
+"EXD.2" <-
+function(fixed = c(NA, NA), names = c("d", "e"))
+{
+    ## Checking arguments
+    numParm <- 2
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( weibull1(fixed = c(1, 0, fixed[1:2]), 
+    names = c("b", "c", names[1:2]), 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("Exponential decay")) )
+}
+
+"EXD.3" <-
+function(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+
+    return(weibull1(fixed = c(1, fixed[1:3]), 
+    names = c("b", names[1:3]),
+    fctName = as.character(match.call()[[1]]),
+    fctText = "Shifted exponential decay"))
+}

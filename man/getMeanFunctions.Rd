@@ -22,7 +22,7 @@
 }
 
 \details{
-  The arguments \code{noParm} and \code{ftext}/code{fname} can be combined.
+  The arguments \code{noParm} and \code{fname} can be combined.
 }
 
 \value{

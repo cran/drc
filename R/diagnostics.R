@@ -4,7 +4,12 @@
     if (!inherits(object, "drc")) {stop("Object not of class 'drc'")}
 
     convStatus <- object$"fit"$convergence
-    if (convStatus == 0) {convTxt <- "Estimation procedure converged"} else {convTxt <- "Estimation procedure failed to converged"}
+    if (convStatus)  # (convStatus == 0)
+    {
+        convTxt <- "Estimation procedure converged"
+    } else {
+        convTxt <- "Estimation procedure failed to converged"
+    }
     cat(paste(convTxt, ".\n\n", sep=""))
 
     convRate <- object$"fit"$counts

@@ -457,3 +457,30 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
 
 l5 <- LL.5
 
+"MM.2" <-
+function(fixed = c(NA, NA), names = c("d", "e"), ...)
+{
+    ## Checking arguments
+    numParm <- 2
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( llogistic(fixed = c(-1, 0, fixed[1:2], 1), names = c("b", "c", names[1:2], "f"),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Michaelis-Menten", 
+    ...) )
+}
+
+"MM.3" <-
+function(fixed = c(NA, NA, NA), names = c("c", "d", "e"), ...)
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( llogistic(fixed = c(-1, fixed[1:3], 1), names = c("b", names[1:3], "f"),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Shifted Michaelis-Menten", 
+    ...) )
+}

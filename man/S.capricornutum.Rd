@@ -1,0 +1,62 @@
+\name{S.capricornutum}
+
+\alias{S.capricornutum}
+
+\docType{data}
+
+\title{Effect of cadmium on growth of green alga}
+
+\description{
+  Green alga (\emph{Selenastrum capricornutum}) was exposed to cadmium chloride concentrations
+  ranging from 5 to 80 micro g/L in geometric progression in 4-day population growth test.
+}
+
+\usage{data(S.capricornutum)}
+
+\format{
+  A data frame with 18 observations on the following 2 variables.
+  \describe{
+    \item{\code{conc}}{a numeric vector of cadmium chloride concentrations (micro g/L)}
+    \item{\code{count}}{a numeric vector of algal counts (10000 x cells /ml)}
+  }
+}
+
+\details{
+  The data are analysed in Bruce and Versteeg (1992) using a log-normal 
+  dose-response model (using the logarithm with base 10).
+}
+
+\source{
+  Bruce, R. D. and Versteeg, D. J. (1992) A statistical procedure for modeling continuous toxicity data,
+  \emph{Environ. Toxicol. Chem.}, \bold{11}, 1485--1494.
+}
+
+%\references{}
+
+\examples{
+
+## Fitting 3-parameter log-normal model
+s.cap.m1 <- drm(count~conc, data=S.capricornutum, fct=LN.3())
+
+## Residual plot
+plot(fitted(s.cap.m1), residuals(s.cap.m1))
+
+## Fitting model with transform-both-sides approach
+s.cap.m2 <- drm(count~conc, data=S.capricornutum, fct=LN.3(), adjust="bc1")
+summary(s.cap.m2)
+
+## Residual plot after transformation (looks better)
+plot(fitted(s.cap.m2), residuals(s.cap.m2))
+
+## Calculating ED values on log scale (not so interesting)
+ED(s.cap.m2, c(10, 20, 50), ci="delta")
+
+## Calculating ED values on the original
+ED(s.cap.m2, c(10, 20, 50), ci="fls")
+
+## Fitting model with ED50 as parameter
+s.cap.m3<-drm(count~conc, data=S.capricornutum, fct=LN.3(loge=FALSE), adjust="bc1")
+ED(s.cap.m3, c(10, 20, 50), ci="delta")
+
+}
+\keyword{datasets}

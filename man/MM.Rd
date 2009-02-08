@@ -11,24 +11,26 @@
 }
 
 \usage{ 
-  MM.2(fixed = c(NA, NA), names = c("Vm", "K"))
+  MM.2(fixed = c(NA, NA), names = c("d", "e"), ...)
   
-  MM.3(fixed = c(NA, NA, NA), names = c("y0", "Vm", "K"))  
+  MM.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"), ...)  
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
-  The order of the parameters is: y0, Vm, K (see under 'Details').}}
+  The order of the parameters is: y0, Vm, K (see under 'Details').}
+  \item{...}{additional arguments from convenience functions to \code{\link{llogistic}}.}
+}
 
 \details{
-  The model is given by the expression
+  The model is given by the mean function
   
-  \deqn{ f(x) = y0 + \frac{Vm x}{K + x}}
+  \deqn{f(x, (c, d, e)) = c + \frac{d-c}{1+(e/x)}}
   
-  It is a three-parameter model. A commonly used derived two-parameter model (\code{MM.2}) is obtained by
-  setting y0=0.
+  It is a decreasing three-parameter model. The two-parameter Michaelis-Menten model (\code{MM.2}) is obtained by
+  setting \eqn{c} equal to 0.
 }
 
 \value{
@@ -48,7 +50,8 @@
 
 \examples{
 
-met.mm.m1<-drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~factor(product), ~factor(product)))
+met.mm.m1 <- drm(gain~dose, product, data=methionine, fct=MM.3(), 
+pmodels = list(~1, ~factor(product), ~factor(product)))
 plot(met.mm.m1, log = "", ylim=c(1450, 1800))
 summary(met.mm.m1)
 
@@ -59,11 +62,11 @@ coef(met.mm.m1)[4] / coef(met.mm.m1)[5] * 100
 SI(met.mm.m1, c(50,50))
 
 ## Simplified models
-met.mm.m2<-drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~factor(product), ~1))
-anova(met.mm.m2, met.mm.m1)  # model reduction not possible
+met.mm.m2a <- drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~factor(product), ~1))
+anova(met.mm.m2a, met.mm.m1)  # model reduction not possible
 
-met.mm.m3<-drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~1, ~factor(product)))
-anova(met.mm.m3, met.mm.m1)  # model reduction not possible
+met.mm.m2b <- drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~1, ~factor(product)))
+anova(met.mm.m2b, met.mm.m1)  # model reduction not possible
 
 }
 \keyword{models}
