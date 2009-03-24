@@ -703,7 +703,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
             ## Identifying a dose response curve only consisting of control measurements
             if (sum(!is.na(startMat[i, ])) == 1) {upperPos <- (1:numNames)[!is.na(startMat[i, ])]}
         }
-        print(startMat)    
+#        print(startMat)    
     
         ## Transforming matrix of starting values into a vector
         nrsm <- nrow(startMat)

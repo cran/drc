@@ -1,6 +1,7 @@
 \name{drm}
 
 \alias{drm}
+\alias{multdrc}
 
 \title{Fitting dose-response models}
 

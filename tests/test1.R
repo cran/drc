@@ -8,6 +8,9 @@ data2 <- read.table("test1.w1.txt", header = TRUE)
 
 library(drc)
 
+#FIT1 <- drm(y~x, data = data1, fct = LL.4())
+#summary(FIT1)
+
 FIT2 <- drm(y~x, data = data1, fct = LL.4(ss = "3"))
 summary(FIT2)
 

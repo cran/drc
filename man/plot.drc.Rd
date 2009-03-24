@@ -105,7 +105,7 @@
 
 %\note{ ~~further notes~~ }
 
-\seealso{\code{\link{plotraw}} plots the observations only.}
+%\seealso{\code{\link{plotraw}} plots the observations only.}
 
 \examples{
 

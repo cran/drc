@@ -1,9 +1,12 @@
-## Changes in DRC
+## Changes in 'drc'
+
+2009-03-25: The dataset "algae" has been included.
+
+2009-03-24: The function plotraw() has been removed. Initial plots of the data should be done using R's standard plotting functionality, e.g. plot and xyplot(). 
 
 2009-03-19: The argument "conLevel" has a more sensible default (no longer hardcorded at 0.01). The argument "xsty" has been introduced to control the arrangement of tick marks on the dose axis. 
 
-2009-03-17: The function yieldLoss() has been included to handle a different parameterization of the Michaelis-Menten model
-(after a suggestion from Andrew Kniss).
+2009-03-17: The function yieldLoss() has been included to handle a different parameterization of the Michaelis-Menten model (after a suggestion by Andrew Kniss).
 
 2009-03-11: The argument "fctList" has been removed from drm().
 

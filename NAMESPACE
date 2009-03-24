@@ -37,7 +37,7 @@ weibull2, W2.2, W2.3, W2.3u, W2.4,
 
 boxcox.drc, bread.drc, estfun.drc,
 
-comped, compParm, diagnostics, drm, drmc, ED, getMeanFunctions, isobole, MAX, mixdrc, mixture, modelFit, mselect, plotraw, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
+comped, compParm, diagnostics, drm, drmc, ED, getMeanFunctions, isobole, MAX, mixdrc, mixture, modelFit, mselect, multdrc, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
 
 mrdrm)
 
