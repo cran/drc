@@ -11,22 +11,18 @@
 }
 
 \usage{
-  llogistic(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf),
-  fixed = c(NA, NA, NA, NA, NA), 
+  llogistic(fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
   ss = c("1", "2", "3"), ssfct = NULL,
   fctName, fctText)
 
-  llogistic2(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf),
-  fixed = c(NA, NA, NA, NA, NA), 
+  llogistic2(fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
   ss = c("1", "2", "3"), ssfct = NULL,
   fctName, fctText)  
 }
 
 \arguments{
-  \item{lowerc}{numeric vector. The lower bound on parameters. Default is minus infinity.}
-  \item{upperc}{numeric vector. The upper bound on parameters. Default is plus infinity.}
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
     NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":").
@@ -56,7 +52,7 @@
 }
 
 \value{
-  The value returned is a list containing the non-linear function, the self starter function
+  The value returned is a list containing the nonlinear function, the self starter function
   and the parameter names.
 }
 
@@ -79,8 +75,7 @@
   Examples are provided in the help pages for these functions.
 }
 
-\examples{
-}
+%\examples{}
 
 \keyword{models}
 \keyword{nonlinear}

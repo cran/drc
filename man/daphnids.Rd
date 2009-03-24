@@ -36,29 +36,20 @@
 \examples{
 
 ## Fitting a model with different parameters
-##  for different curves
-##  using 'multdrc'
-daphnids.m1 <- multdrc(no/total~dose, time, weights=total, 
-data=daphnids, fct=l2(), type="binomial")
-
-summary(daphnids.m1)
+## for different curves
+daphnids.m1 <- drm(no/total~dose, time, weights = total, 
+data = daphnids, fct = LL.2(), type = "binomial")
 
 ## Goodness-of-fit test
-anova(daphnids.m1)
+modelFit(daphnids.m1)
+
+## Summary of the data
+summary(daphnids.m1)
 
 ## Fitting a model with a common intercept parameter
-##  using 'multdrc'
-daphnids.m2 <- multdrc(no/total~dose, time, weights=total, 
-data=daphnids, fct=l2(), type="binomial", 
-collapse=list(~1, ~time))
-
-## The same fits using 'drm'
-daphnids.m1 <- drm(no/total~dose, time, weights=total, 
-data=daphnids, fct=LL.2(), type="binomial")
-
-daphnids.m2 <- drm(no/total~dose, time, weights=total, 
-data=daphnids, fct=LL.2(), type="binomial", 
-pmodels=list(~1, ~time))
+daphnids.m2 <- drm(no/total~dose, time, weights = total, 
+data = daphnids, fct = LL.2(), type = "binomial", 
+pmodels = list(~1, ~time))
 
 }
 \keyword{datasets}

@@ -52,17 +52,15 @@
 
 \author{Christian Ritz}
 
-\note{This function is for use with the function \code{\link{multdrc}}.}
+\note{This function is for use with the function \code{\link{drm}}.}
 
 \seealso{Related functions are \code{\link{W1.4}} and \code{\link{weibull1}}.}
 
 \examples{
 
 ## Fitting a three-parameter Weibull model
-model1 <- multdrc(ryegrass, fct = W1.3())
-model1
-
-rm(model1)
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = W1.3())
+ryegrass.m1
 
 }
 \keyword{models}

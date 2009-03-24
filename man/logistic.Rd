@@ -15,10 +15,10 @@
 \alias{b4}
 \alias{b5}
 
-\title{The logistic (Boltzmann) model}
+\title{The logistic model}
 
 \description{
-  The asymmetric logistic (Boltzmann) model for dose-response relationships.
+  The general asymmetric five-parameter logistic model for describing dose-response relationships.
 }
 
 \usage{
@@ -52,10 +52,12 @@
   
   The model is different from the log-logistic models \code{\link{llogistic}} and \code{\link{llogistic2}}
   where the term \deqn{log(x)} is used instead of \deqn{x}.
+  
+  The model is sometimes referred to as the Boltzmann model.
 }
 
 \value{
-  The value returned is a list containing the non-linear function, the self starter function
+  The value returned is a list containing the nonlinear function, the self starter function
   and the parameter names.
 }
 
@@ -69,16 +71,16 @@
 
 \examples{
 
-## Fitting the logistic model
-m1 <- multdrc(ryegrass, fct = logistic())
-summary(m1)
+## Fitting the four-parameter logistic model
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = L.4())
+summary(ryegrass.m1)
 
 ## Fitting an asymmetric logistic model
 ##  requires installing the package 'NISTnls'
-# m2 <- drm(y~x, data = Ratkowsky3, 
-# fct = b5(fixed = c(NA, 0, NA, NA, NA)))
-# plot(m2)
-# summary(m2)  
+# Ratkowsky3.m1 <- drm(y~x, data = Ratkowsky3, 
+# fct = L.5(fixed = c(NA, 0, NA, NA, NA)))
+# plot(Ratkowsky3.m1)
+# summary(Ratkowsky3.m1)  
 ## okay agreement with NIST values
 ##  for the two parameters that are the same
 

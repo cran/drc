@@ -1,6 +1,5 @@
 "braincousens" <-
-function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
+function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText)
 {
     ## Checking arguments
     numParm <- 5
@@ -83,13 +82,13 @@ names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
     names <- names[notFixed]
 
 
-    ## Defining parameter to be scaled
-    if ( (scaleDose) && (is.na(fixed[4])) ) 
-    {
-        scaleInd <- sum(is.na(fixed[1:4]))
-    } else {
-        scaleInd <- NULL
-    }
+#    ## Defining parameter to be scaled
+#    if ( (scaleDose) && (is.na(fixed[4])) ) 
+#    {
+#        scaleInd <- sum(is.na(fixed[1:4]))
+#    } else {
+#        scaleInd <- NULL
+#    }
 
     ## Constructing a helper function
     ##  also used in 'llogistic' and 'llogistic2'
@@ -131,28 +130,29 @@ names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
 
 
     ## Limits
-    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
 
     ## Defining the ED function
-    edfct <- function(parm, p, upper = 1000, interval = c(1e-3, 1000), ...)
+    edfct <- function(parm, p, lower = 1e-3, upper = 1000, ...)
     {
 #        if (is.missing(upper)) {upper <- 1000}
+        interval <- c(lower, upper)     
      
         parmVec[notFixed] <- parm
 
         tempVal <- (100-p)/100
 
         helpEqn <- function(dose) 
-                   {
-                       expVal <- exp(parmVec[1]*(log(dose)-log(parmVec[4])))
-                       parmVec[5]*(1+expVal*(1-parmVec[1]))-(parmVec[3]-parmVec[2])*expVal*parmVec[1]/dose
-                   }
+        {
+            expVal <- exp(parmVec[1]*(log(dose)-log(parmVec[4])))
+            parmVec[5]*(1+expVal*(1-parmVec[1]))-(parmVec[3]-parmVec[2])*expVal*parmVec[1]/dose
+        }
         maxAt <- uniroot(helpEqn, interval)$root
     
         eqn <- function(dose) {tempVal*(1+exp(parmVec[1]*(log(dose)-log(parmVec[4]))))-(1+parmVec[5]*dose/(parmVec[3]-parmVec[2]))}
-        EDp <- uniroot(eqn, lower=maxAt, upper=upper)$root
+        EDp <- uniroot(eqn, lower = maxAt, upper = upper)$root
 
         EDdose <- EDp
         tempVal1 <- exp(parmVec[1]*(log(EDdose)-log(parmVec[4])))
@@ -221,10 +221,10 @@ names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
 
 
     ## Finding the maximal hormesis
-    maxfct <- function(parm, upper, interval)
+    maxfct <- function(parm, lower = 1e-3, upper = 1000)
     {
-        if (is.null(upper)) {upper <- 1000}
-        if (is.null(interval)) {interval <- c(1e-3, 1000)}     
+#        if (is.null(upper)) {upper <- 1000}
+#        if (is.null(interval)) {interval <- c(1e-3, 1000)}     
 #        alpha <- 0.5
         parmVec[notFixed] <- parm
         if (parmVec[1]<1) {stop("Brain-Cousens model with b<1 not meaningful")}
@@ -238,9 +238,9 @@ names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
             return(parmVec[5]*(1+expTerm2)-(parmVec[3]-parmVec[2]+expTerm1)*expTerm2*parmVec[1]/t)
         }
     
-        ED1 <- edfct(parm, 1, upper, interval)[[1]]
+        ED1 <- edfct(parm, 1, lower, upper)[[1]]
                
-        doseVec <- exp(seq(log(1e-6), log(ED1), length=100))
+        doseVec <- exp(seq(log(1e-6), log(ED1), length = 100))
 #        print((doseVec[optfct(doseVec)>0])[1])
 
         maxDose <- uniroot(optfct, c((doseVec[optfct(doseVec)>0])[1], ED1))$root
@@ -249,9 +249,10 @@ names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
 
 
     returnList <- 
-    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, 
-    lowerc=lowerLimits, upperc=upperLimits, 
-    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes,
+    list(fct = fct, confct = confct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, 
+#    lowerc = lowerLimits, upperc = upperLimits, 
+    edfct = edfct, maxfct = maxfct, 
+#    scaleInd = scaleInd, anovaYes = anovaYes,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Brain-Cousens (hormesis)", fctText),
     noParm = sum(is.na(fixed)))
@@ -267,12 +268,12 @@ names = c("b", "c", "d", "e", "f"), scaleDose = TRUE, fctName, fctText)
 
 
 "BC.4" <-
-function(names = c("b", "d", "e", "f"))
+function(fixed = c(NA, NA, NA, NA), names = c("b", "d", "e", "f"))
 {
     ## Checking arguments
-    if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
+    if (!is.character(names) | !(length(names) == 4)) {stop("Not correct 'names' argument")}
  
-    return(braincousens(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA),
+    return(braincousens(names=c(names[1], "c", names[2:4]), fixed = c(fixed[1], 0, fixed[2:4]),
     fctName = as.character(match.call()[[1]]),
     fctText = "Brain-Cousens (hormesis) with lower limit fixed at 0"))
 }
@@ -280,12 +281,12 @@ function(names = c("b", "d", "e", "f"))
 bcl3 <- BC.4
 
 "BC.5" <-
-function(names = c("b", "c", "d", "e", "f"))
+function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
 {
     ## Checking arguments
-    if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
+    if (!is.character(names) | !(length(names) == 5)) {stop("Not correct 'names' argument")}
 
-    return(braincousens(names = names, fixed = c(NA, NA, NA, NA, NA),
+    return(braincousens(names = names, fixed = fixed,
     fctName = as.character(match.call()[[1]])))
 }
 

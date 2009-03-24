@@ -37,21 +37,20 @@
 \examples{
 
 ## Fitting a model with a common control
-c.m1<-drm(drymatter~dose, treatment, data=G.aparine, 
-pmodels=data.frame(treatment,treatment,1,treatment),fct=LL.4())
+c.m1 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
+pmodels = data.frame(treatment,treatment,1,treatment), fct = LL.4())
 
 ## Visual inspection of fit
-plot(c.m1)
+plot(c.m1, broken = TRUE)
 
 ## Lack of fit test
-anova(c.m1)
+modelFit(c.m1)
 
 ## Summary output
 summary(c.m1)
 
 ## Predicted values with se and confidence intervals
 predict(c.m1, interval = "confidence")
-
 
 ## Calculating the relative potency
 SI(c.m1, c(50,50))
@@ -66,14 +65,13 @@ relpot(c.m1, ci = "delta")
 relpot(c.m1, scale="percent")
 
 ## Fitting a reduced model
-c.m2<-drm(drymatter~dose, treatment, data=G.aparine, 
-pmodels=data.frame(1,treatment,1,treatment),fct=LL.4())
+c.m2 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
+pmodels = data.frame(1,treatment,1,treatment), fct = LL.4())
 
 anova(c.m2, c.m1)
 
 ## Showing the relative potency 
 relpot(c.m2)
-
 
 ## Fitting the same model in a different parameterisation
 c.m3<-drm(drymatter~dose, treatment, data=G.aparine, 

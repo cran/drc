@@ -2,16 +2,14 @@
 
 \alias{vcov.drc}
 
-\title{Calculating Variance-Covariance Matrix for objects of class 'drc'}
+\title{Calculating variance-covariance matrix for objects of class 'drc'}
 
 \description{
   'vcov' returns the estimated variance-covariance matrix for the parameters in the non-linear function.
 }
 
 \usage{
-
   \method{vcov}{drc}(object, ..., corr = FALSE)
-
 }
 
 \arguments{
@@ -28,11 +26,10 @@
 
 \examples{
 
-model1 <- multdrc(ryegrass)
-vcov(model1)
-vcov(model1, corr = TRUE)
-
-rm(model1)
+## Fitting a four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
+vcov(ryegrass.m1)
+vcov(ryegrass.m1, corr = TRUE)
 
 }
 \keyword{models}

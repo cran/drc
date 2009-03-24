@@ -60,7 +60,7 @@ gompGrowth.3(fixed = c(NA, NA, NA), names = c("b", "c", "plateau"))
 
 \note{Growth functions are generally fitted on log-transformed weight data, which equals to setting bc parameter to 0}
 
-\seealso{}
+%\seealso{}
 
 \examples{
 

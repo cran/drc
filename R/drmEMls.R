@@ -1,6 +1,6 @@
 "drmEMls" <- 
 function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, dmf = NULL, 
-scaleX = 1, scaleY = 1)
+doseScaling = 1, respScaling = 1)
 {
 #    ## Defining lack-of-fit/goodness-of-fit tests
 #    anovaTest <- contAnovaTest()
@@ -10,12 +10,17 @@ scaleX = 1, scaleY = 1)
     ## Defining the objective function and its derivative
     opfct <- function(parm)  # , scaling = TRUE)
     {
+#        print(parm)
 #        if (scaling)
 #        { 
 #            sum( robustFct(((resp - multCurves(dose/scaleX, parm)) / scaleY)*weights), na.rm = rmNA)  
-            # weights enter multiplicatively under the square!
 #        } else {
-            sum(robustFct((resp - multCurves(dose, parm))*weights), na.rm = rmNA)          
+#        print(sum(robustFct(((resp / respScaling) - multCurves((dose / doseScaling), parm)) * weights), na.rm = rmNA))
+#        print(c(parm, as.vector(multCurves((dose / doseScaling), parm)[1:5])))
+#        print(as.vector(robustFct(((resp / respScaling) - multCurves((dose / doseScaling), parm)) * weights)))
+#        print(multCurves((dose / doseScaling), parm))
+        sum(robustFct(((resp / respScaling) - multCurves((dose / doseScaling), parm)) * weights), na.rm = rmNA)          
+        # weights enter multiplicatively before being squared!
 #        }
     }
     
@@ -26,7 +31,7 @@ scaleX = 1, scaleY = 1)
 #            apply(-2*(resp - multCurves(dose, parm))*dmf(dose, parm), 2, sum)
 #            apply(-2*(resp - multCurves(dose, parm))*dmf(dose, parm), 2, appFct, cid)
 
-            -2*(resp - multCurves(dose, parm))*dmf(dose, parm)
+            -2*((resp / respScaling) - multCurves((dose / doseScaling), parm)) * dmf((dose / doseScaling), parm)
         }
     } else {
         opdfct1 <- NULL
@@ -62,7 +67,7 @@ scaleX = 1, scaleY = 1)
             ch <- try(chol(scaledH))
             if(inherits(ch, "try-error")) 
             {
-                ch <- try(chol(0.99*object$fit$hessian+0.01*diag(dim(object$fit$hessian)[1])))
+                ch <- try(chol(0.99 * object$fit$hessian + 0.01 * diag(dim(object$fit$hessian)[1])))
             }
             ## Try regularizing if the varcov is unstable
             if(!inherits(ch, "try-error")) return(chol2inv(ch))

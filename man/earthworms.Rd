@@ -26,7 +26,7 @@
 }
 
 \source{
-The dataset is kindly provided by Nina Cedergreen.
+  The dataset is kindly provided by Nina Cedergreen, Royal Veterinary and Agricultural University, Denmark.
 }
 
 %\references{}
@@ -34,20 +34,19 @@ The dataset is kindly provided by Nina Cedergreen.
 \examples{
 
 ## Fitting a logistic regression model
-model1 <- multdrc(number/total~dose, weights=total, data=earthworms,
-fct=l2(), type="binomial")
-anova(model1)  # testing againsts more general one-way model
+earthworms.m1 <- drm(number/total~dose, weights = total, data = earthworms,
+fct = LL.2(), type = "binomial")
+modelFit(earthworms.m1)  # a crude goodness-of-fit test
 
 ## Fitting an extended logistic regression model 
 ##  where the upper limit is estimated
-model2 <- multdrc(number/total~dose, weights=total, data=earthworms,
-fct=l3(), type="binomial")
-anova(model2)  # "goodness-of-fit test"
+earthworms.m2 <- drm(number/total~dose, weights = total, data = earthworms,
+fct = LL.3(), type = "binomial")
+modelFit(earthworms.m2)  # goodness-of-fit test
+# improvement not visible in test!!!
 
 ## Comparing model1 and model2 (can model2 be reduced to model1?)
-anova(model1, model2, test="Chisq")
-
-rm(model1, model2)
+anova(earthworms.m1, earthworms.m2, test = "Chisq")
 
 }
 \keyword{datasets}

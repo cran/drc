@@ -1,6 +1,4 @@
-"weibull2" <- function(
-lowerc = c(-Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA), 
-names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
+"weibull2" <- function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)
 {
     ## Checking arguments
     numParm <- 4
@@ -81,13 +79,13 @@ names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
     w2.names <- names[notFixed]
 
 
-    ## Defining parameter to be scaled
-    if ( (scaleDose) && (is.na(fixed[4])) ) 
-    {
-        scaleInd <- sum(is.na(fixed[1:4]))
-    } else {
-        scaleInd <- NULL
-    }
+#    ## Defining parameter to be scaled
+#    if ( (scaleDose) && (is.na(fixed[4])) ) 
+#    {
+#        scaleInd <- sum(is.na(fixed[1:4]))
+#    } else {
+#        scaleInd <- NULL
+#    }
     
     
     ## Defining derivatives
@@ -113,8 +111,8 @@ names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
     derivx <- NULL
 
     ## Limits
-    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
 
     ## Defining the ED function
@@ -142,7 +140,7 @@ names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
             p <- 100 - p
         }
                 
-        weibull1(lowerc, upperc, fixed, names, scaleDose)$edfct(parm, 100 - p, reference, type, ...) 
+        weibull1(fixed, names)$edfct(parm, 100 - p, reference, type, ...) 
     }
 
 
@@ -175,7 +173,8 @@ names = c("b","c","d","e"), scaleDose = TRUE, fctName, fctText)
 #    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, anovaYes=anovaYes,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Weibull (type 2)", fctText),     
-    noParm = sum(is.na(fixed)))
+    noParm = sum(is.na(fixed)),
+    fixed = fixed)
 
     class(returnList) <- "Weibull-2"
     invisible(returnList)

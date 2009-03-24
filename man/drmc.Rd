@@ -9,15 +9,14 @@
 }
 
 \usage{
-  drmc(constr = FALSE, errorm = TRUE, maxDose = 1e-1, maxIt = 500, method="BFGS", 
-  noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, trace = FALSE, warnVal = -1, zeroTol=0)
+  drmc(constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS", 
+  noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, trace = FALSE, warnVal = -1)
 }
 
 \arguments{
   \item{constr}{logical. If TRUE optimisation is constrained, only yielding non-negative parameters.}
   \item{errorm}{logical specifying whether failed convergence in \code{\link{drm}} should result 
     in an error or only a warning.}
-  \item{maxDose}{numeric. The maximum dose allowed if scaling of dose is to be used.}
   \item{maxIt}{numeric. The maximum number of iterations in the optimisation procedure.}
   \item{method}{character string. The method used in the optimisation procedure. 
     See \code{\link{optim}} for available methods.}
@@ -29,7 +28,6 @@
   \item{trace}{logical. If TRUE the trace from \code{\link{optim}} is displayed.}  
   \item{warnVal}{numeric. If equal to 0 then the warnings are stored and displayed at the end. 
     See under 'warn' in \code{\link{options}}. The default results in suppression of warnings.}
-  \item{zeroTol}{numeric. The threshold below which doses are considered as control.}
 }
 
 \value{

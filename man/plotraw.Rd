@@ -44,7 +44,6 @@
 
 \seealso{See Also as \code{\link{plot.drc}}.}
 
-\examples{
-}
+%\examples{}
 
 \keyword{aplot}

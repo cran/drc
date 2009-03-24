@@ -40,46 +40,42 @@
 \examples{
 
 ## Fitting the model with freely varying ED50 values
-mecter.mfree <- drm(rgr~dose, pct, data=mecter, 
-fct=LL.4(), pmodels=list(~1,~1,~1,~factor(pct) - 1)) 
+mecter.free <- drm(rgr ~ dose, pct, data = mecter, 
+fct = LL.4(), pmodels = list(~1, ~1, ~1, ~factor(pct) - 1)) 
 
 ## Lack-of-fit test
-anova(mecter.mfree)  # not really acceptable
-summary(mecter.mfree)
+modelFit(mecter.free)  # not really acceptable
+summary(mecter.free)
 
 ## Plotting isobole structure
-isobole(mecter.mfree, exchange=0.02)
+isobole(mecter.free, exchange = 0.02)
 
 ## Fitting the concentration addition model
-mecter.mca <- mixture(rgr~dose, pct, data=mecter, collapse=~1, 
-fct=LL.4(), model="CA")
+mecter.ca <- mixture(mecter.free, model = "CA")
 
 ## Comparing to model with freely varying e parameter
-anova(mecter.mca, mecter.mfree)  # rejected
+anova(mecter.ca, mecter.free)  # rejected
 
 ## Plotting isobole based on concentration addition
-isobole(mecter.mfree, mecter.mca, exchange=0.02)  # poor fit
+isobole(mecter.free, mecter.ca, exchange = 0.02)  # poor fit
 
 ## Fitting the Hewlett model
-mecter.mhew <- mixture(rgr~dose, pct, data=mecter, collapse=~1, 
-fct=LL.4(), model="Hewlett")
+mecter.hew <- mixture(mecter.free, model = "Hewlett")
 
 ## Comparing to model with freely varying e parameter
-anova(mecter.mhew, mecter.mfree)  # rejected
+anova(mecter.hew, mecter.free)  # rejected
 
 ## Plotting isobole based on the Hewlett model
-isobole(mecter.mfree, mecter.mhew, exchange=0.02)  # poor fit
+isobole(mecter.free, mecter.hew, exchange = 0.02)  # poor fit
 
 ## Fitting the Voelund model
-mecter.mvoe<-mixture(rgr~dose, pct, data=mecter, collapse=~1, 
-fct=LL.4(), model="Voelund")
+mecter.voe<-mixture(mecter.free, model = "Voelund")
 
 ## Comparing to model with freely varying e parameter
-anova(mecter.mvoe, mecter.mfree)  # accepted
+anova(mecter.voe, mecter.free)  # accepted
 
 ## Plotting isobole based on the Voelund model
-isobole(mecter.mfree, mecter.mvoe, exchange=0.02)  # good fit
-
+isobole(mecter.free, mecter.voe, exchange = 0.02)  # good fit
 
 }
 \keyword{datasets}

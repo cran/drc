@@ -1,5 +1,4 @@
 "llogistic2" <- function(
-lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf), 
 fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "2", "3"), ssfct = NULL,
 fctName, fctText)
 {
@@ -44,10 +43,10 @@ fctName, fctText)
     ## Version 1 (default)    
     if (ss == "1")
     {
-        ssfct <- function(dataFra)
+        ssfct <- function(dframe)
         {
-            x <- dataFra[, 1]
-            y <- dataFra[, 2]
+            x <- dframe[, 1]
+            y <- dframe[, 2]
 
             startVal <- rep(0, numParm)
 
@@ -198,9 +197,9 @@ fctName, fctText)
     }
 
 
-    ## Setting the limits
-    if (length(lowerc) == numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    ## Setting the limits
+#    if (length(lowerc) == numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
 
     ## Defining the ED function
@@ -259,7 +258,7 @@ fctName, fctText)
     returnList <- 
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx,
     edfct = edfct, bfct = bfct, inversion = invfct,
-    lowerc=lowerLimits, upperc=upperLimits,
+#    lowerc=lowerLimits, upperc=upperLimits,
     name = fctName, 
     text = fctText, 
     noParm = sum(is.na(fixed)),

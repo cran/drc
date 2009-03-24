@@ -33,14 +33,16 @@
 \examples{
 
 ## Fitting a hormesis model
-fit.ml3c <- multdrc(DW~Dose, data=leaflength, fct=ml3c(), boxcox=TRUE)
+leaflength.crs4c1 <- drm(DW ~ Dose, data = leaflength, fct = CRS.4c())
+plot(fitted(leaflength.crs4c1), residuals(leaflength.crs4c1))
+
+leaflength.crs4c2 <- boxcox(drm(DW ~ Dose, data = leaflength, fct = CRS.4c()), method = "anova", plotit = FALSE)
+summary(leaflength.crs4c2)
 
 ## Plottinf fitted curve and original data
-plot(fit.ml3c, conLevel=0.001, type="points", legend=FALSE, 
-ylab="Produced leaf length(cm)", xlab="Metsulfuron-methyl(mg/l)",
-main="Hormesis: leaf length of barley")
-
-rm(fit.ml3c)
+plot(leaflength.crs4c2, broken = TRUE, conLevel = 0.001, type = "all", legend = FALSE, 
+ylab = "Produced leaf length (cm)", xlab = "Metsulfuron-methyl (mg/l)",
+main = "Hormesis: leaf length of barley")
 
 }
 \keyword{datasets}

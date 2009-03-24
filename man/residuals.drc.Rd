@@ -34,15 +34,14 @@
 
 \examples{
 
-model1 <- multdrc(ryegrass)
+## Fitting a four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~conc, data = ryegrass, fct = LL.4())
 
 ## Displaying the residual plot (raw residuals)
-plot(fitted(model1), residuals(model1))
+plot(fitted(ryegrass.m1), residuals(ryegrass.m1))
 
 ## Using the standardised residuals
-plot(fitted(model1), residuals(model1, type = "standard"))
-
-rm(model1)
+plot(fitted(ryegrass.m1), residuals(ryegrass.m1, type = "standard"))
 
 }
 \keyword{models}

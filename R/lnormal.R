@@ -232,7 +232,8 @@ fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText, loge
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx, edfct = edfct,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Log-normal", fctText), 
-    noParm = sum(is.na(fixed)), lowerAs = lowerAs, upperAs = upperAs, monoton = monoton)
+    noParm = sum(is.na(fixed)), lowerAs = lowerAs, upperAs = upperAs, monoton = monoton,
+    fixed = fixed)
     
     class(returnList) <- "log-normal"
     invisible(returnList)

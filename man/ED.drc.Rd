@@ -8,16 +8,16 @@
 
 \description{
 
-  'ED' estimates effective doses given (ECp/EDp/ICp) for given reponse levels.
+  \code{ED} estimates effective doses (ECp/EDp/ICp) for given reponse levels.
 }
 
 \usage{
-  \method{ED}{drc}(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
-  level = ifelse(!(ci=="none"), 0.95, NULL), logBase = NULL,
-  reference = c("control", "upper"), type = c("relative", "absolute"), 
-  display = TRUE, ...)
+  \method{ED}{drc}(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
+  level = ifelse(!(interval == "none"), 0.95, NULL),
+  reference = c("control", "upper"), type = c("relative", "absolute"), lref, uref,
+  bound = TRUE, od = FALSE, display = TRUE, logBase = NULL, ...)
   
-  \method{ED}{mrdrc}(object, respLev, level = 0.95, interval = c("none", "approximate", "bootstrap"), 
+  \method{ED}{mrdrc}(object, respLev, interval = c("none", "approximate", "bootstrap"), level = 0.95, 
   method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, display = TRUE, lower, upper,
   intType = c("confidence", "prediction"), minmax = c("response", "dose"), n = 1000, seedVal = 200810311, ...) 
 }
@@ -25,19 +25,19 @@
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{respLev}{a numeric vector containing the response levels.}
-  \item{bound}{logical. If TRUE only ED values between 0 and 100\% are allowed. FALSE is useful for hormesis models.}
-  \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
-  \item{ci}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
+  \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
   Use "delta" for asymptotics-based confidence intervals (using the delta method and the t-distribution).
   Use "fls" for from logarithm scale based confidence intervals (in case the parameter in the model is log(ED50) as for
-  the \code{\link{boltzmann}}) models.}
+  the \code{\link{logistic}}) models. The only alternative for model-robust fits is using inverse regression.}
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
-  \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}
   \item{type}{character string. Whether the specified response levels are absolute or relative (default).}
+  \item{lref}{numeric value specifying the lower limit to serve reference.}
+  \item{uref}{numeric value specifying the upper limit to serve reference (eg. 100\%).}  
+  \item{bound}{logical. If TRUE only ED values between 0 and 100\% are allowed. FALSE is useful for hormesis models.}
+  \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
-  \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none".
-  The only alternative for model-robust fits is using inverse regression.}
+  \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}  
   \item{method}{character string specifying if bisection or grid search should be used to determine ED estimates.
   Grid search may give better results for ED level close to the boundaries of the dose range or in case of
   a non-monotonous dose-response curves. The bisection method is faster than the grid search.}
@@ -55,17 +55,13 @@
 }
 
 \details{
-  This function is only implemented for the built-in functions of class 'braincousens', 'gompertz', 
-  'logistic' and 'mlogistic'.
-
-  For objects of class 'braincousens' or 'mlogistic' the additional argument may be the 'upper' argument
-  or the 'interval' argument. 
-  The 'upper' argument specifies the upper limit of the bisection method. 
-  The upper limit needs to be larger than the EDx level to be calculated. The default limit is 1000, but
-  this may need to be increased.
-  The 'interval' argument should specify a rough interval in which the dose
-  yielding the maximum hormetical response lies. The default interval is 'c(0.001, 1000)'. Notice that the lower limit
-  should not be set to 0 (use something like 1e-3, 1e-6, ...).
+  For hormesis models (\code{\link{braincousens}} and \code{\link{cedergreen}}), the additional 
+  arguments \code{lower} and \code{upper} may be supplied. 
+  The \code{lower} and \code{upper} arguments specify the lower and upper limits of the bisection method used to
+  find the ED values.  The lower and upper limits need to be smaller/larger than the EDx level to be calculated. 
+  The default limits are 0.001 and 1000 for \code{braincousens} and 0.0001 and 10000 for \code{cedergreen}, but this 
+  may need to be increased. Notice that the lower limit should not be set to 0 (use instead something 
+  like 1e-3, 1e-6, ...).
   
   For model-robust fits the arguments \code{lower} and \code{upper} can be used to specify reference values for the
   lower and upper limits of the dose-response relationship. This only applies for the continuous responses. For
@@ -73,7 +69,8 @@
 }
 
 \value{
-  A matrix with two columns: one containing the estimates and one containing the corresponding estimated standard errors.
+  A matrix with two or more columns, containing the estimates 
+  and the corresponding estimated standard errors and possibly lower and upper confidence limits.
 }
 
 %\references{ ~put references to the literature/web site here ~ }
@@ -91,33 +88,33 @@
 ### How to use 'ED'
 
 ## Fitting 4-parameter log-logistic model
-ryegrass.m1<-drm(ryegrass, fct=LL.4())
+ryegrass.m1<-drm(ryegrass, fct = LL.4())
 
 ## Calculating EC/ED values
-ED(ryegrass.m1, c(10,50,90)) 
+ED(ryegrass.m1, c(10, 50, 90)) 
 ## first column: the estimates of ED10, ED50 and ED90
 ## second column: the estimated standard errors 
 
 ### How to use the argument 'ci'
 
 ## Also displaying 95% confidence intervals
-ED(ryegrass.m1, c(10,50,90), ci = "delta")
+ED(ryegrass.m1, c(10,50,90), interval = "delta")
 
 ## Comparing delta method and back-transformed 
 ##  confidence intervals for ED values
 
 ## Fitting 4-parameter log-logistic 
 ##  in different parameterisation (using LL2.4)
-ryegrass.m2 <- drm(ryegrass, fct=LL2.4())  
+ryegrass.m2 <- drm(ryegrass, fct = LL2.4())  
 
-ED(ryegrass.m1, c(10,50,90), ci="fls")
-ED(ryegrass.m2, c(10,50,90), ci="delta")
+ED(ryegrass.m1, c(10,50,90), interval = "fls")
+ED(ryegrass.m2, c(10,50,90), interval = "delta")
 
 
 ### How to use the argument 'bound'
 
 ## Fitting the Brain-Cousens model
-lettuce.m1 <- multdrc(weight ~ conc, 
+lettuce.m1 <- drm(weight ~ conc, 
 data = lettuce, fct = BC.4())
 
 ### Calculating ED[-10]

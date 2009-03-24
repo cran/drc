@@ -5,26 +5,28 @@
 \title{Model selection}
 
 \description{
-  Model selection by comparison of different models using 1) the maximum log likelihood value, 
-  2) Akaike's information criteria (AIC), 3) the estimated residual variance 
-  and 4) the p-value from a lack-of-fit test as criteria.
+  Model selection by comparison of different models using the maximum log likelihood value, 
+  Akaike's information criterion (AIC), the estimated residual variance 
+  and the p-value from a lack-of-fit test as criteria.
 }
 
 \usage{
-mselect(object, fctList = NULL, nested = FALSE)
+  mselect(object, fctList = NULL, nested = FALSE)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{fctList}{a list of non-linear functions to be compared.}
-  \item{nested}{logical. TRUE results in F tests between adjacent (in 'fctList') models. 
+  \item{nested}{logical. TRUE results in F tests between adjacent models (in 'fctList'). 
   Only sensible for nested models.}
 }
 
 \details{
-  Criterion 1) cannot be used for comparison unless the models are nested ().
+  The maximum likelihood cannot be used for comparison unless the models are nested.
 
-  For criteria 2) and 3): the smaller the better; for criterion 4) the larger the better.
+  For Akaike's information criterion and the residual variance: the smaller the better and 
+  for lack-of-fit test: the larger the better. Note that the residual variance is only available for 
+  continuous dose-response data.
 }
 
 \value{
@@ -41,13 +43,23 @@ mselect(object, fctList = NULL, nested = FALSE)
 
 \examples{
 
-## Fitting initial model
-m1 <- multdrc(ryegrass)
+### Example with continuous data
+## Fitting initial four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
 
 ## Model selection
-mselect(m1, list(l3(), l5(), W1.3(), W1.4(), weibull2(), baro5(), richards()))
+mselect(ryegrass.m1, list(LL.3(), LL.5(), W1.3(), W1.4(), W2.4(), baro5()))
 
-mselect(m1, list(l5()))  # nested models
+mselect(ryegrass.m1, list(LL.5()), nested = TRUE)  # nested models
+
+### Example with quantal data
+## Fitting initial two-parameter log-logistic model
+earthworms.m1 <- drm(number/total~dose, weights=total, 
+data = earthworms, fct = LL.2(), type = "binomial")
+
+## Comparing 4 models
+mselect(earthworms.m1, list(W1.2(), W2.2(), LL.3()))
+# model selection based AIC or p value not working in this example!!!
 
 }
 \keyword{models}

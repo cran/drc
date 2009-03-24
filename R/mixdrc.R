@@ -5,16 +5,21 @@ function(object, random, data, startVal)
 #    if (missing(lambda)) {lambda <- 1}
     if (!is.null(object$"boxcox")) 
     {
-        lambda <- object$"boxcox"[1]
-        bcAdd <- object$"boxcox"[4]
+        lambda <- object$"boxcox"$"lambda"
+        bcAdd <- object$"boxcox"$"bcAdd"
     } else {
         lambda <- 1 
         bcAdd <- 1
     }
 
     ## Defining dose and response
-    respVar <- ((eval(object$call[[2]][[2]], envir = data) + bcAdd)^lambda - 1)/lambda  # name of response variable
-    doseVar <- eval(object$call[[2]][[3]], envir = data)
+#    respVar <- ((eval(object$call[[2]][[2]], envir = data) + bcAdd)^lambda - 1)/lambda  # name of response variable
+#    doseVar <- eval(object$call[[2]][[3]], envir = data)
+    
+    dataList <- object$"dataList"
+    doseVar <- dataList$"dose"
+    respVar <- dataList$"resp"
+    
 #    dataSet <- cbind(data, doseVar, respVar)
     dataSet <- data.frame(data, doseVar = doseVar, respVar = respVar)
 
@@ -75,21 +80,22 @@ function(object, random, data, startVal)
 
 
         ## Constructing list for fixed argument
-        colEntry <- object$call$collapse
+        colEntry <- object$call$pmodels
 
         fixedList <- list()
         if ( (!is.null(colEntry)) && (as.character(colEntry[[1]])=="list") )
         {
             for (i in 2:(1+lenPN))
             {
-                fixedList[[i-1]] <- eval(parse(text=paste(parNames[i-1], deparse(object$call$collapse[[i]]), sep="")), envir = dataSet)
+                fixedList[[i-1]] <- eval(parse(text=paste(parNames[i-1], 
+                deparse(object$call$pmodels[[i]]), sep="")), envir = dataSet)
             }
         }
         if ( (!is.null(colEntry)) && (as.character(colEntry[[1]])=="data.frame"))
         {
             for (i in 2:(1+lenPN))
             {
-                startStr <- as.character(object$call$collapse[[i]])
+                startStr <- as.character(object$call$pmodels[[i]])
                 if (length(grep("1", startStr)) == 0) 
                 {
                     fili <- paste(parNames[i-1], paste("factor(", startStr, ")", sep=""), sep="~")    

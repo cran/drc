@@ -2,8 +2,6 @@
 
 \alias{anova.drc}
 
-%\alias{anova.drclist}
-
 \title{ANOVA for non-linear model fits}
 
 \description{
@@ -13,8 +11,6 @@
 \usage{
 
   \method{anova}{drc}(object, ..., details = TRUE, test = NULL)
-
-%anova.drclist(object, ..., test = NULL)
 }
 
 \arguments{
@@ -38,25 +34,29 @@
   An object of class 'anova'.
 }
 
-\references{Bates, D. M. and Watts, D. G. (1988) \emph{Nonlinear Regression Analysis and Its Applications}, New York: Wiley \& Sons (pp. 103--104).} 
+\references{
+  Bates, D. M. and Watts, D. G. (1988) 
+  \emph{Nonlinear Regression Analysis and Its Applications}, 
+  New York: Wiley \& Sons (pp. 103--104)
+} 
 
 \author{Christian Ritz}
 
-\seealso{The function \code{\link{anova.lm}} for linear models.}
+\seealso{
+  For comparison of nested or non-nested model the function \code{\link{mselect}}can also be used.
+  
+  The function \code{\link{anova.lm}} for linear models.
+}
 
 \examples{
 
-## Comparing the nonlinear model to a one-way ANOVA model using an F test
-model1 <- multdrc(ryegrass, fct = W1.4())
-anova(model1)   
-
 ## Comparing a Gompertz three- and four-parameter models using an F test
-model2 <- multdrc(ryegrass, fct = W1.3())
-anova(model2, model1)  # reduction to 'W1.3' not possible (highly significant)   
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = W1.4())
+ryegrass.m2 <- drm(rootl ~ conc, data = ryegrass, fct = W1.3())
+anova(ryegrass.m2, ryegrass.m1)  # reduction to 'W1.3' not possible (highly significant)   
 
-anova(model2, model1, details = FALSE)  # without details
+anova(ryegrass.m2, ryegrass.m1, details = FALSE)  # without details
 
-rm(model1, model2)
 }
 \keyword{models}
 \keyword{nonlinear}

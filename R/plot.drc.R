@@ -1,10 +1,14 @@
 "plot.drc" <-
 function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName, 
-gridsize = 100, legend, legendText, legendPos, legendCex = 1, type = "average", obs, lty, log = "x", 
+gridsize = 100, legend, legendText, legendPos, legendCex = 1, 
+type = c("average", "all", "bars", "none", "obs"), 
+obs, lty, log = "x", xsty = c("base10", "none"), 
 cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1, bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, 
 ytlab = NULL, add = FALSE, axes = TRUE)
 {    
     object <- x
+    type <- match.arg(type)
+    xsty <- match.arg(xsty)
 
     ## Constructing the plot data
     origData<-object$"data"
@@ -27,7 +31,12 @@ ytlab = NULL, add = FALSE, axes = TRUE)
 
     if (missing(conLevel)) 
     {
-        conLevel <- ifelse(is.null(logDose), 1e-2, log(1e-2))
+#        conLevel <- ifelse(is.null(logDose), 1e-2, log(1e-2))
+        
+        ## Constructing appropriate break on dose axis
+        log10cl <- round(log10(min(dose[dose > 0]))) - 1
+        conLevel <- 10^(log10cl)
+        if (!is.null(logDose)) {conLevel <- log(conLevel)}  # natural logarithm
     }
     if (missing(conName)) 
     {
@@ -245,7 +254,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
             barFct(plotPoints)            
             
             ## Adding axes    
-            addAxes(axes, cex.axis, conName, conNameYes, xt, xtlab, yt, ytlab)
+            addAxes(axes, cex.axis, conLevel, conName, conNameYes, xt, xtlab, xsty, yt, ytlab)
 
             ## Adding axis break
             ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX)       
@@ -281,6 +290,23 @@ ytlab = NULL, add = FALSE, axes = TRUE)
         }
     }
     
+
+#    ## Plotting pointwise prediction intervals
+#    if (identical(type, "predict"))
+#    {
+#        for (i in levelInd)
+#        {
+#            indVal <- uniAss %in% level[i]
+#            if ( (!naPlot) && (any(is.na(plotMat[, indVal]))) ) 
+#            {
+#                noPlot[i] <- TRUE
+#                next
+#            }
+#            lines(dosePts[ivMid], plotMat[ivMid, indVal], lty = ltyVec[i], col = colourVec[i], ...)
+#        }
+#    }
+
+    
     ## Adding legend
     makeLegend(colourVec, legend, legendCex, legendPos, legendText, lenlev, level, ltyVec, 
     noPlot, pchVec, type, xLimits, yLimits)
@@ -297,12 +323,12 @@ ytlab = NULL, add = FALSE, axes = TRUE)
 
 "getRange" <- function(x, y, xlim)
 {
-    logVec <- (x>=xlim[1] & x<=xlim[2])
+    logVec <- ((x >= xlim[1]) & (x <= xlim[2]))
     return(range(y[logVec]))
 }
 
 
-"addAxes" <- function(axes, cex.axis, conName, conNameYes, xt, xtlab, yt, ytlab)
+"addAxes" <- function(axes, cex.axis, conLevel, conName, conNameYes, xt, xtlab, xsty, yt, ytlab)
 {
     if (!axes) {return(invisible(NULL))}  # doing nothing
     
@@ -314,17 +340,35 @@ ytlab = NULL, add = FALSE, axes = TRUE)
                 
     ## Concerning the x axis                
     xaxisTicks <- axTicks(1)
-    xLabels <- as.expression(xaxisTicks)
-    if (conNameYes) {xLabels[1] <- conName}                                                
-
-    ## Avoiding too many tick marks on the x axis
-    lenXT <- length(xaxisTicks)
-    if (lenXT > 6) 
+    if (!(min(xaxisTicks) > conLevel))
     {
-        halfLXT <- floor(lenXT/2) - 1
-        chosenInd <- 1 + 2*(0:halfLXT)  # ensuring that control always is present
-        xaxisTicks <- xaxisTicks[chosenInd]
-        xLabels <- xLabels[chosenInd]
+        xaxisTicks[1] <- conLevel
+    }
+    xaxisTicksOrig <- xaxisTicks
+    xLabels <- xaxisTicks
+#    print(xaxisTicks)
+
+#    ## Avoiding too many tick marks on the x axis
+#    lenXT <- length(xaxisTicks)
+#    if (lenXT > 6) 
+#    {
+#        halfLXT <- floor(lenXT/2) - 1
+#        chosenInd <- 1 + 2*(0:halfLXT)  # ensuring that control always is present
+#        xaxisTicks <- xaxisTicks[chosenInd]
+#        xLabels <- xLabels[chosenInd]
+#    }    
+#    
+    if (identical(xsty, "base10"))
+    {    
+        ceilingxTicks <- ceiling(log10(xaxisTicks[-1]))
+        xaxisTicks <- c(xaxisTicks[1], 10^(unique(ceilingxTicks)))
+        xLabels <- c(xLabels[1], unlist(tapply(xLabels[-1], ceilingxTicks, head, 1)))
+
+        ## Reverting to original tick marks in case too few were created
+        if (length(xaxisTicks) < 3)
+        { 
+            xaxisTicks <- xaxisTicksOrig
+        }
     }
                 
     if (!is.null(xt)) 
@@ -336,9 +380,15 @@ ytlab = NULL, add = FALSE, axes = TRUE)
         } else {
              xaxisTicks <- xt
              xLabels <- xt
+             conNameYes <- FALSE
         }
     }
     if (!is.null(xtlab)) {xLabels <- xtlab}
+#    print(xaxisTicks)
+
+    ## Updating x axis labels
+    xLabels <- as.expression(xaxisTicks)
+    if (conNameYes) {xLabels[1] <- conName}                                                
 
     axis(1, at = xaxisTicks, labels = xLabels, cex.axis = cex.axis)
     axis(2, at = yaxisTicks, labels = yLabels, cex.axis = cex.axis)        

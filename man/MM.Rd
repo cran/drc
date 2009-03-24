@@ -50,10 +50,12 @@
 
 \examples{
 
+## Fitting Michaelis-Menten model
 met.mm.m1 <- drm(gain~dose, product, data=methionine, fct=MM.3(), 
 pmodels = list(~1, ~factor(product), ~factor(product)))
 plot(met.mm.m1, log = "", ylim=c(1450, 1800))
 summary(met.mm.m1)
+ED(met.mm.m1, c(10, 50))
 
 ## Calculating bioefficacy: approach 1
 coef(met.mm.m1)[4] / coef(met.mm.m1)[5] * 100

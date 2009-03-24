@@ -44,16 +44,14 @@
 
 \examples{
 
-## Fitting a model
-model1 <- multdrc(ryegrass)
-
-## Confidence interval for a single parameter
-confint(model1, "e")
+## Fitting a four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
 
 ## Confidence intervals for all parameters
-confint(model1)
+confint(ryegrass.m1)
 
-rm(model1)
+## Confidence interval for a single parameter
+confint(ryegrass.m1, "e")
 
 }
 \keyword{models}

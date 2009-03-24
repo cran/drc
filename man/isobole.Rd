@@ -47,7 +47,7 @@ isobole(object1, object2, exchange = 1, cifactor = 2, ename = "e", xaxis = "100"
   The examples in \code{\link{acidiq}}, \code{\link{glymet}} and \code{\link{mecter}}.
 }
 
-\examples{
-}
+%\examples{}
+
 \keyword{models}
 \keyword{nonlinear}

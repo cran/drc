@@ -35,17 +35,18 @@
 
 \examples{
 
-## Fitting a 4-parameter log-logistic model
-secalonic.m1 <- multdrc(rootl~dose, data=secalonic)
+## Fitting a four-parameter log-logistic model
+secalonic.m1 <- drm(rootl ~ dose, data = secalonic, fct = LL.4())
+summary(secalonic.m1)
 
-## Fitting a 3-parameter log-logistic model
+## Fitting a three-parameter log-logistic model
 ##  lower limit fixed at 0
-secalonic.m2 <- multdrc(rootl~dose, data=secalonic, fct=LL.3())
-
+secalonic.m2 <- drm(rootl ~ dose, data = secalonic, fct = LL.3())
+summary(secalonic.m1)
 
 ## Fitting logistic and log-logistic models
-secalonic.m1 <- drm(rootl~dose, data=secalonic, fct=LL.4())
-secalonic.m2 <- drm(rootl~dose, data=secalonic, fct=L.4())
+secalonic.m1 <- drm(rootl ~ dose, data = secalonic, fct = LL.4())
+secalonic.m2 <- drm(rootl ~ dose, data = secalonic, fct = L.4())
 
 plot(secalonic.m1, conLevel=0.001, broken=TRUE, ylim=c(0,7), xlab="Dose", ylab="Root length", cex=1.2, lwd=2)
 plot(secalonic.m2, conLevel=0.001, broken=TRUE, ylim=c(0,7), add=TRUE, lty=2, lwd=2)

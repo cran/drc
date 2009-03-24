@@ -98,7 +98,7 @@ daphnids1.mr<-mrdrm(daphnids1.m1, daphnids1.m2)
 daphnids1.mr
 
 plot(daphnids1.m1)
-plot(daphnids1.mr, add=TRUE, type="fit", lty=2)
+plot(daphnids1.mr, add=TRUE, type="none", lty=2)
 
 ## daphnids dataset at 48 hours
 daphnids2.m1<-drm(no/total~dose, weights = total, data = daphnids[9:16,], fct = LL.2(), type = "binomial")
@@ -108,7 +108,7 @@ daphnids2.mr<-mrdrm(daphnids2.m1, daphnids2.m2)
 daphnids2.mr
 
 plot(daphnids2.m1)
-plot(daphnids2.mr, add=TRUE, type="fit", lty=2)
+plot(daphnids2.mr, add=TRUE, type="none", lty=2)
 
 
 ## fly dataset from Nottingham & Birch (1996)
@@ -124,8 +124,8 @@ fly.mr1 <- mrdrm(fly.m1, fly.m2)
 fly.mr2 <- mrdrm(fly.m1, fly.m2, criterion="lcv")
 
 plot(fly.m1, ylim = c(0,1))
-plot(fly.mr1, add = TRUE, type = "fit", lty = 3)
-plot(fly.mr2, add = TRUE, type = "fit", lty = 2)
+plot(fly.mr1, add = TRUE, type = "none", lty = 3)
+plot(fly.mr2, add = TRUE, type = "none", lty = 2)
 
 fly.mr1
 fly.mr2
@@ -245,7 +245,7 @@ exp.z.mr <- mrdrm(exp.z.m1, exp.z.m2)
 exp.z.mr
 
 plot(exp.z.mr, type = "all", conLevel = 5, broken = TRUE)
-plot(exp.z.m1, add = TRUE, type = "fit", conLevel = 5, broken = TRUE, lty = 2)
+plot(exp.z.m1, add = TRUE, type = "none", conLevel = 5, broken = TRUE, lty = 2)
 
 ED(exp.z.mr, 50, interval="approximate")
 ED(exp.z.m1, 50, ci="delta")
@@ -255,7 +255,7 @@ par(mfrow = c(2, 2))
 
 plot(exp.a.m1, type = "all", conLevel=1, broken=TRUE, xlab="", ylab="Response", main = "A")
 plot(exp.k.m1, type = "all", broken=TRUE, xlab="", ylab="", main = "B")
-plot(exp.x.m1, type="all", broken=TRUE, xlab="Dose", ylab="Response", main = "C")
+plot(exp.x.m1, type = "all", broken=TRUE, xlab="Dose", ylab="Response", main = "C")
 plot(exp.z.m1, type = "all", conLevel = 5, broken = TRUE, xlab="Dose", ylab="", main = "D")
 
 par(mfrow = c(1, 1))
@@ -265,10 +265,10 @@ par(mfrow = c(1, 1))
 par(mfrow = c(1, 2))
 
 plot(exp.x.mr, type="all", broken = TRUE, ylim=c(0.05,0.84), xlab = "Dose", ylab = "Response", main = "C")
-plot(exp.x.m1, add = TRUE, type = "fit", broken = TRUE, lty = 2)
+plot(exp.x.m1, add = TRUE, type = "none", broken = TRUE, lty = 2)
 
 plot(exp.z.mr, pava = TRUE, type = "all", conLevel = 5, broken = TRUE, ylim=c(0.05,0.84), xlab = "Dose", ylab = "", main = "D")
-plot(exp.z.m1, add = TRUE, type = "fit", conLevel = 5, broken = TRUE, lty = 2)
+plot(exp.z.m1, add = TRUE, type = "none", conLevel = 5, broken = TRUE, lty = 2)
 
 
 par(mfrow = c(1, 1))

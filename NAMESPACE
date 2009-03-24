@@ -29,9 +29,7 @@ llogistic2, LL2.2, LL2.3, LL2.3u, LL2.4, LL2.5,
 
 lnormal, LN.2, LN.3, LN.3u, LN.4,
 
-MM.2, MM.3,
-
-richards, 
+MM.2, MM.3, 
 
 weibull1, W1.2, W1.3, W1.3u, W1.4, w2, w3, w4, 
 
@@ -39,7 +37,7 @@ weibull2, W2.2, W2.3, W2.3u, W2.4,
 
 boxcox.drc, bread.drc, estfun.drc,
 
-colFct, comped, compParm, diagnostics, drm, drmc, ED, getMeanFunctions, isobole, MAX, mdControl, mixdrc, mixture, mselect, multdrc, plotraw, PR, rdrm, relpot, searchdrc, SI, simDR,
+comped, compParm, diagnostics, drm, drmc, ED, getMeanFunctions, isobole, MAX, mixdrc, mixture, modelFit, mselect, plotraw, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
 
 mrdrm)
 

@@ -15,7 +15,7 @@
 \arguments{
   \item{object}{object of class \code{drc} obtaining fitting a dose-response model.}
   \item{xVec}{numeric vector of dose values.}
-  \item{\dots}{additional arguments to be supplied to \code{\link[drc]{predict}}. No effect at the moment.}
+  \item{\dots}{additional arguments to be supplied to \code{\link[drc]{predict.drc}}. No effect at the moment.}
 }
 
 \details{
@@ -29,12 +29,12 @@
 %\references{}
 
 \author{
-  Christian Ritz after a suggestion from Andrew Kniss
+  Christian Ritz after a suggestion from Andrew Kniss.
 }
 
 %\note{ ~~further notes~~ }
 
-\seealso{Predictions can also be obtained using \code{\link[drc]{predict}}.}
+\seealso{Predictions can also be obtained using \code{\link[drc]{predict.drc}}.}
 
 \examples{
 

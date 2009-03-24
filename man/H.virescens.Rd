@@ -24,7 +24,7 @@
 }
 
 \details{
-  In Venables and Riply (2002), the data are analysed using a logistic regression with log2 of dose 
+  In Venables and Ripley (2002), these data are analysed using a logistic regression with base-2 logarithm of dose 
   as explanatory variable.
 }
 
@@ -37,11 +37,12 @@
 \examples{
 
 ## Fitting dose-response model (log-logistic with common slope)
-Hv.m1 <- drm(numdead/total~dose, sex, weights=total, data=H.virescens, fct=LL.2(), pmodels=list(~1,~sex), type="binomial")
+Hv.m1 <- drm(numdead/total~dose, sex, weights = total, data = H.virescens, fct = LL.2(), 
+pmodels = list(~1,~sex), type = "binomial")
 summary(Hv.m1)
 
 ## Fitting the same model as in Venables and Riply (2002)
-Hv.m2 <- glm(cbind(numdead, total-numdead)~sex+I(log2(dose))-1, data=H.virescens,family=binomial)
+Hv.m2 <- glm(cbind(numdead, total-numdead)~sex+I(log2(dose))-1, data = H.virescens, family = binomial)
 
 ## Comapring the fits
 logLik(Hv.m1)

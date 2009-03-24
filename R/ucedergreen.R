@@ -1,7 +1,5 @@
 "ucedergreen" <- 
-function(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf), 
-fixed = c(NA, NA, NA, NA, NA), names = c("b","c","d","e","f"), alpha, 
-scaleDose = TRUE)
+function(fixed = c(NA, NA, NA, NA, NA), names = c("b","c","d","e","f"), alpha)
 {
     numParm <- 5
     if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
@@ -50,13 +48,13 @@ scaleDose = TRUE)
     names <- names[notFixed]
 
 
-    ## Defining parameter to be scaled
-    if ( (scaleDose) && (is.na(fixed[4])) ) 
-    {
-        scaleInd <- sum(is.na(fixed[1:4]))
-    } else {
-        scaleInd <- NULL
-    }
+#    ## Defining parameter to be scaled
+#    if ( (scaleDose) && (is.na(fixed[4])) ) 
+#    {
+#        scaleInd <- sum(is.na(fixed[1:4]))
+#    } else {
+#        scaleInd <- NULL
+#    }
 
 
     ## Defining derivatives
@@ -101,8 +99,8 @@ scaleDose = TRUE)
 
 
     ## Setting limits
-    if (length(lowerc) == numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    if (length(lowerc) == numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
 
     ## Defining the ED function

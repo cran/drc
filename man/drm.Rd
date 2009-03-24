@@ -9,18 +9,17 @@
 }
 
 \usage{
-  drm(formula, curve, pmodels, weights, data = NULL, subset, fct, 
-  adjust = c("none", "bc1", "bc2", "vp"), bc = NULL, bcAdd = 0,
-  type = c("continuous", "binomial", "Poisson", "survival"), 
-  start, start2, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
-  fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
+  drm(formula, curveid, pmodels, weights, data = NULL, subset, fct, 
+  type = c("continuous", "binomial", "Poisson", "quantal", "survival"), bcVal = NULL, bcAdd = 0, 
+  start, na.action = na.fail, robust = "mean", logDose = NULL, 
+  control = drmc(), lowerl = NULL, upperl = NULL)
 }
 
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Either of the form 'response \eqn{~} dose' 
   or as a data frame with response values in first column and dose values in second column.}
   
-  \item{curve}{a numeric vector or factor containing the grouping of the data.}
+  \item{curveid}{a numeric vector or factor containing the grouping of the data.}
   
   \item{pmodels}{a data frame with a many columns as there are parameters in the non-linear function. 
   Or a list containing a formula for each parameter in the non-linear function.}
@@ -37,10 +36,8 @@
   Currently available functions include, among others, the four- and five-parameter log-logistic models 
   \code{\link{LL.4}}, \code{\link{LL.5}} and the Weibull model \code{\link{W1.4}}. Use
   \code{\link{getMeanFunctions}} for a full list.}
-  
-  \item{adjust}{a character string specifying the type of adjustment for variance inhomogeneity.}
-  
-  \item{bc}{a numeric value specifying the lambda parameter to be used in the Box-Cox transformation.}
+   
+  \item{bcVal}{a numeric value specifying the lambda parameter to be used in the Box-Cox transformation.}
   
   \item{bcAdd}{a numeric value specifying the constant to be added on both sides prior to Box-Cox transformation. 
   The default is 0.}
@@ -49,14 +46,10 @@
   
   \item{start}{an optional numeric vector containing starting values for all mean parameters in the model. 
   Overrules any self starter function.}
-  
-  \item{start2}{an optional numeric vector containing starting values for all variance parameters in the model.}
-  
+   
   \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  
   The default is \code{link{na.fail}}. To omit 'NA's use \code{\link{na.omit}}.}
-  
-  \item{hetvar}{a vector specifying the grouping for heterogeneous variances.}
-  
+   
   \item{robust}{a character string specifying the rho function for robust estimation. Default is non-robust 
   least squares estimation ("mean"). Available robust methods are: median estimation ("median"), 
   least median of squares ("lms"), least trimmed squares ("lts"), metric trimming ("trimmed"), 
@@ -65,7 +58,7 @@
   \item{logDose}{a numeric value or NULL. If log doses value are provided the base of the logarithm should be specified (exp(1) for the natural logarithm
   and 10 for 10-logarithm).}
 
-  \item{fctList}{a list of functions in case different functions need to be fit to different curves.}
+%  \item{fctList}{a list of functions in case different functions need to be fit to different curves.}
   
   \item{control}{a list of arguments controlling constrained optimisation (zero as boundary), 
   maximum number of iteration in the optimisation,
@@ -79,16 +72,8 @@
 }
 
 \details{
-  This function is intended to supersede the function \code{\link{multdrc}}.
-
   This function uses the function 'optim' for the minimisation. The control arguments are specified using 
   the function \code{\link{drmc}}.
-  
-  If the argument \code{adjust} is "bc1" it may be necessary to constrain the optimisation 
-  (using \code{\link{mdControl}}) in order to comply with the requirement of non-negative values for the 
-  Box-Cox transformation. Alternatively a constant can be added in the Box-Cox transformation (using \code{bcAdd}). The residuals available will be based on the transformed response values.
-  
-  If \code{adjust} is "vp" then \code{robust} is set to "mean".
   
   For robust estimation MAD (median abslolute deviance) is used to estimate the residual variance.  
   
@@ -110,19 +95,19 @@
   and \code{\link{SI}}.
 
   The columns of a data frame argument to \code{pmodels} are automatically converted into factors. 
-  This does not happen if a list is specified. The data frame argument allows collapsing parameters for 
-  some or all curves (using \code{\link{colFct}}), whereas the list argument allows specification of 
-  additive models for the parameters.
+  This does not happen if a list is specified. 
+  
+%  The data frame argument allows collapsing parameters for 
+%  some or all curves (using \code{\link{colFct}}), whereas the list argument allows specification of 
+%  additive models for the parameters.
 }
 
-\seealso{The function \code{\link{nls}} can be used for fitting general nonlinear regression models.}
-
-\examples{
-
-m1 <- drm(ryegrass, fct = LL.4())
-
-m2 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
-
+\seealso{
+  Examples using \code{\link{drm}} found in the help pages of \code{\link{secalonic}}, \code{\link{ryegrass}}, 
+  and many other datasets and functions in \code{drc}.
 }
+
+%\examples{}
+
 \keyword{models}
 \keyword{nonlinear}

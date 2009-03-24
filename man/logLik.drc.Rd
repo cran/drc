@@ -5,7 +5,7 @@
 \title{Extracting the log likelihood}
 
 \description{
-  'loglik' extracts the value of the log likelihood function evaluated at the parameter estimates.
+  \code{loglik} extracts the value of the log likelihood function evaluated at the parameter estimates.
 }
 \usage{
   \method{logLik}{drc}(object, ...)
@@ -21,17 +21,18 @@
 }
 
 \note{
-    The value of the log likelihood could be used to compare fits of the same data and model for different starting values. Larger is better.
+    The value of the log likelihood could be used to compare model fits of the same data based on different 
+    dose-response models or based on the same model but fitted different algorithms, software programmes, or 
+    starting values. For comparisons: Larger is better.
 }
 
 \author{Christian Ritz}
 
 \examples{
 
-model1 <- multdrc(ryegrass) 
-logLik(model1)
-
-rm(model1)
+## Fitting a four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~conc, data = ryegrass, fct = LL.4()) 
+logLik(ryegrass.m1)
 
 }
 \keyword{models}

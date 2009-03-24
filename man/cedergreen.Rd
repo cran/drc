@@ -17,31 +17,22 @@
 }
 
 \usage{
-  cedergreen(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
-  upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-  names = c("b", "c", "d", "e", "f"), alpha, scaleDose = TRUE)
+  cedergreen(fixed = c(NA, NA, NA, NA, NA), 
+  names = c("b", "c", "d", "e", "f"), alpha)
   
-  CRS.6(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf, -Inf), 
-  upperc=c(Inf, Inf, Inf, Inf, Inf, Inf), 
-  fixed=c(NA, NA, NA, NA, NA, NA), 
-  names=c("b","c","d","e","f","g"))
+  CRS.6(fixed = c(NA, NA, NA, NA, NA, NA), 
+  names = c("b","c","d","e","f","g"))
   
-  ucedergreen(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
-  upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-  names = c("b", "c", "d", "e", "f"), alpha, scaleDose = TRUE)
+  ucedergreen(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alpha)
 }
 
 \arguments{
-  \item{lowerc}{numeric vector. The lower bound on parameters. Default is minus infinity.}
-  \item{upperc}{numeric vector. The upper bound on parameters. Default is plus infinity.}
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
   The default is reasonable (see under 'Usage').
                The order of the parameters is: b, c, d, e, f (see under 'Details').}
   \item{alpha}{numeric. The degree of hormesis. Needs to be specified!}
-  \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
-                   this is required for datasets where all dose values are small. }  
 }
 
 \details{
@@ -66,36 +57,33 @@ The u-shaped model is given by the expression
 }
 
 \references{
-  Cedergreen, N. and Ritz, C. and Streibig, J. C. (2005) Improved empirical models describing hormesis, 
-  \emph{Environmental Toxicology and Chemistry} \bold{24}, 3166--3172.
+  Cedergreen, N. and Ritz, C. and Streibig, J. C. (2005) 
+  Improved empirical models describing hormesis, 
+  \emph{Environmental Toxicology and Chemistry} 
+  \bold{24}, 3166--3172.
 }
 
 \author{Christian Ritz}
 
-\note{The functions are for use with the functions \code{\link{drm}} or \code{\link{multdrc}}.}
+\note{
+  The functions are for use with the functions \code{\link{drm}}.
+}
 
 \seealso{
-  Special cases are \code{\link{CRS.4a}}, \code{\link{CRS.4a}}, 
-  \code{\link{UCRS.5a}} and \code{\link{UCRS.5a}} where a,b and c coresspond to 
+  For fixed alpha, several special cases are handled by the following convenience functions 
+  \code{\link{CRS.4a}}, \code{\link{CRS.4b}}, 
+  \code{\link{CRS.4c}}, \code{\link{CRS.5a}}, \code{\link{CRS.5b}}, \code{\link{CRS.5c}},
+  \code{\link{UCRS.4a}}, \code{\link{UCRS.4b}}, \code{\link{UCRS.4c}}, \code{\link{UCRS.5a}},
+  \code{\link{UCRS.5b}}, \code{\link{UCRS.5c}} where a, b and c correspond to 
   the pre-specified alpha values 1, 0.5 and 0.25, respectively.
 }
 
 \examples{
 
-## Modified logistic model with the constraint f>0
-lettuce.m1 <- multdrc(weight~conc,data=lettuce, 
-fct=cedergreen(fixed=c(NA, NA, NA, NA, NA), 
-lowerc=c(-Inf, -Inf, -Inf, -Inf, 0), alpha=1), 
-control=mdControl(constr=TRUE))
-
-summary(lettuce.m1)
-ED(lettuce.m1, c(10, 50, 90))
-
-
-## Estimating alpha
-lettuce.m2<-drm(weight~conc,data=lettuce,fct=CRS.6())
-summary(lettuce.m2)
-plot(lettuce.m2)  # oops: not increasing until hormesis peak
+## Estimating CRS model with alpha unknown
+lettuce.crsm1 <- drm(weight~conc, data = lettuce, fct = CRS.6())
+summary(lettuce.crsm1)
+plot(lettuce.crsm1)  # oops: not increasing until hormesis peak
 
 }
 

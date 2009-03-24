@@ -39,7 +39,7 @@
 \author{Christian Ritz}
 
 \note{
-  This function is for use with the function \code{\link{multdrc}}.
+  This function is for use with the function \code{\link{drm}}.
 }
 
 \seealso{
@@ -49,11 +49,9 @@
 \examples{
 
 ## Fitting a two-parameter Weibull model
-model1 <- multdrc(number/total~dose, weights=total,
-data=earthworms, fct = W1.2(), type = "binomial")
-summary(model1)
-
-rm(model1)
+earthworms.m1 <- drm(number/total~dose, weights = total,
+data = earthworms, fct = W1.2(), type = "binomial")
+summary(earthworms.m1)
 
 }
 \keyword{models}

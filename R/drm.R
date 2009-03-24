@@ -1,52 +1,51 @@
 "drm" <-function(
-formula, curve, pmodels, weights, data = NULL, subset, fct, 
-adjust = c("none", "bc1", "bc2", "vp"), bc = NULL, bcAdd = 0, 
-type = c("continuous", "binomial", "Poisson", "survival"),
-start, start2, na.action = na.fail, hetvar = NULL, robust = "mean", logDose = NULL, 
-fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
+formula, curveid, pmodels, weights, data = NULL, subset, fct, 
+type = c("continuous", "binomial", "Poisson", "quantal", "survival"), bcVal = NULL, bcAdd = 0, 
+start, na.action = na.fail, robust = "mean", logDose = NULL, 
+control = drmc(), lowerl = NULL, upperl = NULL)
 {
-    ## Matching 'adjust' argument
-    adjust <- match.arg(adjust)
-    type <- match.arg(type)
+#    ## Matching 'adjust' argument
+#    adjust <- match.arg(adjust)
 
+    ## Matching argument values
+    type <- match.arg(type)
     
     ## Loading MASS
     require(MASS, quietly = TRUE)  # used for boxcox and ginv
 
-
     ## Setting na.action option
     options(na.action = deparse(substitute(na.action)))
-
 
     ## Setting control parameters
     useD <- control$"useD"
     constrained <- control$"constr"
-    maxDose <- control$"maxDose"
+#    maxDose <- control$"maxDose"
     maxIt <- control$"maxIt"
     optMethod <- control$"method"
     relTol <- control$"relTol"
     warnVal <- control$"warnVal"
-    zeroTol <- control$"zeroTol"
-    bcConstant <- bcAdd  # the bcAdd argument overrules the setting via the control argument
-    rmNA <- control$"rmNA"
-    errorMessage <- control$"errorm"
-    noMessage <- control$"noMessage"
+#    zeroTol <- control$"zeroTol"
+#    bcConstant <- bcAdd  
+    rmNA <- control$"rmNA"  # in drmEM...
+    errorMessage <- control$"errorm"  # in drmOpt
+    noMessage <- control$"noMessage"  # reporting finding control measurements? 
 #    trace <- control$"trace"
         
     ## Setting warnings policy
     options(warn = warnVal)
 
-    ## Setting adjustment
-    if (adjust == "none") {boxcox <- FALSE; varPower <- FALSE}
-    if (adjust == "bc1") {boxcox <- TRUE; varPower <- FALSE}
-    if (adjust == "vp") {boxcox <- FALSE; varPower <- TRUE}
-    if ( (!is.null(bc)) && (is.numeric(bc))) {boxcox <- bc}
+#    ## Setting adjustment
+#    if (adjust == "none") {boxcox <- FALSE; varPower <- FALSE}
+#    if (adjust == "bc1") {boxcox <- TRUE; varPower <- FALSE}
+#    if (adjust == "vp") {boxcox <- FALSE; varPower <- TRUE}
+
+#    if ( (!is.null(bcVal)) && (is.numeric(bcVal))) {boxcox <- bc}
         
-    if (!(robust == "mean"))
-    {
-        boxcox <- FALSE
-        varPower <- FALSE
-    }
+#    if (!(robust == "mean"))
+#    {
+#        boxcox <- FALSE
+#        varPower <- FALSE
+#    }
 
     ## Handling 'start' argument
     if (missing(start)) {selfStart <- TRUE} else {selfStart <- FALSE}
@@ -84,13 +83,14 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         numNames <- length(parNames)
     }
     
-    ## Coercing two arguments in 'ssfct' into one argument
-    lenASS <- length(formals(ssfct))
-    if (lenASS > 1)
-    {
-        ssTemp <- ssfct
-        ssfct <- function(dataset) {ssTemp(dataset[, head(1:lenASS, -1)], dataset[, lenASS])}
-    }
+#    ## Coercing two arguments in 'ssfct' into one argument
+#    lenASS <- length(formals(ssfct))
+#    if (lenASS > 1)
+#    {
+#        stop("Self starter function should only have one argument, which takes a data frame")
+##        ssTemp <- ssfct
+##        ssfct <- function(dataset) {ssTemp(dataset[, head(1:lenASS, -1)], dataset[, lenASS])}
+#    }
 
     ## Checking whether or not first derivates are supplied    
     isDF <- is.function(fct$"deriv1")
@@ -108,19 +108,17 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         dfct2 <- fct$"deriv2"
     } else {
         dfct2 <- NULL
-    }
-    
-    fct$"anovaYes"$"bin" <- NULL
-    fct$"anovaYes"$"cont" <- TRUE
+    }    
+#    fct$"anovaYes"$"bin" <- NULL
+#    fct$"anovaYes"$"cont" <- TRUE
 
-
-    ## Handling the 'formula', 'curve' and 'data' arguments
-    anName <- deparse(substitute(curve))  # storing name for later use
+    ## Handling the 'formula', 'curveid' and 'data' arguments
+    anName <- deparse(substitute(curveid))  # storing name for later use
     if (length(anName) > 1) {anName <- anName[1]}  # to circumvent the behaviour of 'substitute' in do.call("multdrc", ...)
 
     mf <- match.call(expand.dots = FALSE)   
     nmf <- names(mf) 
-    mnmf <- match(c("formula", "curve", "data", "subset", "na.action", "weights", "hetvar"), nmf, 0) 
+    mnmf <- match(c("formula", "curveid", "data", "subset", "na.action", "weights"), nmf, 0) 
 
     mf[[1]] <- as.name("model.frame")
     mf <- eval(mf[c(1,mnmf)], parent.frame())  #, globalenv())
@@ -130,7 +128,12 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     resp <- model.response(mf, "numeric")
     origResp <- resp  # in case of transformation of the response    
     lenData <- length(resp)
+    numObs <- length(resp)
     xDim <- ncol(as.matrix(dose))
+    if (xDim > 1)
+    {
+        stop("drm() is only designed for 1-dim. dose vectors")
+    }
     dimData <- xDim + 1  # dimension of dose plus 1 dimensional response
     
     varNames <- names(mf)
@@ -140,122 +143,34 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     weights <- model.weights(mf)
     if (is.null(weights))
     {
-        weights <- rep(1, lenData)
+        weights <- rep(1, numObs)
     }
 
-    ## Extracting variable for heterogeneous variances
-    vvar <- model.extract(mf, "hetvar")    
+#    ## Extracting variable for heterogeneous variances
+#    vvar <- model.extract(mf, "hetvar")    
     
     ## Finding indices for missing values
     missingIndices <- attr(mf, "na.action")
     if (is.null(missingIndices)) {removeMI <- function(x){x}} else {removeMI <- function(x){x[-missingIndices,]}}
 
-    ## Handling situation where no 'curve' or 'pmodels' argument is given
-    assayNo <- model.extract(mf, "curve")   
-    pmodelsList <- list()
-
-    if (is.null(assayNo)) {assayNo <- rep(1, lenData)}
+    ## Handling "curveid" argument
+    assayNo <- model.extract(mf, "curveid") 
+    if (is.null(assayNo))  # in case not supplied
+    {
+        assayNo <- rep(1, numObs)
+    }
     uniqueNames <- unique(assayNo)
     colOrder <- order(uniqueNames)
+#    print(colOrder)
     uniqueNames <- as.character(uniqueNames)
-    
-    if (missing(pmodels)) 
-    {
-        pmodels <- as.data.frame(matrix(assayNo, lenData, numNames))
-        
-        if (length(unique(assayNo)) == 1) 
-        {
-            for (i in 1:numNames) 
-            {
-                pmodelsList[[i]] <- matrix(1, lenData, 1)
-        }} else {
-            modelMat <- model.matrix(~factor(assayNo)-1)  # no intercept term
-            for (i in 1:numNames) 
-            {
-                pmodelsList[[i]] <- modelMat
-                pmodelsList[[i]] <- pmodelsList[[i]][, colOrder]
-        }}   
-    } else {
-
-    ## Handling a list or data.frame argument of 'pmodels'
-    if (is.null(data)) 
-    {
-        pmodels <- eval(substitute(pmodels), envir = .GlobalEnv)
-    } else {
-        pmodels <- eval(substitute(pmodels), envir = data, enclos = parent.frame())
-    }
-   
-    if (is.data.frame(pmodels))
-    {
-        lenCol <- ncol(pmodels)
-        pmodelsMat <- matrix(0, lenData, lenCol)    
-    
-        for (i in 1:lenCol) 
-        {
-            if (length(unique(pmodels[,i])) == 1) 
-            {
-                pmodelsList[[i]] <- matrix(1, lenData, 1)
-                pmodelsMat[,i] <- rep(1, lenData)    
-            }
-            else {
-                mf <- eval(model.frame(~factor(pmodels[,i]) - 1), parent.frame())  # converting to factors
-                mt <- attr(mf, "terms")    
-    
-                mf2 <- model.matrix(mt, mf)
-                ncmf2 <- ncol(mf2)
-
-                mf3 <- removeMI(mf2)
-                pmodelsList[[i]] <- mf3
-                pmodelsMat[, i] <- mf3%*%c(1:ncmf2)
-            }
-        }
-           
-    } else {
-
-        if (is.list(pmodels))
-        {   
-            lenCol <- length(pmodels)
-            pmodelsMat <- matrix(0, length(resp), lenCol)
-    
-            for (i in 1:lenCol) 
-            {
-                if (paste(as.character(pmodels[[i]]), collapse = "") == "~1") 
-                {
-                    pmodelsList[[i]] <- matrix(1, lenData, 1)
-                    pmodelsMat[,i] <- rep(1, lenData)
-                } else
-                {
-                    mf <- eval(model.frame(pmodels[[i]], data=data), parent.frame())   
-                    mt <- attr(mf, "terms")    
-                        
-                    mf2 <- model.matrix(mt, mf)
-                    ncmf2 <- ncol(mf2)
-
-                    mf3 <- removeMI(mf2)                    
-                    pmodelsList[[i]] <- mf3  
-                    
-                    pmodelsMat[,i] <- mf3%*%c(1:ncmf2)                    
-                }
-            }
-        }
-    }     
-    pmodelsOld <- pmodels
-    pmodels <- as.data.frame(pmodelsMat)  # pmodelsMat not used any more
-    }
-    
-    ## Re-setting na.action
-    options(na.action = "na.omit")  # the default
-
-    ## Transforming dose value if they are provided as log dose
-    if ( !is.null(logDose) && is.numeric(logDose) ) 
-    {
-       origDose <- dose
-       dose <- logDose^dose
-    }
 
     ## Re-enumerating the levels in 'assayNo' and 'pmodels'
     assayNoOld <- assayNo
+#    ciOrigIndex <- uniqueNames  # unique(assayNo)
+#    ciOrigLength <- length(unique(assayNoOld))
 
+    ## Detecting control measurements 
+    
     ## Defining helper function     
     colConvert <- function(vec)
     {
@@ -267,124 +182,293 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         for (i in 1:length(assLev)) {retVec[vec == assLev[i]] <- j; j <- j + 1}
 
         return(retVec)
-    }
-
-    assayNo <- colConvert(assayNoOld)  # curves enumerated from 1 to numAss
+    } 
+    assayNo <- colConvert(assayNoOld)
     assayNames <- as.character(unique(assayNoOld))
     numAss <- length(assayNames)
-    for (i in 1:numNames) {pmodels[, i] <- colConvert(pmodels[, i])}
-
-    ## Handling one-dimensional x     
-    if (xDim == 1)
-    {
-        ## Detecting control measurements 
-        uniqueDose <- lapply(tapply(dose, assayNoOld, unique), length)
-        udNames <- names(uniqueDose[uniqueDose == 1])
-        if (length(udNames) > 0) 
-        {
-            cm <- udNames
-            if (!noMessage) {cat(paste("Control measurements detected for level: ", udNames, "\n", sep = ""))}
-            ## add a check to see if at least one component in pmodels results in a single column
+        
+    
+#    lenDose <- unlist(lapply(tapply(dose, assayNoOld, unique), length))
+#    conDose <- names(lenDose)[lenDose == 1]
+#    nconDose <- names(lenDose)[lenDose > 1]
+#    if (length(conDose) > 0) 
+#    {        
+#        if (!noMessage) 
+#        {
+#            cat(paste("Control measurements detected for level: ", conDose, "\n", sep = ""))
+#        }
+#            
+#        assayNo[assayNoOld %in% conDose] <- nconDose[1]
+#        ciOrigIndex <- unique(assayNo)
+##        ciOrigLength <- length(unique(assayNoOld))  # numAss
+#      
+#      
+#        ## Updating names, number of curves and the enumeration (starting from 1)
+#        assayNames <- nconDose
+##        numAss <- length(assayNames) 
+#        assayNo <- colConvert(assayNo)
+#                       
+#        cm <- NULL
+##        }
+#         
+#        uniqueDose <- lapply(tapply(dose, assayNoOld, unique), length)
+#        udNames <- names(uniqueDose[uniqueDose == 1])
+#        if (length(udNames) > 0) 
+#        {
+#            cm <- udNames
+#            if (!noMessage) {cat(paste("Control measurements detected for level: ", udNames, "\n", sep = ""))}
+#            ## add a check to see if at least one component in pmodels results in a single column
             
+##            conInd <- assayNoOld%in%udNames
+##            assayNo[conInd] <- (assayNo[!conInd])[1]
+##            cm <- NULL
+##assayNew <- assayNo
+##assayNew[conInd] <- (assayNo[!conInd])[1]
+##print(assayNew)
+##
 #            conInd <- assayNoOld%in%udNames
 #            assayNo[conInd] <- (assayNo[!conInd])[1]
+#            ciOrigIndex <- unique(assayNo)
+#            ciOrigLength <- numAss
+#            
+#            ## Updating names, number of curves and the enumeration (starting from 1)
+#            assayNames <- as.character(unique(assayNoOld[!conInd]))
+#            numAss <- length(assayNames) 
+#            assayNo <- colConvert(assayNo)
+#                       
 #            cm <- NULL
-#assayNew <- assayNo
-#assayNew[conInd] <- (assayNo[!conInd])[1]
-#print(assayNew)
+#
 
-            conInd <- assayNoOld%in%udNames
-            assayNo[conInd] <- (assayNo[!conInd])[1]
-            ciOrigIndex <- unique(assayNo)
-            ciOrigLength <- numAss
-            
-            ## Updating names, number of curves and the enumeration (starting from 1)
-            assayNames <- as.character(unique(assayNoOld[!conInd]))
-            numAss <- length(assayNames) 
-            assayNo <- colConvert(assayNo)
-                       
-            cm <- NULL
-
-        } else {
-            cm <- NULL
-            ciOrigIndex <- unique(assayNo)
-            ciOrigLength <- numAss            
-        }
+## New -commented out
+#    } else {
+#        cm <- NULL
+#        ciOrigIndex <- unique(assayNo)
+##        ciOrigLength <- numAss 
+#        
+#        assayNames <- as.character(unique(assayNoOld))          
+#        assayNo <- colConvert(assayNoOld)  # re-enumerating from 1 to numAss       
+#    }
+#    numAss <- length(assayNames)   
+#    print(ciOrigIndex)
+#    print(ciOrigLength)
 
 
-        ## Defining ANOVA model
-        bcc <- rep(bcConstant, lenData)    
-        if (numAss > 1) 
+    
+    uniqueDose <- lapply(tapply(dose, assayNoOld, unique), length)
+    udNames <- names(uniqueDose[uniqueDose == 1])
+    if (length(udNames) > 0) 
+    {
+        cm <- udNames
+        if (!noMessage) 
         {
-            anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor*factor(assayNo)
-            alternative <- 2
-        } else {
-            anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor
-            alternative <- 1
+            cat(paste("Control measurements detected for level: ", udNames, "\n", sep = ""))
         }
-         
-
-        ## Checking whether there is enough df to perform Box-Cox transformation
-        if ( boxcox && ( (lenData - numAss*length(unique(dose))) < lenData/10) )
+        conInd <- assayNoOld %in% udNames
+        assayNo[conInd] <- (assayNo[!conInd])[1]
+        ciOrigIndex <- unique(assayNo)
+        ciOrigLength <- numAss
+        
+        ## Updating names, number of curves and the enumeration (starting from 1)
+        assayNames <- as.character(unique(assayNoOld[!conInd]))
+        numAss <- length(assayNames)
+        assayNo <- colConvert(assayNo)
+        cm <- NULL
+    } else {
+        cm <- NULL
+        ciOrigIndex <- unique(assayNo)
+        ciOrigLength <- numAss
+    }
+#    print(assayNo)
+    
+    ## Handling "pmodels" argument
+    pmodelsList <- list()
+    if (missing(pmodels)) 
+    {
+#        pmodels <- as.data.frame(matrix(assayNo, numObs, numNames))
+#        
+        if (length(unique(assayNo)) == 1) 
         {
-            if (boxcox) {warning("Box-Cox transformation based on clustering of dose values", call. = FALSE)}
-            doseFactor <- factor(cutree(hclust(dist(dose), method = "average"), lenData/3))  
-            # constructing groups containing roughly 3 observations 
-
-
-            ## Re-defining ANOVA model
-            if (numAss > 1) 
+            for (i in 1:numNames) 
             {
-                anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor*factor(assayNo)
-                dset <- data.frame(doseFactor, resp, assayNo, bcc)
-                alternative <- 2
-            } else {
-                anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor
-                dset <- data.frame(doseFactor, resp, bcc)
-                alternative <- 1
+                pmodelsList[[i]] <- matrix(1, numObs, 1)
             }
         } else {
-            doseFactor <- factor(dose)
-        }
-        dset <- data.frame(dose, doseFactor, resp, assayNo, bcc)
-
-         
-        ## Fitting ANOVA model
-        if (type == "continuous")
+            modelMat <- model.matrix(~ factor(assayNo) - 1, level = unique(assayNo))  # no intercept term
+            for (i in 1:numNames) 
+            {
+                pmodelsList[[i]] <- modelMat
+#                print(head(modelMat))
+#                pmodelsList[[i]] <- pmodelsList[[i]][, colOrder]
+            }
+        }   
+    } else {
+        ## Handling a list or data.frame argument of "pmodels"
+        if (is.null(data)) 
         {
-            testList <- drmLOFls()
-            if (varPower) {testList <- drmLOFvp()}
-            if (!is.null(vvar)) {testList <- drmLOFhv()}
-        }
-        if (type == "binomial")
-        {
-            testList <- drmLOFbinomial()
-        }
-        if (type == "Poisson")
-        {
-            testList <- drmLOFPoisson()
-        }
-
-        
-#        if (varPower) {testList <- mdrcVp(anovaYes = TRUE)} else {testList <- drmEMls(anovaYes = TRUE)}
-#        if (!is.null(vvar)) {testList <- mdrcHetVar(anovaYes = TRUE)}
-
-        gofTest <- testList$"gofTest"            
-        lofTest <- testList$"anovaTest"
-        if (!is.null(lofTest))
-        {
-            anovaModel0 <- lofTest(anovaFormula, dset)
+            pmodels <- eval(substitute(pmodels), envir = .GlobalEnv)
         } else {
-            anovaModel0 <- NULL
-            alternative <- 0
+            pmodels <- eval(substitute(pmodels), envir = data, enclos = parent.frame())
         }
+   
+        if (is.data.frame(pmodels))
+        {
+            lenCol <- ncol(pmodels)
+            pmodelsMat <- matrix(0, numObs, lenCol)    
+    
+            for (i in 1:lenCol) 
+            {
+                if (length(unique(pmodels[,i])) == 1) 
+                {
+                    pmodelsList[[i]] <- matrix(1, numObs, 1)
+                    pmodelsMat[,i] <- rep(1, numObs)    
+                } else {
+                    mf <- eval(model.frame(~factor(pmodels[,i]) - 1), parent.frame())  # converting to factors
+                    mt <- attr(mf, "terms")    
+    
+                    mf2 <- model.matrix(mt, mf)
+                    ncmf2 <- ncol(mf2)
+
+                    mf3 <- removeMI(mf2)
+                    pmodelsList[[i]] <- mf3
+                    pmodelsMat[, i] <- mf3 %*% c(1:ncmf2)
+                }
+            }
+        } else {
+
+            if (is.list(pmodels))
+            {   
+                lenCol <- length(pmodels)
+                pmodelsMat <- matrix(0, length(resp), lenCol)
+    
+                for (i in 1:lenCol) 
+                {
+                    if (paste(as.character(pmodels[[i]]), collapse = "") == "~1") 
+                    {
+                        pmodelsList[[i]] <- matrix(1, numObs, 1)
+                        pmodelsMat[,i] <- rep(1, numObs)
+                    } else {
+                        mf <- eval(model.frame(pmodels[[i]], data=data), parent.frame())   
+                        mt <- attr(mf, "terms")    
+                        
+                        mf2 <- model.matrix(mt, mf)
+                        ncmf2 <- ncol(mf2)
+
+                        mf3 <- removeMI(mf2)                    
+                        pmodelsList[[i]] <- mf3  
+                    
+                        pmodelsMat[,i] <- mf3%*%c(1:ncmf2)                    
+                    }
+                }
+            }
+        }     
+#        pmodelsOld <- pmodels
+#        pmodels <- as.data.frame(pmodelsMat)  # pmodelsMat not used any more
+    }
+#    for (i in 1:numNames) {pmodels[, i] <- colConvert(pmodels[, i])}
+
+    
+    ## Re-setting na.action
+    options(na.action = "na.omit")  # the default
+
+    ## Transforming dose value if they are provided as log dose
+    if ( !is.null(logDose) && is.numeric(logDose) ) 
+    {
+       origDose <- dose
+       dose <- logDose^dose
+    }
+
+#    ## Handling one-dimensional x     
+#    if (xDim == 1)
+#    {
+        ## Defining ANOVA model
+#        bcc <- rep(bcAdd, numObs)    
+#        if (numAss > 1) 
+#        {
+#            anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor*factor(assayNo)
+#            alternative <- 2
+#        } else {
+#            anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor
+#            alternative <- 1
+#        }
+         
+
+#        ## Checking whether there is enough df to perform Box-Cox transformation
+#        if ( boxcox && ( (numObs - numAss*length(unique(dose))) < numObs/10) )
+#        {
+#            if (boxcox) {warning("Box-Cox transformation based on clustering of dose values", call. = FALSE)}
+#            doseFactor <- factor(cutree(hclust(dist(dose), method = "average"), numObs/3))  
+#            # constructing groups containing roughly 3 observations 
+#
+#            ## Re-defining ANOVA model
+#            if (numAss > 1) 
+#            {
+#                anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor*factor(assayNo)
+#                dset <- data.frame(doseFactor, resp, assayNo, bcc)
+#                alternative <- 2
+#            } else {
+#                anovaFormula <- (resp + bcc) ~ offset(bcc) + doseFactor
+#                dset <- data.frame(doseFactor, resp, bcc)
+#                alternative <- 1
+#            }
+#        } else {
+#            doseFactor <- factor(dose)
+#        }
+         
+#        ## Fitting ANOVA model
+#        if (type == "continuous")
+#        {
+#            testList <- drmLOFls()
+##            if (varPower) {testList <- drmLOFvp()}
+##            if (!is.null(vvar)) {testList <- drmLOFhv()}
+#        }
+#        if (type == "binomial")
+#        {
+#            testList <- drmLOFbinomial()
+#        }
+#        if (type == "Poisson")
+#        {
+#            testList <- drmLOFPoisson()
+#        }
+#        
+##        if (varPower) {testList <- mdrcVp(anovaYes = TRUE)} else {testList <- drmEMls(anovaYes = TRUE)}
+##        if (!is.null(vvar)) {testList <- mdrcHetVar(anovaYes = TRUE)}
+#
+#        gofTest <- testList$"gofTest"            
+#        lofTest <- testList$"anovaTest"
+#        if (!is.null(lofTest))
+#        {
+#            dset <- data.frame(dose, factor(dose), resp, assayNo, bcc)
+#            anovaModel0 <- lofTest(anovaFormula, dset)
+#        } else {
+#            anovaModel0 <- NULL
+#            alternative <- 0
+#        }
+        
+#        ## Fitting ANOVA model
+#        testList <- switch(type, 
+#        "continuous" = drmLOFls(), 
+#        "binomial" = drmLOFbinomial(), 
+#        "Poisson" = drmLOFPoisson())
+#
+#        gofTest <- testList$"gofTest"            
+#        lofTest <- testList$"anovaTest"
+#        if (!is.null(lofTest))
+#        {
+#            afList <- anovaFormula(dose, resp, assayNo, bcAdd)
+#            anovaForm <- afList$"anovaFormula"
+#            anovaData <- afList$"anovaData"        
+#
+#            anovaModel0 <- lofTest(anovaForm, anovaData)
+#        } else {
+#            anovaModel0 <- NULL
+#        }
 
 
-        ## Applying the Box-Cox transformation (lambda is defined here!)
-        bcResult <- drmBoxcox(boxcox, anovaFormula, dset)  
-        lambda <- bcResult[[1]]
-        boxcoxci <- bcResult[[2]] 
-        boxcox <- bcResult[[3]]      
+#        ## Applying the Box-Cox transformation (lambda is defined here!)
+#        bcResult <- drmBoxcox(boxcox, anovaFormula, dset)  
+#        lambda <- bcResult[[1]]
+#        boxcoxci <- bcResult[[2]] 
+#        boxcox <- bcResult[[3]]      
 
 #        lambda <- 0
 #        isNumeric <- is.numeric(boxcox)
@@ -410,75 +494,74 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 #        }
  
 
-        ## Using self starter 
-        if (!noSSfct)
-        {
-            ## Calculating initial estimates for the parameters using the self starter
-            startMat <- matrix(0, numAss, numNames)
-            doseresp <- data.frame(dose, origResp)
-    
-            for (i in 1:numAss)
-            {
-                indexT1 <- (assayNo == i)
-                if (any(indexT1)) 
-                {
-                    isfi <- is.finite(dose)  # removing infinite dose values
-                    logVec <- indexT1 & isfi
-                    startMat[i, ] <- ssfct(doseresp[logVec, ])  # ssfct(dose[logVec], origResp[logVec] )
-                } else {
-                    startMat[i, ] <- rep(NA, numNames)
-                }
-
-                ## Identifying a dose response curve only consisting of control measurements
-                if (sum(!is.na(startMat[i, ])) == 1) {upperPos <- (1:numNames)[!is.na(startMat[i, ])]}
-            }
-#            colMat <- matrix(0, numNames, numAss)
-#            maxParm <- rep(0, numNames)  # storing the max number of parameters
-        }
+#        ## Using self starter 
+#        if (!noSSfct)
+#        {
+#            ## Calculating initial estimates for the parameters using the self starter
+#            startMat <- matrix(0, numAss, numNames)
+#            doseresp <- data.frame(dose, origResp)
+#    
+#            for (i in 1:numAss)
+#            {
+#                indexT1 <- (assayNo == i)
+#                if (any(indexT1)) 
+#                {
+#                    isfi <- is.finite(dose)  # removing infinite dose values
+#                    logVec <- indexT1 & isfi
+#                    startMat[i, ] <- ssfct(doseresp[logVec, ])  # ssfct(dose[logVec], origResp[logVec] )
+#                } else {
+#                    startMat[i, ] <- rep(NA, numNames)
+#                }
+#
+#                ## Identifying a dose response curve only consisting of control measurements
+#                if (sum(!is.na(startMat[i, ])) == 1) {upperPos <- (1:numNames)[!is.na(startMat[i, ])]}
+#            }
+##            colMat <- matrix(0, numNames, numAss)
+##            maxParm <- rep(0, numNames)  # storing the max number of parameters
+#        }
 
         
-    ## Handling multi-dimensional x   
-    } else {  
-        alternative <- NULL
-        anovaModel0 <- NULL
+#    ## Handling multi-dimensional x   
+#    } else { 
+#        stop("Currently multi-dimensional dose values are not supported") 
+#        alternative <- NULL
+#        anovaModel0 <- NULL
 #        anovaModel <- NULL
-        gofTest <- NULL
+#        gofTest <- NULL
         
-        if (is.numeric(boxcox))
-        {
-            lambda <- boxcox                  
-            boxcoxci <- c(NA, NA)
-        } else {
-            lambda <- NA                  
-            boxcoxci <- NULL
-        }
-        
+#        if (!is.null(bcVal))
+#        {
+#            lambda <- boxcox                  
+#            boxcoxci <- c(NA, NA)
+#        } else {
+#            lambda <- NA                  
+#            boxcoxci <- NULL
+#        }       
 
-        ## Using self starter
-        if (!noSSfct)
-        {
-            ## Calculating initial estimates for the parameters using the self starter
-            startMat <- matrix(0, numAss, numNames)
-            doseresp <- data.frame(dose, origResp)
-    
-            for (i in 1:numAss)
-            {
-                indexT1 <- (assayNo == i)
-                if (any(indexT1)) 
-                {
-                    startMat[i, ] <- ssfct(doseresp[indexT1, ])  # ssfct(dose[indexT1], origResp[indexT1])
-                } else {
-                    startMat[i, ] <- rep(NA, numNames)
-                }
-                
-                ## Identifying a dose response curve only consisting of control measurements
-                if (sum(!is.na(startMat[i,]))==1) {upperPos <- (1:numNames)[!is.na(startMat[i,])]}
-            }
+#        ## Using self starter
+#        if (!noSSfct)
+#        {
+#            ## Calculating initial estimates for the parameters using the self starter
+#            startMat <- matrix(0, numAss, numNames)
+#            doseresp <- data.frame(dose, origResp)
+#    
+#            for (i in 1:numAss)
+#            {
+#                indexT1 <- (assayNo == i)
+#                if (any(indexT1)) 
+#                {
+#                    startMat[i, ] <- ssfct(doseresp[indexT1, ])  # ssfct(dose[indexT1], origResp[indexT1])
+#                } else {
+#                    startMat[i, ] <- rep(NA, numNames)
+#                }
+#                
+#                ## Identifying a dose response curve only consisting of control measurements
+#                if (sum(!is.na(startMat[i,]))==1) {upperPos <- (1:numNames)[!is.na(startMat[i,])]}
+#            }
 #            colMat <- matrix(0, numNames, numAss)
 #            maxParm <- rep(0, numNames)  # storing the max number of parameters
-        }
-    }
-
+#        }
+#    }
 
     ## Finding parameters for the control measurements which will not be estimated
     pmodelsList2 <- list()
@@ -520,9 +603,7 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
             pmodelsList2[[i]] <- as.matrix(pmodelsList[[i]])  # columns are kept
         }
     
-    }  
-   
-    
+    }
     
     ## Constructing vectors 'ncclVec' and 'parmPos' used below
     ncclVec <- rep(0, numNames)
@@ -532,11 +613,99 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     }
     parmPos <- c(0, cumsum(ncclVec)[-numNames])
 
+    ## Constructing parameter names
+    pnList <- drmParNames(numNames, parNames, pmodelsList2)
+    parmVec <- pnList[[1]]
+    parmVecA <- pnList[[2]]
+    parmVecB <- pnList[[3]]   
+
+    ## Defining with indices for the individual parameters in the model
+    parmIndex <- list()
+    for (i in 1:numNames)
+    {
+        parmIndex[[i]] <- parmPos[i] + 1:ncclVec[i]
+    }
+
+    ## Scaling of dose and response values 
+    scaleFct <- fct$"scaleFct"
+    if (!is.null(scaleFct))
+    {
+        # Defining scaling for dose and response values 
+        doseScaling <- 10^(floor(log10(median(dose))))   
+        if ( (is.na(doseScaling)) || (doseScaling < 1e-10) )
+        {
+            doseScaling <- 1
+        }
+
+        respScaling <- 10^(floor(log10(median(resp)))) 
+        if ( (is.na(respScaling)) || (respScaling < 1e-10) || (!identical(type, "continuous")) || (!is.null(bcVal)) )
+        {
+            respScaling <- 1
+        }   
+#        print(resp)
+#        print(median(resp))
+
+#        doseScaling <- 1
+#        respScaling <- 1
+
+## Starting values need to be calculated after BC transformation!!!        
+
+        # Retrieving scaling vector
+        longScaleVec <- rep(scaleFct(doseScaling, respScaling), as.vector(unlist(lapply(parmIndex, length))))
+        
+    } else {
+        doseScaling <- 1
+        respScaling <- 1
+        
+        longScaleVec <- 1
+#        
+#        startVecSc <- startVec
+    }      
+#    print(c(doseScaling, respScaling))    
 
     ## Constructing vector of initial parameter values
     startVecList <- list()
+    
+    ## Calculating initial estimates for the parameters using the self starter
     if(!noSSfct)
     {
+        startMat <- matrix(0, numAss, numNames)
+        lenASS <- length(formals(ssfct))
+        if (lenASS > 1)  
+        # in case doseScaling and respScaling arguments are available
+        # scaling is done inside ssfct()
+        {
+            doseresp <- data.frame(x = dose, y = origResp)
+            ssFct <- function(dframe){ssfct(dframe, doseScaling, respScaling)}
+        } else {
+        # scaling is explicitly applied to the dose and response values
+            doseresp <- data.frame(x = dose / doseScaling, y = origResp / respScaling)
+            ssFct <- ssfct
+        }
+#        doseresp <- data.frame(x = dose / doseScaling, y = origResp / respScaling)
+#        doseresp <- data.frame(dose, origResp)
+        isfi <- is.finite(dose)  # removing infinite dose values
+    
+        ## Finding starting values for each curve
+        for (i in 1:numAss)
+        {
+            indexT1 <- (assayNo == i)
+            if (any(indexT1)) 
+            {
+                logVec <- indexT1 & isfi
+#                startMat[i, ] <- ssfct(doseresp[logVec, ])  # ssfct(dose[logVec], origResp[logVec] )
+#                startMat[i, ] <- ssfct(doseresp[logVec, ], doseScaling, respScaling)
+                startMat[i, ] <- ssFct(doseresp[logVec, ])
+            } else {
+                 startMat[i, ] <- rep(NA, numNames)
+            }
+    
+            ## Identifying a dose response curve only consisting of control measurements
+            if (sum(!is.na(startMat[i, ])) == 1) {upperPos <- (1:numNames)[!is.na(startMat[i, ])]}
+        }
+        print(startMat)    
+    
+        ## Transforming matrix of starting values into a vector
         nrsm <- nrow(startMat)
         for (i in 1:numNames)
         {
@@ -549,25 +718,24 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
             sv[isZero] <- mean(sv)
             
             startVecList[[i]] <- sv[indVec]
+#            print(startVecList[[i]])
         }
         startVec <- unlist(startVecList)        
     } else {
         startVec <- start  # no checking if no self starter function is provided!!!
     }
-
-
+    
     ## Checking the number of start values provided
     if (!selfStart && !noSSfct) 
     {
-        lenReq <- length(startVec)
+        lenReq <- length(startVec)  # generated from self starter
         if (length(start) == lenReq) 
         {
-            startVec <- start
+            startVec <- start / longScaleVec
         } else {
-            stop(paste("Wrong number of initial parameter values. ", lenReq, " values should be supplied", sep=""))
+            stop(paste("Wrong number of initial parameter values. ", lenReq, " values should be supplied", sep = ""))
         }
     }
-
 
     ## Converting parameters
     if (selfStart)
@@ -575,16 +743,13 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         startVec <- drmConvertParm(startVec, startMat, assayNo, pmodelsList2) 
     }
 
-
-    ## Constructing parameter names
-    pnList <- drmParNames(numNames, parNames, pmodelsList2)
-    parmVec <- pnList[[1]]
-    parmVecA <- pnList[[2]]
-    parmVecB <- pnList[[3]]
-    
+    # Scaling starting values (currently not done in drmEMls)
+#    startVecSc <- startVec / longScaleVec 
+    startVecSc <- startVec
+#    print(startVecSc)    
 
     ## Defining function which converts parameter vector to parameter matrix            
-    parmMatrix <- matrix(0, lenData, numNames)
+    parmMatrix <- matrix(0, numObs, numNames)
     parm2mat <- function(parm)
     {
 #        parmMatrix <- matrix(0, lenData, numNames)
@@ -594,62 +759,69 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 #           print(as.matrix(pmodelsList2[[i]]))
 #           print(parmPos[i] + 1:ncclVec[i])
 #           print(parm[parmPos[i] + 1:ncclVec[i]])          
-           parmMatrix[, i] <- pmodelsList2[[i]] %*% parm[parmPos[i] + 1:ncclVec[i]]
+#           parmMatrix[, i] <- pmodelsList2[[i]] %*% parm[parmPos[i] + 1:ncclVec[i]]
+           parmMatrix[, i] <- pmodelsList2[[i]] %*% parm[parmIndex[[i]]]
         }
         return(parmMatrix)
-    }
-        
+    }        
 
     ## Defining non-linear function
-    if (!is.null(fctList))
-    {
-        ivList <- list()
-        ivList2 <- list()        
-        matList <- list()
-        svList <- list()
-        for (i in 1:numAss)
-        {
-            indexT1 <- (assayNo == i)
-            isfi <- is.finite(dose)  # removing infinite dose values
+#    if (!is.null(fctList))
+#    {
+#        ivList <- list()
+#        ivList2 <- list()        
+#        matList <- list()
+#        svList <- list()
+#        for (i in 1:numAss)
+#        {
+#            indexT1 <- (assayNo == i)
+#            isfi <- is.finite(dose)  # removing infinite dose values
+#
+#            ivList[[i]] <- indexT1
+##            svList[[i]] <- fctList[[i]]$"ssfct"( doseresp[(indexT1 & isfi), ] )
+#            logVec <- indexT1 & isfi
+#            svList[[i]] <- fctList[[i]]$"ssfct"(doseresp[logVec, ])  # dose[logVec], origResp[logVec])
+#            matList[[i]] <- c( sum(indexT1), length(svList[[i]]) )
+#            
+#            ivList2[[i]] <- match(fctList[[i]]$names, fct$names)             
+#        }
+#
+#    
+#        posVec <- rep(0, numAss)
+#        for (i in 1:numAss)
+#        {
+#            posVec[i] <- matList[[i]][2]
+#        }
+#        posVec <- cumsum(posVec)
+#        posVec <- c(0, posVec)
+##        print(posVec)
+#    
+#        drcFct1 <- function(dose, parm)
+#        {
+#            retVec <- rep(0, numObs)
+#            for (i in 1:numAss)
+#            {
+#                iVec <- ivList[[i]]
+#                pMat <- matrix(parm[(posVec[i]+1):posVec[i+1]], matList[[i]][1], matList[[i]][2], byrow = TRUE) 
+#                retVec[iVec] <- fctList[[i]]$"fct"( dose[iVec], pMat )
+#            }
+#            return(retVec)
+#        }
+#        
+#        startVec <- as.vector(unlist(svList))
+#    } else {
 
-            ivList[[i]] <- indexT1
-#            svList[[i]] <- fctList[[i]]$"ssfct"( doseresp[(indexT1 & isfi), ] )
-            logVec <- indexT1 & isfi
-            svList[[i]] <- fctList[[i]]$"ssfct"(doseresp[logVec, ])  # dose[logVec], origResp[logVec])
-            matList[[i]] <- c( sum(indexT1), length(svList[[i]]) )
-            
-            ivList2[[i]] <- match(fctList[[i]]$names, fct$names)             
-        }
-
-    
-        posVec <- rep(0, numAss)
-        for (i in 1:numAss)
-        {
-            posVec[i] <- matList[[i]][2]
-        }
-        posVec <- cumsum(posVec)
-        posVec <- c(0, posVec)
-#        print(posVec)
-    
         drcFct1 <- function(dose, parm)
         {
-            retVec <- rep(0, lenData)
-            for (i in 1:numAss)
-            {
-                iVec <- ivList[[i]]
-#                print(matList[[i]])
-                pMat <- matrix(parm[(posVec[i]+1):posVec[i+1]], matList[[i]][1], matList[[i]][2], byrow = TRUE) 
-#                print(pMat)
-#                print(length(dose[iVec]))
-#                print(dim(pMat))
-                retVec[iVec] <- fctList[[i]]$"fct"( dose[iVec], pMat )
-            }
-            return(retVec)
+            drcFct(dose, parm2mat(parm))
         }
-        
-        startVec <- as.vector(unlist(svList))
-    } else {
+#    }
 
+
+    ## Defining model function        
+    if (!is.null(fct$"retFct"))
+    {
+        drcFct <- fct$"retFct"(doseScaling, respScaling)  #, numObs)
         drcFct1 <- function(dose, parm)
         {
             drcFct(dose, parm2mat(parm))
@@ -665,9 +837,9 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     } else {
         iv <- assayNoOld == cm
         niv <- !iv
-        fctEval <- rep(0, lenData)
+        fctEval <- rep(0, numObs)
 
-        multCurves<-function(dose, parm) 
+        multCurves <- function(dose, parm) 
         {
             parmVal <- parm2mat(parm)           
             fctEval[iv] <- parmVal[iv, upperPos, drop = FALSE]
@@ -679,42 +851,10 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
 #    print(startVec)
 #    print(multCurves(dose, startVec))
 
-
     ## Defining objective function
-    robustFct <- drmRobust(robust, match.call(), lenData, length(startVec))
+    robustFct <- drmRobust(robust, match.call(), numObs, length(startVec))  
     
-
-    ## Box-Cox transformation is applied
-    if (boxcox)
-    {
-#        varPower <- FALSE  # not both boxcox and varPower at the same time
-
-        ## Defining Box-Cox transformation function
-        bcfct <- function(x, lambda, bctol, add = bcConstant)
-        {
-            if (abs(lambda) > bctol)
-            {
-                return(((x+add)^lambda-1)/lambda)
-            } else {
-                return(log(x+add))    
-            }
-        }
-        
-        ## Setting the tolerance for Box-Cox transformation being the logarithm transformation 
-        ##  (same as in boxcox.default in MASS package)
-        bcTol <- 0.02 
-        
-        resp <- bcfct(resp, lambda, bcTol)
-
-        multCurves2 <- function(dose, parm)
-        {
-            bcfct(multCurves(dose, parm), lambda, bcTol)
-        } 
-    } else {multCurves2 <- multCurves}
-#    print(startVec)
-#    print(multCurves2(dose, startVec))
-    
-    ## Defining first derivative (if available)
+    ## Defining first derivative (if available) ... used once in drmEMls()
     if (!is.null(dfct1))
     {
         dmatfct <- function(dose, parm)
@@ -723,69 +863,97 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
         }
     } else {
         dmatfct <-NULL
-    }
-    
-   
+    } 
+
+    ## Box-Cox transformation is applied
+    if (!is.null(bcVal))  # (boxcox)
+    {
+#        varPower <- FALSE  # not both boxcox and varPower at the same time
+
+        ## Defining Box-Cox transformation function
+        bcfct <- function(x, lambda, bctol, add = bcAdd)
+        {
+            if (abs(lambda) > bctol)
+            {
+                return(((x + add)^lambda - 1)/lambda)
+            } else {
+                return(log(x + add))    
+            }
+        }
+        
+        ## Setting the tolerance for Box-Cox transformation being the logarithm transformation 
+        ##  (same as in boxcox.default in MASS package)
+        bcTol <- 0.02 
+        
+#        resp <- bcfct(resp, lambda, bcTol)
+        resp <- bcfct(resp, bcVal, bcTol)
+
+        multCurves2 <- function(dose, parm)
+        {
+            bcfct(multCurves(dose, parm), bcVal, bcTol)
+        } 
+    } else {multCurves2 <- multCurves}
+#    print(startVec)
+#    print(multCurves2(dose, startVec))    
+
     ## Defining estimation method
-    scaleXConstant <- 1
-    scaleYConstant <- 1 ## mean(resp) 
-    
     if (type == "continuous")
     {
         ## Ordinary least squares estimation
-        estMethod <- drmEMls(dose, resp, multCurves2, startVec, robustFct, weights, rmNA, dmf = dmatfct, 
-        scaleX = scaleXConstant, scaleY = scaleYConstant)
+        estMethod <- drmEMls(dose, resp, multCurves2, startVecSc, robustFct, weights, rmNA, dmf = dmatfct, 
+        doseScaling = doseScaling, respScaling = respScaling)
         
-        if (adjust == "vp")  #(varPower)
-        {        
-            estMethod <- drmEMvp(dose, resp, multCurves2)  # mdrcVp(dose, resp, multCurves2)
-            lenStartVec <- length(startVec)
-            
-            start2ss <- estMethod$"ssfct"(cbind(dose, resp))
-            if (missing(start2))
-            {
-                startVec <- c(startVec, start2ss)            
-            } else {
-                if (length(start2) == 2)  # canonical 2?
-                {
-                    startVec <- c(startVec, start2)            
-                }
-            }
-#            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
-            parmVec <- c(parmVec, "Sigma", "Power")
-
-        }
+#        if (adjust == "vp")  #(varPower)
+#        {        
+#            estMethod <- drmEMvp(dose, resp, multCurves2)  # mdrcVp(dose, resp, multCurves2)
+#            lenStartVec <- length(startVec)
+#            
+#            start2ss <- estMethod$"ssfct"(cbind(dose, resp))
+#            if (missing(start2))
+#            {
+#                startVec <- c(startVec, start2ss)            
+#            } else {
+#                if (length(start2) == 2)  # canonical 2?
+#                {
+#                    startVec <- c(startVec, start2)            
+#                }
+#            }
+##            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
+#            parmVec <- c(parmVec, "Sigma", "Power")
+#            
+#            startVecSc <- startVec
+#        }
                   
-        if (!is.null(vvar))
-        {
-            estMethod <- mdrcHetVar(dose, resp, multCurves2, vvar)
-            lenStartVec <- length(startVec)            
-            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
-            parmVec <- c(parmVec, as.character(unique(vvar)))        
-        }
+#        if (!is.null(vvar))
+#        {
+#            estMethod <- mdrcHetVar(dose, resp, multCurves2, vvar)
+#            lenStartVec <- length(startVec)            
+#            startVec <- c(startVec, estMethod$"ssfct"(cbind(dose, resp)))
+#            parmVec <- c(parmVec, as.character(unique(vvar)))        
+#        }
     }
-    if (type == "binomial")
+    if (identical(type, "binomial"))
     {
-        estMethod <- drmEMbinomial(dose, resp, multCurves2, startVec, robustFct, weights, rmNA)    
-    
-    }
-    if (type == "Poisson")
+        estMethod <- drmEMbinomial(dose, resp, multCurves2, startVecSc, robustFct, weights, rmNA, 
+        doseScaling = doseScaling)        
+    } 
+    if (identical(type, "Poisson"))
     {
-        estMethod <- drmEMPoisson(dose, resp, multCurves2, startVec)
-    }       
+        estMethod <- drmEMPoisson(dose, resp, multCurves2, startVecSc, doseScaling = doseScaling)
+    }          
     opfct <- estMethod$opfct            
 
 
     ## Re-fitting the ANOVA model to incorporate Box-Cox transformation (if necessary)
-    if (type == "continuous")
-    {    
-        if (!is.na(lambda))
-        {
-            dset <- data.frame(dose, doseFactor, resp, assayNo, bcc)  # dataset with new resp values        
-            anovaModel0 <- (testList$"anovaTest")(anovaFormula, dset)            
-#            anovaModel <- anovaModel0$"anovaFit"
-        }
-    }
+#    if (type == "continuous")
+#    {    
+#        if (!is.na(lambda))
+#        {
+#            dset <- data.frame(dose, doseFactor, resp, assayNo, bcc)  # dataset with new resp values        
+#            anovaModel0 <- (testList$"anovaTest")(anovaFormula, dset)            
+##            anovaModel <- anovaModel0$"anovaFit"
+#        }
+#    }
 
     ## Defining lower and upper limits of parameters
 #    if (constrained)
@@ -852,39 +1020,38 @@ fctList = NULL, control = drmc(), lowerl = NULL, upperl = NULL)
     }  
 
     ## Manipulating before optimisation
-#    print(startVec)  # 1
         
-    ## Scaling x values
-if (FALSE)
-{
-    sxInd <- fct$"sxInd"
-    sxYN <- !is.null(sxInd) && ((max(dose)<1e-2) || (min(dose)>1e2) || (diff(range(dose))>1e2) )
-    if ( sxYN && (is.null(fctList)) )
-    {
-#        if (!is.null(fctList))
+#    ## Scaling x values
+#if (FALSE)
+#{
+#    sxInd <- fct$"sxInd"
+#    sxYN <- !is.null(sxInd) && ((max(dose)<1e-2) || (min(dose)>1e2) || (diff(range(dose))>1e2) )
+#    if ( sxYN && (is.null(fctList)) )
+#    {
+##        if (!is.null(fctList))
+##        {
+##            parmIndX <- rep(0, numAss)
+##            for (i in 1:numAss)
+##            {
+##                parmIndX[i] <- fctList[[i]]$"sxInd"
+##            }
+##            parmIndX <- cumsum(parmIndX)
+##        } else {
+#            parmIndX <- parmPos[sxInd] + 1:ncclVec[sxInd]        
+##        }
+#    
+#        scaleXConstant <- median(dose)
+#        sxFct <- scaleX(scaleXConstant)  # , scaleX(dose, maxDose)        
+#        if (adjust == "vp")
 #        {
-#            parmIndX <- rep(0, numAss)
-#            for (i in 1:numAss)
-#            {
-#                parmIndX[i] <- fctList[[i]]$"sxInd"
-#            }
-#            parmIndX <- cumsum(parmIndX)
-#        } else {
-            parmIndX <- parmPos[sxInd] + 1:ncclVec[sxInd]        
+#            dose <- sxFct(dose)    
+#            opfct <- drmEMvp(dose, resp, multCurves2)$"opfct"
 #        }
-    
-        scaleXConstant <- median(dose)
-        sxFct <- scaleX(scaleXConstant)  # , scaleX(dose, maxDose)        
-        if (adjust == "vp")
-        {
-            dose <- sxFct(dose)    
-            opfct <- drmEMvp(dose, resp, multCurves2)$"opfct"
-        }
-        
-        startVec[parmIndX] <- sxFct(startVec[parmIndX])
-    }
-#    print(startVec)  # 2
-}
+#        
+#        startVec[parmIndX] <- sxFct(startVec[parmIndX])
+#    }
+##    print(startVec)  # 2
+#}
 
 #    ## Scaling y values
 #    ##  based on the original response value
@@ -928,9 +1095,9 @@ if (FALSE)
 
 
     ## Testing nonlinear function
-#    print(startVec)
-#    print(multCurves2(dose, startVec))
-#    print(opfct(startVec))
+#    print(startVecSc)
+#    print(multCurves2(dose, startVecSc))
+#    print(opfct(startVecSc))
 #    print(dose)
 #    print(resp)
      
@@ -947,13 +1114,38 @@ if (FALSE)
 #    } else {
 #        opfct2 <- opfct
 #    }
-    opfct2 <- opfct
+#    opfct2 <- opfct  # only used once below
 
-    ## Optimising
-    nlsFit <- drmOpt(opfct2, opdfct1, startVec, optMethod, constrained, warnVal, 
+    ## Optimising the objective function previously defined
+    startVecSc <- as.vector(startVecSc)  # removing names
+    nlsFit <- drmOpt(opfct, opdfct1, startVecSc, optMethod, constrained, warnVal, 
     upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, trace = control$"trace") 
         
     if (!nlsFit$convergence) {return(nlsFit)}
+     
+#    print(nlsFit) 
+     
+    ## Adjusting for pre-fit scaling 
+    if (!is.null(scaleFct))
+    {
+        # Scaling the sums of squares value back
+        nlsFit$value <- nlsFit$value * (respScaling^2)
+   
+        # Scaling estimates and Hessian back
+        nlsFit$par <- nlsFit$par * longScaleVec
+        nlsFit$hessian <- nlsFit$hessian * (1/outer(longScaleVec/respScaling, longScaleVec/respScaling))
+    }
+    
+    if (!is.null(fct$"retFct"))
+    {
+        drcFct <- fct$"retFct"(1, 1)  #, numObs)  # resetting the scaling
+        drcFct1 <- function(dose, parm)
+        {
+            drcFct(dose, parm2mat(parm))
+        }
+    }
+    
+    
 #    print(nlsFit$par)
 #    nlsFit$value <- opfct(nlsFit$par)  # used in the residual variance
 
@@ -978,50 +1170,48 @@ if (FALSE)
 #    }
 
     
-    ## Adjusting for scaling of x values
-if (FALSE)
-{    
-    if ( sxYN && (is.null(fctList)) )  # (!is.null(sxInd))
-    {
-        if (adjust == "vp")
-        {
-            dose <- sxFct(dose, down = FALSE)
-        }
-        startVec[parmIndX] <- sxFct(startVec[parmIndX], down = FALSE)
-        nlsFit$par[parmIndX] <- sxFct(nlsFit$par[parmIndX], down = FALSE)
+#    ## Adjusting for scaling of x values
+#if (FALSE)
+#{    
+#    if ( sxYN && (is.null(fctList)) )  # (!is.null(sxInd))
+#    {
+#        if (adjust == "vp")
+#        {
+#            dose <- sxFct(dose, down = FALSE)
+#        }
+#        startVec[parmIndX] <- sxFct(startVec[parmIndX], down = FALSE)
+#        nlsFit$par[parmIndX] <- sxFct(nlsFit$par[parmIndX], down = FALSE)
+#
+#        scaleFct2 <- function(hessian) 
+#                     {
+#                         newHessian <- scaleFct1(hessian)
+#                         newHessian[, parmIndX] <- sxFct(newHessian[, parmIndX], down = FALSE)
+#                         newHessian[parmIndX, ] <- sxFct(newHessian[parmIndX, ], down = FALSE)
+#                         return(newHessian)
+#                     }                
+#    } else {
+#        scaleFct2 <- function(hessian) 
+#        {
+#            scaleFct1(hessian)
+#        }
+#    }
+#}
 
-        scaleFct2 <- function(hessian) 
-                     {
-                         newHessian <- scaleFct1(hessian)
-                         newHessian[, parmIndX] <- sxFct(newHessian[, parmIndX], down = FALSE)
-                         newHessian[parmIndX, ] <- sxFct(newHessian[parmIndX, ], down = FALSE)
-                         return(newHessian)
-                     }                
-    } else {
-        scaleFct2 <- function(hessian) 
-        {
-            scaleFct1(hessian)
-        }
-    }
-}
-
-    ## Handling variance parameters
-    varParm <- NULL
-        
-    if (varPower)
-    {
-        varParm <- list(type = "varPower", index = 1:lenStartVec)        
-    }
-    if (!is.null(vvar))
-    {
-        varParm <- list(type = "hetvar", index = 1:lenStartVec)
-    }
-
+#    ## Handling variance parameters
+#    varParm <- NULL
+#        
+#    if (varPower)
+#    {
+#        varParm <- list(type = "varPower", index = 1:lenStartVec)        
+#    }
+#    if (!is.null(vvar))
+#    {
+#        varParm <- list(type = "hetvar", index = 1:lenStartVec)
+#    }
 
     # Testing against the ANOVA (F-test)
     nlsSS <- nlsFit$value
-    nlsDF <- lenData - length(startVec)
-
+    nlsDF <- numObs - length(startVec)
 
     ## Constructing a plot function
         
@@ -1031,29 +1221,29 @@ if (FALSE)
     pickCurve <- rep(0, length(iVec))
     for (i in iVec)
     {
-       pickCurve[i] <- (1:lenData)[assayNo==i][1]
+       pickCurve[i] <- (1:numObs)[assayNo == i][1]
     }
     parmMat <- matrix(NA, numAss, numNames)
 
     fixedParm <- (estMethod$"parmfct")(nlsFit)
 #    print(nlsFit$par)
 #    print(fixedParm)
-    parmMat[iVec,] <- parm2mat(fixedParm)[pickCurve, ]
+    parmMat[iVec, ] <- parm2mat(fixedParm)[pickCurve, ]
 
-    if(!is.null(fctList))
-    {
-         parmMat <- matrix(NA, numAss, numNames)
-         for (i in 1:numAss)
-         {
-             parmMat[i, ivList2[[i]]] <- fixedParm[(posVec[i]+1):posVec[i+1]]
-         }
-    }    
+#    if(!is.null(fctList))
+#    {
+#         parmMat <- matrix(NA, numAss, numNames)
+#         for (i in 1:numAss)
+#         {
+#             parmMat[i, ivList2[[i]]] <- fixedParm[(posVec[i]+1):posVec[i+1]]
+#         }
+#    }    
         
     if (!is.null(cm))
     {
 #        conPos <- upperPos
 #        print(conPos)
-        parmMat[-iVec, upperPos] <- parm2mat(fixedParm)[assayNoOld==cm, , drop=FALSE][1, upperPos]  
+        parmMat[-iVec, upperPos] <- parm2mat(fixedParm)[assayNoOld==cm, , drop = FALSE][1, upperPos]  
         # 1: simply picking the first row
     }
     rownames(parmMat) <- assayNames
@@ -1066,7 +1256,7 @@ if (FALSE)
         if (!is.null(cm))
         {
 #            conPos <- conList$"pos"
-            parmMat[-iVec, upperPos] <- parm2mat(fixedParm)[assayNoOld==cm, , drop=FALSE][1, upperPos]  
+            parmMat[-iVec, upperPos] <- parm2mat(fixedParm)[assayNoOld==cm, , drop = FALSE][1, upperPos]  
             # 1: simply picking the first row
         }
         rownames(parmMat) <- assayNames
@@ -1075,10 +1265,21 @@ if (FALSE)
     }
     parmMat <- pmFct( (estMethod$"parmfct")(nlsFit) )
 
+#    ## Scaling parameters
+#    if (!is.null(fct$scaleFct))
+#    {
+#        scaleFct <- function(parm)
+#        {
+#            fct$scaleFct(parm, xScaling, yScaling)
+#        }
+#    
+#        parmMat <- apply(parmMat, 1, scaleFct)
+#    }
+#
 
     ## Constructing design matrix allowing calculations for each curve
-    colPos <- 1
-    rowPos <- 1
+#    colPos <- 1
+#    rowPos <- 1
 #    Xmat <- matrix(0, numAss*numNames, length(nlsFit$par))
 #    Xmat <- matrix(0, numAss*numNames, length(fixedParm))
 
@@ -1129,11 +1330,11 @@ if (FALSE)
             curvePts <- matrix(NA, lenPts, ciOrigLength)  # numAss)
             for (i in 1:numAss)
             {
-                if (!is.null(fctList)) 
-                {
-                    drcFct <- fctList[[i]]$"fct"
-                    numNames <- matList[[i]][2]    
-                }
+#                if (!is.null(fctList)) 
+#                {
+#                    drcFct <- fctList[[i]]$"fct"
+#                    numNames <- matList[[i]][2]    
+#                }
             
                 if (i%in%iVec)
                 {
@@ -1161,8 +1362,7 @@ if (FALSE)
     resVec <- resp - predVec
     resVec[is.nan(predVec)] <- 0    
 
-
-    diagMat <- matrix(c(predVec, resVec), lenData, 2)
+    diagMat <- matrix(c(predVec, resVec), numObs, 2)
     colnames(diagMat) <- c("Predicted values", "Residuals")
 
 
@@ -1177,7 +1377,7 @@ if (FALSE)
 #    }
     if (robust%in%c("lms", "lts"))  # p. 202 i Rousseeuw and Leroy: Robust Regression and Outlier Detection
     {  
-        scaleEst <- 1.4826*(1+5/(lenData-length(nlsFit$par)))*sqrt(median(resVec^2))                                 
+        scaleEst <- 1.4826*(1+5/(numObs-length(nlsFit$par)))*sqrt(median(resVec^2))                                 
         w <- (resVec/scaleEst < 2.5)
         nlsFit$value <- sum(w*resVec^2)/(sum(w)-length(nlsFit$par))    
     }
@@ -1190,8 +1390,10 @@ if (FALSE)
 
 
     ## Collecting summary output
-    sumVec <- c(lambda, NA, NA, NA, nlsSS, nlsDF, lenData, alternative)
-    sumList <- list(lenData = lenData, alternative = alternative, df.residual = lenData - length(startVec))
+    sumVec <- c(bcVal, NA, NA, NA, nlsSS, nlsDF, numObs)  # , alternative)
+    sumList <- list(lenData = numObs, 
+    alternative = NULL,  # alternative, 
+    df.residual = numObs - length(startVec))
 
 
     ## The function call
@@ -1208,14 +1410,14 @@ if (FALSE)
     names(dataSet) <- c(varNames, anName, anName, "weights")
 
 
-    ## Box-Cox information
-    bcVec <- c(lambda, boxcoxci)
-    if (all(is.na(bcVec))) {bcVec <- NULL}
-    if (!is.null(bcVec)) {bcVec <- c(bcVec, bcAdd)}
+#    ## Box-Cox information
+#    bcVec <- c(lambda, boxcoxci)
+#    if (all(is.na(bcVec))) {bcVec <- NULL}
+#    if (!is.null(bcVec)) {bcVec <- c(bcVec, bcAdd)}
 
 
     ## Evaluating goodness-of-fit test
-    if (!is.null(gofTest)) {gofTest <- gofTest(resp, weights, predVec, sumList$"df.residual")}
+#    if (!is.null(gofTest)) {gofTest <- gofTest(resp, weights, predVec, sumList$"df.residual")}
 
 
 #    ## Adjusting in case 'fctList' is specified
@@ -1268,15 +1470,22 @@ if (FALSE)
 #    deriv1Mat <- NULL
 
     ## Returning the fit
-    returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
-    diagMat, callDetail, dataSet, t(parmMat), fct, robust, bcVec, estMethod, lenData-length(startVec), 
-    anovaModel0, gofTest, sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
-    deparse(substitute(curve)), data, weights)
+#    returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
+    returnList <- list(NULL, nlsFit, list(plotFct, logDose), sumVec, startVecSc * longScaleVec, 
+#    returnList <- list(nlsFit, list(plotFct, logDose), sumVec, startVecSc * longScaleVec, 
+    list(parmVec, parmVecA, parmVecB), 
+    diagMat, callDetail, dataSet, t(parmMat), fct, robust, estMethod, numObs - length(startVec), 
+#    anovaModel0, gofTest, 
+    sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
+    anName, data, weights, list(dose = dose, resp = resp, curveid = assayNoOld, origResp = origResp))
     
     names(returnList) <- c("varParm", "fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
-    "parmMat", "fct", "robust", "boxcox", "estMethod", "df.residual", "anova", "gofTest", 
+#    names(returnList) <- c("fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
+    "parmMat", "fct", "robust", "estMethod", "df.residual", 
+#    "anova", "gofTest", 
     "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose", "cm", "deriv1",
-    "curveVarNam", "origData", "weights")
+    "curveVarNam", "origData", "weights",
+    "dataList")
     class(returnList) <- c("drc", class(fct))
 
     return(returnList)

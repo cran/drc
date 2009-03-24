@@ -1,6 +1,5 @@
 "CRS.6" <-
-function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf, Inf), 
-fixed=c(NA, NA, NA, NA, NA, NA), names=c("b","c","d","e","f","g"))
+function(fixed = c(NA, NA, NA, NA, NA, NA), names = c("b","c","d","e","f","g"))
 {
     ## Checking arguments
     numParm <- 6
@@ -67,8 +66,8 @@ fixed=c(NA, NA, NA, NA, NA, NA), names=c("b","c","d","e","f","g"))
 
 
     ## Limits
-    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
 
     ## Defining the ED function    
@@ -78,8 +77,8 @@ fixed=c(NA, NA, NA, NA, NA, NA), names=c("b","c","d","e","f","g"))
     maxfct <- NULL
     
     returnList <- 
-    list(fct=fct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-    edfct=edfct, maxfct=maxfct,
+    list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, # lowerc=lowerLimits, upperc=upperLimits, 
+    edfct = edfct, maxfct = maxfct,
     name = "CRS.6",
     text = "Generalised Cedergreen-Ritz-Streibig (hormesis)", 
     noParm = sum(is.na(fixed)))

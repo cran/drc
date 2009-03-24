@@ -1,15 +1,14 @@
 "drmEMbinomial" <- 
-function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, zeroTol = 1e-12)
+function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, zeroTol = 1e-12, doseScaling = 1)
 {
-
     ## Finding indices for doses that give contribution to likelihood function
-    iv <- ( (multCurves(dose, startVec) > zeroTol) & (multCurves(dose, startVec) < 1-zeroTol) )
+    iv <- ( (multCurves(dose/doseScaling, startVec) > zeroTol) & (multCurves(dose/doseScaling, startVec) < 1-zeroTol) )
 
 
     ## Defining the objective function                
     opfct <- function(c)  # dose, resp and weights are fixed
     {                      
-        prob <- (multCurves(dose, c))[iv]
+        prob <- (multCurves(dose / doseScaling, c))[iv]
 #        prob <- multCurves(dose, c)
 
 #        return( -sum((resp2*weights2)*log(prob/(1-prob))+weights2*log(1-prob)) )
@@ -45,13 +44,14 @@ function(dose, resp, multCurves, startVec, robustFct, weights, rmNA, zeroTol = 1
         fit$par
     }
 
-
-    ## Modifying ANOVA test (removing dose=0 and dose=Inf)
-    anovaTest2 <- function(formula, ds) {anovaTest(formula, ds[iv, ])}
+#
+#    ## Modifying ANOVA test (removing dose=0 and dose=Inf)
+#    anovaTest2 <- function(formula, ds) {anovaTest(formula, ds[iv, ])}
 
 
     ## Returning list of functions
-    return(list(llfct=llfct, opfct=opfct, ssfct=ssfct, rvfct=rvfct, vcovfct=vcovfct, parmfct=parmfct, anovaTest2=anovaTest2))
+    return(list(llfct = llfct, opfct = opfct, ssfct = ssfct, rvfct = rvfct, 
+    vcovfct = vcovfct, parmfct = parmfct))  # , anovaTest2=anovaTest2))
 }
 
 

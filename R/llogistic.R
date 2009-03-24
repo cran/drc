@@ -1,7 +1,6 @@
 "llogistic" <- function(
-lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc = c(Inf, Inf, Inf, Inf, Inf), 
-fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ss = c("1", "2", "3"), ssfct = NULL,
-fctName, fctText)
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
+ss = c("1", "2", "3"), ssfct = NULL, fctName, fctText)
 {
     ## Matching 'adjust' argument
     ss <- match.arg(ss)
@@ -16,23 +15,59 @@ fctName, fctText)
     parmVec <- rep(0, numParm)
     parmVec[!notFixed] <- fixed[!notFixed]
 
-    ## Defining the basic non-linear function
-    bfct <- function(x, parm)
-    {
-        parm[2] + (parm[3]-parm[2])/((1+(x/parm[4])^parm[1]))^parm[5]
-    }
+#    ## Defining the basic non-linear function
+#    bfct <- function(x, parm)
+#    {
+#        parm[2] + (parm[3]-parm[2])/((1+(x/parm[4])^parm[1]))^parm[5]
+#    }
 
-    ## Defining the non-linear function
+    ## Defining the model function
     fct <- function(dose, parm) 
     {
-        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+        parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
         
         cParm <- parmMat[, 2]
 #        cParm + (parmMat[, 3] - cParm)/((1+exp(parmMat[, 1]*(log(dose)-log(parmMat[, 4]))))^parmMat[, 5])
         cParm + (parmMat[, 3] - cParm)/((1+exp(parmMat[, 1]*(log(dose/parmMat[, 4]))))^parmMat[, 5])
     }
-
+       
+    ## Defining the model function adjusted for scaling
+    retFct <- function(doseScaling, respScaling)
+    {          
+        fct <- function(dose, parm) 
+        {
+            parmMat <- matrix(parmVec / c(1, respScaling, respScaling, doseScaling, 1), 
+            nrow(parm), numParm, byrow = TRUE)
+            parmMat[, notFixed] <- parm
+        
+            cParm <- parmMat[, 2]
+            cParm + (parmMat[, 3] - cParm)/((1 + exp(parmMat[, 1]*(log(dose / parmMat[, 4]))))^parmMat[, 5])
+        }
+        fct        
+    }
+    
+if (FALSE) {  ## will work once plotFct does not depend on drcFct
+    ## Defining the model function adjusted for scaling
+    retFct <- function(doseScaling, respScaling, numObs)
+    {   
+        parmMat <- matrix(parmVec / c(1, respScaling, respScaling, doseScaling, 1), numObs, numParm, byrow = TRUE)
+        
+        fct <- function(dose, parm) 
+        {        
+            parmMat[, notFixed] <- parm        
+            cParm <- parmMat[, 2]
+            cParm + (parmMat[, 3] - cParm)/((1 + exp(parmMat[, 1]*(log(dose / parmMat[, 4]))))^parmMat[, 5])
+        }
+        fct        
+    }
+}
+        
+    ## Defining scale function
+    scaleFct <- function(doseScaling, respScaling)
+    {        
+        c(1, respScaling, respScaling, doseScaling, 1)[notFixed]
+    }    
 
     ## Defining the self starter function
     
@@ -45,10 +80,10 @@ fctName, fctText)
     ## Version 1 (default)    
     if (ss == "1")
     {
-        ssfct <- function(dataFra)
+        ssfct <- function(dframe)
         {
-            x <- dataFra[, 1]
-            y <- dataFra[, 2]
+            x <- dframe[, 1]
+            y <- dframe[, 2]
 
             startVal <- rep(0, numParm)
 
@@ -79,22 +114,28 @@ fctName, fctText)
     ## Version 2
     if (ss == "2")
     {
-        ssfct <- function(dframe)
+        ssfct <- function(dframe, doseScaling, respScaling)
         {
-            x <- dframe[, 1]
-            y <- dframe[, 2]
+            x <- dframe[, 1] / doseScaling
+            y <- dframe[, 2] / respScaling
 
 #            startVal <- rep(0, numParm)
 
 #            startVal[3] <- max(resp3) + 0.001  # the d parameter
 #            startVal[3] <- ifelse(notFixed[3], 1.05*max(y), fixed[3])
 #            startVal[3] <- mean(resp3[dose2 == max(dose2)]) + 0.001
-             dVal <- ifelse(notFixed[3], 1.01*max(y), fixed[3])
         
 #            startVal[2] <- min(resp3) - 0.001  # the c parameter
 #            startVal[2] <- ifelse(notFixed[2], 0.95*min(y), fixed[2])
 #            startVal[2] <- mean(resp3[dose2 == min(dose2)]) + (1e-8)*((max(resp3) - min(resp3))/max(resp3))  
-            cVal <- ifelse(notFixed[2], 0.99*min(y), fixed[2])
+
+#            miny <- min(y)
+#            if (all.equal(miny, 0))
+#            {
+#                miny <- min(y[y > miny])
+#            } 
+            cVal <- ifelse(notFixed[2], 0.99 * min(y), fixed[2] / respScaling)
+            dVal <- ifelse(notFixed[3], 1.01 * max(y), fixed[3] / respScaling)
 
 #            if (reps)
 #            {
@@ -113,7 +154,8 @@ fctName, fctText)
 
 #            startVal[5] <- 1 
             fVal <- 1  # need not be updated with value in 'fixed[5]'
-            # better choice than 1 may be possible!        
+            # better choice than 1 may be possible! 
+            # the f parameter, however, is very rarely a magnitude of 10 larger or smaller
         
             if ( length(unique(x)) == 1 ) {return((c(NA, NA, dVal, NA, NA))[notFixed])}  
             # only estimate of upper limit if a single unique dose value 
@@ -127,7 +169,11 @@ fctName, fctText)
             x2 <- x[indexT1a]
             y2 <- y[indexT1a]
             
+            print(c(cVal, dVal))
             beVec <- find.be2(x2, y2, cVal, dVal)
+# These lines are not needed as the b and e parameters are not used in further calculations
+#            bVal <- ifelse(notFixed[1], beVec[1], fixed[1])
+#            eVal <- ifelse(notFixed[4], beVec[2], fixed[4] / doseScaling)
             bVal <- beVec[1]
             eVal <- beVec[2]
             
@@ -252,40 +298,38 @@ fctName, fctText)
     }
 
 
-    ## Setting the limits
-    if (length(lowerc) == numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    ## Setting the limits
+#    if (length(lowerc) == numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
   
     ## The three definitions below are not needed in future ('drm')
 
-    ## Defining parameter to be scaled
-    if (is.na(fixed[4]))  #  (scaleDose) && (is.na(fixed[4])) ) 
-    {
-        scaleInd <- sum(is.na(fixed[1:4]))
-    } else {
-        scaleInd <- NULL
-    }
-    ## Defining value for control measurements (dose=0)
-    confct <- function(drcSign)
-    {
-        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
-        confct2 <- function(parm)
-        { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
-            parmMat[, notFixed] <- parm
-            parmMat[, conPos]
-        }
-        return(list(pos=conPos, fct=confct2))
-    }
-    ## Defining flag to indicate if more general ANOVA model
-#    anovaYes <- list(bin = !any(is.na(fixed[c(2,3,5)])) , cont = TRUE)
-    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
-    if (is.na(binVar)) {binVar <- FALSE}
-    if (!binVar) {binVar <- NULL}
-    anovaYes <- list(bin = binVar, cont = TRUE)
-    
-
+#    ## Defining parameter to be scaled
+#    if (is.na(fixed[4]))  #  (scaleDose) && (is.na(fixed[4])) ) 
+#    {
+#        scaleInd <- sum(is.na(fixed[1:4]))
+#    } else {
+#        scaleInd <- NULL
+#    }
+#    ## Defining value for control measurements (dose=0)
+#    confct <- function(drcSign)
+#    {
+#        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
+#        confct2 <- function(parm)
+#        { 
+#            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+#            parmMat[, notFixed] <- parm
+#            parmMat[, conPos]
+#        }
+#        return(list(pos=conPos, fct=confct2))
+#    }
+#    ## Defining flag to indicate if more general ANOVA model
+##    anovaYes <- list(bin = !any(is.na(fixed[c(2,3,5)])) , cont = TRUE)
+#    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
+#    if (is.na(binVar)) {binVar <- FALSE}
+#    if (!binVar) {binVar <- NULL}
+#    anovaYes <- list(bin = binVar, cont = TRUE)
 
     ## Defining the ED function
     edfct <- function(parm, respl, reference, type, ...)
@@ -333,26 +377,26 @@ fctName, fctText)
 #        return(list(SIpair, SIder1, SIder2))
 #    }
     
-if (FALSE)
-{    
-    ## Identifying parameters that are on the same scale as x and y 
-    ##  not used in 'multdrc', but in 'drm'
-    if (is.na(fixed[4]))
-    {
-        sxInd <- sum(is.na(fixed[1:4]))  # sxInd <- c(4)
-    } else {
-        sxInd <- NULL
-    }
-    if ( (is.na(fixed[2])) || (is.na(fixed[3])) )
-    {
-        syInd <- c(sum(is.na(fixed[1:2])), sum(is.na(fixed[1:3])))  # syInd <- c(2, 3)
-        if (syInd[2] == 0) {syInd <- syInd[1]}
-        if (syInd[1] == 0) {syInd <- syInd[2]}
-        if (is.na(syInd)) {syInd <- NULL}
-    } else {
-        syInd <- NULL
-    }
-}    
+#if (FALSE)
+#{    
+#    ## Identifying parameters that are on the same scale as x and y 
+#    ##  not used in 'multdrc', but in 'drm'
+#    if (is.na(fixed[4]))
+#    {
+#        sxInd <- sum(is.na(fixed[1:4]))  # sxInd <- c(4)
+#    } else {
+#        sxInd <- NULL
+#    }
+#    if ( (is.na(fixed[2])) || (is.na(fixed[3])) )
+#    {
+#        syInd <- c(sum(is.na(fixed[1:2])), sum(is.na(fixed[1:3])))  # syInd <- c(2, 3)
+#        if (syInd[2] == 0) {syInd <- syInd[1]}
+#        if (syInd[1] == 0) {syInd <- syInd[2]}
+#        if (is.na(syInd)) {syInd <- NULL}
+#    } else {
+#        syInd <- NULL
+#    }
+#}    
     
     ## Defining the inverse function
     invfct <- function(y, parm) 
@@ -370,11 +414,12 @@ if (FALSE)
     ## Returning the function with self starter and names
     returnList <- 
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx,
-    edfct = edfct, inversion = invfct,
-    scaleInd = scaleInd, confct=confct, anovaYes=anovaYes, lowerc=lowerLimits, upperc=upperLimits,
+    edfct = edfct, inversion = invfct, scaleFct = scaleFct,
+#    scaleInd = scaleInd, confct=confct, anovaYes=anovaYes, lowerc=lowerLimits, upperc=upperLimits,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Log-logistic (ED50 as parameter)", fctText), 
-    noParm = sum(is.na(fixed)), lowerAs = lowerAs, upperAs = upperAs, monoton = monoton)
+    noParm = sum(is.na(fixed)), lowerAs = lowerAs, upperAs = upperAs, monoton = monoton,
+    retFct = retFct, fixed = fixed)
     # the 4th last line is not needed in the future ('drm')
     #     , sxInd = sxInd, syInd = syInd,    
     

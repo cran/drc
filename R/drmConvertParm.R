@@ -6,7 +6,7 @@ function(startVec, startMat, factor1, colList)
 #    print(factor1)
     if (length(unique(factor1)) == 1) {return(startVec)}
     
-    mmat <- (model.matrix(~factor(factor1) - 1))
+    mmat <- model.matrix(~factor(factor1) - 1)
 #    print(dim(mmat))
         
     pm <- list()

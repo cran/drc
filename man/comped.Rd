@@ -63,18 +63,18 @@
 \examples{
 
 ## Fitting the model
-S.alba.m1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
-pmodels=data.frame(Herbicide,1,1,Herbicide), adjust="bc1") 
+S.alba.m1 <- boxcox(drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
+pmodels=data.frame(Herbicide,1,1,Herbicide)), method = "anova") 
 
 ## Displaying estimated ED values
 ED(S.alba.m1, c(10, 90))
 
 ## Making comparisons of ED10 and ED90
-comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator="/")
+comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator = "/")
 
-comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator="/", interval=FALSE)
+comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator = "/", interval = FALSE)
 
-comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator="-")
+comped(c(21.173, 44.718), c(11.87, 8.42), log=FALSE, operator = "-")
 
 }
 \keyword{models}

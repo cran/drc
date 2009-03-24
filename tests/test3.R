@@ -16,8 +16,8 @@ row.names = as.integer(c(1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 19, 20, 21, 22, 23, 24,
 35, 36, 37, 38, 39, 40)), 
 class = "data.frame")
 
-m1 <- drm(response~conc, data=dat1, fct=l4())
-m2 <- drm(response~conc, data=dat1, fct=l4(), adjust="vp")  # huge standard errors
+m1 <- drm(response~conc, data=dat1, fct=LL.4())
+#m2 <- drm(response~conc, data=dat1, fct=LL.4(), adjust="vp")  # huge standard errors
 
 
 ## Second dataset
@@ -33,5 +33,5 @@ row.names = as.integer(c(49, 50, 51, 52, 53, 54, 55, 56, 65,
 66, 67, 68, 69, 70, 71, 72, 81, 82, 83, 84, 85, 86, 87, 88)), 
 class = "data.frame")
 
-m3 <- drm(response~conc, data=dat2, fct=l4())
-m4 <- drm(response~conc, data=dat2, fct=l4(), adjust="vp")  # huge standard errors
+m3 <- drm(response~conc, data=dat2, fct=LL.4())
+#m4 <- drm(response~conc, data=dat2, fct=LL.4(), adjust="vp")  # huge standard errors

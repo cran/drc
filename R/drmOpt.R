@@ -1,6 +1,7 @@
 "drmOpt" <- 
 function(opfct, opdfct1, startVec, optMethod, constrained, warnVal, 
-upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, traceVal, silentVal = TRUE) 
+upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, traceVal, silentVal = TRUE)
+## propagate "silentVal" from calling function? 
 {
     ## Controlling the warnings
     options(warn = warnVal)   
@@ -38,7 +39,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
             if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
             return(list(call = callDetail, parNames = parmVec, startVal = startVec, convergence = FALSE))
         }
-        if (!hes) {nlsFit$hessian <- opdfct2(parmVal)}
+        if (!hes) {nlsFit$hessian <- opdfct2(nlsFit$par)}
 
     ## Derivatives are not used
     } else {  
@@ -59,7 +60,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 #            psVec[psVec<1e-4] <- 1
 
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = optMethod, 
-            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)) , silent = silentVal)
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)))  #, silent = silentVal)
 #            nlsObj0 <- try(optim(startVec, opfct, method=optMethod, 
 #            control=list(maxit=maxIt, reltol=relTol, parscale=psVec)), silent=TRUE)
 #            nlsObj <- try(optim(nlsObj0$par, opfct, hessian=TRUE, method=optMethod, 
@@ -80,7 +81,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
             }
 
             callDetail <- match.call()
-            if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
+            if (is.null(callDetail$fct)) {callDetail$fct <- substitute(LL.4())}
             return(list(call = callDetail, parNames = parmVec, startVal = startVec, convergence = FALSE))
         }
     }}

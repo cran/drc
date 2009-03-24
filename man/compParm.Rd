@@ -28,7 +28,7 @@ compParm(object, strVal, operator = "/", od = FALSE)
 
 \details{
   The function compares actual parameter estimates, and therefore the results depend on the parameterisation used. Probably it is most useful
-  in combination with 'collapse' arguments (in \code{\link{multdrc}}) that are data frames or lists with formulas without intercept (-1). 
+  in combination with 'collapse' arguments (in \code{\link{drm}}) that are data frames or lists with formulas without intercept (-1). 
 }
 
 \author{Christian Ritz}

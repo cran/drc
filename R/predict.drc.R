@@ -24,7 +24,14 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     if (lenCN > 1)
     {
         indVec <- indVec[as.character(newdata[, 2])]
-        pm <- parmMat[, as.character(newdata[, 2])]  # 'as.character' used to suppress factor levels            
+        
+        groupLevels <- newdata[, 2]
+        if (!all(is.numeric(groupLevels)))
+        {
+            pm <- parmMat[, as.character(groupLevels)]  # 'as.character()' used to suppress factor levels            
+        } else {
+            pm <- parmMat[, groupLevels]
+        }
     } else {
         lenDV <- length(doseVec)
         indVec <- rep(1, lenDV)
@@ -37,7 +44,7 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     {
         naVec[i] <- any(is.na(parmMat[, i]))
     }
-    parmMat <- parmMat[, !naVec, drop=FALSE] 
+    parmMat <- parmMat[, !naVec, drop = FALSE] 
 
     ## Constructing variance-covariance matrix
     sumObj <- summary(object, od = od)

@@ -1,0 +1,43 @@
+## Changes in DRC
+
+2009-03-19: The argument "conLevel" has a more sensible default (no longer hardcorded at 0.01). The argument "xsty" has been introduced to control the arrangement of tick marks on the dose axis. 
+
+2009-03-17: The function yieldLoss() has been included to handle a different parameterization of the Michaelis-Menten model
+(after a suggestion from Andrew Kniss).
+
+2009-03-11: The argument "fctList" has been removed from drm().
+
+2009-03-06: mixture() has been completely revised with a lot of changes to the arguments. 
+The model function richards() has been removed as it is simply a different parameterization of the five-parameter log-logistic model. colFct() has also been removed.
+
+2009-03-04: A new function modelFit() has been introduced for assessing the model fit, partly replacing the anova method.
+
+2009-02-27: Bug in mselect() has been fixed (reported by John Lewis).
+
+2009-02-25: Bug in boxcox.drc has been fixed. Moreover, this method has been extended to include functionality previously available through drm().
+
+2009-02-19: multdrc() and associated mdControl have been taken completely out of use. drm() has been improved w.r.t. handling extremely small or large dose or response values. Arguments "lowerc" and "upperc" have been removed in model functions as they were redundant.
+
+2009-02-13: Argument "ci" renames into "interval" in ED().
+
+2009-02-12: Bug in predict.drc fixed (thanks to Mario D'Antuono).
+
+2009-02-09: Redundant encoding removed. Argument "fixed" added to BC.4() and BC.5() (thanks to Nina Cedergreen).
+
+2008-12-02: Dataset "H.virescens" added. Asymptotic regression and exponential
+decay implemented differently.
+
+2008-11-26: "lnormal" function has been added plus three new datasets.
+
+2008-11-18: "gompertz" function has been added.
+
+2008-11-13: Error in level argument in plot method has been fixed.
+
+2008-11-03 Datasets 'lepidium' and 'nasturtium' have been added.
+
+2008-10-31: Bug in 'level' argument in plot method has been fixed.
+
+2008-10-02: New function mrdrm() for model-robust modelling included. Accompanying ED and
+predict methods also added. 
+
+2008-09-30: lettuce dataset got correct row numbers

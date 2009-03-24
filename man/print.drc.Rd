@@ -26,11 +26,12 @@
 
 \examples{
 
-model1<-multdrc(ryegrass)
-print(model1)
-model1  # gives the same output as the previous line
+## Fitting a four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~conc, data = ryegrass, fct = LL.4())
 
-rm(model1)
+## Displaying the model fit
+print(ryegrass.m1)
+ryegrass.m1  # gives the same output as the previous line
 
 }
 \keyword{models}

@@ -46,7 +46,7 @@
 \author{Christian Ritz}
 
 \note{
-  This function is for use with the function \code{\link{multdrc}}.
+  This function is for use with the function \code{\link{drm}}.
 }
 
 \seealso{
@@ -58,13 +58,14 @@
 
 ## Fitting a two-parameter logistic model 
 ##  to binomial responses (a logit model)
-model1 <- multdrc(number/total~dose, weights=total, 
-data=earthworms, fct = LL.2(), type = "binomial")
-plot(model1)  # not fitting at the upper limit!
+earthworms.m1 <- drm(number/total~dose, weights=total, 
+data = earthworms, fct = LL.2(), type = "binomial")
+
+plot(earthworms.m1)  # not fitting at the upper limit!
 
 }
 
 \keyword{models}
 \keyword{nonlinear}
 
-\concept{Hill 2-parameter two-parameter}
+\concept{Hill logit 2-parameter two-parameter}

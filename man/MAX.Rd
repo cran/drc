@@ -5,22 +5,24 @@
 \title{Maximum mean response}
 
 \description{
-  'MAX' estimates the maximum mean response and the dose at which it occurs.
+  \code{MAX} estimates the maximum mean response and the dose at which it occurs.
 }
 
 \usage{
-MAX(object, upper = 1000, interval = c(1e-3, 1000))
+MAX(object, lower = 1e-3, upper = 1000)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
+  \item{lower}{numeric. Lower limit for bisection method. Need to be smaller than EDx level to be calculated.}  
   \item{upper}{numeric. Upper limit for bisection method. Need to be larger than EDx level to be calculated.}
-  \item{interval}{numeric vector of length 2 specifying the interval wherein the dose resulting in 
-  the maximum hormesis response is to be found.}
 }
 
 \details{
-  This function is only implemented for the built-in functions of class 'braincousens' and 'mlogistic'.
+  This function is only implemented for the built-in functions of class \code{\link{braincousens}} and 
+  \code{\link{cedergreen}}.
+  
+  This function was used for obtaining the results on hormesis effect size reported in Cedergreen et al. (2005).
 }
 
 \value{
@@ -29,7 +31,10 @@ MAX(object, upper = 1000, interval = c(1e-3, 1000))
   and one containing the corresponding maximum response.
 }
 
-%\references{ ~put references to the literature/web site here ~ }
+\references{
+  Cedergreen, N. and Ritz, C. and Streibig, J. C. (2005) Improved empirical models describing hormesis, 
+  \emph{Environmental Toxicology and Chemistry} \bold{24}, 3166--3172. 
+}
 
 \author{Christian Ritz}
 
@@ -39,7 +44,10 @@ MAX(object, upper = 1000, interval = c(1e-3, 1000))
 
 \examples{
 
-lettuce.m1 <- drm(lettuce[,c(2,1)], fct=CRS.4c())
+## Fitting a Cedergreen-Ritz-Streibig model
+lettuce.m1 <- drm(weight~conc, data = lettuce, fct = CRS.4c())
+
+## Finding maximum average response and the corrresponding dose
 MAX(lettuce.m1)
 
 }

@@ -46,14 +46,14 @@
 
 \author{Christian Ritz and Jens C. Streibig}
 
-\note{This function is for use with the function \code{\link{multdrc}}.}
+\note{This function is for use with the function \code{\link{drm}}.}
 
 \seealso{Setting \eqn{c=0} yields \code{\link{LL.3}}. See also \code{\link{LL.5}}.}
 
 \examples{
 
-model1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach, fct=LL.4())
-model1
+spinach.m1 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
+spinach.m1
 
 rm(model1)
 

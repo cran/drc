@@ -41,37 +41,35 @@
 \examples{
 
 ## Fitting the model with freely varying ED50 values
-acidiq.mfree <- drm(rgr~dose, pct, data=acidiq, fct = LL.4(),
-pmodels = list(~factor(pct),~1,~1,~factor(pct) - 1), 
-adjust = "bc1")
+## Ooops: Box-Cox transformation is needed
+acidiq.free <- drm(rgr ~ dose, pct, data = acidiq, fct = LL.4(),
+pmodels = list(~factor(pct), ~1, ~1, ~factor(pct) - 1))
 
 ## Lack-of-fit test
-anova(acidiq.mfree)
-summary(acidiq.mfree)
+modelFit(acidiq.free)
+summary(acidiq.free)
 
 ## Plotting isobole structure
-isobole(acidiq.mfree, exchange=0.1, xlim=c(0, 400), ylim=c(0,45))
+isobole(acidiq.free, exchange = 0.1, xlim = c(0, 400), ylim = c(0,45))
 
 ## Fitting the concentration addition model
-acidiq.mca <- mixture(rgr~dose, pct, data=acidiq, fct = LL.4(), 
-collapse=~factor(pct), model="CA", boxcox=TRUE)
+acidiq.ca <- mixture(acidiq.free, model = "CA")
 
 ## Comparing to model with freely varying e parameter
-anova(acidiq.mca, acidiq.mfree)  # rejected
+anova(acidiq.ca, acidiq.free)  # rejected
 
-## Plotting isobole based on concentration addition
-isobole(acidiq.mfree, acidiq.mca, exchange=0.1, xlim=c(0, 420), ylim=c(0,45))  # poor fit
+## Plotting isobole based on concentration addition -- poor fit
+isobole(acidiq.free, acidiq.ca, exchange = 0.1, xlim = c(0, 420), ylim = c(0,45))  # poor fit
 
 ## Fitting the Hewlett model
-acidiq.mhew <- mixture(rgr~dose, pct, data=acidiq, fct = LL.4(), 
-collapse=~factor(pct), model="Hewlett", boxcox=TRUE)
+acidiq.hew <- mixture(acidiq.free, model = "Hewlett")
 
 ## Comparing to model with freely varying e parameter
-anova(acidiq.mfree, acidiq.mhew)  # accepted
-summary(acidiq.mhew)
+anova(acidiq.free, acidiq.hew)  # accepted
+summary(acidiq.hew)
 
-## Plotting isobole based on concentration addition
-isobole(acidiq.mfree, acidiq.mhew, exchange=0.1, xlim=c(0, 400), ylim=c(0,45))  # good fit
+## Plotting isobole based on the Hewlett model
+isobole(acidiq.free, acidiq.hew, exchange = 0.1, xlim = c(0, 400), ylim = c(0,45))  # good fit
 
 }
 \keyword{datasets}

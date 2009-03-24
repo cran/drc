@@ -39,7 +39,7 @@
 
 nasturtium.m1 <- drm(weight~conc, data=nasturtium, fct = LL.3())
 
-anova(nasturtium.m1)
+modelFit(nasturtium.m1)
 
 plot(nasturtium.m1, type = "all", log = "", xlab = "Concentration (g/ha)", ylab = "Weight (mg)")
 }

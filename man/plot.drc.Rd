@@ -14,7 +14,8 @@
   
   \method{plot}{drc}(x, ..., level = NULL, broken = FALSE, col = FALSE, 
   conLevel, conName, gridsize = 100, legend, legendText, legendPos, legendCex = 1,
-  type = "average", obs, lty, log = "x", cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1,
+  type = c("average", "all", "bars", "none", "obs"), obs, lty, log = "x", xsty = c("base10", "none"), 
+  cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1,
   bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL,
   add = FALSE, axes = TRUE)
 
@@ -29,7 +30,10 @@
   \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
   (using functionality in the CRAN package 'plotrix').}
   \item{col}{either logical or a vector of colours. If TRUE default colours are used. If FALSE (default) no colours are used.}  
-  \item{conLevel}{numeric. Dose level below which the dose is zero (the amount of stretching on the x-axis above zero). Default is 1e-2.}
+  \item{conLevel}{numeric specifying the dose level below which the dose is zero (the amount of stretching on 
+  the dose axis above zero in order to create the visual illusion of a logarithmic scale including 0). 
+  The default is the base-10 value corresponding to the rounded value of the minimum of the log10 values of 
+  all positive dose values.}
   \item{conName}{character string. Name on x axis for dose zero. Default is '"0"'.}
   \item{gridsize}{numeric. Number of points in the grid used for plotting the fitted curves.}
   \item{legend}{logical. If TRUE a legend is displayed.}
@@ -37,7 +41,7 @@
   (the position of the upper right corner of the legend box).}
   \item{legendPos}{numeric vector of length 2 giving the position of the legend.}
   \item{legendCex}{numeric specifying the legend text size.}
-  \item{type}{a character string specifying how the originals observations should be plotted. There are currently
+  \item{type}{a character string specifying how to plot the data. There are currently
   5 options:  "average" (averages and fitted curve(s); default), 
   "none" (only the fitted curve(s)), "obs" (only the data points), 
   "all" (all data points and fitted curve(s)) and 
@@ -46,6 +50,9 @@
   \item{lty}{a numeric vector specifying the line types.}
   \item{log}{a character string which contains '"x"' if the x axis is to be logarithmic, '"y"' if the y axis is to be logarithmic and '"xy"' or
   '"yx"' if both axes are to be logarithmic. The default is "x". The empty string "" yields the original axes.}
+  \item{xsty}{a character string specifying the dose axis style for arrangement of tick marks. By default ("base10") 
+  only base 10 tick marks are shown, unless too few tick marks are available in which case "none" applies 
+  (if the range of doses applied is narrow). The choice "none" seeks to provide a sensible set of tick marks.}
   \item{cex}{numeric or numeric vector specifying the size of plotting symbols and text 
   (see \code{\link{par}} for details).}
   \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
@@ -93,7 +100,7 @@
 
 \author{
   Christian Ritz and Jens C. Streibig
-  Contributions from: Xiaoyan Wang  
+  Contributions from Xiaoyan Wang  
 }
 
 %\note{ ~~further notes~~ }
@@ -113,8 +120,9 @@ plot(ryegrass.m1, broken = TRUE)
 plot(ryegrass.m2, broken = TRUE, add = TRUE, type = "none", col = 2, lty = 2)
 
 ## Finetuning the axis break
-plot(ryegrass.m1, conLevel = 0.1, broken = TRUE)
-plot(ryegrass.m1, conLevel = 0.1, broken = TRUE, bcontrol = list(style = "zigzag"))
+plot(ryegrass.m1, broken = TRUE, bcontrol = list(style = "gap"))
+plot(ryegrass.m1, broken = TRUE, bcontrol = list(style = "slash"))
+plot(ryegrass.m1, broken = TRUE, bcontrol = list(style = "zigzag"))
 
 ## Plot without axes
 plot(ryegrass.m1, axes = FALSE)

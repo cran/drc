@@ -44,15 +44,15 @@
 }
 
 \author{Christian Ritz}
-\note{This function is for use with the function \code{\link{multdrc}}.}
+
+\note{This function is for use with the function \code{\link{drm}}.}
 
 \seealso{Related functions are \code{\link{LL.4}} and \code{\link{LL.3}}.}
+
 \examples{
 
-model1 <- multdrc(ryegrass, fct = LL.5())
-summary(model1)
-
-rm(model1)
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.5())
+summary(ryegrass.m1)
 
 }
 

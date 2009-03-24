@@ -90,18 +90,18 @@ fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)  #, 
 
         ## Derivative obtained using 
         ## deriv(~c+(d-c)*exp(-exp(b*(dose-e))), c("dose"), function(dose, b,c,d,e){})
-        dFct <- function(dose, b, c, d, e) 
+        dFct <- function(x, b, c, d, e) 
         {
             .expr1 <- d - c
-            .expr4 <- exp(b * (dose - e))
+            .expr4 <- exp(b * (x - e))
             .expr6 <- exp(-.expr4)
             .value <- c + .expr1 * .expr6
-            .grad <- array(0, c(length(.value), 1L), list(NULL, c("dose")))
-            .grad[, "dose"] <- -(.expr1 * (.expr6 * (.expr4 * b)))
+            .grad <- array(0, c(length(.value), 1L), list(NULL, c("x")))
+            .grad[, "x"] <- -(.expr1 * (.expr6 * (.expr4 * b)))
             attr(.value, "gradient") <- .grad
             .value
         }    
-        attr(dFct(dose, parmMat[, 1], parmMat[, 2], parmMat[, 3], parmMat[, 4]), "gradient")
+        attr(dFct(x, parmMat[, 1], parmMat[, 2], parmMat[, 3], parmMat[, 4]), "gradient")
     }
 
     ## Defining the ED function

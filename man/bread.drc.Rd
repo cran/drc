@@ -36,7 +36,7 @@
 
 \author{Christian Ritz}
 
-\note{}
+%\note{}
 
 \seealso{For other applications see \code{\link[sandwich]{sandwich}}.}
 

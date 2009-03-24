@@ -26,7 +26,7 @@
 }
 
 \source{
-  Cedergreen N. (2004) Unpublished bioassay data.
+  Cedergreen N. (2004). Unpublished bioassay data.
 }
 
 \examples{
@@ -40,7 +40,7 @@ summary(terbuthylazin.m1)
 
 ## Fitting log-logistic model
 ##  with Box-Cox transformation
-terbuthylazin.m2 <- drm(rgr~dose, data = terbuthylazin, fct = LL.4(), adjust = "bc1")
+terbuthylazin.m2 <- boxcox(terbuthylazin.m1, method = "anova")
 summary(terbuthylazin.m2)
 
 }

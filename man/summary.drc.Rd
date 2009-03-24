@@ -11,7 +11,6 @@
 \usage{
 
   \method{summary}{drc}(object, od = FALSE, ...)
-
 }
 
 \arguments{
@@ -23,13 +22,14 @@
 \value{
   A list of summary statistics, including parameter estimates and estimated standard errors, of the fitted 'drc' model given by \code{object}.
 }
+
 \author{Christian Ritz}
 
-\examples{
-
-spinach.m1 <- multdrc(SLOPE~DOSE, CURVE, data = spinach)
-summary(spinach.m1)
-
+\note{
+  Examples on usage are for instance found in the help pages of \code{\link{ryegrass}} and \code{\link{secalonic}}.
 }
+
+%\examples{}
+
 \keyword{models}
 \keyword{nonlinear}

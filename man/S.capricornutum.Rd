@@ -36,13 +36,13 @@
 \examples{
 
 ## Fitting 3-parameter log-normal model
-s.cap.m1 <- drm(count~conc, data=S.capricornutum, fct=LN.3())
+s.cap.m1 <- drm(count ~ conc, data = S.capricornutum, fct = LN.3())
 
 ## Residual plot
 plot(fitted(s.cap.m1), residuals(s.cap.m1))
 
 ## Fitting model with transform-both-sides approach
-s.cap.m2 <- drm(count~conc, data=S.capricornutum, fct=LN.3(), adjust="bc1")
+s.cap.m2 <- boxcox(s.cap.m1, method = "anova")
 summary(s.cap.m2)
 
 ## Residual plot after transformation (looks better)
@@ -55,8 +55,9 @@ ED(s.cap.m2, c(10, 20, 50), ci="delta")
 ED(s.cap.m2, c(10, 20, 50), ci="fls")
 
 ## Fitting model with ED50 as parameter
-s.cap.m3<-drm(count~conc, data=S.capricornutum, fct=LN.3(loge=FALSE), adjust="bc1")
-ED(s.cap.m3, c(10, 20, 50), ci="delta")
+## (for comparison)
+s.cap.m3 <- drm(count ~ conc, data = S.capricornutum, fct = LN.3(loge=FALSE))
+ED(s.cap.m3, c(10, 20, 50), ci = "delta")
 
 }
 \keyword{datasets}

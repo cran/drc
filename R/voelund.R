@@ -1,13 +1,13 @@
-"voelund" <- function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA, NA, NA, NA), 
-                 names=c("b","c","d","e","f","g","h"), useDer = FALSE)
+"voelund" <- function(fixed = c(NA, NA, NA, NA, NA, NA, NA), 
+names = c("b", "c", "d", "e", "f", "g", "h"), eps = 1e-10)  # , useDer = FALSE)
 {
     ## Checking arguments
     numParm <- 7
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct 'fixed' argument")}    
 
-    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
-    if (useDer) {stop("Derivatives not available")}
+#    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
+#    if (useDer) {stop("Derivatives not available")}
 
     notFixed <- is.na(fixed)
     parmVec <- rep(0, numParm)
@@ -34,26 +34,30 @@
         loge[!is.finite(parmMat[, 4])] <- log(parmMat[!is.finite(parmMat[, 4]), 5])
         loge[!is.finite(parmMat[, 5])] <- log(parmMat[!is.finite(parmMat[, 5]), 4])
         
-        parmMat[, 2]+(parmMat[, 3]-parmMat[, 2])/(1+exp(parmMat[, 1]*(log(dose)-loge)))
+#        parmMat[, 2]+(parmMat[, 3]-parmMat[, 2])/(1+exp(parmMat[, 1]*(log(dose)-loge)))
+        retVec <- parmMat[, 2]+(parmMat[, 3]-parmMat[, 2])/(1+exp(parmMat[, 1]*(log(dose)-loge)))
+        ## Handling the case dose=0 where "loge" may become NaN due to the mixture encoding (pct in glymet)
+        retVec[dose < eps] <- parmMat[dose < eps, 3]
+        retVec        
     }
 
 
-    ## Defining value for control measurements (dose=0)
-    confct <- function(drcSign)
-    {
-        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
-        confct2 <- function(parm)
-        { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
-            parmMat[, notFixed] <- parm
-            parmMat[, conPos]
-        }
-        return(list(pos=conPos, fct=confct2))
-    }
+#    ## Defining value for control measurements (dose=0)
+#    confct <- function(drcSign)
+#    {
+#        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
+#        confct2 <- function(parm)
+#        { 
+#            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+#            parmMat[, notFixed] <- parm
+#            parmMat[, conPos]
+#        }
+#        return(list(pos=conPos, fct=confct2))
+#    }
 
 
-    ## Defining flag to indicate if more general ANOVA model
-    anovaYes <- FALSE
+#    ## Defining flag to indicate if more general ANOVA model
+#    anovaYes <- FALSE
 
 
     ## Defining the self starter function
@@ -98,22 +102,26 @@
     deriv2 <- NULL
 
 
-    ## Limits
-    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
-
+#    ## Limits
+#    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
     ## Defining the ED function
     edfct <- NULL
 
-
     ## Defining the SI function
     sifct <- NULL
 
+    ## Scale function
+    scaleFct <- function(doseScaling, respScaling)
+    {        
+        c(1, respScaling, respScaling, doseScaling, doseScaling, 1, 1)[notFixed]
+    }
 
     returnList <- 
-    list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, 
-    lowerc=lowerLimits, upperc=upperLimits, edfct=edfct, sifct=sifct,
+    list(fct=fct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, 
+#    lowerc=lowerLimits, upperc=upperLimits, confct=confct, anovaYes=anovaYes, 
+    edfct=edfct, sifct=sifct,
     name = "voelund",
     text = "Voelund mixture", 
     noParm = sum(is.na(fixed)))

@@ -60,7 +60,9 @@
 
 \author{Christian Ritz}
 
-\note{This function is for use with the function \code{\link{drm}} or \code{\link{multdrc}}.}
+\note{
+  This function is for use with the function \code{\link{drm}}.
+}
 
 \seealso{
   Similar functions are \code{\link{CRS.5a}} and \code{\link{UCRS.5a}}, 
@@ -68,18 +70,18 @@
 
 \examples{
 
-## Modified logistic model
-lettuce.m1 <- drm(lettuce[,c(2,1)], fct=CRS.4a())
-summary(lettuce.m1)
-ED(lettuce.m1, c(50))
+## Fitting modified logistic models
+lettuce.crsm1 <- drm(lettuce[,c(2,1)], fct=CRS.4a())
+summary(lettuce.crsm1)
+ED(lettuce.crsm1, c(50))
 
-lettuce.m2 <- drm(lettuce[,c(2,1)], fct=CRS.4b())
-summary(lettuce.m2)
-ED(lettuce.m2, c(50))
+lettuce.crsm2 <- drm(lettuce[,c(2,1)], fct=CRS.4b())
+summary(lettuce.crsm2)
+ED(lettuce.crsm2, c(50))
 
-lettuce.m3 <- drm(lettuce[,c(2,1)], fct=CRS.4c())
-summary(lettuce.m3)
-ED(lettuce.m3, c(50))
+lettuce.crsm3 <- drm(lettuce[,c(2,1)], fct=CRS.4c())
+summary(lettuce.crsm3)
+ED(lettuce.crsm3, c(50))
 
 }
 \keyword{models}

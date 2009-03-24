@@ -1,5 +1,5 @@
 "MAX" <-
-function(object, upper = 1000, interval = c(1e-3, 1000))
+function(object, lower = 1e-3, upper = 1000)
 {
 #    typeStr <- "ED"
 #
@@ -130,7 +130,7 @@ function(object, upper = 1000, interval = c(1e-3, 1000))
         parmChosen <- parmMat[,i]
 
 #        print(parmChosen)
-        MAXmat[i, ] <- MAXlist(parmChosen, upper, interval)
+        MAXmat[i, ] <- MAXlist(parmChosen, lower, upper)
         dimNames[i] <- strParm[i]
     }
 

@@ -61,7 +61,7 @@ The a,b,c models are obtained by setting alpha equal to 1, 0.5 and 0.25, respect
 \author{Christian Ritz}
 
 \note{
-  This function is for use with the function \code{\link{drm}} or \code{\link{multdrc}}.  
+  This function is for use with the function \code{\link{drm}}.  
 }
 
 \seealso{

@@ -41,7 +41,6 @@
   \emph{Basic and Applied Ecology}, \bold{8}, 258--268.
 }
 
-\examples{
+%\examples{}
 
-}
 \keyword{datasets}

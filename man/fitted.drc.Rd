@@ -27,10 +27,8 @@
 
 \examples{
 
-model1 <- multdrc(ryegrass)
-plot(fitted(model1), residuals(model1))  # a residual plot
-
-rm(model1)
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
+plot(fitted(ryegrass.m1), residuals(ryegrass.m1))  # a residual plot
 
 }
 \keyword{models}

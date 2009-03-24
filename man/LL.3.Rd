@@ -67,7 +67,7 @@
 \author{Christian Ritz}
 
 \note{
-  This function is for use with the function \code{\link{multdrc}}.
+  This function is for use with the function \code{\link{drm}}.
 }
 
 \seealso{
@@ -78,8 +78,8 @@
 \examples{
 
 ## Fitting model with lower limit equal 0
-model1 <- multdrc(ryegrass, fct=LL.3())
-summary(model1)
+ryegrass.model1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.3())
+summary(ryegrass.model1)
 
 ## Fitting binomial response
 ##  with non-zero control response
@@ -93,14 +93,14 @@ treatment <- factor(c("w213","w213","w213","w213",
 finney.ex19 <- data.frame(logdose, n, r, treatment)
 
 ## Fitting model where the lower limit is estimated
-model2 <- multdrc(r/n~logdose, treatment, weights=n, data=finney.ex19, 
-logDose=10, fct=LL.3u(), type="binomial", 
-collapse=data.frame(treatment, 1, treatment))
+fe19.model1 <- drm(r/n~logdose, treatment, weights = n, data = finney.ex19, 
+logDose = 10, fct = LL.3u(), type="binomial", 
+pmodels = data.frame(treatment, 1, treatment))
 
-summary(model2)
-anova(model2)
-plot(model2, conLevel=-1, ylim=c(0.1, 1.3))
-abline(h=1, lty=2)
+summary(fe19.model1)
+modelFit(fe19.model1)
+plot(fe19.model1, conLevel = -1, ylim = c(0.1, 1.3))
+abline(h = 1, lty = 2)
 
 }
 

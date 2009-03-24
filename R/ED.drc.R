@@ -1,11 +1,11 @@
 ED <- function (object, ...) UseMethod("ED", object)
 
 "ED.drc" <-
-function(object, respLev, bound = TRUE, od = FALSE, ci = c("none", "delta", "fls", "tfls"), 
-level = ifelse(!(ci == "none"), 0.95, NULL), logBase = NULL, reference = c("control", "upper"), 
-type = c("relative", "absolute"), display = TRUE, ...)
+function(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
+level = ifelse(!(interval == "none"), 0.95, NULL), reference = c("control", "upper"), 
+type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display = TRUE, logBase = NULL, ...)
 {
-    ci <- match.arg(ci)
+    interval <- match.arg(interval)
     reference <- match.arg(reference)
     type <- match.arg(type)
     
@@ -185,15 +185,15 @@ type = c("relative", "absolute"), display = TRUE, ...)
             dEDval <- EDeval[[2]]
             
             oriMat[rowIndex, 1] <- EDval
-            oriMat[rowIndex, 2] <- sqrt(dEDval%*%varCov%*%dEDval)
+            oriMat[rowIndex, 2] <- sqrt(dEDval %*% varCov %*% dEDval)
                    
             if (!is.null(logBase))
             {
                 EDval <- logBase^(EDval)                
-                dEDval <- EDval*log(logBase)*dEDval
+                dEDval <- EDval * log(logBase) * dEDval
             }
             EDmat[rowIndex, 1] <- EDval
-            EDmat[rowIndex, 2] <- sqrt(dEDval%*%varCov%*%dEDval)
+            EDmat[rowIndex, 2] <- sqrt(dEDval %*% varCov %*% dEDval)
 
 #            dimNames[rowIndex] <- paste(strParm[i], ":", percVec[j], sep="")
             dimNames[rowIndex] <- paste(strParm[i], respLev[j], sep = "")
@@ -211,7 +211,7 @@ type = c("relative", "absolute"), display = TRUE, ...)
         qFct <- qnorm
     }
 
-    if (ci == "delta")
+    if (interval == "delta")
     {
         ciMat <- matrix(0, lenEB*lenPV, 2)
         tquan <- qFct(1 - (1 - level)/2)        
@@ -222,7 +222,7 @@ type = c("relative", "absolute"), display = TRUE, ...)
         colNames <- c(colNames, "Lower", "Upper")
         ciLabel <- "Delta method"
     }
-    if (ci == "tfls")
+    if (interval == "tfls")
     {
         lsVal <- log(oriMat[, 1])
         lsdVal <- oriMat[, 2]/oriMat[, 1]
@@ -235,7 +235,7 @@ type = c("relative", "absolute"), display = TRUE, ...)
         ciLabel <- "To and from log scale"       
     }
 #    if ( (!is.null(logBase)) && (ci == "fls") )
-    if (ci == "fls")
+    if (interval == "fls")
     {        
         ciMat <- matrix(0, lenEB*lenPV, 2)
         tquan <- qFct(1 - (1 - level)/2) 
@@ -256,13 +256,17 @@ type = c("relative", "absolute"), display = TRUE, ...)
         colNames <- c( colNames[-2], "Lower", "Upper")
         ciLabel <- "From log scale"  
     }
-    if (!(ci == "none"))
+    if (!(interval == "none"))
     {
         EDmat <- as.matrix(cbind(EDmat, ciMat))
-    }    
+    } else {
+        ciLabel <- NULL
+    }   
     dimnames(EDmat) <- list(dimNames, colNames)
+    resPrint(EDmat, "Estimated effective doses", interval, ciLabel, display = display)
+    
+#    EDprint(EDmat, interval, ciLabel, display)
 
-    EDprint(EDmat, ci, ciLabel, display)
 #    ## Displaying the ED values
 #    if (display)
 #    {
@@ -277,4 +281,21 @@ type = c("relative", "absolute"), display = TRUE, ...)
 #        printCoefmat(EDmat)
 #    }
 #    invisible(EDmat)    
+}
+
+resPrint <- function(resMat, headerText, interval, intervalLabel, display)
+{
+    if (display)
+    {
+        cat("\n")
+        cat(paste(headerText, "\n", sep = ""))
+        if (!identical(interval, "none")) 
+        {
+            intervalText <- paste("(", intervalLabel, "-based confidence interval(s))\n", sep = "")
+            cat(intervalText)
+        }
+        cat("\n")         
+        printCoefmat(resMat)
+    }
+    invisible(resMat)  
 }

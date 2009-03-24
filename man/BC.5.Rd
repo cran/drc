@@ -13,12 +13,14 @@
 }
 
 \usage{
-  BC.5(names = c("b", "c", "d", "e", "f"))
+  BC.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
 
-  BC.4(names = c("b", "d", "e", "f"))
+  BC.4(fixed = c(NA, NA, NA, NA), names = c("b", "d", "e", "f"))
 }
 
 \arguments{
+  \item{fixed}{numeric vector specifying which parameters are fixed and at which values they are fixed. 
+  NAs designate parameters that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
 }
 
@@ -44,27 +46,45 @@
 
   van Ewijk, P. H. and Hoekstra, J. A. (1993) 
   Calculation of the EC50 and its Confidence Interval When Subtoxic Stimulus Is Present,
-  \emph{ECOTOXICOLOGY AND ENVIRONMENTAL SAFETY}, \bold{25}, 25--32.  
+  \emph{Ecotoxicology and Environmental Safety}, \bold{25}, 25--32.  
 }
 
 \author{Christian Ritz}
 
-\note{This function is for use with the function \code{\link{drm}} or \code{\link{multdrc}}.}
+\note{This function is for use with the function \code{\link{drm}}.}
 
-%\seealso{The related function \code{\link{BC.4}}.}
+\seealso{
+  More details are found for the general model function \code{\link{braincousens}}.
+}
 
 \examples{
 
-lettuce.m1 <- drm(lettuce[,c(2,1)], fct=BC.5())
-anova(lettuce.m1)
-plot(lettuce.m1)
+## Fitting the data in van Ewijk and Hoekstra (1993)
+lettuce.bcm1 <- drm(weight ~ conc, data = lettuce, fct=BC.5())
+modelFit(lettuce.bcm1)
+plot(lettuce.bcm1)
 
-lettuce.m2 <- drm(lettuce[,c(2,1)], fct=BC.4())
-summary(lettuce.m2)
-ED(lettuce.m2, c(50))  # compare the parameter estimate and 
-                   # its estimated standard error 
-                   # to the values in the paper by 
-                   # van Ewijk and Hoekstra
+lettuce.bcm2 <- drm(weight ~conc, data = lettuce, fct=BC.4())
+summary(lettuce.bcm2)
+ED(lettuce.bcm2, c(50))  
+# compare the parameter estimate and 
+# its estimated standard error 
+# to the values in the paper by 
+# van Ewijk and Hoekstra (1993)
+
+
+## Brain-Cousens model with the constraint b>3
+ryegrass.bcm1 <- drm(rootl ~conc, data = ryegrass, fct = BC.5(), 
+lower = c(3, -Inf, -Inf, -Inf, -Inf), control = drmc(constr=TRUE))
+
+summary(ryegrass.bcm1)
+
+## Brain-Cousens model with the constraint f>0 
+## (no effect as the estimate of f is positive anyway)
+ryegrass.bcm2 <- drm(rootl ~conc, data = ryegrass, fct = BC.5(), 
+lower = c(-Inf, -Inf, -Inf, -Inf, 0), control = drmc(constr=TRUE))
+
+summary(ryegrass.bcm2)
 
 }
 \keyword{models}

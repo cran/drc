@@ -37,9 +37,7 @@
   and the parameter names.
 }
 
-\references{
-
-}
+%\references{}
 
 \author{Christian Ritz}
 
@@ -47,13 +45,9 @@
   This function is for use with the function \code{\link{drm}}.
 }
 
-\seealso{
+%\seealso{}
 
-}
+%\examples{}
 
-\examples{
-
-
-}
 \keyword{models}
 \keyword{nonlinear}

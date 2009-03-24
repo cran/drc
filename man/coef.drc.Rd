@@ -32,18 +32,9 @@
 
 \examples{
 
-model1 <- multdrc(ryegrass)
-coef(model1)
-
-model2 <- multdrc(ryegrass, boxcox = TRUE)
-summary(model2)  # not a satisfactory fit
-
-## Usinf estimates from 'model1' as start values
-model3 <- multdrc(ryegrass, boxcox = TRUE, 
-startVal = coef(model1))
-summary(model3)  # a satisfactory fit
-
-rm(model1, model2, model3)
+## Fitting a four-parameter log-logistic model
+ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
+coef(ryegrass.m1)
 
 }
 \keyword{models}

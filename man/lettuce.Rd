@@ -45,12 +45,13 @@ lettuce
 ## Monotonous dose-response model
 lettuce.m1 <- drm(weight~conc, data=lettuce, fct=LL.3())
 
-plot(lettuce.m1, broken =TRUE)
+plot(lettuce.m1, broken = TRUE)
 
 ## Model fit in van Ewijk and Hoekstra (1994)
 lettuce.m2 <- drm(weight~conc, data=lettuce, fct=BC.4())
+modelFit(lettuce.m2)
 
-plot(lettuce.m2, broken =TRUE, type = "fit", add = TRUE, lty = 2)
+plot(lettuce.m2, add = TRUE, broken = TRUE, type = "none", lty = 2)
 
 ## Hormesis effect only slightly significant
 summary(lettuce.m2)

@@ -42,39 +42,35 @@
 
 
 ## Fitting the model with freely varying ED50 values
-glymet.mfree <- drm(rgr~dose, pct, data = glymet, 
-fct = LL.3(), pmodels = list(~factor(pct),~1,~factor(pct) - 1),
-adjust = "bc1") 
-
+glymet.free <- drm(rgr~dose, pct, data = glymet, 
+fct = LL.3(), pmodels = list(~factor(pct) , ~1, ~factor(pct))) 
 
 ## Lack-of-fit test
-anova(glymet.mfree)  # not really acceptable
-summary(glymet.mfree)
+modelFit(glymet.free)  # acceptable
+summary(glymet.free)
 
 ## Plotting isobole structure
-isobole(glymet.mfree, exchange=0.01)
+isobole(glymet.free, exchange=0.01)
 
 ## Fitting the concentration addition model
-glymet.mca <- mixture(rgr~dose, pct, data = glymet, collapse = ~factor(pct), 
-fct = LL.3(), model = "CA", boxcox = TRUE)
+glymet.ca <- mixture(glymet.free, model = "CA")
 
 ## Comparing to model with freely varying e parameter
-anova(glymet.mca, glymet.mfree)  # borderline accepted
+anova(glymet.ca, glymet.free)  # borderline accepted
 
 ## Plotting isobole based on concentration addition
-isobole(glymet.mfree, glymet.mca, exchange=0.01)  # acceptable fit
+isobole(glymet.free, glymet.ca, exchange = 0.01)  # acceptable fit
 
 ## Fitting the Hewlett model
-glymet.mhew <- mixture(rgr~dose, pct, data = glymet, collapse = ~factor(pct), 
-fct = LL.3(), model = "Hewlett", boxcox = TRUE)
+glymet.hew <- mixture(glymet.free, model = "Hewlett")
 
-## Comparing to model with freely varying e parameter
-anova(glymet.mca, glymet.mhew)  
+### Comparing to model with freely varying e parameter
+anova(glymet.ca, glymet.hew)  
 # borderline accepted
 # the Hewlett model offers no improvement over concentration addition
 
-## Plotting isobole based on concentration addition
-isobole(glymet.mfree, glymet.mhew, exchange=0.01)  
+## Plotting isobole based on the Hewlett model
+isobole(glymet.free, glymet.hew, exchange = 0.01)  
 # no improvement over concentration addition
 
 }

@@ -614,7 +614,7 @@ EDprint <- function(EDmat, ci, ciLabel, display)
 }
 
 ## Calculating ED values for model-robust fits (only works for one curve)
-ED.mrdrc <- function(object, respLev, level = 0.95, interval = c("none", "approximate", "bootstrap"), 
+ED.mrdrc <- function(object, respLev, interval = c("none", "approximate", "bootstrap"), level = 0.95, 
 method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, display = TRUE, lower = NULL, upper = NULL, 
 intType = c("confidence", "prediction"), minmax = c("response", "dose"), n = 1000, seedVal = 200810311, ...)
 {
@@ -763,48 +763,48 @@ print.mrdrc <- function(x, ...)
 }
 
 
-mv <- function(n, edval = 50, seedVal = 200810151)
-{
-    set.seed(seedVal)
-
-    doseVec <- deguelin$dose
-    nVec <- deguelin$n
-    if (FALSE)
-    {
-#        sigmaVal <- exp.x.mr$
-#        lenData <- nrow()
-#        doseVec <- exp.x$conc       
-#        fittedVec <- fitted(exp.x.mr)          
-    }
-    edVec <- rep(NA, n)
-    lVec <- rep(NA, n)
-    for (i in 1:n)
-    {
-        if (TRUE)
-        {
-            rVec <- rbinom(length(nVec), nVec, fitted(deguelin.mr))
-            m1 <- try(drm(rVec/nVec ~ doseVec, weights = nVec, fct = LL.2(), type = "binomial", start = coef(deguelin.m1)), 
-            silent = TRUE)
-        }
-        if (FALSE)
-        {
-            rVec <- rnorm(lenData, fittedVec, sigmaVal)
-            m1 <- try(drm(rVec ~ doseVec, fct = LL.3(), start = coef(exp.x.m1)), 
-            silent = TRUE)
-        
-        }
-        if (inherits(m1, "try-error"))
-        {
-            edVec[i] <- NA
-        }  else {
-            m2 <- loess(rVec/nVec ~ doseVec, degree = 1)
-            mr <- mrdrm(m1, m2)
-            edVec[i] <- ED(mr, edval, display = FALSE)[1]  
-            lVec[i] <- mr$lambda
-        }
-    }
-    list(edVal = edVec, lambdaVal = lVec)
-}
+#mv <- function(n, edval = 50, seedVal = 200810151)
+#{
+#    set.seed(seedVal)
+#
+#    doseVec <- deguelin$dose
+#    nVec <- deguelin$n
+#    if (FALSE)
+#    {
+##        sigmaVal <- exp.x.mr$
+##        lenData <- nrow()
+##        doseVec <- exp.x$conc       
+##        fittedVec <- fitted(exp.x.mr)          
+#    }
+#    edVec <- rep(NA, n)
+#    lVec <- rep(NA, n)
+#    for (i in 1:n)
+#    {
+#        if (TRUE)
+#        {
+#            rVec <- rbinom(length(nVec), nVec, fitted(deguelin.mr))
+#            m1 <- try(drm(rVec/nVec ~ doseVec, weights = nVec, fct = LL.2(), type = "binomial", start = coef(deguelin.m1)), 
+#            silent = TRUE)
+#        }
+#        if (FALSE)
+#        {
+#            rVec <- rnorm(lenData, fittedVec, sigmaVal)
+#            m1 <- try(drm(rVec ~ doseVec, fct = LL.3(), start = coef(exp.x.m1)), 
+#            silent = TRUE)
+#        
+#        }
+#        if (inherits(m1, "try-error"))
+#        {
+#            edVec[i] <- NA
+#        }  else {
+#            m2 <- loess(rVec/nVec ~ doseVec, degree = 1)
+#            mr <- mrdrm(m1, m2)
+#            edVec[i] <- ED(mr, edval, display = FALSE)[1]  
+#            lVec[i] <- mr$lambda
+#        }
+#    }
+#    list(edVal = edVec, lambdaVal = lVec)
+#}
 
 
 ##  From the R-help e-mail by Ted Harding: http://tolstoy.newcastle.edu.au/R/e2/help/07/03/12853.html

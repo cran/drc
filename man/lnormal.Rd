@@ -95,8 +95,7 @@
   and \code{\link{M.bahia}}.
 }
 
-\examples{
-}
+%\examples{}
 
 \keyword{models}
 \keyword{nonlinear}

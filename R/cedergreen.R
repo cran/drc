@@ -1,6 +1,5 @@
 "cedergreen" <-
-function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA, NA), 
-         names=c("b","c","d","e","f"), alpha, scaleDose = TRUE)
+function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alpha)
 {
     ## Checking arguments
     numParm <- 5
@@ -90,13 +89,13 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
     names <- names[notFixed]
 
 
-    ## Defining parameter to be scaled
-    if ( (scaleDose) && (is.na(fixed[4])) ) 
-    {
-        scaleInd <- sum(is.na(fixed[1:4]))
-    } else {
-        scaleInd <- NULL
-    }
+#    ## Defining parameter to be scaled
+#    if ( (scaleDose) && (is.na(fixed[4])) ) 
+#    {
+#        scaleInd <- sum(is.na(fixed[1:4]))
+#    } else {
+#        scaleInd <- NULL
+#    }
 
 
     ## Defining derivatives
@@ -141,16 +140,17 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Limits
-    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
+#    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
 
     ## Defining the ED function    
-    edfct <- function(parm, p, upper = 10000, interval = c(1e-4, 10000), ...)  # upper2=1000)
+    edfct <- function(parm, p, lower = 1e-4, upper = 10000, ...)  # upper2=1000)
     {
 #        if (is.null(upper)) {upper <- 1000}
 #        if (missing(upper2)) {upper2 <- 1000}
-          
+        interval <- c(lower, upper)
+         
         parmVec[notFixed] <- parm
     
         tempVal <- (100-p)/100
@@ -237,10 +237,10 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
 
     ## Finding the maximal hormesis
-    maxfct <- function(parm, upper, interval)
+    maxfct <- function(parm, lower = 1e-3, upper = 1000)
     {
-        if (is.null(upper)) {upper <- 1000}
-        if (is.null(interval)) {interval <- c(1e-3, 1000)}            
+#        if (is.null(upper)) {upper <- 1000}
+#        if (is.null(interval)) {interval <- c(1e-3, 1000)}            
 #        alpha <- 0.5
         parmVec[notFixed] <- parm
         
@@ -252,9 +252,9 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
             return(expTerm1*alpha/(t^(alpha+1))*(1+expTerm2)-(parmVec[3]-parmVec[2]+expTerm1)*expTerm2*parmVec[1]/t)
         }
     
-        ED1 <- edfct(parm, 1, upper, interval)[[1]]
+        ED1 <- edfct(parm, 1, lower, upper)[[1]]
                
-        doseVec <- exp(seq(log(1e-6), log(ED1), length=100))
+        doseVec <- exp(seq(log(1e-6), log(ED1), length = 100))
 #        print((doseVec[optfct(doseVec)>0])[1])
 
         maxDose <- uniroot(optfct, c((doseVec[optfct(doseVec)>0])[1], ED1))$root
@@ -263,8 +263,9 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
     
     returnList <- 
-    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, upperc=upperLimits, 
-    edfct=edfct, maxfct=maxfct, scaleInd=scaleInd, anovaYes=anovaYes,
+    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,  # lowerc=lowerLimits, upperc=upperLimits, 
+    edfct=edfct, maxfct=maxfct, 
+#    scaleInd=scaleInd, anovaYes=anovaYes,
     name = "cedergreen",
     text = "Cedergreen-Ritz-Streibig", 
     noParm = sum(is.na(fixed)))
@@ -279,7 +280,7 @@ function(names=c("b", "d", "e", "f"))
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA), alpha=1))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 1))
 }
 
 ml3a <- CRS.4a
@@ -290,7 +291,7 @@ function(names=c("b", "d", "e", "f"))
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA), alpha=0.5))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.5))
 }
 
 ml3b <- CRS.4b
@@ -301,7 +302,7 @@ function(names=c("b", "d", "e", "f"))
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(names=c(names[1], "c", names[2:4]), fixed=c(NA, 0, NA, NA, NA), alpha=0.25))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.25))
 }
 
 ml3c <- CRS.4c
@@ -312,7 +313,7 @@ function(names=c("b", "c", "d", "e", "f"))
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
  
-    return(cedergreen(names=names, fixed=c(NA, NA, NA, NA, NA), alpha=1))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 1))
 }
 
 ml4a <- CRS.5a
@@ -323,7 +324,7 @@ function(names=c("b", "c", "d", "e", "f"))
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(names=names, fixed=c(NA, NA, NA, NA, NA), alpha=0.5))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.5))
 }
 
 ml4b <- CRS.5b
@@ -334,7 +335,7 @@ function(names=c("b", "c", "d", "e", "f"))
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(names=names, fixed=c(NA, NA, NA, NA, NA), alpha=0.25))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.25))
 }
 
 ml4c <- CRS.5c

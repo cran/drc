@@ -42,7 +42,7 @@
 
 ## Log-logistic fit
 deguelin.m1 <- drm(r/n~dose, weights=n, data=deguelin, fct=LL.2(), type="binomial")
-anova(deguelin.m1)
+modelFit(deguelin.m1)
 summary(deguelin.m1)
 
 ## Loess fit

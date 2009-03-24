@@ -1,41 +1,103 @@
-"boxcox.drc" <- function(object, lambda = seq(-2, 2, 1/10), plotit = TRUE,
-eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-Likelihood", ...)
+"boxcox.drc" <- function(object, lambda = seq(-2, 2, by = 0.25), plotit = TRUE,
+bcAdd = 0, method = c("ml", "anova"), level = 0.95, eps = 1/50, 
+xlab = expression(lambda), ylab = "log-Likelihood", ...)
 {
-
-    lenlam <- length(lambda)
-    llVec <- rep(NA, lenlam)
-    for (i in 1:lenlam)
+    method <- match.arg(method)
+    
+    ## Identifying the conditional or fixed-lambda approach
+    if (identical(length(lambda), 1))
     {
-        drcTemp <- try(update(object, bc = lambda[i], bcAdd = bcAdd), silent = TRUE)
-        if (!inherits(drcTemp, "try-error")) {llVec[i] <- logLik(drcTemp)}
-    }
-    lv <- lambda[which.max(llVec)]
-    llv <- max(llVec, na.rm = TRUE)
-    ci <- boxcoxCI(lambda, llVec, level)
-
-    if (plotit)  # based on boxcox.default
-    {
-        plot(lambda, llVec, type ="l", xlab = xlab, ylab = ylab, ...)
-        
-        plims <- par("usr")
-        y0 <- plims[3]
-        lim <- llv-qchisq(level, 1)/2
-        
-        segments(lv, llv, lv, y0, lty=3)
-        segments(ci[1], lim, ci[1], y0, lty = 3)  # lower limit
-        segments(ci[2], lim, ci[2], y0, lty = 3)  # upper limit
-        
-        scal <- (1/10 * (plims[4] - y0))/par("pin")[2] 
-        scx <- (1/10 * (plims[2] - plims[1]))/par("pin")[1] 
-        text(lambda[1] + scx, lim + scal, " 95%") 
-        abline(h = lim, lty = 3)
-
+        method <- "fixed"
     } 
-    retFit <- update(object, bc = lv, bcAdd = bcAdd)
-    retFit$lambda <- list(lambda = lv, ci = ci)
-    retFit$boxcox[c(2, 3)] <- ci
-    ## future: make boxcox and lambda into one component in the fit
+    
+    
+    if (identical(method, "fixed"))
+    {
+        lv <- lambda
+        ci <- c(NA, NA)
+    }
+
+    if (identical(method, "ml"))
+    {
+        ## Defining the likelihood function
+        llFct <- function(object, lv) {
+            yVec <- object$"data"[, 2]
+            N <- length(yVec)  # df.residual(object)
+            Ji <- yVec^(lv - 1)
+            -N * log(sqrt(sum(residuals(object)^2)/N)) - N/2 + sum(log(Ji))
+        }
+
+        ## Fitting the model over a grid of lambda values
+        lenlam <- length(lambda)
+        llVec <- rep(NA, lenlam)
+        for (i in 1:lenlam)
+        {
+            drcTemp <- try(update(object, bc = lambda[i], bcAdd = bcAdd), silent = TRUE)
+            if (!inherits(drcTemp, "try-error")) 
+            {
+                llVec[i] <- llFct(drcTemp, lambda[i])  # logLik(drcTemp)
+#                print(llVec[i])
+            }
+        }
+        lv <- lambda[which.max(llVec)]
+        ci <- boxcoxCI(lambda, llVec, level)    
+#        llv <- max(llVec, na.rm = TRUE)
+
+        ## Plotting the profile log-likelihood
+        if (plotit)  # based on boxcox.default
+        {
+            plot(lambda, llVec, type ="l", xlab = xlab, ylab = ylab, ...)
+        
+            plims <- par("usr")
+            y0 <- plims[3]
+            llv <- max(llVec, na.rm = TRUE)
+            lim <- llv - qchisq(level, 1)/2
+        
+            segments(lv, llv, lv, y0, lty=3)
+            segments(ci[1], lim, ci[1], y0, lty = 3)  # lower limit
+            segments(ci[2], lim, ci[2], y0, lty = 3)  # upper limit
+        
+            scal <- (1/10 * (plims[4] - y0))/par("pin")[2] 
+            scx <- (1/10 * (plims[2] - plims[1]))/par("pin")[1] 
+            text(lambda[1] + scx, lim + scal, " 95%") 
+            abline(h = lim, lty = 3)
+        } 
+    }
      
+    ## ANOVA-based approach 
+    if (identical(method, "anova"))
+    {
+        dose <- object$dataList$"dose" 
+        resp <- object$dataList$"resp"     
+        curveid <- object$dataList$"curve"
+        numCur <- length(unique(curveid)) 
+     
+        if (any(unlist(tapply(resp, dose, length)) < 2))
+        {
+            stop("ANOVA-based TBS approach requires replicates for each dose value")
+        }
+    
+        ## Defining ANOVA formula
+        afList <- anovaFormula(dose, resp, curveid, bcAdd)
+        anovaForm <- afList$"anovaFormula"
+        anovaData <- afList$"anovaData"
+
+        profLik <- boxcox(anovaForm, lambda = lambda, plotit = plotit, data = anovaData)  
+        # using boxcox in MASS         
+                    
+        lamVec <- profLik$x               
+        llVec <- profLik$y
+        lv <- lamVec[which.max(llVec)]
+        ci <- boxcoxCI(lamVec, llVec, level)
+    } 
+     
+    ## Updating the model fit
+    retFit <- update(object, bc = lv, bcAdd = bcAdd)
+    retFit$"boxcox" <- list(lambda = lv, ci = ci, bcAdd = bcAdd)
+#    retFit$boxcox[c(2, 3)] <- ci
+    ## future: make boxcox and lambda into one component in the fit     
+     
+    ## Returning the result 
     invisible(retFit)
 }
 
@@ -76,3 +138,20 @@ function(x, y, level = 0.95)
 }
 
 
+## Defining ANOVA model formula
+anovaFormula <- function(dose, resp, curveid, bcAdd)
+{
+    bcc <- rep(bcAdd, length(resp))    
+    numCur <- length(unique(curveid))
+    
+    if (numCur > 1) 
+    {
+        anovaForm <- (resp + bcc) ~ offset(bcc) + factor(dose) * factor(curveid)
+        alternative <- 2
+    } else {
+        anovaForm <- (resp + bcc) ~ offset(bcc) + factor(dose)
+        alternative <- 1
+    }
+       
+    list(anovaFormula = anovaForm, anovaData = data.frame(dose, resp, curveid, bcc))
+}

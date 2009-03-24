@@ -3,7 +3,7 @@
 \alias{weibull1}
 \alias{weibull2}
 
-\title{The Weibull functions}
+\title{Weibull model functions}
 
 \description{
   'weibull' and 'weibull2' provide a very general way of specifying Weibull dose response functions,
@@ -11,28 +11,20 @@
 }
 
 \usage{
-  weibull1(lowerc = c(-Inf, -Inf, -Inf, -Inf),
-           upperc = c(Inf, Inf, Inf, Inf), 
-           fixed = c(NA, NA, NA, NA), 
+  weibull1(fixed = c(NA, NA, NA, NA), 
            names = c("b", "c", "d", "e"),
-           scaleDose = TRUE, fctName, fctText)
+           fctName, fctText)
  
-  weibull2(lowerc = c(-Inf, -Inf, -Inf, -Inf),
-           upperc = c(Inf, Inf, Inf, Inf), 
-           fixed = c(NA, NA, NA, NA), 
+  weibull2(fixed = c(NA, NA, NA, NA), 
            names = c("b", "c", "d", "e"),
-           scaleDose = TRUE, fctName, fctText)
+           fctName, fctText)
 }
 
 \arguments{
-  \item{lowerc}{numeric vector. The lower bound on parameters. Default is minus infinity.}
-  \item{upperc}{numeric vector. The upper bound on parameters. Default is plus infinity.}
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
   The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e (see under 'Details').}
-  \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
-                   this is required for datasets where all dose values are small. } 
   \item{fctName}{optional character string used internally by convenience functions.}  
   \item{fctText}{optional character string used internally by convenience functions.}                      
 }
@@ -61,7 +53,10 @@
 
 \author{Christian Ritz}
 
-\note{The functions are for use with the function \code{\link{multdrc}}.}
+\note{
+  The functions are for use with the function \code{\link{drm}}.
+
+}
 
 \seealso{
   For convenience several special cases of the function 'weibull1' are available: 
@@ -69,25 +64,28 @@
 
   Special cases of 'weibull2' are: 
   \code{\link{W2.2}}, \code{\link{W2.3}} and \code{\link{W2.4}}.  
+  
+  These convenience functions should be used rather than the underlying functions 
+  \code{weibull1} and \code{weibull2}.
 }
 
 \examples{
 
 ## Fitting two different Weibull models
-ryegrass.m1 <- drm(ryegrass, fct = weibull1())
+ryegrass.m1 <- drm(ryegrass, fct = W1.4())
 plot(ryegrass.m1, conLevel=0.5)
 
-ryegrass.m2 <- drm(ryegrass, fct = weibull2())
-plot(ryegrass.m2, conLevel=0.5, add = TRUE, type = "fit", col=2)
+ryegrass.m2 <- drm(ryegrass, fct = W2.4())
+plot(ryegrass.m2, conLevel=0.5, add = TRUE, type = "none", col = 2)
 # you could also look at the ED values to see the difference
 
 ## A four-parameter Weibull model with b fixed at 1
-ryegrass.m3 <- drm(ryegrass, fct = weibull1(fixed=c(1, NA, NA, NA)))
+ryegrass.m3 <- drm(ryegrass, fct = W1.4(fixed = c(1, NA, NA, NA)))
 summary(ryegrass.m3)
 
 ## A four-parameter Weibull model with the constraint b>3
-ryegrass.m4 <- drm(ryegrass, fct = weibull1(), lowerl = c(3, -Inf, -Inf, -Inf), 
-control=drmc(constr=TRUE))
+ryegrass.m4 <- drm(ryegrass, fct = W1.4(), lowerl = c(3, -Inf, -Inf, -Inf), 
+control = drmc(constr=TRUE))
 summary(ryegrass.m4)
 
 }

@@ -9,16 +9,19 @@
 }
 
 \usage{
-boxcox.drc(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, eps = 1/50, bcAdd = 0, level = 0.95, xlab = expression(lambda), ylab = "log-Likelihood", ...)
+boxcox.drc(object, lambda = seq(-2, 2, by = 0.25), plotit = TRUE, bcAdd = 0, method = c("ml", "anova"),  
+level = 0.95, eps = 1/50, xlab = expression(lambda), ylab = "log-Likelihood", ...)
 }
 
 \arguments{
   \item{object}{object of class \code{drc}.}
-  \item{lambda}{numeric vector of lambda values; the default is (-2, 2) in steps of 0.1.}
+  \item{lambda}{numeric vector of lambda values; the default is (-2, 2) in steps of 0.25.}
   \item{plotit}{logical which controls whether the result should be plotted.}
-  \item{eps}{numeric value: the tolerance for lambda = 0; defaults to 0.02.}
   \item{bcAdd}{numeric value specifying the constant to be added on both sides prior to Box-Cox transformation. 
   The default is 0.}
+  \item{method}{character string specifying the estimation method for lambda: maximum likelihood or ANOVA-based 
+  (optimal lambda inherited from more general ANOVA model fit.}
+  \item{eps}{numeric value: the tolerance for lambda = 0; defaults to 0.02.}
   \item{level}{numeric value: the confidence level required.}
   \item{xlab}{character string: the label on the x axis, defaults to "lambda".}
   \item{ylab}{character string: the label on the y axis, defaults to "log-likelihood".}
@@ -44,7 +47,7 @@ boxcox.drc(object, lambda = seq(-2, 2, 1/10), plotit = TRUE, eps = 1/50, bcAdd =
 
 \author{Christian Ritz}
 
-\note{}
+%\note{}
 
 \seealso{
   For linear regression the analogue is \code{\link[MASS]{boxcox}}. 

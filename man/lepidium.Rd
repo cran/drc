@@ -37,7 +37,7 @@
 
 lepidium.m1 <- drm(weight~conc, data=lepidium, fct = LL.4())
 
-anova(lepidium.m1)
+modelFit(lepidium.m1)
 
 plot(lepidium.m1, type = "all", log = "")
 }
