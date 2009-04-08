@@ -1,135 +1,28 @@
-"MAX" <-
-function(object, lower = 1e-3, upper = 1000)
+"MAX" <- function(
+object, lower = 1e-3, upper = 1000, pool = TRUE)
 {
-#    typeStr <- "ED"
-#
-#
-#    ## Finding super class
-#    EDinfo <- partIn(class(obj), typeStr)
-#
-#    EDstr <- EDinfo[[1]]
-#    EDfct <- EDinfo[[2]]
-#
-#    inOut <- iofct(typeStr, EDstr)
-#    in1fct <- inOut[[1]]
-#    in2fct <- inOut[[2]]
-#    outfct <- inOut[[3]]
-
-
     ## Checking class of 'object'
     MAXlist <- object[[11]]$"maxfct"
     if (is.null(MAXlist)) {stop("No method available")}
 
-
     ## Retrieving relevant quantities
-    assayNo <- object$data[, 3]  # obj[[9]][,3]
-    numAss <- length(unique(assayNo))    
-#    assayNo<-obj[[9]][,3]
-#    numAss<-length(unique(assayNo))
-
-#    parmMat <- obj[[10]]
-    sumObj<-summary(object)
-#    resVar<-sumObj[[1]]
-#    varMat<-obj[[12]]%*%sumObj[[2]]%*%t(obj[[12]])
-    varMat <- sumObj$"varMat"
-    
-    parm<-c((sumObj[[3]])[,1])
-#    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
-#    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
-#    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
-
-#    ncPM <- ncol(parmMat)
-#    naVec <- rep(NA, ncPM)
-#    for (i in 1:ncPM)
-#    {
-#        if (any(is.na(parmMat[,i]))) {naVec[i] <- i}
-#    }
-
-
-    ## Creating an index matrix
-#    asVec1 <- c(t(parmMat))
-#    notNA <- !is.na(asVec1)
-#    asVec2 <- asVec1[notNA]
-#    asVec1[notNA] <- match(asVec2, unique(asVec2))
-#    indexMat <- matrix(asVec1, nrow(parmMat), ncol(parmMat), byrow=TRUE)
-
-#    lenNV <- length(naVec[!is.na(naVec)])
-#    if (lenNV>0)
-#    {
-#        parmMat <- parmMat[,-naVec[!is.na(naVec)]]
-#        indexMat <- indexMat[,-naVec[!is.na(naVec)]]
-#    }
-    
-#    ncPM <- ncol(object[[10]])
-#    nrPM <- nrow(object[[10]])
-#    
-#    options(warn=-1)  # to avoid warnings when filling in matrix with elements in excess in the vector 
-#    indexMat <- t(matrix(NA, nrPM, ncPM))
-#    indexMat[!is.na(t(object[[10]]))] <- 1:(nrPM*ncPM)
-#    indexMat <- t(indexMat)
-#    options(warn=0)
-##    print(indexMat)
-#    
-#    naVec <- rep(FALSE, ncPM)
-#    for (i in 1:ncPM)
-#    {
-#        naVec[i] <- any(is.na(indexMat[,i]))
-#    }
-#    indexMat <- indexMat[, !naVec, drop=FALSE]
-#    parmMat <- parmMat[, !naVec, drop=FALSE] 
-##    print(indexMat)   
-
-    oData <- object$"data"
-    strParm <- unique(oData[, ncol(oData) - 1])  # second last column contains original curve levels
-    indexMat0 <- object$"indexMat"
-    noNA <- complete.cases(t(indexMat0))
-    indexMat <- t((t(indexMat0))[noNA, , drop = FALSE])
-    parmMat0 <- object$"parmMat"  # [[10]]
-    parmMat <-  t((t(parmMat0))[noNA, , drop = FALSE])
-    
-    strParm <- strParm[noNA]
-
-
-    ## Finding out which parameter occurs most times; this determines the number of ED values
-#    maxIndex <- 0
-#    maxParm <- 0
-#    
-#    print(EDlist(parmMat[,1], 50, upper))
-#    indexVec <- (1:nrow(parmMat))[(EDlist(parmMat[,1], 50, upper))[[2]]<1e-10]
-#    print(indexVec)
-#    for (i in indexVec)
-#    {
-#        PM <- parmMat[i,]
-#        lenPM <- length(unique(PM))
-#        if (lenPM > maxParm) {maxIndex <- match(unique(PM),PM); maxParm <- i}
-#    }
-#
-#    nCol <- ncol(parmMat)
-#    indexVec <- 1:nCol
-#    for (i in 1:nCol)
-#    {
-#        if (any(is.na(parmMat[,i]))) {indexVec[i] <- NA}
-#    }
-#    indexVec <- indexVec[!is.na(indexVec)]
-#    print(indexVec)
-    indexVec <- 1:ncol(indexMat)
-
+    indexMat <- object$"indexMat"
+    parm <- as.vector(coef(object))
+    parmMat <- object$"parmMat"
+    strParm <- colnames(parmMat)    
+    varMat <- vcov(object, pool = pool)
 
     ## Calculating ED values    
-    lenEB <- length(indexVec)    
-    dimNames<-rep("", lenEB)
-    MAXmat<-matrix(0, lenEB, 2)
+    ncolIM <- ncol(indexMat)
+    indexVec <- 1:ncolIM    
+    dimNames <- rep("", ncolIM)
+    MAXmat <- matrix(0, ncolIM, 2)
 
-    
-#    rowIndex <- 1
-#    for (i in maxIndex)
     for (i in indexVec)
     {
         parmInd <- indexMat[,i]
         varCov <- varMat[parmInd, parmInd]
         parmChosen <- parmMat[,i]
-
-#        print(parmChosen)
         MAXmat[i, ] <- MAXlist(parmChosen, lower, upper)
         dimNames[i] <- strParm[i]
     }
@@ -137,5 +30,4 @@ function(object, lower = 1e-3, upper = 1000)
     dimnames(MAXmat) <- list(dimNames, c("Dose", "Response"))
     printCoefmat(MAXmat)
     invisible(MAXmat)    
-#    return(EDmat)
 }

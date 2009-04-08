@@ -94,6 +94,8 @@ xlab = expression(lambda), ylab = "log-Likelihood", ...)
     ## Updating the model fit
     retFit <- update(object, bc = lv, bcAdd = bcAdd)
     retFit$"boxcox" <- list(lambda = lv, ci = ci, bcAdd = bcAdd)
+    retFit$call$bcVal <- lv
+    retFit$call$bcAdd <- bcAdd    
 #    retFit$boxcox[c(2, 3)] <- ci
     ## future: make boxcox and lambda into one component in the fit     
      

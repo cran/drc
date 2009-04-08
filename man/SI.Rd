@@ -12,13 +12,13 @@
 
 \usage{
   SI(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
-  ci = c("none", "delta", "fieller", "fls"), 
-  level = ifelse(!(ci=="none"), 0.95, NULL),
+  interval = c("none", "delta", "fieller", "fls"), 
+  level = ifelse(!(interval == "none"), 0.95, NULL),
   reference = c("control", "upper"),  
-  type = c("relative", "absolute"), logBase = NULL,
-  display = TRUE, ...)
+  type = c("relative", "absolute"),
+  display = TRUE, pool = TRUE, logBase = NULL, ...)
   
-  relpot(object, plotit = TRUE, compMatch = NULL, percVec = NULL, ci = "none", 
+  relpot(object, plotit = TRUE, compMatch = NULL, percVec = NULL, interval = "none", 
   type = c("relative", "absolute"), scale = c("original", "percent", "unconstrained"), ...)
 }
 
@@ -26,19 +26,22 @@
   \item{object}{an object of class 'drc'.}
   \item{percVec}{a numeric vector of dosage values.}
   \item{compMatch}{an optional character vector of names of assays to be compared. If not specified all comparisons are supplied.}
-  \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
+  \item{od}{logical. If TRUE adjustment for over-dispersion is used. This argument only makes a difference for
+  binomial data.}
   \item{reverse}{logical. If TRUE the order of comparison of two curves is reversed.}
-  \item{ci}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
+  \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
   Use "delta" for asymptotics-based confidence intervals (using the delta method and the t-distribution).
   Use "fieller" for confidence intervals based on Fieller's theorem (with help from the delta method).
   Use "fls" for from-logarithm-scale-based confidence intervals (in case the parameter in the model fit is 
-  log(ED50) as is the case for the \code{\link{boltzmann}} or \code{\link{llogistic2}} models); currently
+  log(ED50) as is the case for the \code{\link{logistic}} or \code{\link{llogistic2}} models); currently
   the argumetn \code{logBase} then also needs to be specified.}
   \item{level}{numeric. The level for the confidence intervals. Default is 0.95.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}  
   \item{type}{character string specifying whether absolute or relative response levels are supplied.}
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}
-  \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}  
+  \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
+  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
+  independently fitted curves as specified in \code{\link{drm}}.}  
   \item{...}{In \code{SI}: additional arguments to the function doing the calculations. 
   For instance the upper limit for the bisection method 
   needs to be larger than the ED values used in the required relative pontency.

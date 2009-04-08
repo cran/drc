@@ -13,7 +13,7 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     if (ncol(newdata) > 2) {stop("More than 2 variables in 'newdata' argument")}
     
     ## Defining dose values    
-    doseVec <- newdata[ , 1]
+    doseVec <- newdata[, 1]
 
     ## Constructing matrix of parameter estimates
     parmMat <- object$"parmMat"        
@@ -69,13 +69,13 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     }    
 
     ## Calculating the quantile to be used in the confidence intervals
-    if (!(interval == "none"))
+    if (!identical(interval, "none"))
     {    
         tquan <- qt(1 - (1 - level)/2, df.residual(object))   
     }  
     
     ## Calculating standard errors and/or confidence intervals
-    if (se.fit || (!interval == "none") )
+    if (se.fit || (!identical(interval, "none")))
     {
         rowIndex <- 1    
         for (i in indexVec)
@@ -88,12 +88,12 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
             varVal <- dfEval %*% varCov %*% dfEval
             retMat[rowIndex, 2] <- sqrt(varVal)  
 
-            if (interval == "confidence")
+            if (identical(interval, "confidence"))
             {
                 retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal)
                 retMat[rowIndex, 4] <- retMat[rowIndex, 1] + tquan * sqrt(varVal)            
             }
-            if (interval == "prediction")
+            if (identical(interval, "prediction"))
             {
                 sumObjRV <- sumObj$"resVar"
                 retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal + sumObjRV)
@@ -102,11 +102,10 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
             rowIndex <- rowIndex + 1        
         }
     }
-    
     ## Keeping relevant indices
     keepInd <- 1
     if (se.fit) {keepInd <- c( keepInd, 2)}
-    if (!interval == "none") {keepInd <- c( keepInd, 3, 4)}
+    if (!identical(interval, "none")) {keepInd <- c( keepInd, 3, 4)}
     
     return(retMat[, keepInd])  # , drop = FALSE])
 }

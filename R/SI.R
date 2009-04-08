@@ -1,51 +1,19 @@
 "SI" <-
 function(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
-ci = c("none", "delta", "fieller", "fls"), level = ifelse(!(ci == "none"), 0.95, NULL), 
-reference = c("control", "upper"), type = c("relative", "absolute"), logBase = NULL,
-display = TRUE, ...)
+interval = c("none", "delta", "fieller", "fls"), level = ifelse(!(interval == "none"), 0.95, NULL), 
+reference = c("control", "upper"), type = c("relative", "absolute"),
+display = TRUE, pool = TRUE, logBase = NULL, ...)
 {
      ## Matching the argument 'method'
-     ci <- match.arg(ci)
+     interval <- match.arg(interval)
      reference <- match.arg(reference)
      type <- match.arg(type)     
-     
-#     if( (ci == "fieller") && !(percVec == c(50, 50)) )
-#     {
-#         stop("Fieller's theorem only implemented for ED50_1/ED50_2")
-#     }
-     
-#    typeStr <- "SI"
-#
-#
-#    ## Finding super class
-#    SIinfo <- partIn(class(obj), typeStr)
-#
-#    SIstr <- SIinfo[[1]]
-#    SIfct <- SIinfo[[2]]
-#
-#    inOut <- iofct(typeStr, SIstr)
-#    in1fct <- inOut[[1]]
-#    in2fct <- inOut[[2]]
-#    outfct <- inOut[[3]]
 
-
-#    SIlist <- obj[[11]][[9]]
-#    SIlist <- obj$fct$"sifct"
-#    if (is.null(SIlist)) {stop("SI values cannot be calculated")}
-
-#    if (ci == "fls")
-#    {
-#        sifct <- createsifct(object$"fct"$"edfct")
-#    } else {
-#        sifct <- createsifct(object$"fct"$"edfct", logBase)
-#    }
-
-    if ( (is.null(logBase)) && (ci == "fls") )
+    if ( (is.null(logBase)) && (interval == "fls") )
     {
-        stop("Argument 'logBase' not specified for ci = 'fls'")
+        stop("Argument 'logBase' not specified for interval = 'fls'")
     }
-    sifct <- createsifct(object$"fct"$"edfct", logBase, ci == "fls")
-
+    sifct <- createsifct(object$"fct"$"edfct", logBase, identical(interval, "fls"))
 
     ## Checking contain of percVec vector ... should be numbers between 0 and 100
     if ( (type == "relative") && any(percVec<=0 | percVec>=100) ) 
@@ -55,120 +23,20 @@ display = TRUE, ...)
 
     if (missing(compMatch)) {matchNames <- FALSE} else {matchNames <- TRUE}
 
+    lenPV <- length(percVec)
 
     ## Retrieving relevant quantities
-    assayNo <- object$"data"[, 3]  # [[9]][,3]
-    numAss <- length(unique(assayNo))
-
-    sumObj<-summary(object, od = od)
-    varMat <- sumObj$"varMat"
-    
-#    varMat<-obj$"transformation"%*%sumObj$"varMat"%*%t(obj$"transformation")    
-
-#    varMat<-obj[[12]]%*%sumObj[[2]]%*%t(obj[[12]])
-#    parm<-c((sumObj[[3]])[,1])
-    parm <- c((sumObj$"estimates")[,1])    
-    lenPV<-length(percVec)
-###    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
-###    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
-##    strParm <- unique(object$"data"[, ncol(object$"data") - 1])  # second last column contains original curve levels
-###    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
-##    strParm <- strParm[!(strParm %in% object$"cm")]
-
-#    indexVec <- in1fct()
-#    ncPM <- ncol(parmMat)
-#    naVec <- rep(NA, ncPM)
-#    for (i in 1:ncPM)
-#    {
-#        if (any(is.na(parmMat[,i]))) {naVec[i] <- i}
-#    }
-
-
-    ## Creating an index matrix
-#    asVec1 <- c(t(parmMat))
-#    notNA <- !is.na(asVec1)
-#    asVec2 <- asVec1[notNA]
-#    asVec1[notNA] <- match(asVec2, unique(asVec2))
-#    indexMat <- matrix(asVec1, nrow(parmMat), ncol(parmMat), byrow=TRUE)
-#
-#    lenNV <- length(naVec[!is.na(naVec)])
-#    if (lenNV>0)
-#    {
-#        parmMat <- parmMat[,-naVec[!is.na(naVec)]]
-#        indexMat <- indexMat[,-naVec[!is.na(naVec)]]
-#    }
-
-#    ncPM <- ncol(obj$"parmMat")  # [[10]])
-#    nrPM <- nrow(obj$"parmMat")  # [[10]])
-    
-#    options(warn=-1)  # to avoid warnings when filling in matrix with elements in excess in the vector 
-#    indexMat <- t(matrix(NA, nrPM, ncPM))
-#    indexMat[!is.na(t(obj[[10]]))] <- 1:(nrPM*ncPM)
-#    indexMat <- t(indexMat)
-#    options(warn=0)
-#    
-#    naVec <- rep(FALSE, ncPM)
-#    for (i in 1:ncPM)
-#    {
-#        naVec[i] <- any(is.na(parmMat[, i]))
-#    }
-#    indexMat <- indexMat[, !naVec, drop=FALSE]
-#    parmMat <- parmMat[, !naVec, drop=FALSE] 
-#    strParm <- strParm[!naVec]
-#
-#    ncPM2 <- ncol(parmMat)  # obj[[10]])
-#    nrPM2 <- nrow(parmMat)  # obj[[10]])
-#    indexMat <- matrix(1:(nrPM2*ncPM2), nrPM2, ncPM2, byrow = TRUE)   
-
-
-    indexMat0 <- object$"indexMat"
-    noNA <- complete.cases(t(indexMat0))
-    indexMat <- t((t(indexMat0))[noNA, ])
-    parmMat0 <- object$"parmMat"  # [[10]]
-    parmMat <-  t((t(parmMat0))[noNA, ])
-#    print(indexMat)
-    strParm <- colnames(parmMat0)
-
-    ## Finding out which parameter occurs most times; this determines the number of SI values
-#    maxIndex <- 0
-#    maxParm <- 0
-#    for (i in indexVec)
-#    {
-#        PM <- parmMat[i,]
-#        lenPM <- length(unique(PM))
-#        if (lenPM > maxParm) {maxIndex <- match(unique(PM),PM); maxParm <- i}
-#    }
-
-#    nCol <- ncol(parmMat)
-#    indexVec <- 1:nCol
-#    for (i in 1:nCol)
-#    {
-#        if (any(is.na(parmMat[,i]))) {indexVec[i] <- NA}
-#    }
-#    indexVec <- indexVec[!is.na(indexVec)]
-#    indexVec <- 1:ncol(indexMat)    
-
-#    lenEB <- maxParm
-#    lenM <- length(indexMat[maxParm,])
-
-#    indexVec <- 1:ncol(indexMat)
-    lenEB <- ncol(indexMat)  # length(indexVec)
-    lenM <- ncol(indexMat)  # length(indexVec)
-#    print(lenM)
-#    print(head(indexMat))
-
-    ## Retrieving curve numbers 
-#    parmName <- unique((unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2-1])[lenEB] 
-#    compNamesTemp <- obj[[6]][grep(paste(parmName,":",sep=""), obj[[6]])]
-#    compNames <- (unlist(strsplit(compNamesTemp, ":")))[(1:length(compNamesTemp))*2]
-    compNames <- as.character(strParm)  # converting a factor
-#print(compNames)
+    indexMat <- object$"indexMat"
+    lenEB <- ncol(indexMat)    
+    parmMat <- object$"parmMat"
+    strParm <- colnames(parmMat)    
+    varMat <- vcov(object, od = od, pool = pool)
+#    compNames <- as.character(strParm)  # converting a factor
 
     ## Calculating SI values
-#    numComp <- (lenPV*(lenPV+1)/2)*(lenM*(lenM-1)/2)
-    numComp <- (lenPV*(lenPV-1)/2)*(lenM*(lenM-1)/2)
+    numComp <- (lenPV*(lenPV-1)/2)*(lenEB * (lenEB - 1) / 2)
     
-    if (!(ci == "none"))
+    if (!identical(interval, "none"))
     {
         siMat <- matrix(0, numComp, 3)
         cNames <- c("Estimate", "Lower", "Upper")
@@ -179,12 +47,8 @@ display = TRUE, ...)
     }
     matchVec <- rep(TRUE, numComp)
     rNames <- rep("", numComp)
-    oriMat <- matrix(0, numComp, 2)
-    
+    oriMat <- matrix(0, numComp, 2)    
     degfree <- df.residual(object)  
-    # obj$"sumList"$"df.residual"  # df.residual(obj)  # obj$"summary"[6]  # sumObj[[4]][2]
-
-
     rowIndex <- 1
     for (i in 1:lenPV)
     {
@@ -193,12 +57,12 @@ display = TRUE, ...)
             if (i>=ii) {next}
             pVec <- percVec[c(i, ii)]
 
-            for (j in 1:lenM)
+            for (j in 1:lenEB)
             {
-                for (k in 1:lenM)
+                for (k in 1:lenEB)
                 {
                     if (j>=k) {next}
-                    matchVec[rowIndex] <- (is.null(compMatch) || all(c(compNames[j],compNames[k])%in%compMatch))  
+                    matchVec[rowIndex] <- (is.null(compMatch) || all(c(strParm[j], strParm[k]) %in% compMatch))  
  
                     jInd <- j
                     kInd <- k
@@ -211,32 +75,17 @@ display = TRUE, ...)
                     parmInd2 <- indexMat[, kInd]
                     
                     splInd <- splitInd(parmInd1, parmInd2)
-
-#                    parmInd <- c(parmInd1, parmInd2)
-#                    varCov <- varMat[parmInd, parmInd]
                     
                     parmChosen1 <- parmMat[, jInd]
                     parmChosen2 <- parmMat[, kInd]
-#                    parmChosen1 <- parmVec[parmInd1]  # parmVec is the vector parameter estimates
-#                    parmChosen2 <- parmVec[parmInd2]
 
-#                    print(parmChosen1) 
-#                    print(parmChosen2)
-#                    print(varMat)                    
-#                    print(varCov)                    
-
-#                    SIeval <- SIlist(parmChosen1, parmChosen2, pVec, ...)
                     SIeval <- 
                     sifct(parmChosen1, parmChosen2, pVec, 
                     splInd[[1]][, 1], splInd[[2]][, 1], splInd[[3]][, 1], splInd[[3]][, 2], reference, type, ...)
-#                    print(SIeval)
+
                     indInOrder <- c(splInd[[1]][, 2], splInd[[2]][, 2], splInd[[3]][, 3])
                                        
                     SIval <- SIeval$"val"  # SIeval[[1]]
-#                    derEval1 <- SIeval$"der1"  # SIeval[[2]]
-#                    derEval2 <- SIeval$"der2"  # SIeval[[3]]
-#                    derEval12 <- SIeval$"der12"  # SIeval[[4]]
-#                    dSIval <- c(derEval1, derEval2, derEval12)                   
                     dSIval <- SIeval$"der"  # SIeval[[2]]
  
                     oriMat[rowIndex, 1] <- SIval
@@ -247,7 +96,7 @@ display = TRUE, ...)
 
                     ## Using t-distribution for continuous data
                     ##  only under the normality assumption
-                    if (object$"type" == "continuous")
+                    if (identical(object$"type", "continuous"))
                     {
                         qFct <- function(x) {qt(x, degfree)}
                         pFct <- function(x) {pt(x, degfree)}
@@ -256,12 +105,8 @@ display = TRUE, ...)
                         pFct <- pnorm
                     }
 
-                    if (ci == "none")
+                    if (identical(interval, "none"))
                     {
-#                        derEval1 <- SIeval[[2]]
-#                        derEval2 <- SIeval[[3]]
-#                        derEval <- c(derEval1, derEval2)
-#                        siMat[rowIndex, 2] <- sqrt(derEval%*%varCov%*%derEval)
                         siMat[rowIndex, 2] <- oriMat[rowIndex, 2]  # sqrt(dSIval%*%varCov%*%dSIval)
 
                         ## Testing SI equal to 1
@@ -269,11 +114,8 @@ display = TRUE, ...)
                         siMat[rowIndex, 3] <- tempStat
                         siMat[rowIndex, 4] <- pFct(-abs(tempStat)) + (1 - pFct(abs(tempStat)))
                     }
-                    if ( (ci == "delta") || (ci == "fls") )
+                    if ( (identical(interval, "delta")) || (identical(interval, "fls")) )
                     {
-#                        derEval1 <- SIeval[[2]]
-#                        derEval2 <- SIeval[[3]]
-#                        derEval <- c(derEval1, derEval2)
                         stErr <- oriMat[rowIndex, 2]  # sqrt(derEval%*%varCov%*%derEval)
                         tquan <- qFct(1 - (1 - level)/2)
                         
@@ -281,7 +123,7 @@ display = TRUE, ...)
                         siMat[rowIndex, 3] <- siMat[rowIndex, 1] + tquan * stErr
                         ciLabel <- "Delta method"
                     }
-                    if (ci == "tfls")
+                    if (identical(interval, "tfls"))
                     {
                         lsVal <- log(oriMat[rowIndex, 1])
                         lsdVal <- oriMat[rowIndex, 2]/oriMat[rowIndex, 1]
@@ -291,30 +133,23 @@ display = TRUE, ...)
                         siMat[rowIndex, 3] <- exp(lsVal + tquan * lsdVal)
                         ciLabel <- "To and from log scale"
                     }
-                    if ( (!is.null(logBase)) && (ci == "fls") )
+                    if ((!is.null(logBase)) && (identical(interval, "fls")))
                     {
                         siMat[rowIndex, 1] <- logBase^(siMat[rowIndex, 1])
                         siMat[rowIndex, 2] <- logBase^(siMat[rowIndex, 2])
                         siMat[rowIndex, 3] <- logBase^(siMat[rowIndex, 3])
                         ciLabel <- "From log scale"
                     }
-                    if (ci == "fieller")  # using t-distribution
+                    if (identical(interval, "fieller"))  # using t-distribution
                     {
-#                        lenp <- length(parmChosen1)  # model depedent!!!
-#                        EDind <- c(parmInd1[lenp], parmInd2[lenp])
-                        
                         vcMat <- matrix(NA, 2, 2)
                         vcMat[1, 1] <- SIeval$"der1"%*%varMat[parmInd1, parmInd1]%*%SIeval$"der1"
                         vcMat[2, 2] <- SIeval$"der2"%*%varMat[parmInd2, parmInd2]%*%SIeval$"der2"
                         vcMat[1, 2] <- SIeval$"der1"%*%varMat[parmInd1, parmInd2]%*%SIeval$"der2"
                         vcMat[2, 1] <- vcMat[1, 2]
-#                        print(vcMat)
                         muVec <- c(SIeval$"valnum", SIeval$"valden")
                         
                         siMat[rowIndex, 2:3] <- fieller(muVec, degfree, vcMat, level = level)  
-#                        fieller(c(parmChosen1[lenp], parmChosen2[lenp]), df.residual(obj), 
-#                        varMat[EDind, EDind], level = level)                        
-#                        varCov[c(lenp, 2*lenp), c(lenp, 2*lenp)], level = level)
                         ciLabel <- "Fieller"
                     }
 
@@ -326,23 +161,22 @@ display = TRUE, ...)
     }
     dimnames(siMat) <- list(rNames, cNames)
     siMat <- siMat[matchVec, , drop = FALSE]
-    
-#    print(matchVec)
 
-    if (display)
-    { 
-        cat("\n")
-        cat("Estimated ratios of effect doses\n")
-        if (!(ci == "none")) 
-        {
-            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
-            cat(ciText)
-        } 
-        cat("\n")
-        printCoefmat(siMat)
-    }
-    invisible(siMat)   
-#    return(siMat[matchVec, ,drop=FALSE])
+    resPrint(siMat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display)
+    
+#    if (display)
+#    { 
+#        cat("\n")
+#        cat("Estimated ratios of effect doses\n")
+#        if (!(ci == "none")) 
+#        {
+#            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
+#            cat(ciText)
+#        } 
+#        cat("\n")
+#        printCoefmat(siMat)
+#    }
+#    invisible(siMat)   
 }
 
 

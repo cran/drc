@@ -6,14 +6,14 @@
 \alias{L.4}
 \alias{L.5}
 
-\alias{boltzmann}
+%\alias{boltzmann}
 
-\alias{B.3}
-\alias{B.4}
-\alias{B.5}
-\alias{b3}
-\alias{b4}
-\alias{b5}
+%\alias{B.3}
+%\alias{B.4}
+%\alias{B.5}
+%\alias{b3}
+%\alias{b4}
+%\alias{b5}
 
 \title{The logistic model}
 
@@ -28,11 +28,11 @@
   L.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
   L.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))  
 
-  boltzmann(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText)
-
-  B.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
-  B.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
-  B.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))  
+%  boltzmann(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText)
+%
+%  B.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+%  B.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
+%  B.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))  
 }
 
 

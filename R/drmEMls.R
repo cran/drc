@@ -94,11 +94,4 @@ doseScaling = 1, respScaling = 1)
 }
 
 
-"drmLOFls" <- function()
-{
-    ## Defining lack-of-fit/goodness-of-fit tests
-    anovaTest <- contAnovaTest()
-    gofTest <- NULL
-    
-    return(list(anovaTest = anovaTest, gofTest = gofTest))
-}
+

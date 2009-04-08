@@ -9,13 +9,19 @@
 }
 
 \usage{
-  \method{vcov}{drc}(object, ..., corr = FALSE)
+  \method{vcov}{drc}(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{...}{additional arguments.}
   \item{corr}{logical. If TRUE a correlation matrix is returned.}
+  \item{od}{logical. If TRUE adjustment for over-dispersion is used. This argument only makes a difference for
+  binomial data.}
+  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
+  independently fitted curves as specified in \code{\link{drm}}.} 
+  \item{unscaled}{logical. If TRUE the unscaled variance-covariance is returned. This argument only makes a difference
+  for continuous data.}
 }
 
 \value{

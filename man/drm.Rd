@@ -13,7 +13,7 @@
   drm(formula, curveid, pmodels, weights, data = NULL, subset, fct, 
   type = c("continuous", "binomial", "Poisson", "quantal", "survival"), bcVal = NULL, bcAdd = 0, 
   start, na.action = na.fail, robust = "mean", logDose = NULL, 
-  control = drmc(), lowerl = NULL, upperl = NULL)
+  control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 }
 
 \arguments{
@@ -70,6 +70,8 @@
   
   \item{upperl}{a numeric vector of upper limits for all parameters in the model 
   (the default corresponds to plus infinity for all parameters).}
+  
+  \item{separate}{logical value indicating whether curves should be fit separately (independent of each other).}
 }
 
 \details{

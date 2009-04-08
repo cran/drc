@@ -60,7 +60,7 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 #            psVec[psVec<1e-4] <- 1
 
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = optMethod, 
-            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)))  #, silent = silentVal)
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)), silent = FALSE)  #silentVal)
 #            nlsObj0 <- try(optim(startVec, opfct, method=optMethod, 
 #            control=list(maxit=maxIt, reltol=relTol, parscale=psVec)), silent=TRUE)
 #            nlsObj <- try(optim(nlsObj0$par, opfct, hessian=TRUE, method=optMethod, 

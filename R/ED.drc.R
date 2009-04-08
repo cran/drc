@@ -3,7 +3,8 @@ ED <- function (object, ...) UseMethod("ED", object)
 "ED.drc" <-
 function(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
 level = ifelse(!(interval == "none"), 0.95, NULL), reference = c("control", "upper"), 
-type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display = TRUE, logBase = NULL, ...)
+type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display = TRUE, 
+pool = TRUE, logBase = NULL, ...)
 {
     interval <- match.arg(interval)
     reference <- match.arg(reference)
@@ -33,7 +34,7 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
 #    } else {
 
     ## Checking 'respLev' vector ... should be numbers between 0 and 100
-    if ( (type == "relative") && bound ) 
+    if ( (type == "relative") && (bound) ) 
     {
         if (any(respLev <= 0 | respLev >= 100)) 
         {
@@ -46,12 +47,13 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
     EDlist <- object$fct$"edfct"  
     if (is.null(EDlist)) {stop("ED values cannot be calculated")}      
 
-    assayNo <- object$data[, 3]  # obj[[9]][,3]
-    numAss <- length(unique(assayNo))
+#    assayNo <- object$data[, 3]  # obj[[9]][,3]
+#    numAss <- length(unique(assayNo))
 
 #    parmMat <- obj$"parmMat"  # [[10]]
-    sumObj <- summary(object, od = od)
-    varMat <- sumObj$"varMat"
+#    sumObj <- summary(object, od = od)
+#    varMat <- sumObj$"varMat"
+#    vcMat <- vcov(object)
 #    resVar <- sumObj$"resVar"  # [[1]]
 #    varMat<-obj$"transformation"%*%sumObj$"varMat"%*%t(obj$"transformation")        
     
@@ -62,8 +64,8 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
 #    strParm <- (unlist(strsplit(obj[[6]], ":")))[(1:length(obj[[6]]))*2] 
 #    strParm <- unique(obj[[9]][, ncol(obj[[9]]) - 1])  # second last column contains original curve levels
 
-    oData <- object$"data"
-    strParm <- unique(oData[, ncol(oData) - 1])  # second last column contains original curve levels
+#    oData <- object$"data"
+#    strParm <- unique(oData[, ncol(oData) - 1])  # second last column contains original curve levels
 #    print(strParm)
 #    strParm <- strParm[apply(parmMat, 2, function(x){!any(is.na(x))})]
 
@@ -116,14 +118,20 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
 #    nrPM2 <- nrow(parmMat)  # obj[[10]])
 #    indexMat <- matrix(1:(nrPM2*ncPM2), nrPM2, ncPM2, byrow = TRUE)   
 
-    indexMat0 <- object$"indexMat"
-    noNA <- complete.cases(t(indexMat0))
-    indexMat <- t((t(indexMat0))[noNA, , drop = FALSE])
-    parmMat0 <- object$"parmMat"  # [[10]]
-    parmMat <-  t((t(parmMat0))[noNA, , drop = FALSE])
+#    indexMat0 <- object$"indexMat"
+#    noNA <- complete.cases(t(indexMat0))
+#    indexMat <- t((t(indexMat0))[noNA, , drop = FALSE])
+#    parmMat0 <- object$"parmMat"  # [[10]]
+#    parmMat <-  t((t(parmMat0))[noNA, , drop = FALSE])
+      
+#    strParm <- unique(object$dataList$curveid)
+#    strParm <- strParm[noNA]
+#    strParm <- colnames(parmMat0)    
     
-    strParm <- strParm[noNA]
-    strParm <- colnames(parmMat0)    
+    indexMat <- object$"indexMat"
+    parmMat <- object$"parmMat"
+    strParm <- colnames(parmMat)    
+    vcMat <- vcov(object, od = od, pool = pool)
 
     ## Finding out which parameter occurs most times; this determines the number of ED values
 #    maxIndex <- 0
@@ -152,8 +160,9 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
     ## Calculating ED values
     
     ## Defining vectors and matrices
-    indexVec <- 1:ncol(indexMat)    
-    lenEB <- length(indexVec)    
+    ncolIM <- ncol(indexMat)
+    indexVec <- 1:ncolIM    
+    lenEB <- ncolIM    
     dimNames <- rep("", lenEB*lenPV)
     EDmat <- matrix(0, lenEB*lenPV, 2)
     oriMat <- matrix(0, lenEB*lenPV, 2)  
@@ -173,7 +182,7 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
     for (i in indexVec)
     {
         parmInd <- indexMat[, i]
-        varCov <- varMat[parmInd, parmInd]
+        varCov <- vcMat[parmInd, parmInd]
         parmChosen <- parmMat[, i]
 
         for (j in 1:lenPV)
@@ -203,11 +212,11 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
     colNames <- c("Estimate", "Std. Error")
     
     ## Using t-distribution for continuous data
-    ##  only under the normality assumption
+    ## (only under the normality assumption)
     if (object$"type" == "continuous")
     {
         qFct <- function(x) {qt(x, df.residual(object))}
-    } else {
+    } else { # Otherwise the standard normal distribution is used
         qFct <- qnorm
     }
 
@@ -264,38 +273,4 @@ type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display 
     }   
     dimnames(EDmat) <- list(dimNames, colNames)
     resPrint(EDmat, "Estimated effective doses", interval, ciLabel, display = display)
-    
-#    EDprint(EDmat, interval, ciLabel, display)
-
-#    ## Displaying the ED values
-#    if (display)
-#    {
-#        cat("\n")
-#        cat("Estimated effective doses\n")
-#        if (!(ci == "none")) 
-#        {
-#            ciText <- paste("(", ciLabel, "-based confidence interval(s))\n", sep = "")
-#            cat(ciText)
-#        }
-#        cat("\n") 
-#        printCoefmat(EDmat)
-#    }
-#    invisible(EDmat)    
-}
-
-resPrint <- function(resMat, headerText, interval, intervalLabel, display)
-{
-    if (display)
-    {
-        cat("\n")
-        cat(paste(headerText, "\n", sep = ""))
-        if (!identical(interval, "none")) 
-        {
-            intervalText <- paste("(", intervalLabel, "-based confidence interval(s))\n", sep = "")
-            cat(intervalText)
-        }
-        cat("\n")         
-        printCoefmat(resMat)
-    }
-    invisible(resMat)  
 }

@@ -130,6 +130,7 @@ xlab, ylab, xlim, ylim, ...)
         ED50.1 <- parmVec[regexpr(curveStr1, namesPV, fixed = TRUE) > 0]
         ED50.2 <- parmVec[regexpr(curveStr2, namesPV, fixed = TRUE) > 0]
         ## maybe use an extractor like 'EDmix' instead of the above 4 lines
+#        print(c(ED50.1, ED50.2))
         
 #        ED50.1 <- parmVec[regexpr("I(1/(pct1/100))", namesPV, fixed = TRUE) > 0]
 #        ED50.2 <- parmVec[regexpr("I(1/(1 - pct1/100))", namesPV, fixed = TRUE) > 0]

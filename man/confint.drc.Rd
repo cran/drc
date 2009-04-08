@@ -10,7 +10,7 @@
 
 \usage{
 
-  \method{confint}{drc}(object, parm, level = 0.95, type = "t", ...)
+  \method{confint}{drc}(object, parm, level = 0.95, type = "t", pool = TRUE, ...)
 
 }
 
@@ -22,6 +22,8 @@
   \item{level}{the confidence level required.}
   \item{type}{the type of confidence interval: based on the standard normal distribution or 
   based on a t-distribution (default).}  
+  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
+  independently fitted curves as specified in \code{\link{drm}}.}  
   \item{\dots}{additional argument(s) for methods. Not used.}
 }
 

@@ -1,26 +1,48 @@
 "plot.drc" <-
-function(x, ..., level = NULL, broken = FALSE, col = FALSE, conLevel, conName, 
-gridsize = 100, legend, legendText, legendPos, legendCex = 1, 
-type = c("average", "all", "bars", "none", "obs"), 
-obs, lty, log = "x", xsty = c("base10", "none"), 
-cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1, bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, 
-ytlab = NULL, add = FALSE, axes = TRUE)
+function(x, ..., add = FALSE, level = NULL, type = c("average", "all", "bars", "none", "obs"), 
+broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100, 
+log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
+yt = NULL, ytlab = NULL, ylab, ylim,
+cex, cex.axis = 1, col = FALSE, lty, pch, 
+legend, legendText, legendPos, cex.legend = 1)
 {    
     object <- x
     type <- match.arg(type)
-    xsty <- match.arg(xsty)
+    
+    ## Determining logarithmic scales
+    if ((log == "") || (log == "y"))
+    {
+        logX <- FALSE
+    } else {
+        logX <- TRUE
+    }    
+    
+    ## Determining the tick mark style for the dose axis
+    if (missing(xtsty))
+    {
+        if (logX)
+        {
+            xtsty <- "base10"
+        } else {
+            xtsty <- "standard"
+        }
+    }
 
     ## Constructing the plot data
-    origData<-object$"data"
-    doseDim <- ncol(origData) - 4  # subtracting 4 because the data frame also contains columns with response, 
+#    origData<-object$"data"
+#    doseDim <- ncol(origData) - 4  # subtracting 4 because the data frame also contains columns with response, 
                                    # curve no. (in new and old enumeration) and weights
-    if (doseDim > 1) {stop("No plot features for plots in more than two dimensions")}
-
-    dose <- origData[, 1:doseDim]
-    resp <- origData[, doseDim+1]
-
-    assayNo <- origData[, 3]
-    assayNoOld <- as.vector(origData[, 4])  # as.vector() to remove factor structure
+#    if (doseDim > 1) {stop("No plot features for plots in more than two dimensions")}
+#    dose1 <- origData[, 1:doseDim]
+#    resp1 <- origData[, doseDim+1]
+    
+    dataList <- object[["dataList"]]
+    dose <- dataList[["dose"]]
+    resp <- dataList[["origResp"]]
+    
+#    assayNo <- origData[, 3]
+#    assayNoOld <- as.vector(origData[, 4])  # as.vector() to remove factor structure
+    assayNoOld <- as.vector(dataList[["curveid"]])  # as.vector() to remove factor structure
     numAss <- length(unique(assayNoOld))
     doPlot <- is.null(level) || any(unique(assayNoOld)%in%level)
     if (!doPlot) {stop("Nothing to plot")}
@@ -29,31 +51,22 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     logDose <- (object$"curve")[[2]]
     naPlot <- ifelse(is.null(object$"curve"$"naPlot"), FALSE, TRUE)
 
-    if (missing(conLevel)) 
-    {
-#        conLevel <- ifelse(is.null(logDose), 1e-2, log(1e-2))
-        
-        ## Constructing appropriate break on dose axis
-        log10cl <- round(log10(min(dose[dose > 0]))) - 1
-        conLevel <- 10^(log10cl)
-        if (!is.null(logDose)) {conLevel <- log(conLevel)}  # natural logarithm
-    }
-    if (missing(conName)) 
-    {
-        if (is.null(logDose)) {conName <- expression(0)} else {conName <- expression(-infinity)}
-    }
+#    if (missing(conName)) 
+#    {
+#        if (is.null(logDose)) {conName <- expression(0)} else {conName <- expression(-infinity)}
+#    }
 
     ## Assigning axis names
-    varNames <- colnames(origData)[1:(doseDim+1)]  # axis names are the names of the dose variable and response variable in the original data set
-    if (missing(xlab)) {if (varNames[1] == "") {xlab <- "Dose"} else {xlab <- varNames[1]}}
-    if (missing(ylab)) {if (varNames[2] == "") {ylab <- "Response"} else {ylab <- varNames[2]}}
+#    varNames <- colnames(origData)[1:(doseDim+1)]  
 
-    ## Determining logarithmic scales
-    logX <- TRUE
-    if ( (log == "") || (log == "y") )  # || (!is.null(logDose)) ) 
-    {
-        logX <- FALSE
-    }      
+    dlNames <- dataList[["names"]]
+    doseName <- dlNames[["dName"]]
+    respName <- dlNames[["orName"]]
+    # axis names are the names of the dose variable and response variable in the original data set
+#    if (missing(xlab)) {if (varNames[1] == "") {xlab <- "Dose"} else {xlab <- varNames[1]}}
+#    if (missing(ylab)) {if (varNames[2] == "") {ylab <- "Response"} else {ylab <- varNames[2]}}
+    if (missing(xlab)) {if (doseName == "") {xlab <- "Dose"} else {xlab <- doseName}}
+    if (missing(ylab)) {if (respName == "") {ylab <- "Response"} else {ylab <- respName}}     
 
     ## Determining range of dose values
     if (missing(xlim)) 
@@ -64,31 +77,47 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     }
 
     ## Handling small dose values
-    conNameYes <- FALSE
-    if ( (xLimits[1] < conLevel) && logX) 
+    if (missing(bp)) 
+    {
+#        conLevel <- ifelse(is.null(logDose), 1e-2, log(1e-2))
+        
+        ## Constructing appropriate break on dose axis
+        log10cl <- round(log10(min(dose[dose > 0]))) - 1
+        conLevel <- 10^(log10cl)
+        if (!is.null(logDose)) {conLevel <- log(conLevel)}  # natural logarithm
+    } else {
+        conLevel <- bp
+    }   
+    if ((xLimits[1] < conLevel) && logX) 
     {
         xLimits[1] <- conLevel
-        smallDoses <- dose<conLevel
+        smallDoses <- (dose < conLevel)
         dose[smallDoses] <- conLevel
-        conNameYes <- TRUE 
+        if (is.null(conName)) 
+        { 
+            if (is.null(logDose)) {conName <- expression(0)} else {conName <- expression(-infinity)}
+        }
+#        conNameYes <- TRUE 
+    } else {
+#        conNameYes <- FALSE
+        conName <- NULL
     }
     if (xLimits[1] >= xLimits[2]) {stop("Argument 'conLevel' is set too high")}
 
-
     ## Constructing dose values for plotting
-    if (doseDim == 1) 
+#    if (doseDim == 1) 
+#    {
+    if ((is.null(logDose)) && (logX))
     {
-        if ( (is.null(logDose)) && (logX) )
-        {
-           dosePts <- exp(seq(log(xLimits[1]), log(xLimits[2]), length = gridsize))
-           ## Avoiding that slight imprecision produces dose values outside the dose range
-           ## (the model-robust predict method is sensitive to such deviations!)
-           dosePts[1] <- xLimits[1]
-           dosePts[gridsize] <- xLimits[2]           
-        } else {
-           dosePts <- seq(xLimits[1], xLimits[2], length = gridsize)
-        }
-    } else {}  # No handling of multi-dimensional dose values
+       dosePts <- exp(seq(log(xLimits[1]), log(xLimits[2]), length = gridsize))
+       ## Avoiding that slight imprecision produces dose values outside the dose range
+       ## (the model-robust predict method is sensitive to such deviations!)
+       dosePts[1] <- xLimits[1]
+       dosePts[gridsize] <- xLimits[2]           
+    } else {
+       dosePts <- seq(xLimits[1], xLimits[2], length = gridsize)
+    }
+#    } else {}  # No handling of multi-dimensional dose values
 
 
     ## Finding minimum and maximum on response scale
@@ -144,7 +173,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     logVec <- !( (dose < xLimits[1] - eps1) | (dose > xLimits[2] + eps1) )
     dose <- dose[logVec]
     resp <- resp[logVec]
-    assayNo <- assayNo[logVec]
+#    assayNo <- assayNo[logVec]
     assayNoOld <- assayNoOld[logVec]    
      
     ## Calculating predicted values for error bars
@@ -254,7 +283,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
             barFct(plotPoints)            
             
             ## Adding axes    
-            addAxes(axes, cex.axis, conLevel, conName, conNameYes, xt, xtlab, xsty, yt, ytlab)
+            addAxes(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab)
 
             ## Adding axis break
             ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX)       
@@ -308,14 +337,15 @@ ytlab = NULL, add = FALSE, axes = TRUE)
 
     
     ## Adding legend
-    makeLegend(colourVec, legend, legendCex, legendPos, legendText, lenlev, level, ltyVec, 
+    makeLegend(colourVec, legend, cex.legend, legendPos, legendText, lenlev, level, ltyVec, 
     noPlot, pchVec, type, xLimits, yLimits)
     
     ## Resetting graphical parameter
     par(las = 0) 
 
     retData <- data.frame(dosePts, as.data.frame(plotMat))
-    colnames(retData) <- c(colnames(origData)[1:doseDim], as.character(unique(assayNoOld)))
+#    colnames(retData) <- c(colnames(origData)[1:doseDim], as.character(unique(assayNoOld)))
+    colnames(retData) <- c(doseName, dlNames[["cNames"]])
     
     invisible(retData)
 }
@@ -327,7 +357,8 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     return(range(y[logVec]))
 }
 
-
+if (FALSE)
+{
 "addAxes" <- function(axes, cex.axis, conLevel, conName, conNameYes, xt, xtlab, xsty, yt, ytlab)
 {
     if (!axes) {return(invisible(NULL))}  # doing nothing
@@ -340,12 +371,25 @@ ytlab = NULL, add = FALSE, axes = TRUE)
                 
     ## Concerning the x axis                
     xaxisTicks <- axTicks(1)
-    if (!(min(xaxisTicks) > conLevel))
+    
+    
+    
+    
+    if (conNameYes)
     {
-        xaxisTicks[1] <- conLevel
+        xaxisTicks[1] <- conName
     }
     xaxisTicksOrig <- xaxisTicks
     xLabels <- xaxisTicks
+    
+    if ((conNameYes) && (min(xt) < conLevel)) 
+    {
+        xLimits[1] <- conLevel
+        smallDoses <- dose<conLevel
+        dose[smallDoses] <- conLevel
+        conNameYes <- TRUE 
+    }
+    
 #    print(xaxisTicks)
 
 #    ## Avoiding too many tick marks on the x axis
@@ -393,12 +437,88 @@ ytlab = NULL, add = FALSE, axes = TRUE)
     axis(1, at = xaxisTicks, labels = xLabels, cex.axis = cex.axis)
     axis(2, at = yaxisTicks, labels = yLabels, cex.axis = cex.axis)        
 }
+}
+
+"addAxes" <- function(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab)
+{
+    if (!axes) {return(invisible(NULL))}  # doing nothing
+    
+    ## Setting up the y axis tick mark locations and labels 
+    yaxisTicks <- axTicks(2)
+    yLabels <- TRUE
+    if (!is.null(yt)) {yaxisTicks <- yt; yLabels <- yt}
+    if (!is.null(ytlab)) {yLabels <- ytlab}                
+                
+    ## Setting up the x axis tick mark locations and labels               
+    if (!is.null(xt)) 
+    {
+        xaxisTicks <- xt
+    } else {
+        xaxisTicks <- axTicks(1)
+
+        ## Styling the x axis tick marks
+        if (identical(xtsty, "base10"))
+        {    
+            ceilingxTicks <- ceiling(log10(xaxisTicks[-1]))
+            xaxisTicksOrig <- xaxisTicks
+            xaxisTicks <- c(xaxisTicks[1], 10^(unique(ceilingxTicks)))
+#        xLabels <- c(xLabels[1], unlist(tapply(xLabels[-1], ceilingxTicks, head, 1)))
+
+            ## Reverting to original tick marks in case too few were created
+            if (length(xaxisTicks) < 3)
+            { 
+                xaxisTicks <- xaxisTicksOrig
+#                xLabels <- as.character(xaxisTicks)
+            }
+        }
+    }
+
+    ## Assigning labels to the tick marks
+    if (!is.null(xtlab)) 
+    {
+        xLabels <- xtlab
+    } else {
+        xLabels <- as.character(xaxisTicks)
+    }
+
+    ## Avoiding too many tick marks
+    if (xttrim)
+    {
+        lenXT <- length(xaxisTicks)
+        if (lenXT > 6) 
+        {
+            thinFactor <- max(c(2, floor(lenXT/6)))
+            halfLXT <- floor(lenXT / thinFactor) - 1
+            chosenInd <- 1 + thinFactor*(0:halfLXT)  
+            # "1" is ensuring that control always is present
+            xaxisTicks <- xaxisTicks[chosenInd]
+            xLabels <- xLabels[chosenInd]
+        }
+    }     
+
+    ## Assigning special name to first tick mark
+    if (logX && (!is.null(conName)))
+    {
+        xLabels[1] <- conName
+    }    
+
+    ## Updating labels
+    xLabels <- as.expression(xLabels)
+
+    ## Updating x axis labels
+#    xLabels <- as.expression(xaxisTicks)
+#    if (conNameYes) {xLabels[1] <- conName}                                                
+
+    axis(1, at = xaxisTicks, labels = xLabels, cex.axis = cex.axis)
+    axis(2, at = yaxisTicks, labels = yLabels, cex.axis = cex.axis)        
+}
+
 
 
 ## Creating a broken axis
-"brokenAxis" <- function(bcontrol, broken, conLevel, dosePts, gridsize, log, logX, plotit = TRUE)
+"brokenAxis" <- function(bcontrol, broken, bp, dosePts, gridsize, log, logX, plotit = TRUE)
 {
-    if (broken && logX)
+    if ((broken) && (logX))
     {
         bList <- list(factor = 2, style = "slash", width = 0.02)
             
@@ -414,7 +534,7 @@ ytlab = NULL, add = FALSE, axes = TRUE)
         breakWidth <- bList$"width"  # 0.02  # default in axis.break
         clFactor <- bList$"factor"  # 2
                      
-        brokenx <- clFactor*conLevel                   
+        brokenx <- clFactor * bp                   
         if ( (log == "x") || (log == "xy") || (log == "yx") )
         {
             ivMid <- dosePts > brokenx            

@@ -161,9 +161,9 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
     invisible(returnList)
 }
 
-"boltzmann" <- logistic
+#"boltzmann" <- logistic
 
-"B.3" <-
+"L.3" <-
 function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
 {
     ## Checking arguments
@@ -171,15 +171,15 @@ function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( boltzmann(fixed = c(fixed[1], 0, fixed[2:3], 1), names = c(names[1], "c", names[2:3], "f"), 
+    return( logistic(fixed = c(fixed[1], 0, fixed[2:3], 1), names = c(names[1], "c", names[2:3], "f"), 
     fctName = as.character(match.call()[[1]]), 
     fctText = "Logistic (ED50 as parameter) with lower limit fixed at 0") )
 }
 
-b3 <- B.3
-L.3 <- B.3
+#b3 <- B.3
+#L.3 <- B.3
 
-"B.4" <-
+"L.4" <-
 function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
 {
     ## Checking arguments
@@ -187,21 +187,21 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( boltzmann(fixed = c(fixed, 1), names = c(names, "f"),
+    return( logistic(fixed = c(fixed, 1), names = c(names, "f"),
     fctName = as.character(match.call()[[1]]), 
     fctText = "Logistic (ED50 as parameter)") )
 }
 
-b4 <- B.4
-L.4 <- B.4
+#b4 <- B.4
+#L.4 <- B.4
 
-"B.5" <-
+"L.5" <-
 function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
 {
-    return( boltzmann(fixed = fixed, names = names,
+    return( logistic(fixed = fixed, names = names,
     fctName = as.character(match.call()[[1]]), 
     fctText = "Generalised logistic (ED50 as parameter)") )
 }
 
-b5 <- B.5
-L.5 <- B.5
+#b5 <- B.5
+#L.5 <- B.5

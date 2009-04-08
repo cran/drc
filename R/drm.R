@@ -1,8 +1,8 @@
-"drm" <-function(
+"drm" <- function(
 formula, curveid, pmodels, weights, data = NULL, subset, fct, 
 type = c("continuous", "binomial", "Poisson", "quantal", "survival"), bcVal = NULL, bcAdd = 0, 
 start, na.action = na.fail, robust = "mean", logDose = NULL, 
-control = drmc(), lowerl = NULL, upperl = NULL)
+control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 {
 #    ## Matching 'adjust' argument
 #    adjust <- match.arg(adjust)
@@ -115,6 +115,8 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     ## Handling the 'formula', 'curveid' and 'data' arguments
     anName <- deparse(substitute(curveid))  # storing name for later use
     if (length(anName) > 1) {anName <- anName[1]}  # to circumvent the behaviour of 'substitute' in do.call("multdrc", ...)
+    if (nchar(anName) < 1) {anName <- "1"}  # in case only one curve is analysed
+
 
     mf <- match.call(expand.dots = FALSE)   
     nmf <- names(mf) 
@@ -134,16 +136,22 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     {
         stop("drm() is only designed for 1-dim. dose vectors")
     }
-    dimData <- xDim + 1  # dimension of dose plus 1 dimensional response
+#    dimData <- xDim + 1  # dimension of dose plus 1 dimensional response
     
-    varNames <- names(mf)
-    varNames <- varNames[c(2:dimData,1)]
+#    varNames <- names(mf)
+#    varNames <- varNames[c(2:dimData,1)]
+
+#    print(names(mf))
+#    print(model.extract(mf, "weights"))
+#    print(model.weights(mf))
+    varNames <- names(mf)[c(2, 1)]  
+    # only used once, but mf is overwritten later on
 
     ## Retrieving weights
-    weights <- model.weights(mf)
-    if (is.null(weights))
+    wVec <- model.weights(mf)
+    if (is.null(wVec))
     {
-        weights <- rep(1, numObs)
+        wVec <- rep(1, numObs)
     }
 
 #    ## Extracting variable for heterogeneous variances
@@ -186,7 +194,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     assayNo <- colConvert(assayNoOld)
     assayNames <- as.character(unique(assayNoOld))
     numAss <- length(assayNames)
-        
+    
     
 #    lenDose <- unlist(lapply(tapply(dose, assayNoOld, unique), length))
 #    conDose <- names(lenDose)[lenDose == 1]
@@ -279,6 +287,22 @@ control = drmc(), lowerl = NULL, upperl = NULL)
         ciOrigLength <- numAss
     }
 #    print(assayNo)
+    
+    ## Pooling data from different curves
+    if ((separate) && (numAss < 2))
+    {
+        warning("Nothing to pool", call. = FALSE)
+        separate <- FALSE 
+    }    
+    if ((separate) && (!missing(pmodels)))
+    {
+        warning("Separate fitting switched off", call. = FALSE)
+        separate <- FALSE
+    }
+    if (separate)
+    {
+        return(idrm(dose, resp, assayNo, wVec, fct, type))
+    }    
     
     ## Handling "pmodels" argument
     pmodelsList <- list()
@@ -900,7 +924,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     if (type == "continuous")
     {
         ## Ordinary least squares estimation
-        estMethod <- drmEMls(dose, resp, multCurves2, startVecSc, robustFct, weights, rmNA, dmf = dmatfct, 
+        estMethod <- drmEMls(dose, resp, multCurves2, startVecSc, robustFct, wVec, rmNA, dmf = dmatfct, 
         doseScaling = doseScaling, respScaling = respScaling)
         
 #        if (adjust == "vp")  #(varPower)
@@ -934,7 +958,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     }
     if (identical(type, "binomial"))
     {
-        estMethod <- drmEMbinomial(dose, resp, multCurves2, startVecSc, robustFct, weights, rmNA, 
+        estMethod <- drmEMbinomial(dose, resp, multCurves2, startVecSc, robustFct, wVec, rmNA, 
         doseScaling = doseScaling)        
     } 
     if (identical(type, "Poisson"))
@@ -1390,7 +1414,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
 
 
     ## Collecting summary output
-    sumVec <- c(bcVal, NA, NA, NA, nlsSS, nlsDF, numObs)  # , alternative)
+    sumVec <- c(NA, NA, NA, nlsSS, nlsDF, numObs)  # , alternative)
     sumList <- list(lenData = numObs, 
     alternative = NULL,  # alternative, 
     df.residual = numObs - length(startVec))
@@ -1398,7 +1422,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
 
     ## The function call
     callDetail <- match.call()
-    if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
+#    if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
 
 
     ## The data set
@@ -1406,7 +1430,7 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     {
         dose <- origDose
     }
-    dataSet <- data.frame(dose, origResp, assayNo, assayNoOld, weights)
+    dataSet <- data.frame(dose, origResp, assayNo, assayNoOld, wVec)
     names(dataSet) <- c(varNames, anName, anName, "weights")
 
 
@@ -1469,6 +1493,32 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     }
 #    deriv1Mat <- NULL
 
+    ## Box-Cox information
+    if (!is.null(bcVal))
+    {
+        bcVec <- list(lambda = bcVal, ci = c(NA, NA), bcAdd = bcAdd)
+    } else {
+        bcVec <- NULL
+    }
+
+    ## Parameter estimates
+    coefVec <- nlsFit$par
+    names(coefVec) <- parmVec
+
+    ## Constructing data list
+    wName <- callDetail[["weights"]]
+    if (is.null(wName)) 
+    {
+        wName <- "weights"
+    } else {
+        wName <- deparse(wName)
+    }
+    dataList <- list(dose = as.vector(dose), origResp = as.vector(origResp), weights = wVec, 
+    curveid = assayNoOld, resp = as.vector(resp),
+    names = list(dName = varNames[1], orName = varNames[2], wName = wName, cNames = anName, rName = ""))
+
+    ## What about naming the vector of weights?
+
     ## Returning the fit
 #    returnList <- list(varParm, nlsFit, list(plotFct, logDose), sumVec, startVec, list(parmVec, parmVecA, parmVecB), 
     returnList <- list(NULL, nlsFit, list(plotFct, logDose), sumVec, startVecSc * longScaleVec, 
@@ -1476,8 +1526,10 @@ control = drmc(), lowerl = NULL, upperl = NULL)
     list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, robust, estMethod, numObs - length(startVec), 
 #    anovaModel0, gofTest, 
-    sumList, function(x){x}, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
-    anName, data, weights, list(dose = dose, resp = resp, curveid = assayNoOld, origResp = origResp))
+    sumList, NULL, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
+    anName, data, wVec, 
+    dataList,
+    coefVec, bcVec)
     
     names(returnList) <- c("varParm", "fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
 #    names(returnList) <- c("fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
@@ -1485,7 +1537,8 @@ control = drmc(), lowerl = NULL, upperl = NULL)
 #    "anova", "gofTest", 
     "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose", "cm", "deriv1",
     "curveVarNam", "origData", "weights",
-    "dataList")
+    "dataList", "coefficients", "boxcox")
+    ## Argument "scaleFct" not used anymore
     class(returnList) <- c("drc", class(fct))
 
     return(returnList)

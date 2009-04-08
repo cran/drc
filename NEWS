@@ -1,6 +1,15 @@
 ## Changes in 'drc'
 
-2009-03-25: The dataset "algae" has been included.
+2009-04-08: Help page for earthworms dataset has been improved. Error in likelihood calculation for some binomial models has been fixed.
+
+2009-04-07: mixture() also works for binomial data. Argument "legendCex" in the plot 
+method renamed into "cex.legend" in line with other cex arguments.
+
+2009-04-01: Minor internals changes in drm() and in the plot method.
+
+2009-03-27: The convenience functions b.3(), B.3(), b.4(), B.4(), b.5(), B.5(), and boltzmann have been removed. Use L.3(), L.4(), and L.5() instead. compParm(), ED(), SI() have been  restructured. drm() has been extended to allow fitting models separately for each curve. confint, summary, vcov, ED, MAX, SI have a new argument "pool" to allow pooling of separate fits. Argument "ci" in relpot() and SI() has been renamed into "interval". modelFit() now also works for binomial data.
+
+2009-03-25: The dataset "algae" has been included. vcov method has been re-structured.
 
 2009-03-24: The function plotraw() has been removed. Initial plots of the data should be done using R's standard plotting functionality, e.g. plot and xyplot(). 
 

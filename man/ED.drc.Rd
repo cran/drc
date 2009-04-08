@@ -15,7 +15,7 @@
   \method{ED}{drc}(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
   level = ifelse(!(interval == "none"), 0.95, NULL),
   reference = c("control", "upper"), type = c("relative", "absolute"), lref, uref,
-  bound = TRUE, od = FALSE, display = TRUE, logBase = NULL, ...)
+  bound = TRUE, od = FALSE, display = TRUE, pool = TRUE, logBase = NULL, ...)
   
   \method{ED}{mrdrc}(object, respLev, interval = c("none", "approximate", "bootstrap"), level = 0.95, 
   method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, display = TRUE, lower, upper,
@@ -37,6 +37,8 @@
   \item{bound}{logical. If TRUE only ED values between 0 and 100\% are allowed. FALSE is useful for hormesis models.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
+  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
+  independently fitted curves as specified in \code{\link{drm}}.}
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}  
   \item{method}{character string specifying if bisection or grid search should be used to determine ED estimates.
   Grid search may give better results for ED level close to the boundaries of the dose range or in case of

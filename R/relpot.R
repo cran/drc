@@ -1,4 +1,4 @@
-"relpot" <- function(object, plotit = TRUE, compMatch = NULL, percVec = NULL, ci = "none", 
+"relpot" <- function(object, plotit = TRUE, compMatch = NULL, percVec = NULL, interval = "none", 
 type = c("relative", "absolute"), scale = c("original", "percent", "unconstrained"), ...)
 {
     scale <- match.arg(scale)
@@ -40,7 +40,7 @@ type = c("relative", "absolute"), scale = c("original", "percent", "unconstraine
 
     lenpv <- length(percVec)
     rpVec <- rep(NA, lenpv)
-    if (ci == "none")
+    if (identical(interval, "none"))
     {
         for (i in 1:lenpv)
         {
@@ -53,7 +53,7 @@ type = c("relative", "absolute"), scale = c("original", "percent", "unconstraine
 
         for (i in 1:lenpv)
         {
-            SIobj <- SI(object, rep(percVec[i], 2), compMatch, ci = ci, type = type, display = FALSE)
+            SIobj <- SI(object, rep(percVec[i], 2), compMatch, interval = interval, type = type, display = FALSE)
             rpVec[i] <- SIobj[1]
             lrpVec[i] <- SIobj[2]
             urpVec[i] <- SIobj[3]            
@@ -78,7 +78,7 @@ type = c("relative", "absolute"), scale = c("original", "percent", "unconstraine
             xVec <- percVec
         }
                 
-        if (ci != "none")
+        if (!identical(interval, "none"))
         {
             plot(xVec, rpVec, type = "l", xlab = xlabStr, ylab = "Relative potency", 
             ylim = c(min(lrpVec), max(urpVec)), ...)

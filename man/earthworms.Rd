@@ -4,10 +4,12 @@
 
 \docType{data}
 
-\title{Earthworms}
+\title{Earthworm toxicity test}
 
 \description{
-  Dataset obtained from a toxicity test using earthworms, counting the number of earthworms staying in the toxic earth container (not migrating to the neighbouring container of clean earth).
+  The dataset is obtained from a toxicity test using earthworms, and it contains the number of earthworms 
+  remaining in a container that is contaminated with a toxic substance (not disclosed) and not
+  migrating to the neighbouring uncontaminated container).
 }
 
 \usage{data(earthworms)}
@@ -15,18 +17,22 @@
 \format{
   A data frame with 35 observations on the following 3 variables.
   \describe{
-    \item{\code{dose}}{a numeric vector}
-    \item{\code{number}}{a numeric vector}
-    \item{\code{total}}{a numeric vector}
+    \item{\code{dose}}{a numeric vector of dose values}
+    \item{\code{number}}{a numeric vector containing counts of remaining earthworms in the container}
+    \item{\code{total}}{a numeric vector containing total number of earthworms put in the containers}
   }
 }
 
 \details{
-  At dose 0 around half of the earthworms wil be in each of the two containers. Thus it is not appropriate to this an ordinary logistic regression (with upper limit 1). 
+  At dose 0 around half of the earthworms is expected be in each of the two containers. Thus it is not 
+  appropriate to fit an ordinary logistic regression with log(dose) as explanatory variable to these data
+  as it implies an upper limit of 1 at dose 0 and in fact this model does not utilise the observations
+  at dose 0 (see the example section below). 
 }
 
 \source{
-  The dataset is kindly provided by Nina Cedergreen, Royal Veterinary and Agricultural University, Denmark.
+  The dataset is kindly provided by Nina Cedergreen, Faculty of Life Sciences, University of Copenhagen, 
+  Denmark.
 }
 
 %\references{}
@@ -45,8 +51,9 @@ fct = LL.3(), type = "binomial")
 modelFit(earthworms.m2)  # goodness-of-fit test
 # improvement not visible in test!!!
 
-## Comparing model1 and model2 (can model2 be reduced to model1?)
-anova(earthworms.m1, earthworms.m2, test = "Chisq")
+## Comparing model1 and model2 
+## (Can the first model be reduced to the second model?)
+anova(earthworms.m1, earthworms.m2)
 
 }
 \keyword{datasets}

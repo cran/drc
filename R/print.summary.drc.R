@@ -24,12 +24,23 @@ function(x, ...)
     cat("Parameter estimates:\n\n")
     printCoefmat(object$"coefficients")
 
-    if ((!is.null(object$"resVar")) && (!(object$"type" == "binomial")))
+    if ((!is.null(object$"resVar")) && (!identical(object$"type", "binomial")))
     {
-        cat("\n")
-        endText <- paste("(", as.character(df.residual(object)), " degrees of freedom)\n", sep = "")
-#        cat("Residual variance:", format(object$"resVar"), endText) 
-        cat("Residual standard error:", format(sqrt(object$"resVar")), endText) 
+        cat("\nResidual standard error")
+        
+        rseMat <- object$"rseMat"
+        if (nrow(rseMat) > 1)
+        {
+            cat("s:\n\n")
+        } else {
+            cat(":\n\n")
+        }
+
+        printFct <- function(x)
+        {
+            paste(format(x[1]), paste("(", as.character(x[2]), " degrees of freedom)\n", sep = ""))
+        }
+        cat(paste(rownames(rseMat), apply(rseMat, 1, printFct)), sep = "")
     }
 
     if (!is.null(object$"varComp"))

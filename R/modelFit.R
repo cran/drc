@@ -9,12 +9,12 @@
     "Poisson" = drmLOFPoisson())
   
     switch(object$"type", 
-    binomial = gofTest(object),  
-    continuous = anovaTest(object, testList$"anovaTest"))
+    binomial = gofTest(object, testList$"gofTest"),  
+    continuous = lofTest(object, testList$"anovaTest"))
 }
 
 
-"anovaTest" <- function(object, anovaTest)
+"lofTest" <- function(object, anovaTest)
 {
     if (!is.null(anovaTest))
     {
@@ -76,9 +76,10 @@
     }
 }
 
-"gofTest" <- function(object)
+"gofTest" <- function(object, gofTest)
 {       
-    gofTest <- object$"gofTest"
+    gofTest <- gofTest(object$"dataList"$"resp", weights(object), fitted(object), df.residual(object))
+    
     if (!is.null(gofTest))
     {
         returnFct(c(NA, NA), c(NA, NA), c(NA, gofTest[2]), c(NA, gofTest[1]), 

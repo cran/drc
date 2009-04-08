@@ -1,16 +1,123 @@
 "vcov.drc" <-
-function(object, ..., corr = FALSE)
+function(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
 {
+    ## Defining function for calculating variance-covariance matrix
+    contData <- identical(object$"type", "continuous")
+    if (contData)
+    {
+        vcovfct <- vcCont
+    } else {
+        vcovfct <- vcDisc
+    }
+
     ## Retrieving the estimated variance-covariance matrix for the parameter estimates
-    
     if (!corr)
     {
-        summary(object)$"varMat"
-    } else {
-        vcMat <- summary(object)$"varMat"
-        diage <- sqrt(diag(vcMat))
-        scaMat <- outer(diage, diage)
-        
-        vcMat/scaMat
+#        summary(object)$"varMat"
+        if (!is.null(object$"objList"))
+        {
+            require(magic, quietly = TRUE)
+
+            if ((contData) && (pool))
+            {
+                vcovfct <- function(x){vcCont(x) / (2 * rse(x, TRUE))}  
+                # no individual scaling, only for continuous data
+
+                vcMat <- do.call("adiag", lapply(object$"objList", vcovfct))
+                if (!unscaled)
+                {
+                    vcMat <- vcMat * (2 * (object$"minval" / df.residual(object)))
+                    # scaling based on all fits
+                }
+            } else {
+                vcMat <- do.call("adiag", lapply(object$"objList", vcovfct))
+            }
+#            do.call("adiag", lapply(object$"objList", object$"estMethod"$"vcovfct"))
+#            vcMat <- do.call("adiag", lapply(object$"objList", vcovfct))
+#            if (contPool)
+#            {
+#                vcMat <- vcMat * (2 * (object$"minval" / df.residual(object)))
+#                # scaling based on all fits
+#            }        
+            return(vcMat)     
+        } else {
+            if ((contData) && (unscaled))
+            {
+                return(vcovfct(object) / (2 * rse(object, TRUE)))
+            } else {
+                varMat <- vcovfct(object)
+                ## Adjusting for over-dispersion using the Pearson statistic
+                if ((identical(object$"type", "binomial")) && (od)) 
+                { 
+                    gof <- drmLOFbinomial()$"gofTest"(object$"dataList"$"resp", 
+                    weights(object), fitted(object), df.residual(object))
+                
+                    varMat <- varMat * (gof[1] / gof[2])
+                }
+                return(varMat)
+            }
+        }
+    } else { ## Calculating correlation matrix
+        corrFct <- function(object)
+        {
+            vcMat <- (object$"estMethod")$"vcovfct"(object)
+            diage <- sqrt(diag(vcMat))
+            vcMat / (outer(diage, diage))
+        }
+        if (!is.null(object$"objList"))
+        {
+            require(magic, quietly = TRUE)        
+            do.call("adiag", lapply(object$"objList", corrFct)) 
+        } else {
+            corrFct(object)
+        }       
     }    
+}
+
+"vcCont" <- function(object)
+{
+#    scaledH <- (object$"fit"$"hessian") / (2 * rvfct(object))
+    scaledH <- (object$"fit"$"hessian") / (2 * rse(object, TRUE))
+    invMat <- try(solve(scaledH), silent = TRUE)
+    
+    if (inherits(invMat, "try-error"))
+    {
+        ## More stable than 'solve' (suggested by Nicholas Lewin-Koh - 2007-02-12)
+        ch <- try(chol(scaledH))
+        if (inherits(ch, "try-error")) 
+        {
+            ch <- try(chol(0.99 * object$fit$hessian + 0.01 * diag(dim(object$fit$hessian)[1])))
+        }
+        ## Try regularizing if the varcov is unstable
+        if (!inherits(ch, "try-error")) {return(chol2inv(ch))}
+    } else {
+        return(invMat)
+    }
+}
+
+"rse" <- function(object, resvar = FALSE)
+{
+    if (!is.null(object$"objList"))
+    {
+        fitValue <- object$"minval"
+    } else {
+        fitValue <- object$"fit"$"value"
+    }
+
+    rse <- switch(object$"type",
+    "continuous" = fitValue / df.residual(object),
+    "binomial" = NA,
+    "Poisson" = NA)
+    
+    if (resvar) 
+    {
+        rse
+    } else {
+        sqrt(rse)
+    }
+}
+
+"vcDisc" <- function(object)
+{
+    solve(object$fit$hessian)    
 }

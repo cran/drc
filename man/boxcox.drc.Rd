@@ -9,8 +9,9 @@
 }
 
 \usage{
-boxcox.drc(object, lambda = seq(-2, 2, by = 0.25), plotit = TRUE, bcAdd = 0, method = c("ml", "anova"),  
-level = 0.95, eps = 1/50, xlab = expression(lambda), ylab = "log-Likelihood", ...)
+boxcox.drc(object, lambda = seq(-2, 2, by = 0.25), plotit = TRUE, bcAdd = 0, 
+method = c("ml", "anova"),  level = 0.95, eps = 1/50, 
+xlab = expression(lambda), ylab = "log-Likelihood", ...)
 }
 
 \arguments{

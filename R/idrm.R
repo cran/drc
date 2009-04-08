@@ -1,77 +1,116 @@
-"idrm" <- function(x, y, curve, weights, fct, type)
+"idrm" <- function(x, y, curveid, weights, fct, type)
 {
-    lenData <- length(y)
-    dframe <- data.frame(y = y, x = x, w = weights)
-
-#print(cbind(x,y,cid))
-
-    ## Setting na.action option to default
-    options(na.action = "na.omit")
-
-    listData <- tapply(1:lenData, curve, function(t) {dframe[t, ]})
-
-print(listData)
-
-    laFct <- function(listDataElt, fct) {drm(y~x, weights=w, data=listDataElt, fct=fct, type=type)}  
-    if (!is.list(fct[[1]]))
+    oneFunction <- !is.list(fct[[1]])
+ 
+    ## Fitting models for each curve
+    fitList <- list() 
+    uniCur <- unique(curveid)   
+    numCur <- length(uniCur)
+    for (i in 1:numCur)
     {
-#        fitList <- lapply(listData, multdrc, fct = fct, ...)
-        fitList <- lapply(listData, laFct, fct)
-    } else {
-        fitList <- list()
-        for (i in 1:length(fct))
+        if (oneFunction)
         {
-#            fitList[[i]] <- drm(listData[[i]], fct = fct[[i]], type = type, weights = weights)
-            fitList[[i]] <- laFct(listData[[i]], fct[[i]])
+            fitList[[i]] <- drm(y~x, curveid, weights = weights, fct = fct, type = type, 
+            subset = curveid == uniCur[i], separate = FALSE)
+        } else {
+            tempFitlist <- list()
+            for (j in 1:length(fct))
+            {
+                tempFitlist[[j]] <- drm(y~x, curveid, weights = weights, fct = fct[[j]], 
+                type = type, subset = curveid == uniCur[i], separate = FALSE)
+            }
+            fitList[[i]] <- tempFitlist
         }
     }
-    
-#    ## The data set
-#    if (!is.null(logDose)) 
-#    {
-#        dose <- origDose
-#    }
-#    dataSet <- data.frame(x, y, curve)  # , assayNoOld, weights)
-#    names(dataSet) <- c(varNames, anName, anName, "weights")    
-    
-    retList <- list(fitList = fitList, fctList = fct, curveId = unique(curve))
-    class(retList) <- c("idrm")
-    return(retList)
-#    return(fitList)
-}
 
-"summary.idrm" <- function(object)
-{
-    
-
-}
-
-
-"coef.idrm" <- function(object)
-{
-    lappFct <- function(t)
+    retList <- fitList[[1]]
+    if (oneFunction)
     {
-        coefVec <- coef(t) 
-        retVec <- c(coefVec, summary(t)$resVar)
-        names(retVec) <- c(names(coefVec), "Res var")
+        parmMat <- fitList[[1]]$"parmMat"
+        nlsFit <- fitList[[1]]$"nlsFit"
         
-        retVec
-    }
+        parNames <- fitList[[1]]$"parNames"
+        numPar <- length(parNames[[1]])        
+        parNames[[3]] <- rep(uniCur[i], numPar)
+               
+        if (numCur > 1)
+        {
+            nlsFit[[1]] <- nlsFit
+            pnList <- list()
+            pnList[[1]] <- parNames
+            pnList[[1]][[3]] <- rep(uniCur[1], numPar)
+            
+            
+            for (i in 2:numCur)
+            {
+                parmMat <- cbind(parmMat, fitList[[i]]$"parmMat")
+                nlsFit[[i]] <- fitList[[i]]$"nlsFit"
+                pnList[[i]] <- fitList[[i]]$"parNames"
+                pnList[[i]][[3]] <- rep(uniCur[i], numPar)
+            }
+        }
+        retList$"parmMat" <- parmMat 
 
-#    coefList <- lapply(object$"fitList", function(t) {c(coef(t), summary(t)$resVar)})
-    coefList <- lapply(object$"fitList", lappFct)
-
-    if (!is.list(object$"fctList"[[1]]))
-    {
-        cl1 <- coefList[[1]]
-        coefMat <- matrix(unlist(coefList), ncol = length(cl1), byrow = TRUE)
-        colnames(coefMat) <- names(cl1)
-        rownames(coefMat) <- object$"curveId"
+        bVec <- as.vector(unlist(lapply(pnList, function(x){x[[2]]})))
+        cVec <- as.vector(unlist(lapply(pnList, function(x){x[[3]]}))) 
+        aVec <- paste(bVec, cVec, sep = ":")
+        retList$"parNames" <- list(aVec, bVec, cVec)       
     
-        return(coefMat)
+        retList$"indexMat" <- matrix(c(1:(numCur * numPar)), numPar, numCur)
+        names(fitList) <- uniCur
+        retList$"objList" <- fitList
+    
+        coefVec <- as.vector(unlist(lapply(fitList, function(x){x$"fit"$"par"})))
+        names(coefVec) <- aVec
+        retList$"coefficients" <- coefVec
+        
+        retList$"df.residual" <- sum(unlist(lapply(fitList, function(x){x$"df.residual"})))
+        retList$"minval" <- sum(unlist(lapply(fitList, function(x){x$"fit"$"value"})))
+        
+        retList$"fit" <- nlsFit
+    
+        
     } else {
-        names(coefList) <- object$"curveId"
-        return(coefList)
+    
     }
+        
+    class(retList) <- c("drc")
+    return(retList)
 }
+
+#
+#"summary.idrm" <- function(object)
+#{
+#    
+#
+#}
+#
+#
+#"coef.idrm" <- function(object)
+#{
+#    lappFct <- function(t)
+#    {
+#        coefVec <- coef(t) 
+#        retVec <- c(coefVec, summary(t)$resVar)
+#        names(retVec) <- c(names(coefVec), "Res var")
+#        
+#        retVec
+#    }
+#
+##    coefList <- lapply(object$"fitList", function(t) {c(coef(t), summary(t)$resVar)})
+#    coefList <- lapply(object$"fitList", lappFct)
+#
+#    if (!is.list(object$"fctList"[[1]]))
+#    {
+#        cl1 <- coefList[[1]]
+#        coefMat <- matrix(unlist(coefList), ncol = length(cl1), byrow = TRUE)
+#        colnames(coefMat) <- names(cl1)
+#        rownames(coefMat) <- object$"curveId"
+#    
+#        return(coefMat)
+#    } else {
+#        names(coefList) <- object$"curveId"
+#        return(coefList)
+#    }
+#}
 

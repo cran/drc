@@ -9,13 +9,15 @@
 }
 
 \usage{
-MAX(object, lower = 1e-3, upper = 1000)
+MAX(object, lower = 1e-3, upper = 1000, pool = TRUE)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{lower}{numeric. Lower limit for bisection method. Need to be smaller than EDx level to be calculated.}  
   \item{upper}{numeric. Upper limit for bisection method. Need to be larger than EDx level to be calculated.}
+  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
+  independently fitted curves as specified in \code{\link{drm}}.} 
 }
 
 \details{

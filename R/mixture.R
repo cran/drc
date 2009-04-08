@@ -165,7 +165,10 @@
         sv3 <- start
     } 
    
-    mModel <- update(object, fct = mixtfct, pmodels = collapseNew2, start = sv3)
+#    print(mixtfct)
+#    print(collapseNew2)
+#    print(sv3)
+    mModel <- update(object, fct = mixtfct, pmodels = collapseNew2, start = sv3, control = control)
     
 #    rm(collapseNew2, envir = .GlobalEnv)    
 

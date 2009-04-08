@@ -12,12 +12,12 @@
 
 \usage{
   
-  \method{plot}{drc}(x, ..., level = NULL, broken = FALSE, col = FALSE, 
-  conLevel, conName, gridsize = 100, legend, legendText, legendPos, legendCex = 1,
-  type = c("average", "all", "bars", "none", "obs"), obs, lty, log = "x", xsty = c("base10", "none"), 
-  cex, pch, xlab, ylab, xlim, ylim, cex.axis = 1,
-  bcontrol = NULL, xt = NULL, xtlab = NULL, yt = NULL, ytlab = NULL,
-  add = FALSE, axes = TRUE)
+  \method{plot}{drc}(x, ..., add = FALSE, level = NULL, type = c("average", "all", "bars", "none", "obs"), 
+  broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100, 
+  log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
+  yt = NULL, ytlab = NULL, ylab, ylim,
+  cex, cex.axis = 1, col = FALSE, lty, pch, 
+  legend, legendText, legendPos, cex.legend = 1)
 
   \method{plot}{mrdrc}(x, ..., pava = FALSE)  
 }
@@ -26,55 +26,57 @@
   \item{x}{an object of class 'drc'.}
   \item{...}{additional graphical arguments. For instance, use \code{lwd=2} or \code{lwd=3} to increase the width 
   of plot symbols.}
+  \item{add}{logical. If TRUE then add to already existing plot.} 
   \item{level}{vector of character strings. To plot only the curves specified by their names.}
-  \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
-  (using functionality in the CRAN package 'plotrix').}
-  \item{col}{either logical or a vector of colours. If TRUE default colours are used. If FALSE (default) no colours are used.}  
-  \item{conLevel}{numeric specifying the dose level below which the dose is zero (the amount of stretching on 
-  the dose axis above zero in order to create the visual illusion of a logarithmic scale including 0). 
-  The default is the base-10 value corresponding to the rounded value of the minimum of the log10 values of 
-  all positive dose values.}
-  \item{conName}{character string. Name on x axis for dose zero. Default is '"0"'.}
-  \item{gridsize}{numeric. Number of points in the grid used for plotting the fitted curves.}
-  \item{legend}{logical. If TRUE a legend is displayed.}
-  \item{legendText}{a character string or vector of character strings specifying the legend text 
-  (the position of the upper right corner of the legend box).}
-  \item{legendPos}{numeric vector of length 2 giving the position of the legend.}
-  \item{legendCex}{numeric specifying the legend text size.}
   \item{type}{a character string specifying how to plot the data. There are currently
   5 options:  "average" (averages and fitted curve(s); default), 
   "none" (only the fitted curve(s)), "obs" (only the data points), 
   "all" (all data points and fitted curve(s)) and 
   "bars" (averages and fitted curve(s) with model-based error ).}
-  \item{obs}{Outdated argument. Use \code{type}.}  
-  \item{lty}{a numeric vector specifying the line types.}
-  \item{log}{a character string which contains '"x"' if the x axis is to be logarithmic, '"y"' if the y axis is to be logarithmic and '"xy"' or
-  '"yx"' if both axes are to be logarithmic. The default is "x". The empty string "" yields the original axes.}
-  \item{xsty}{a character string specifying the dose axis style for arrangement of tick marks. By default ("base10") 
-  only base 10 tick marks are shown, unless too few tick marks are available in which case "none" applies 
-  (if the range of doses applied is narrow). The choice "none" seeks to provide a sensible set of tick marks.}
-  \item{cex}{numeric or numeric vector specifying the size of plotting symbols and text 
-  (see \code{\link{par}} for details).}
-  \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
-  \item{xlab}{an optional label for the x axis.}
-  \item{ylab}{an optional label for the y axis.}
-  \item{xlim}{a numeric vector of length two, containing the lower and upper limit for the x axis.}
-  \item{ylim}{a numeric vector of length two, containing the lower and upper limit for the y axis.}
-  \item{cex.axis}{numeric value specifying the magnification to be used for axis annotation 
-  relative to the current setting of cex.}  
+  \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
+  (using functionality in the CRAN package 'plotrix').}
+  \item{bp}{numeric value specifying the breap point below which the dose is zero (the amount of stretching on 
+  the dose axis above zero in order to create the visual illusion of a logarithmic scale \emph{including} 0). 
+  The default is the base-10 value corresponding to the rounded value of the minimum of the log10 values of 
+  all positive dose values. This argument is only working for logarithmic dose axes.}
   \item{bcontrol}{a list with components \code{factor}, \code{style} and \code{width}. 
   Controlling the appearance of the break (in case \code{broken} is \code{TRUE}). 
   The component \code{factor} is the distance from the control to the break as a 
-  multiple of the value of \code{conLevel} (default is 2).
+  multiple of the value of \code{bp} (default is 2).
   The component \code{style} can take the values: \code{gap}, \code{slash} or \code{zigzag}.
   The component \code{width} is the width of the break symbol (default is 0.02).}
+  \item{conName}{character string. Name on x axis for dose zero. Default is '"0"'.}
+  \item{axes}{logical indicating whether both axes should be drawn on the plot.}
+  \item{gridsize}{numeric. Number of points in the grid used for plotting the fitted curves.}
+  \item{log}{a character string which contains '"x"' if the x axis is to be logarithmic, '"y"' if the y axis is to be logarithmic and '"xy"' or
+  '"yx"' if both axes are to be logarithmic. The default is "x". The empty string "" yields the original axes.}
+  \item{xtsty}{a character string specifying the dose axis style for arrangement of tick marks. By default ("base10") 
+  For a logarithmic axis by default only base 10 tick marks are shown ("base10"). Otherwise sensible 
+  equidistantly located tick marks are shown ("standard"), relying on \code{\link{axTicks}}.}
+  \item{xttrim}{logical specifying if the number of tick marks should be trimmed in case too many tick marks 
+  are initially determined.}
   \item{xt}{a numeric vector containing the positions of the tick marks on the x axis.}
   \item{xtlab}{a vector containing the tick marks on the x axis.}
+  \item{xlab}{an optional label for the x axis.}
+  \item{xlim}{a numeric vector of length two, containing the lower and upper limit for the x axis.}
   \item{yt}{a numeric vector, containing the positions of the tick marks on the y axis.}
   \item{ytlab}{a vector containing the tick marks on the y axis.} 
-  \item{add}{logical. If TRUE then add to already existing plot.} 
-  \item{axes}{logical indicating whether both axes should be drawn on the plot.}
-  \item{pava}{logical. If TRUE the fit is monotoniosed using pool adjacent violators algorithm.}  
+  \item{ylab}{an optional label for the y axis.}
+  \item{ylim}{a numeric vector of length two, containing the lower and upper limit for the y axis.}  
+  \item{cex}{numeric or numeric vector specifying the size of plotting symbols and text 
+  (see \code{\link{par}} for details).}
+  \item{cex.axis}{numeric value specifying the magnification to be used for axis annotation 
+  relative to the current setting of cex.}  
+  \item{col}{either logical or a vector of colours. If TRUE default colours are used. 
+  If FALSE (default) no colours are used.}  
+  \item{legend}{logical. If TRUE a legend is displayed.}
+  \item{legendText}{a character string or vector of character strings specifying the legend text 
+  (the position of the upper right corner of the legend box).}
+  \item{legendPos}{numeric vector of length 2 giving the position of the legend.}
+  \item{cex.legend}{numeric specifying the legend text size.}
+  \item{lty}{a numeric vector specifying the line types.}
+  \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
+  \item{pava}{logical. If TRUE the fit is monotonised using pool adjacent violators algorithm.}  
 }
 
 \details{
@@ -148,12 +150,12 @@ plot(spinach.m1, cex = c(1,2,3,4,5), main = "User-specified symbil sizes")
 ## Fitting another model to be plotted below
 lettuce.m1 <- drm(weight~conc, data = lettuce, fct = LL.4())
 
-## Using the argument 'conLevel'. Compare the plots!
+## Using the argument 'bp'. Compare the plots!
 par(mfrow = c(2, 2))
-plot(lettuce.m1, main = "conLevel=1e-2 (default)")  # using the default
-plot(lettuce.m1, conLevel = 1e-4, main = "conLevel=1e-4")
-plot(lettuce.m1, conLevel = 1e-6, main = "conLevel=1e-6")
-plot(lettuce.m1, conLevel = 1e-8, main = "conLevel=1e-8")
+plot(lettuce.m1, main = "bp = default")  # using the default
+plot(lettuce.m1, bp = 1e-4, main = "bp = 1e-4")
+plot(lettuce.m1, bp = 1e-6, main = "bp = 1e-6")
+plot(lettuce.m1, bp = 1e-8, main = "bp = 1e-8")
 par(mfrow = c(1,1))
 
 ## User-specified position of legend
