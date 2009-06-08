@@ -1,10 +1,10 @@
 "llogistic" <- function(
 fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
-ss = c("1", "2", "3"), ssfct = NULL, 
+method = c("1", "2", "3", "4"), ssfct = NULL, 
 fctName, fctText)
 {
     ## Matching 'adjust' argument
-    ss <- match.arg(ss)
+    method <- match.arg(method)
     
     ## Checking arguments
     numParm <- 5
@@ -72,17 +72,16 @@ if (FALSE) {  ## will work once plotFct does not depend on drcFct
 
     ## Defining the self starter function
 
-    ## Defining self starter function based on supplied function   
+    ## Defining self starter function   
     if (!is.null(ssfct))
     {
         ssfct <- ssfct
     } else {
-        ssfct <- LL.ssf(ss, fixed)
+        ssfct <- llogistic.ssf(method, fixed)
     }
    
     ## Defining names
     names <- names[notFixed]
-    
     
     ##Defining the first derivatives (in the parameters) 
 #    if (useD)
@@ -167,16 +166,18 @@ if (FALSE) {  ## will work once plotFct does not depend on drcFct
     edfct <- function(parm, respl, reference, type, ...)
     {
         parmVec[notFixed] <- parm
-        if (type == "absolute") 
-        {
-            p <- 100*((parmVec[3] - respl)/(parmVec[3] - parmVec[2]))
-        } else {  
-            p <- respl
-        }
-        if ( (parmVec[1] < 0) && (reference == "control") )
-        {
-            p <- 100 - p
-        }
+#        if (type == "absolute") 
+#        {
+#            p <- 100*((parmVec[3] - respl)/(parmVec[3] - parmVec[2]))
+#        } else {  
+#            p <- respl
+#        }
+#        ## Swapping p for increasing curve
+#        if ( (type == "relative") && (parmVec[1] < 0) && (reference == "control") )
+#        {
+#            p <- 100 - p
+#        }
+        p <- EDhelper(parmVec, respl, reference, type)
     
         tempVal <- log((100-p)/100)
         EDp <- parmVec[4]*(exp(-tempVal/parmVec[5])-1)^(1/parmVec[1])

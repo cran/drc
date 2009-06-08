@@ -60,3 +60,6 @@ anova(ryegrass.m2, ryegrass.m1, details = FALSE)  # without details
 }
 \keyword{models}
 \keyword{nonlinear}
+
+\concept{extra sum-of-squares F-test}
+\concept{approximate F-test}

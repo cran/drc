@@ -14,15 +14,18 @@
 }
 
 \usage{
-  gompertz(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)
+  gompertz(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), 
+  method = c("1", "2", "3", "4"), ssfct = NULL,
+  fctName, fctText)
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{vector of character strings giving the names of the parameters (should not contain ":").
-  The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e
-  (see under 'Details' for the precise meaning of each parameter).}
+  The order of the parameters is: b, c, d, e (see under 'Details' for the precise meaning of each parameter).}
+  \item{method}{character string indicating the self starter function to use.}  
+  \item{ssfct}{a self starter function to be used.}  
   \item{fctName}{character string used internally by convenience functions (optional).}  
   \item{fctText}{character string used internally by convenience functions (optional).}  
 }
@@ -56,10 +59,10 @@
 
 \note{
   The function is for use with the function \code{\link{drm}}, but typically the convenience functions
-  \code{link{G.2}}, \code{link{G.3}}, \code{link{G.3u}}, and \code{link{G.4}} should be used.
+  \code{\link{G.2}}, \code{\link{G.3}}, \code{\link{G.3u}}, and \code{\link{G.4}} should be used.
 }
 
-\seealso{The Weibull model \code{\link{weibull1}} is closely related to the Gompertz model.}
+\seealso{The Weibull model \code{\link{weibull2}} is closely related to the Gompertz model.}
 
 \examples{
 

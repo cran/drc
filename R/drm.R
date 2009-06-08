@@ -112,6 +112,9 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    fct$"anovaYes"$"bin" <- NULL
 #    fct$"anovaYes"$"cont" <- TRUE
 
+    ## Storing call details
+    callDetail <- match.call()
+
     ## Handling the 'formula', 'curveid' and 'data' arguments
     anName <- deparse(substitute(curveid))  # storing name for later use
     if (length(anName) > 1) {anName <- anName[1]}  # to circumvent the behaviour of 'substitute' in do.call("multdrc", ...)
@@ -876,7 +879,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    print(multCurves(dose, startVec))
 
     ## Defining objective function
-    robustFct <- drmRobust(robust, match.call(), numObs, length(startVec))  
+#    robustFct <- drmRobust(robust, match.call(), numObs, length(startVec))  
+    robustFct <- drmRobust(robust, callDetail, numObs, length(startVec))  
     
     ## Defining first derivative (if available) ... used once in drmEMls()
     if (!is.null(dfct1))
@@ -1143,7 +1147,9 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     ## Optimising the objective function previously defined
     startVecSc <- as.vector(startVecSc)  # removing names
     nlsFit <- drmOpt(opfct, opdfct1, startVecSc, optMethod, constrained, warnVal, 
-    upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, trace = control$"trace") 
+    upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, trace = control$"trace",
+    matchCall = callDetail) 
+#    matchCall = match.call()) 
         
     if (!nlsFit$convergence) {return(nlsFit)}
      
@@ -1421,7 +1427,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 
 
     ## The function call
-    callDetail <- match.call()
+#    callDetail <- match.call()
 #    if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
 
 

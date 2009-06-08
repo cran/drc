@@ -12,13 +12,17 @@
 \usage{
   braincousens(fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
+  method = c("1", "2", "3", "4"), ssfct = NULL,
   fctName, fctText)
 }
 
 \arguments{
-  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
-  \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). The default is reasonable (see under 'Usage').
-               The order of the parameters is: b, c, d, e, f (see under 'Details').} 
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
+  NAs for parameter that are not fixed.}
+  \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
+  The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e, f (see under 'Details').} 
+  \item{method}{character string indicating the self starter function to use.}  
+  \item{ssfct}{a self starter function to be used.}  
   \item{fctName}{optional character string used internally by convenience functions.}  
   \item{fctText}{optional character string used internally by convenience functions.}                            
 }

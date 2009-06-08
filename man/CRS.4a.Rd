@@ -27,14 +27,15 @@
 }
 
 \usage{
-  CRS.4a(names = c("b", "d", "e", "f"))
+  CRS.4a(names = c("b", "d", "e", "f"), ...)
 
-  UCRS.4a(names = c("b", "d", "e", "f"))
+  UCRS.4a(names = c("b", "d", "e", "f"), ...)
 }
 
 \arguments{
   \item{names}{a vector of character strings giving the names of the parameters. 
   The default is reasonable (see above).}
+  \item{...}{additional arguments to be passed from the convenience functions.}
 }
 
 \details{

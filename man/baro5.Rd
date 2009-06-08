@@ -10,20 +10,18 @@
 }
 
 \usage{
-baro5(lowerc = c(-Inf, -Inf, -Inf, -Inf, -Inf), 
-upperc = c(Inf, Inf, Inf, Inf, Inf), fixed = c(NA, NA, NA, NA, NA), 
-names = c("b1", "b2", "c", "d", "e"), scaleDose = TRUE, useDer = FALSE)
+  baro5(fixed = c(NA, NA, NA, NA, NA), names = c("b1", "b2", "c", "d", "e"),
+  method = c("1", "2", "3", "4"), ssfct = NULL)
 }
 
 \arguments{
-  \item{lowerc}{numeric vector. The lower bound on parameters. Default is minus infinity.}
-  \item{upperc}{numeric vector. The upper bound on parameters. Default is plus infinity.}
-  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
-  \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). The default is reasonable (see under 'Usage').
-               The order of the parameters is: b1, b2, c, d, e (see under 'Details').}
-  \item{scaleDose}{logical. If TRUE dose values are scaled around 1 during estimation; 
-                   this is required for datasets where all dose values are small. }
-  \item{useDer}{logical. If TRUE derivatives are supplied, otherwise they are not supplied. Not implemented.}}
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
+  NAs for parameter that are not fixed.}
+  \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
+  The order of the parameters is: b1, b2, c, d, e (see under 'Details').}
+  \item{method}{character string indicating the self starter function to use.}  
+  \item{ssfct}{a self starter function to be used.}                 
+}
 
 \details{
   The five-parameter function given by the expression
@@ -36,29 +34,21 @@ names = c("b1", "b2", "c", "d", "e"), scaleDose = TRUE, useDer = FALSE)
 }
 
 \value{
-  The value returned by the 'baro5' is a list with the following components
-  \item{fct}{The dose response function.}
-  \item{ssfct}{The self starter function.}
-  \item{deriv1}{The first derivative. Not available.}  
-  \item{deriv2}{The second derivative. Not available.}  
-  \item{lowerc}{The lower bounds on the parameters.}
-  \item{upperc}{The upper bounds on the parameters.}
-  \item{edfct}{The ED function. Not available.}
-  \item{sifct}{The SI function. Not available.}    
+  The value returned is a list containing the nonlinear model function, the self starter function
+  and the parameter names.    
 }
 
-\references{Ricketts, J. H. and Head, G. A. (1999) A five-parameter logistic equation for investigating asymmetry of
-curvature in baroreflex studies. \emph{Am. J. Physiol. (Regulatory
-Integrative Comp. Physiol. 46)}, \bold{277}, 441--454.}
+\references{
+  Ricketts, J. H. and Head, G. A. (1999) 
+  A five-parameter logistic equation for investigating asymmetry of curvature in baroreflex studies. 
+  \emph{Am. J. Physiol. (Regulatory Integrative Comp. Physiol. 46)}, \bold{277}, 441--454.
+}
 
 \author{Christian Ritz}
 
-%\note{ ~~further notes~~ }
+\note{See the example for the dataset \code{\link{heartrate}}.}
 
-\examples{
+%\examples{}
 
-## See the example for the heartrate dataset
-
-}
 \keyword{models}
 \keyword{nonlinear}

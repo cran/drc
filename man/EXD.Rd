@@ -10,9 +10,9 @@
 }
 
 \usage{
-  EXD.2(fixed = c(NA, NA), names = c("d", "e"))
+  EXD.2(fixed = c(NA, NA), names = c("d", "e"), ...)
 
-  EXD.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
+  EXD.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"), ...)
 }
 
 \arguments{
@@ -20,6 +20,7 @@
   NAs for parameter that are not fixed.}
   \item{names}{vector of character strings giving the names of the parameters (should not contain ":").
   The default parameter names are: init, plateau, k.}
+  \item{...}{additional arguments to be passed from the convenience functions.}   
 }
 
 \details{

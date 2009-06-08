@@ -1,5 +1,25 @@
 ## Changes in 'drc'
 
+2009-06-08: The argument 'display' (with same functionality as in Ed()) has been added for compParm() (after a suggestion from Scott Ray).
+
+2009-06-02: The help pages for anova.drc and BC.4(), BC.5(), CRS.5.() have been improved.
+
+2009-05-29: The dataset ecvam has been included (migated from the package 'mrdrc').
+
+2009-05-28: The function maED() for parametric model averaging has been added.
+
+2009-05-27: The functions fplogistic() and FPL.4() enable fitting dose-response models based on fractional polynomials. The function maED() can be used to do model-average based estimation of ED values.
+
+2009-05-24: Structure of self starter functions has been completely revamped. Four initial value procedure are now available for almost all implemented dose-response models.
+
+2009-05-23: The function getInitial() has been included.
+
+2009-05-20: Help page for ED() has been improved (after comment from Claire Della Vedova).
+
+2009-05-07: Bug in ED() concerning the arguments type="absolute" and reference="upper" has been resolved (reported by Yue Zeng-Li).
+
+2009-04-22: Help page for gompertz() has been improved slightly.
+
 2009-04-08: Help page for earthworms dataset has been improved. Error in likelihood calculation for some binomial models has been fixed.
 
 2009-04-07: mixture() also works for binomial data. Argument "legendCex" in the plot 

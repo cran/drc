@@ -1,22 +1,20 @@
-"baro5" <- 
-function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, Inf), fixed=c(NA, NA, NA, NA, NA), 
-         names=c("b1","b2","c","d","e"), scaleDose = TRUE, useDer = FALSE)
+"baro5" <- function(
+fixed = c(NA, NA, NA, NA, NA), names = c("b1", "b2", "c", "d", "e"), 
+method = c("1", "2", "3", "4"), ssfct = NULL)
 {
     ## Checking arguments
     numParm <- 5
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct 'fixed' argument")}    
 
-    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
-    if (useDer) {stop("Derivatives not available")}
-
+#    if (!is.logical(useDer)) {stop("Not logical useDer argument")}
+#    if (useDer) {stop("Derivatives not available")}
 
     notFixed <- is.na(fixed)
     parmVec <- rep(0, numParm)
     parmVec[!notFixed] <- fixed[!notFixed]
     parmVec1 <- parmVec
     parmVec2 <- parmVec
-
 
     ## Defining the non-linear function
     fct <- function(dose, parm)
@@ -40,26 +38,25 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
     }
 
+#    ## Defining value for control measurements (dose=0)
+#    confct <- function(drcSign)
+#    {
+#        if (drcSign>0) {conPos <- 1} else {conPos <- 2}
+#        confct2 <- function(parm)
+#        { 
+#            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+#            parmMat[, notFixed] <- parm
+#            parmMat[, conPos]
+#        }
+#        return(list(pos=conPos, fct=confct2))
+#    }
+#
+#    ## Defining flag to indicate if more general ANOVA model is available as alternative
+#    anovaYes <- TRUE
 
-    ## Defining value for control measurements (dose=0)
-    confct <- function(drcSign)
-    {
-        if (drcSign>0) {conPos <- 1} else {conPos <- 2}
-        confct2 <- function(parm)
-        { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
-            parmMat[, notFixed] <- parm
-            parmMat[, conPos]
-        }
-        return(list(pos=conPos, fct=confct2))
-    }
-
-
-    ## Defining flag to indicate if more general ANOVA model is available as alternative
-    anovaYes <- TRUE
-
-
-    ## Defining the self starter function
+    ## Defining self starter function
+if (FALSE)
+{    
     ssfct <- function(dataFra)
     {
         dose2 <- dataFra[,1]
@@ -86,43 +83,47 @@ function(lowerc=c(-Inf, -Inf, -Inf, -Inf, -Inf), upperc=c(Inf, Inf, Inf, Inf, In
 
         return(startVal[notFixed])
     }
-
+}
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {   
+        ssfct <- function(dframe)
+        {
+            initval <- (llogistic()$ssfct(dframe))[c(1, 1:4)]   
+    
+            return(initval[notFixed])
+        }        
+    }
    
     ## Defining names
     names <- names[notFixed]
 
-
-    ## Defining parameter to be scaled
-    if ( (scaleDose) && (is.na(fixed[5])) ) 
-    {
-        scaleInd <- sum(is.na(fixed[1:5]))
-    } else {
-        scaleInd <- NULL
-    }
-
+#    ## Defining parameter to be scaled
+#    if ( (scaleDose) && (is.na(fixed[5])) ) 
+#    {
+#        scaleInd <- sum(is.na(fixed[1:5]))
+#    } else {
+#        scaleInd <- NULL
+#    }
 
     ## Defining derivatives
     deriv1 <- NULL
     deriv2 <- NULL
 
-
-    ## Limits
-    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
-    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
-
+#    ## Limits
+#    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
+#    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
     ## Defining the ED function
     edfct <- NULL
 
-
     ## Defining the SI function
-    sifct <- NULL
-    
+    sifct <- NULL    
     
     returnList <- 
-    list(fct=fct, confct=confct, anovaYes=anovaYes, ssfct=ssfct, names=names, 
-    deriv1=deriv1, deriv2=deriv2, lowerc=lowerLimits, 
-    upperc=upperLimits, edfct=edfct, sifct=sifct, scaleInd=scaleInd,
+    list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, 
+    edfct=edfct, sifct=sifct,
     name = "baro5",
     text = "Baroflex", 
     noParm = sum(is.na(fixed)))

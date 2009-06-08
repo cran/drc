@@ -17,7 +17,7 @@
 \alias{uml4c}
 
 
-\title{The Cedergreen-Ritz-Streibig model}
+\title{Cedergreen-Ritz-Streibig dose-reponse model for describing hormesis}
 
 \description{
   'CRS.5a', 'CRS.5b' and 'CRS.5c' provide the Cedergreen-Ritz-Streibig modified log-logistic model for describing
@@ -28,26 +28,39 @@
 }
 
 \usage{
-  CRS.5a(names = c("b", "c", "d", "e", "f"))
+  CRS.5a(names = c("b", "c", "d", "e", "f"), ...)
 
-  UCRS.5a(names = c("b", "c", "d", "e", "f"))
+  UCRS.5a(names = c("b", "c", "d", "e", "f"), ...)
 }
 
 \arguments{
-  \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable (see above).}
+  \item{names}{a vector of character strings giving the names of the parameters.}
+  \item{...}{additional arguments to be passed from the convenience functions.}  
 }
 
 \details{
-The model is given by the expression
-  \deqn{ f(x) = c + \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}}
-which is a five-parameter model.
+  The model function inverse u-shaped hormesis patterns is
   
-It is a modification of the four-parameter logistic curve to take hormesis into account.
+  \deqn{ f(x) = c + \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}},
+
+  which is a five-parameter model. It is a modification of the four-parameter log-logistic curve 
+  to take hormesis into account.
   
-The u-shaped model is given by the expression
+  The parameters have the following interpretations
+  \itemize{
+    \item \eqn{b}: Not direct interpretation
+    \item \eqn{c}: Lower horizontal asymptote
+    \item \eqn{d}: Upper horizontal asymptote
+    \item \eqn{e}: Not direct interpretation
+    \item \eqn{f}: Size of the hormesis effect: the larger the value the larger is the hormesis effect. \eqn{f=0}
+    corresponds to no hormesis effect and the resulting model is the four-parameter log-logistic model. 
+    This parameter should be positive in order for the model to make sense.
+  }  
+  
+  The model function for u-shaped hormesis patterns is
   \deqn{ f(x) = c + d - \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}}
   
-The a,b,c models are obtained by setting alpha equal to 1, 0.5 and 0.25, respectively.  
+  The models denoted a,b,c are obtained by fixing the alpha parameter at 1, 0.5 and 0.25, respectively.  
 }
 
 \value{
@@ -66,7 +79,7 @@ The a,b,c models are obtained by setting alpha equal to 1, 0.5 and 0.25, respect
 
 \seealso{
   Similar functions are \code{\link{CRS.4a}} and \code{\link{UCRS.4a}}, but with the
-  lower limit fixed at 0 (one parameter less).
+  lower limit (the parameter \eqn{c}) fixed at 0 (one parameter less to be estimated).
 }
 
 \examples{

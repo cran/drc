@@ -10,15 +10,16 @@
 }
 
 \usage{
-  AR.2(fixed = c(NA, NA), names = c("d", "e"))
+  AR.2(fixed = c(NA, NA), names = c("d", "e"), ...)
 
-  AR.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
+  AR.3(fixed = c(NA, NA, NA), names = c("c", "d", "e"), ...)
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{vector of character strings giving the names of the parameters (should not contain ":").}
+  \item{...}{additional arguments to be passed from the convenience functions.}     
 }
 
 \details{

@@ -1,5 +1,7 @@
 "lnormal" <- function(
-fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText, loge = TRUE)
+fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), 
+method = c("1", "2", "3", "4"), ssfct = NULL,
+fctName, fctText, loge = FALSE)
 {   
     ## Checking arguments
     numParm <- 4
@@ -76,46 +78,55 @@ fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText, loge
     }
 
     ## Defining the self starter function
-    ssfct <- function(dframe)
+#if (FALSE)
+#{   
+#    ssfct <- function(dframe)
+#    {
+#        x <- dframe[, 1]
+#        y <- dframe[, 2]    
+#
+#        zeroVal <- 1e-12
+#        cVal <- 0.99 * ifelse(notFixed[2], min(y), fixed[2])    
+#        dVal <- 1.01 * ifelse(notFixed[3], max(y), fixed[3])
+#        
+#        ## Finding b and e based on linear regression
+#        findbe <- function(x, y, 
+#        transx = function(x)
+#        {
+#            xVec <- log(x)
+#            xVec[!is.finite(xVec)] <- NA
+#            xVec
+#       },
+#        transy = function(y) 
+#        {
+#            denomVal <- 1.01 * max(dVal - y)
+#            qnorm((dVal - y) / denomVal)             
+##            qnorm((dVal - y)/(dVal - cVal))
+#        })
+#        {
+#            transY <- transy(y)  
+#            transX <- transx(x)
+#
+#            lmFit <- lm(transY ~ transX)
+#            coefVec <- coef(lmFit)
+##            bVal <- coefVec[2]        
+#            bVal <- ifelse(notFixed[1], -coefVec[2], fixed[1]) 
+##            eVal <- -coefVec[1] / bVal    
+#            eVal <- ifelse(notFixed[4], backe(coefVec[1] / bVal), fixed[4]) 
+#    
+#            return(as.vector(c(bVal, eVal)))
+#        }
+#        beVec <- findbe(x, y)
+#        
+#        c(beVec[1], cVal, dVal, beVec[2])[notFixed]
+#    }
+#}   
+    if (!is.null(ssfct))
     {
-        x <- dframe[, 1]
-        y <- dframe[, 2]    
-
-        zeroVal <- 1e-12
-        cVal <- 0.99 * ifelse(notFixed[2], min(y), fixed[2])    
-        dVal <- 1.01 * ifelse(notFixed[3], max(y), fixed[3])
-        
-        ## Finding b and e based on linear regression
-        findbe <- function(x, y, 
-        transx = function(x)
-        {
-            xVec <- log(x)
-            xVec[!is.finite(xVec)] <- NA
-            xVec
-        },
-        transy = function(y) 
-        {
-            denomVal <- 1.01 * max(dVal - y)
-            qnorm((dVal - y) / denomVal)             
-#            qnorm((dVal - y)/(dVal - cVal))
-        })
-        {
-            transY <- transy(y)  
-            transX <- transx(x)
-
-            lmFit <- lm(transY ~ transX)
-            coefVec <- coef(lmFit)
-#            bVal <- coefVec[2]        
-            bVal <- ifelse(notFixed[1], -coefVec[2], fixed[1]) 
-#            eVal <- -coefVec[1] / bVal    
-            eVal <- ifelse(notFixed[4], backe(coefVec[1] / bVal), fixed[4]) 
-    
-            return(as.vector(c(bVal, eVal)))
-        }
-        beVec <- findbe(x, y)
-        
-        c(beVec[1], cVal, dVal, beVec[2])[notFixed]
-    }
+        ssfct <- ssfct  # in case it is explicitly provided
+    } else {
+        ssfct <- lnormal.ssf(method, fixed, loge)
+    }    
    
     ## Defining names
     names <- names[notFixed]
@@ -153,16 +164,17 @@ fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText, loge
     edfct <- function(parm, respl, reference, type, ...)
     {
         parmVec[notFixed] <- parm
-        if (type == "absolute") 
-        {
-            p <- 100*((parmVec[3] - respl)/(parmVec[3] - parmVec[2]))
-        } else {  
-            p <- respl
-        }
-        if ( (parmVec[1] < 0) && (reference == "control") )
-        {
-            p <- 100 - p
-        }
+#        if (type == "absolute") 
+#        {
+#            p <- 100*((parmVec[3] - respl)/(parmVec[3] - parmVec[2]))
+#        } else {  
+#            p <- respl
+#        }
+#        if ( (parmVec[1] < 0) && (reference == "control") )
+#        {
+#            p <- 100 - p
+#        }
+        p <- EDhelper(parmVec, respl, reference, type)
     
         pProp <- 1 - (100-p) / 100
 #        EDp <- parmVec[4] * exp(qnorm(1-p) / parmVec[1])

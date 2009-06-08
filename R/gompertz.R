@@ -1,5 +1,7 @@
 "gompertz" <- function(
-fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)  #, inc = TRUE)
+fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), 
+method = c("1", "2", "3", "4"), ssfct = NULL,
+fctName, fctText)
 {   
     ## Checking arguments
     numParm <- 4
@@ -39,7 +41,9 @@ fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)  #, 
         fd(dose, parmMat[, 1], parmMat[, 2], parmMat[, 3], parmMat[, 4])
     }
 
-    ## Defining the self starter function
+    ## Defining self starter function
+if (FALSE)
+{    
     ssfct <- function(dframe)
     {
         x <- dframe[, 1]
@@ -68,6 +72,13 @@ fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)  #, 
         beVec <- findbe(x, y)
         
         c(beVec[1], cVal, dVal, beVec[2])[notFixed]
+    }
+}
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {
+        ssfct <- gompertz.ssf(method, fixed)     
     }
    
     ## Defining names
@@ -132,10 +143,10 @@ function(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( gompertz(fixed = c(fixed[1], 0, upper, fixed[2]), 
+    return(gompertz(fixed = c(fixed[1], 0, upper, fixed[2]), 
     names = c(names[1], "c", "d", names[2]), 
     fctName = as.character(match.call()[[1]]), 
-    fctText = lowupFixed("Gompertz", upper), ...) )
+    fctText = lowupFixed("Gompertz", upper), ...))
 }
 
 "G.3" <-
@@ -146,10 +157,10 @@ function(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( gompertz(fixed = c(fixed[1], 0, fixed[2:3]), 
+    return(gompertz(fixed = c(fixed[1], 0, fixed[2:3]), 
     names = c(names[1], "c", names[2:3]),
     fctName = as.character(match.call()[[1]]), 
-    fctText = lowFixed("Gompertz"), ...) )
+    fctText = lowFixed("Gompertz"), ...))
 }
 
 "G.3u" <-
@@ -160,11 +171,10 @@ function(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( gompertz(fixed = c(fixed[1:2], upper, fixed[3]), 
+    return(gompertz(fixed = c(fixed[1:2], upper, fixed[3]), 
     names = c(names[1:2], "d", names[3]),
     fctName = as.character(match.call()[[1]]),
-    fctText = upFixed("Gompertz", upper), 
-    ...) )
+    fctText = upFixed("Gompertz", upper), ...))
 }
 
 "G.4" <-
@@ -175,7 +185,7 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( gompertz(fixed = fixed, names = names,
-    fctName = as.character(match.call()[[1]]), ...) )
+    return(gompertz(fixed = fixed, names = names,
+    fctName = as.character(match.call()[[1]]), ...))
 }
 

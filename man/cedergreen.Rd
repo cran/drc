@@ -18,21 +18,29 @@
 
 \usage{
   cedergreen(fixed = c(NA, NA, NA, NA, NA), 
-  names = c("b", "c", "d", "e", "f"), alpha)
+  names = c("b", "c", "d", "e", "f"), 
+  method = c("1", "2", "3", "4"), ssfct = NULL,
+  alpha)
   
   CRS.6(fixed = c(NA, NA, NA, NA, NA, NA), 
-  names = c("b","c","d","e","f","g"))
+  names = c("b","c","d","e","f","g"),
+  method = c("1", "2", "3", "4"), ssfct = NULL)
   
-  ucedergreen(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alpha)
+  ucedergreen(fixed = c(NA, NA, NA, NA, NA), 
+  names = c("b", "c", "d", "e", "f"), 
+  method = c("1", "2", "3", "4"), ssfct = NULL,
+  alpha)
 }
 
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
-  The default is reasonable (see under 'Usage').
-               The order of the parameters is: b, c, d, e, f (see under 'Details').}
-  \item{alpha}{numeric. The degree of hormesis. Needs to be specified!}
+  The order of the parameters is: b, c, d, e, f (see under 'Details').}
+  \item{method}{character string indicating the self starter function to use.}  
+  \item{ssfct}{a self starter function to be used.}                 
+  \item{alpha}{numeric value between 0 and 1, reflecting the steepness of the hormesis peak. 
+  This argument needs to be specified.}
 }
 
 \details{

@@ -28,7 +28,7 @@
   \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
   Use "delta" for asymptotics-based confidence intervals (using the delta method and the t-distribution).
   Use "fls" for from logarithm scale based confidence intervals (in case the parameter in the model is log(ED50) as for
-  the \code{\link{logistic}}) models. The only alternative for model-robust fits is using inverse regression.}
+  the \code{\link{llogistic2}}) models. The only alternative for model-robust fits is using inverse regression.}
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}
   \item{type}{character string. Whether the specified response levels are absolute or relative (default).}

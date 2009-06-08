@@ -1,0 +1,79 @@
+\name{maED}
+
+\Rdversion{1.1}
+
+\alias{maED}
+
+\title{Estimation of ED values using model-averaging}
+
+\description{
+ Estimates and confidence intervals for ED values are estimated using model-averaging.
+}
+
+\usage{
+maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
+level = 0.95, display = TRUE, na.rm = FALSE)
+}
+
+\arguments{
+  \item{object}{an object of class 'drc'.}
+  \item{fctList}{a list of non-linear functions to be compared.}
+  \item{respLev}{a numeric vector containing the response levels.}
+  \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
+  The choices "buckland" and "kang" are explained in the Details section.}
+  \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
+  \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
+  \item{na.rm}{logical indicating whether or not NA occurring during model fitting should be left out of
+  subsequent calculations.}
+}
+\details{
+  Model-averaging of individual estimates is carried out as described by Buckland \emph{et al.} (1997) and 
+  Kang \emph{et al.} (2000) using AIC-based weights. The two approaches differ w.r.t. the calculation of confidence
+  intervals: Buckland \emph{et al.} (1997) provide an approximate variance formula under the assumption of
+  perfectly correlated estimates (so, confidence intervals will tend to be too wide), 
+  whereas Kang \emph{et al.} (2000) use the model weights to calculate confidence limits as weighted means of 
+  the confidence limits for the individual fits.
+}
+
+\value{
+  A matrix with two or more columns, containing the estimates 
+  and the corresponding estimated standard errors and possibly lower and upper confidence limits.
+}
+
+\references{ 
+  Buckland, S. T. and Burnham, K. P. and Augustin, N. H. (1997)
+  Model Selection: An Integral Part of Inference
+  \emph{Biometrics} \bold{53}, 603--618.
+  
+  Kang, Seung-Ho and Kodell, Ralph L. and Chen, James J. (2000)
+  Incorporating Model Uncertainties along with Data Uncertainties in Microbial Risk Assessment,
+  \emph{Regulatory Toxicology and Pharmacology} \bold{32}, 68--72.
+}
+
+\author{Christian Ritz}
+
+%\note{}
+
+\seealso{
+  The function \code{\link{mselect}} provides a summary of fit statistics for several models fitted to the same data.
+}
+
+\examples{
+
+ryegrass.m1 <- drm(rootl~conc, data = ryegrass, fct = LL.4())
+  
+mselect(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)))
+  
+maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+c(10, 50, 90))  
+  
+maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+c(10, 50, 90), "buckland")
+
+maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+c(10, 50, 90), "kang")
+
+}
+
+\keyword{models}
+\keyword{nonlinear}

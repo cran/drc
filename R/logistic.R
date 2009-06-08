@@ -1,11 +1,12 @@
-"logistic" <-
-function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText)
+"logistic" <- function(
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
+method = c("1", "2", "3", "4"), ssfct = NULL,
+fctName, fctText)
 {
     ## Checking arguments
     numParm <- 5
     if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed) == numParm)) {stop("Not correct 'fixed' argument")}    
-
 
     ## Handling 'fixed' argument
     notFixed <- is.na(fixed)
@@ -24,8 +25,9 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
         parmMat[,2]+(parmMat[,3]-parmMat[,2])/((1+exp(parmMat[,1]*(dose-parmMat[,4])))^parmMat[,5])
     }
 
-
-    ## Defining the self starter function
+    ## Defining self starter function
+if (FALSE)
+{    
     ssfct <- function(dataFra)
     {
         dose2 <- dataFra[,1]
@@ -53,11 +55,16 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
                
         return(startVal[notFixed])
     }
-
+}
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {
+        ssfct <- logistic.ssf(method, fixed)     
+    }
    
     ## Defining names
     names <- names[notFixed]
-
 
     ##Defining the first derivatives (in the parameters) 
     deriv1 <- function(dose, parm)
@@ -80,7 +87,6 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
         
     deriv2 <- NULL
     
-    
     ##Defining the first derivatives (in x)
     derivx <- function(x, parm)
     {
@@ -92,7 +98,6 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
         (-parmMat[, 5]*(parmMat[, 3] - parmMat[, 2])*temp1*parmMat[, 1])/((1 + temp1)^(parmMat[, 5] + 1))
     }
 
-
     ## Defining the ED function
     edfct <- function(parm, p, ...)
     {
@@ -102,14 +107,36 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
         {
             tempVal <- (100 - p) / 100
             EDp <- parmVec[4] + log( (1 + exp(-parmVec[1]*parmVec[4])) / (tempVal^(1/parmVec[5])) - 1)/parmVec[1]
+            
+            ## deriv(~e + log( (1 + exp(-b*e)) / (((100 - p) / 100)^(1/f)) - 1)/b, c("b", "c", "d", "e", "f"), function(b,c,d,e,f){})
+            EDderFct <- 
+            function (b, c, d, e, f) 
+            {
+                .expr3 <- exp(-b * e)
+                .expr4 <- 1 + .expr3
+                .expr6 <- (100 - p)/100
+                .expr8 <- .expr6^(1/f)
+                .expr10 <- .expr4/.expr8 - 1
+                .expr11 <- log(.expr10)
+                .value <- e + .expr11/b
+                .grad <- array(0, c(length(.value), 5L), list(NULL, c("b", "c", "d", "e", "f")))
+                .grad[, "b"] <- -(.expr3 * e/.expr8/.expr10/b + .expr11/b^2)
+                .grad[, "c"] <- 0
+                .grad[, "d"] <- 0
+                .grad[, "e"] <- 1 - .expr3 * b/.expr8/.expr10/b
+                .grad[, "f"] <- .expr4 * (.expr8 * (log(.expr6) * (1/f^2)))/.expr8^2/.expr10/b
+                attr(.value, "gradient") <- .grad
+                .value
+            }
+            EDder <- attr(EDderFct(parmVec[1], parmVec[2], parmVec[3], parmVec[4], parmVec[5]), "gradient")
+
     
         }  else {
             tempVal1 <- p / 100
             tempVal2 <- (1 / (tempVal1 / ((1 + exp(-parmVec[1]*parmVec[4]))^parmVec[5]) + 1 - tempVal1))^(1/parmVec[5])
             EDp <- parmVec[4] + log(tempVal2 - 1) / parmVec[1]
-        
+            EDder <- NULL
         }
-        EDder <- NULL
     
 #        tempVal <- -log((100-p)/100)
 #        EDp <- parmVec[4] + log(exp(tempVal/parmVec[5])-1)/parmVec[1]
@@ -122,7 +149,6 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 #    
         return(list(EDp, EDder[notFixed]))
     }
-
 
 #    ## Defining the SI function
 #    sifct <- function(parm1, parm2, pair)
@@ -139,7 +165,6 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 #
 #        return(list(SIpair, SIder1, SIder2))
 #    }
-
 
     ## Defining the inverse function
     invfct <- function(y, parm) 
@@ -164,43 +189,43 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 #"boltzmann" <- logistic
 
 "L.3" <-
-function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+function(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 3
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( logistic(fixed = c(fixed[1], 0, fixed[2:3], 1), names = c(names[1], "c", names[2:3], "f"), 
+    return(logistic(fixed = c(fixed[1], 0, fixed[2:3], 1), names = c(names[1], "c", names[2:3], "f"), 
     fctName = as.character(match.call()[[1]]), 
-    fctText = "Logistic (ED50 as parameter) with lower limit fixed at 0") )
+    fctText = "Logistic (ED50 as parameter) with lower limit fixed at 0", ...))
 }
 
 #b3 <- B.3
 #L.3 <- B.3
 
 "L.4" <-
-function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
+function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 4
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( logistic(fixed = c(fixed, 1), names = c(names, "f"),
+    return(logistic(fixed = c(fixed, 1), names = c(names, "f"),
     fctName = as.character(match.call()[[1]]), 
-    fctText = "Logistic (ED50 as parameter)") )
+    fctText = "Logistic (ED50 as parameter)", ...))
 }
 
 #b4 <- B.4
 #L.4 <- B.4
 
 "L.5" <-
-function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
+function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
 {
-    return( logistic(fixed = fixed, names = names,
+    return(logistic(fixed = fixed, names = names,
     fctName = as.character(match.call()[[1]]), 
-    fctText = "Generalised logistic (ED50 as parameter)") )
+    fctText = "Generalised logistic (ED50 as parameter)", ...))
 }
 
 #b5 <- B.5

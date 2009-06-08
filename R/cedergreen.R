@@ -1,5 +1,7 @@
-"cedergreen" <-
-function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alpha)
+"cedergreen" <- function(
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
+method = c("1", "2", "3", "4"), ssfct = NULL, 
+alpha)
 {
     ## Checking arguments
     numParm <- 5
@@ -28,29 +30,30 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alph
     }
 
 
-    ## Defining value for control measurements (dose=0)
-    confct <- function(drcSign)
-    {
-        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
-        confct2 <- function(parm)
-        { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
-            parmMat[, notFixed] <- parm
-            parmMat[, conPos]
-        }
-        return(list(pos=conPos, fct=confct2))
-    }
+#    ## Defining value for control measurements (dose=0)
+#    confct <- function(drcSign)
+#    {
+#        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
+#        confct2 <- function(parm)
+#        { 
+#            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+#            parmMat[, notFixed] <- parm
+#            parmMat[, conPos]
+#        }
+#        return(list(pos=conPos, fct=confct2))
+#    }
+#
+#
+#    ## Defining flag to indicate if more general ANOVA model
+##    anovaYes <- TRUE
+#    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
+#    if (is.na(binVar)) {binVar <- FALSE}
+#    if (!binVar) {binVar <- NULL}
+#    anovaYes <- list(bin = binVar, cont = TRUE)
 
-
-    ## Defining flag to indicate if more general ANOVA model
-#    anovaYes <- TRUE
-    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
-    if (is.na(binVar)) {binVar <- FALSE}
-    if (!binVar) {binVar <- NULL}
-    anovaYes <- list(bin = binVar, cont = TRUE)
-
-
-    ## Defining the self starter function
+    ## Defining self starter function
+if (FALSE)
+{    
     ssfct <- function(dataFra)
     {
         dose2 <- dataFra[,1]
@@ -83,11 +86,23 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alph
 
         return(startVal[notFixed])
     }
-
-   
+}
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {
+#        ssfct <- cedergreen.ssf(method, fixed, alpha)       
+        ssfct <- function(dframe)
+        {
+            initval <- llogistic()$ssfct(dframe)   
+            initval[5] <- (2*(median(dframe[, 2])-initval[2])-(initval[3]-initval[2]))*exp(1/(initval[4]^alpha))
+    
+            return(initval[notFixed])
+        }        
+    }
+       
     ## Defining names
     names <- names[notFixed]
-
 
 #    ## Defining parameter to be scaled
 #    if ( (scaleDose) && (is.na(fixed[4])) ) 
@@ -100,22 +115,22 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alph
 
     ## Defining derivatives
     
-    ## Constructing a helper function
-    xlogx <- function(x, p)
-    {
-        lv <- (x < 1e-12)
-        nlv <- !lv
-        
-        rv <- rep(0, length(x))
-        
-        xlv <- x[lv] 
-        rv[lv] <- log(xlv^(xlv^p[lv]))
-        
-        xnlv <- x[nlv]
-        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
-    
-        rv
-    }
+#    ## Constructing a helper function
+#    xlogx <- function(x, p)
+#    {
+#        lv <- (x < 1e-12)
+#        nlv <- !lv
+#        
+#        rv <- rep(0, length(x))
+#        
+#        xlv <- x[lv] 
+#        rv[lv] <- log(xlv^(xlv^p[lv]))
+#        
+#        xnlv <- x[nlv]
+#        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
+#    
+#        rv
+#    }
     
     ## Specifying the derivatives    
     deriv1 <- function(dose, parm)
@@ -263,9 +278,9 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alph
 
     
     returnList <- 
-    list(fct=fct, confct=confct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,  # lowerc=lowerLimits, upperc=upperLimits, 
+    list(fct=fct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,  # lowerc=lowerLimits, upperc=upperLimits, 
     edfct=edfct, maxfct=maxfct, 
-#    scaleInd=scaleInd, anovaYes=anovaYes,
+#    scaleInd=scaleInd, anovaYes=anovaYes, confct=confct,
     name = "cedergreen",
     text = "Cedergreen-Ritz-Streibig", 
     noParm = sum(is.na(fixed)))
@@ -275,67 +290,67 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), alph
 }
 
 "CRS.4a" <-
-function(names=c("b", "d", "e", "f"))
+function(names = c("b", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 1))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 1, ...))
 }
 
 ml3a <- CRS.4a
 
 "CRS.4b" <-
-function(names=c("b", "d", "e", "f"))
+function(names = c("b", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.5))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.5, ...))
 }
 
 ml3b <- CRS.4b
 
 "CRS.4c" <-
-function(names=c("b", "d", "e", "f"))
+function(names = c("b", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.25))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.25, ...))
 }
 
 ml3c <- CRS.4c
 
 "CRS.5a" <-
-function(names=c("b", "c", "d", "e", "f"))
+function(names = c("b", "c", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
  
-    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 1))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 1, ...))
 }
 
 ml4a <- CRS.5a
 
 "CRS.5b" <-
-function(names=c("b", "c", "d", "e", "f"))
+function(names = c("b", "c", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.5))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.5, ...))
 }
 
 ml4b <- CRS.5b
 
 "CRS.5c" <-
-function(names=c("b", "c", "d", "e", "f"))
+function(names = c("b", "c", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.25))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.25, ...))
 }
 
 ml4c <- CRS.5c

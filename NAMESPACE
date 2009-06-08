@@ -13,6 +13,8 @@ ucedergreen, UCRS.4a, UCRS.4b, UCRS.4c, UCRS.5a, UCRS.5b, UCRS.5c, uml3a, uml3b,
 
 EXD.2, EXD.3, 
 
+fplogistic, FPL.4,
+
 gompertz, G.2, G.3, G.3u, G.4,
 
 gompertzd,
@@ -35,7 +37,7 @@ weibull2, W2.2, W2.3, W2.3u, W2.4,
 
 boxcox.drc, bread.drc, estfun.drc,
 
-comped, compParm, diagnostics, drm, drmc, ED, getMeanFunctions, isobole, MAX, mixdrc, mixture, modelFit, mselect, multdrc, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
+comped, compParm, diagnostics, drm, drmc, ED, getInitial, getMeanFunctions, isobole, MAX, maED, mixdrc, mixture, modelFit, mselect, multdrc, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
 
 mrdrm)
 

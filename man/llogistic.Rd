@@ -13,7 +13,7 @@
 \usage{
   llogistic(fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"),
-  ss = c("1", "2", "3"), ssfct = NULL,
+  method = c("1", "2", "3", "4"), ssfct = NULL,
   fctName, fctText)
 
   llogistic2(fixed = c(NA, NA, NA, NA, NA), 
@@ -28,7 +28,8 @@
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":").
   The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e, f 
     (see under 'Details').}
-  \item{ss}{character string indicating the self starter function to use.}
+  \item{method}{character string indicating the self starter function to use.} 
+  \item{ss}{character string indicating the self starter function to use.} 
   \item{ssfct}{a self starter function to be used.}  
   \item{fctName}{optional character string used internally by convenience functions.}  
   \item{fctText}{optional character string used internally by convenience functions.}  

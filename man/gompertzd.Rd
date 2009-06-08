@@ -10,15 +10,12 @@
 }
 
 \usage{
-  gompertzd(lowerc = c(-Inf, -Inf), upperc = c(Inf, Inf),
-  fixed = c(NA, NA), names = c("a", "b"))
+  gompertzd(fixed = c(NA, NA), names = c("a", "b"))
 }
 
 \arguments{
-  \item{lowerc}{numeric vector. The lower bound on parameters. Default is minus infinity.}
-  \item{upperc}{numeric vector. The upper bound on parameters. Default is plus infinity.}
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
-    NAs for parameter that are not fixed.}
+  NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":").
   The default is (notice the order): a, b.}
 }
@@ -28,12 +25,12 @@
   
   \deqn{ f(x) = a \exp(bx-a/b(exp(bx)-1))}
   
-  For \eqn{a>0} and \eqn{b} not 0 the function is decreasing, equaling \eqn{a} at \eqn{x=0} 
+  For \eqn{a>0} and \eqn{b} not 0, the function is decreasing, equaling \eqn{a} at \eqn{x=0} 
   and approaching 0 at plus infinity.
 }
 
 \value{
-  The value returned is a list containing the non-linear function, the self starter function
+  The value returned is a list containing the model function, the self starter function
   and the parameter names.
 }
 

@@ -1,5 +1,5 @@
 "compParm" <-
-function(object, strVal, operator = "/", od = FALSE, pool = TRUE)
+function(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE)
 {
 #    strParm <- object$"parNames"[[1]]
 #    lenSP <- length(strParm)
@@ -90,9 +90,10 @@ function(object, strVal, operator = "/", od = FALSE, pool = TRUE)
     }
     dimnames(cpMat) <- list(compParm, c("Estimate", "Std. Error", "t-value", "p-value"))
     
-#    cat("\n")
-    cat("\nComparison of parameter", paste("'", strVal, "'", sep = ""), "\n\n")
-#    cat("\n")
-    printCoefmat(cpMat)
+    if (display)
+    {
+        cat("\nComparison of parameter", paste("'", strVal, "'", sep = ""), "\n\n")
+        printCoefmat(cpMat)
+    }
     invisible(cpMat)
 }

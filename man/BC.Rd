@@ -13,26 +13,42 @@
 }
 
 \usage{
-  BC.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
+  BC.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
 
-  BC.4(fixed = c(NA, NA, NA, NA), names = c("b", "d", "e", "f"))
+  BC.4(fixed = c(NA, NA, NA, NA), names = c("b", "d", "e", "f"), ...)
 }
 
 \arguments{
   \item{fixed}{numeric vector specifying which parameters are fixed and at which values they are fixed. 
   NAs designate parameters that are not fixed.}
-  \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
+  \item{names}{a vector of character strings giving the names of the parameters.}
+  \item{...}{additional arguments to be passed from the convenience functions.} 
 }
 
 \details{
-  The Brain-Cousens model is given by the expression
-  \deqn{ f(x) = c + \frac{d-c+fx}{1+\exp(b(\log(x)-\log(e)))}}
-  which is a five-parameter model.
+  The model function for the Brain-Cousens model (Brain and Cousens, 1989) is
   
-  It is a modification of the log-logistic curve to take u-shaped hormesis into account.
+  \deqn{ f(x, b,c,d,e,f) = c + \frac{d-c+fx}{1+\exp(b(\log(x)-\log(e)))}},
+  
+  and it is a five-parameter model, obtained by extending the four-parameter log-logistic model (\code{\link{LL.4}}
+  to take into account inverse u-shaped hormesis effects.
+  
+  The parameters have the following interpretations
+  \itemize{
+    \item \eqn{b}: Not direct interpretation
+    \item \eqn{c}: Lower horizontal asymptote
+    \item \eqn{d}: Upper horizontal asymptote
+    \item \eqn{e}: Not direct interpretation
+    \item \eqn{f}: Size of the hormesis effect: the larger the value the larger is the hormesis effect. \eqn{f=0}
+    corresponds to no hormesis effect and the resulting model is the four-parameter log-logistic model. 
+    This parameter should be positive in order for the model to make sense.
+  }
   
   Fixing the lower limit at 0 yields the four-parameter model 
+  
   \deqn{ f(x) = 0 + \frac{d-0+fx}{1+\exp(b(\log(x)-\log(e)))}}
+  
+  used by van Ewijk and Hoekstra (1993).
 }
 
 \value{
@@ -87,5 +103,6 @@ lower = c(-Inf, -Inf, -Inf, -Inf, 0), control = drmc(constr=TRUE))
 summary(ryegrass.bcm2)
 
 }
+
 \keyword{models}
 \keyword{nonlinear}

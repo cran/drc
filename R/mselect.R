@@ -27,21 +27,28 @@
 #        retList[[1]] <- object
 
     fctList2 <- rep("", lenFL + 1)        
-    fctList2[1] <- deparse((object$"call"$"fct"))        
+#    fctList2[1] <- deparse((object$"call"$"fct"))        
+    fctList2[1] <- object$"fct"$"name"
        
     if (!is.null(fctList))
     {
         prevObj <- object    
         for (i in 1:lenFL)
         {
-            tempObj <- update(object, fct=fctList[[i]])  # try(update(object, fct = fctList[[i]]), silent = TRUE)
-            
+#            tempObj <- update(object, fct = fctList[[i]])  # try(update(object, fct = fctList[[i]]), silent = TRUE)
+            tempObj <- try(update(object, fct = fctList[[i]]), silent = TRUE)            
+
+            fctList2[i+1] <- fctList[[i]]$"name"            
             if (!inherits(tempObj, "try-error"))
             {   
 #                if (is.null(names(fctList)))
 #                {
-                    tempChar <- deparse(mc[[3]][i+1])
-                    fctList2[i+1] <- substr(tempChar, start = 1, stop = nchar(tempChar) - 2)
+
+#                    tempChar <- deparse(mc[[3]][i+1])
+#                    fctList2[i+1] <- substr(tempChar, start = 1, stop = nchar(tempChar) - 2)                    
+
+#                    fctList2[i+1] <- fctList[[i]]$"name"
+
 #                } else {
 #                    tempChar <- names(fctList)[i]
 #                    fctList2[i+1] <- as.character(tempChar)

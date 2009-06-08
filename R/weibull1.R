@@ -1,5 +1,7 @@
-"weibull1" <-
-function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText)
+"weibull1" <- function(
+fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), 
+method = c("1", "2", "3", "4"), ssfct = NULL,
+fctName, fctText)
 {
     ## Checking arguments
     numParm <- 4
@@ -22,33 +24,35 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctT
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
     
-        parmMat[, 2] + ( parmMat[, 3] - parmMat[, 2] ) * exp( - exp( parmMat[, 1] *( log(dose) - log(parmMat[, 4])) ) )
+        parmMat[, 2] + (parmMat[, 3] - parmMat[, 2]) * exp( -exp(parmMat[, 1] *(log(dose) - log(parmMat[, 4]))))
     }
 
 
-    ## Defining value for control measurements (dose=0)
-    confct <- function(drcSign)
-    {
-        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
-        confct2 <- function(parm)
-        { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
-            parmMat[, notFixed] <- parm
-            parmMat[, conPos]
-        }
-        return(list(pos = conPos, fct = confct2))
-    }
+#    ## Defining value for control measurements (dose=0)
+#    confct <- function(drcSign)
+#    {
+#        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
+#        confct2 <- function(parm)
+#        { 
+#            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+#            parmMat[, notFixed] <- parm
+#            parmMat[, conPos]
+#        }
+#        return(list(pos = conPos, fct = confct2))
+#    }
 
 
-    ## Defining flag to indicate if more general ANOVA model
-#    anovaYes <- list(bin = !any(is.na(fixed[c(2,3)])) , cont = TRUE)
-    binVar <- all(fixed[c(2, 3)]==c(0, 1))
-    if (is.na(binVar)) {binVar <- FALSE}
-    if (!binVar) {binVar <- NULL}    
-    anovaYes <- list(bin = binVar, cont = TRUE)
+#    ## Defining flag to indicate if more general ANOVA model
+##    anovaYes <- list(bin = !any(is.na(fixed[c(2,3)])) , cont = TRUE)
+#    binVar <- all(fixed[c(2, 3)]==c(0, 1))
+#    if (is.na(binVar)) {binVar <- FALSE}
+#    if (!binVar) {binVar <- NULL}    
+#    anovaYes <- list(bin = binVar, cont = TRUE)
 
 
     ## Defining the self starter function
+if (FALSE)
+{
     ssfct <- function(dataFra)
     {
         dose2 <- dataFra[, 1]
@@ -116,6 +120,14 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctT
 #        print(startVal)  
         return(startVal[notFixed])
     }
+}
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct  # in case it is explicitly provided
+    } else {
+        ssfct <- weibull1.ssf(method, fixed)
+    }    
+    
 
    
     ## Defining names
@@ -157,11 +169,13 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctT
 
 
     ## Defining the ED function
-    edfct <- function(parm, p, reference, type, ...)  # upper argument not used in 'gompertz'
+    edfct <- function(parm, respl, reference, type, ...)  # function(parm, p, reference, type, ...)
     {        
         parmVec[notFixed] <- parm
-        if (type == "absolute") {p <- 100*((parmVec[3] - p)/(parmVec[3] - parmVec[2]))}
-        if ( (parmVec[1] < 0) && (reference == "control") ) {p <- 100 - p}
+        p <- EDhelper(parmVec, respl, reference, type)
+        
+#        if (type == "absolute") {p <- 100*((parmVec[3] - p)/(parmVec[3] - parmVec[2]))}
+#        if ( (parmVec[1] < 0) && (reference == "control") ) {p <- 100 - p}
     
         tempVal <- log(-log((100-p)/100))
         EDp <- exp(tempVal/parmVec[1] + log(parmVec[4]))
@@ -205,7 +219,7 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctT
 
 
 "W1.2" <-
-function(upper = 1, fixed = c(NA, NA), names = c("b", "e"))
+function(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
 {
     ## Checking arguments
     numParm <- 2
@@ -214,13 +228,13 @@ function(upper = 1, fixed = c(NA, NA), names = c("b", "e"))
 
     return(weibull1(fixed = c(fixed[1], 0, upper, fixed[2]), names = c(names[1], "c", "d", names[2]),
     fctName = as.character(match.call()[[1]]), 
-    fctText = lowupFixed("Weibull (type 1)", upper)))
+    fctText = lowupFixed("Weibull (type 1)", upper), ...))
 }
 
 w2 <- W1.2
 
 "W1.3" <-
-function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+function(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 3
@@ -229,27 +243,27 @@ function(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
 
     return(weibull1(fixed = c(fixed[1], 0, fixed[2:3]), names = c(names[1], "c", names[2:3]),
     fctName = as.character(match.call()[[1]]), 
-    fctText = lowFixed("Weibull (type 1)")))
+    fctText = lowFixed("Weibull (type 1)"), ...))
 }
 
 w3 <- W1.3
 
 "W1.3u" <-
-function(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"))
+function(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)
 {
     ## Checking arguments
     numParm <- 3
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( weibull1(fixed = c(fixed[1:2], upper, fixed[3]), 
+    return(weibull1(fixed = c(fixed[1:2], upper, fixed[3]), 
     names = c(names[1:2], "d", names[3]), 
     fctName = as.character(match.call()[[1]]),
-    fctText = upFixed("Weibull (type 1)", upper)) )
+    fctText = upFixed("Weibull (type 1)", upper), ...))
 }
 
 "W1.4" <-
-function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
+function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 4
@@ -258,28 +272,28 @@ function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
 
     return(weibull1(fixed = fixed, names = names,
     fctName = as.character(match.call()[[1]]),
-    fctText = "Weibull (type 1)"))
+    fctText = "Weibull (type 1)", ...))
 }
 
 w4 <- W1.4
 
 
 "EXD.2" <-
-function(fixed = c(NA, NA), names = c("d", "e"))
+function(fixed = c(NA, NA), names = c("d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 2
     if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
 
-    return( weibull1(fixed = c(1, 0, fixed[1:2]), 
+    return(weibull1(fixed = c(1, 0, fixed[1:2]), 
     names = c("b", "c", names[1:2]), 
     fctName = as.character(match.call()[[1]]), 
-    fctText = lowFixed("Exponential decay")) )
+    fctText = lowFixed("Exponential decay"), ...))
 }
 
 "EXD.3" <-
-function(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
+function(fixed = c(NA, NA, NA), names = c("c", "d", "e"), ...)
 {
     ## Checking arguments
     numParm <- 3
@@ -289,5 +303,5 @@ function(fixed = c(NA, NA, NA), names = c("c", "d", "e"))
     return(weibull1(fixed = c(1, fixed[1:3]), 
     names = c("b", names[1:3]),
     fctName = as.character(match.call()[[1]]),
-    fctText = "Shifted exponential decay"))
+    fctText = "Shifted exponential decay", ...))
 }

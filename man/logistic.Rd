@@ -22,11 +22,13 @@
 }
 
 \usage{
-  logistic(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText) 
+  logistic(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"),
+  method = c("1", "2", "3", "4"), ssfct = NULL, 
+  fctName, fctText) 
 
-  L.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
-  L.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
-  L.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))  
+  L.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
+  L.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
+  L.5(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)  
 
 %  boltzmann(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText)
 %
@@ -41,8 +43,11 @@
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
   The order of the parameters is: b, c, d, e, f (see under 'Details').}
+  \item{method}{character string indicating the self starter function to use.}  
+  \item{ssfct}{a self starter function to be used.}    
   \item{fctName}{optional character string used internally by convenience functions.}  
-  \item{fctText}{optional character string used internally by convenience functions.}    
+  \item{fctText}{optional character string used internally by convenience functions.}
+  \item{...}{Additional arguments (see \code{\link{llogistic}}).}    
 }
 
 \details{

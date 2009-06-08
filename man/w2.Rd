@@ -12,15 +12,17 @@
 }
 
 \usage{
-  W1.2(upper = 1, fixed = c(NA, NA), names = c("b", "e"))
+  W1.2(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
   
-  W2.2(upper = 1, fixed = c(NA, NA), names = c("b", "e"))
+  W2.2(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
 }
 
 \arguments{
   \item{upper}{numeric value. The fixed, upper limit in the model. Default is 1.}
-  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
+  NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
+  \item{...}{additional arguments to be passed from the convenience functions.}  
 }
 
 \details{

@@ -1,6 +1,7 @@
 "drmOpt" <- 
 function(opfct, opdfct1, startVec, optMethod, constrained, warnVal, 
-upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, traceVal, silentVal = TRUE)
+upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, traceVal, silentVal = TRUE,
+matchCall)
 ## propagate "silentVal" from calling function? 
 {
     ## Controlling the warnings
@@ -35,9 +36,9 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 #            stop("Convergence failed")
             warning("Convergence failed. The model was not fitted!", call. = FALSE)
 
-            callDetail <- match.call()
-            if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
-            return(list(call = callDetail, parNames = parmVec, startVal = startVec, convergence = FALSE))
+#            callDetail <- match.call()
+#            if (is.null(callDetail$fct)) {callDetail$fct <- substitute(l4())}
+            return(list(call = matchCall, parNames = parmVec, startVal = startVec, convergence = FALSE))
         }
         if (!hes) {nlsFit$hessian <- opdfct2(nlsFit$par)}
 
@@ -60,7 +61,8 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
 #            psVec[psVec<1e-4] <- 1
 
             nlsObj <- try(optim(startVec, opfct, hessian = TRUE, method = optMethod, 
-            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)), silent = FALSE)  #silentVal)
+            control = list(maxit = maxIt, reltol = relTol, parscale = psVec, trace = traceVal)), silent = silentVal)
+
 #            nlsObj0 <- try(optim(startVec, opfct, method=optMethod, 
 #            control=list(maxit=maxIt, reltol=relTol, parscale=psVec)), silent=TRUE)
 #            nlsObj <- try(optim(nlsObj0$par, opfct, hessian=TRUE, method=optMethod, 
@@ -80,9 +82,9 @@ upperLimits, lowerLimits, errorMessage, maxIt, relTol, opdfct2 = NULL, parmVec, 
                 warning("Convergence failed. The model was not fitted!", call. = FALSE)
             }
 
-            callDetail <- match.call()
-            if (is.null(callDetail$fct)) {callDetail$fct <- substitute(LL.4())}
-            return(list(call = callDetail, parNames = parmVec, startVal = startVec, convergence = FALSE))
+#            callDetail <- match.call()
+#            if (is.null(callDetail$fct)) {callDetail$fct <- substitute(LL.4())}
+            return(list(call = matchCall, parNames = parmVec, startVal = startVec, convergence = FALSE))
         }
     }}
     

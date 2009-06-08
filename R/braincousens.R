@@ -1,5 +1,7 @@
-"braincousens" <-
-function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctName, fctText)
+"braincousens" <- function(
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
+method = c("1", "2", "3", "4"), ssfct = NULL,
+fctName, fctText)
 {
     ## Checking arguments
     numParm <- 5
@@ -26,29 +28,31 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
     }
 
 
-    ## Defining value for control measurements (dose=0)
-    confct <- function(drcSign)
-    {
-        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
-        confct2 <- function(parm)
-        { 
-            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
-            parmMat[, notFixed] <- parm
-            parmMat[, conPos]
-        }
-        return(list(pos=conPos, fct=confct2))
-    } 
-
-
-    ## Defining flag to indicate if more general ANOVA model
-#    anovaYes <- TRUE
-    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
-    if (is.na(binVar)) {binVar <- FALSE}
-    if (!binVar) {binVar <- NULL}
-    anovaYes <- list(bin = binVar, cont = TRUE)
+#    ## Defining value for control measurements (dose=0)
+#    confct <- function(drcSign)
+#    {
+#        if (drcSign>0) {conPos <- 2} else {conPos <- 3}
+#        confct2 <- function(parm)
+#        { 
+#            parmMat <- matrix(parmVec, nrow(parm), numParm, byrow=TRUE)
+#            parmMat[, notFixed] <- parm
+#            parmMat[, conPos]
+#        }
+#        return(list(pos=conPos, fct=confct2))
+#    } 
+#
+#
+#    ## Defining flag to indicate if more general ANOVA model
+##    anovaYes <- TRUE
+#    binVar <- all(fixed[c(2, 3, 5)]==c(0, 1, 1))
+#    if (is.na(binVar)) {binVar <- FALSE}
+#    if (!binVar) {binVar <- NULL}
+#    anovaYes <- list(bin = binVar, cont = TRUE)
 
 
     ## Defining the self starter function
+if (FALSE)
+{
     ssfct <- function(dataFra)
     {
         dose2 <- dataFra[,1]
@@ -76,7 +80,20 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 
         return(startVal[notFixed])
     }
-
+} 
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {
+#        ssfct <- braincousens.ssf(method, fixed)
+        ssfct <- function(dframe)
+        {
+            initval <- llogistic()$ssfct(dframe)   
+            initval[5] <- 0
+    
+            return(initval[notFixed])
+        }           
+    }
    
     ## Defining names
     names <- names[notFixed]
@@ -90,23 +107,23 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 #        scaleInd <- NULL
 #    }
 
-    ## Constructing a helper function
-    ##  also used in 'llogistic' and 'llogistic2'
-    xlogx <- function(x, p)
-    {
-        lv <- (x < 1e-12)
-        nlv <- !lv
-        
-        rv <- rep(0, length(x))
-        
-        xlv <- x[lv] 
-        rv[lv] <- log(xlv^(xlv^p[lv]))
-        
-        xnlv <- x[nlv]
-        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
-    
-        rv
-    }
+#    ## Constructing a helper function
+#    ##  also used in 'llogistic' and 'llogistic2'
+#    xlogx <- function(x, p)
+#    {
+#        lv <- (x < 1e-12)
+#        nlv <- !lv
+#        
+#        rv <- rep(0, length(x))
+#        
+#        xlv <- x[lv] 
+#        rv[lv] <- log(xlv^(xlv^p[lv]))
+#        
+#        xnlv <- x[nlv]
+#        rv[nlv] <- (xnlv^p[nlv])*log(xnlv)
+#    
+#        rv
+#    }
     
     ## Defining derivatives
     deriv1 <- function(dose, parm)
@@ -249,8 +266,8 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 
 
     returnList <- 
-    list(fct = fct, confct = confct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, 
-#    lowerc = lowerLimits, upperc = upperLimits, 
+    list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, 
+#    lowerc = lowerLimits, upperc = upperLimits, confct = confct, 
     edfct = edfct, maxfct = maxfct, 
 #    scaleInd = scaleInd, anovaYes = anovaYes,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
@@ -267,27 +284,27 @@ function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), fctN
 }
 
 
-"BC.4" <-
-function(fixed = c(NA, NA, NA, NA), names = c("b", "d", "e", "f"))
+"BC.4" <- function(
+fixed = c(NA, NA, NA, NA), names = c("b", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names) == 4)) {stop("Not correct 'names' argument")}
  
     return(braincousens(names=c(names[1], "c", names[2:4]), fixed = c(fixed[1], 0, fixed[2:4]),
     fctName = as.character(match.call()[[1]]),
-    fctText = "Brain-Cousens (hormesis) with lower limit fixed at 0"))
+    fctText = "Brain-Cousens (hormesis) with lower limit fixed at 0", ...))
 }
 
 bcl3 <- BC.4
 
-"BC.5" <-
-function(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"))
+"BC.5" <- function(
+fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), ...)
 {
     ## Checking arguments
     if (!is.character(names) | !(length(names) == 5)) {stop("Not correct 'names' argument")}
 
     return(braincousens(names = names, fixed = fixed,
-    fctName = as.character(match.call()[[1]])))
+    fctName = as.character(match.call()[[1]]), ...))
 }
 
 bcl4 <- BC.5

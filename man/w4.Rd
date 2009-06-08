@@ -12,14 +12,16 @@
 }
 
 \usage{
-  W1.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
+  W1.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
   
-  W2.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"))
+  W2.4(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
 }
 
 \arguments{
-  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed.}
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
+  NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
+  \item{...}{additional arguments to be passed from the convenience functions.}   
 }
 
 \details{

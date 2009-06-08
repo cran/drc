@@ -262,7 +262,7 @@ pool = TRUE, logBase = NULL, ...)
         ciMat[, 2] <- logBase^(oriMat[, 1] + tquan * oriMat[, 2])
         
         EDmat <- EDmat[, -2, drop = FALSE]  # standard errors not relevant        
-        colNames <- c( colNames[-2], "Lower", "Upper")
+        colNames <- c(colNames[-2], "Lower", "Upper")
         ciLabel <- "From log scale"  
     }
     if (!(interval == "none"))
@@ -274,3 +274,4 @@ pool = TRUE, logBase = NULL, ...)
     dimnames(EDmat) <- list(dimNames, colNames)
     resPrint(EDmat, "Estimated effective doses", interval, ciLabel, display = display)
 }
+

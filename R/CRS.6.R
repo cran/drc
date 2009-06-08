@@ -1,5 +1,7 @@
-"CRS.6" <-
-function(fixed = c(NA, NA, NA, NA, NA, NA), names = c("b","c","d","e","f","g"))
+"CRS.6" <- function(
+fixed = c(NA, NA, NA, NA, NA, NA), 
+names = c("b", "c", "d", "e", "f", "g"),
+method = c("1", "2", "3", "4"), ssfct = NULL)
 {
     ## Checking arguments
     numParm <- 6
@@ -12,7 +14,6 @@ function(fixed = c(NA, NA, NA, NA, NA, NA), names = c("b","c","d","e","f","g"))
     parmVec1 <- parmVec
     parmVec2 <- parmVec
     
-    
     ## Defining the non-linear function
     fct <- function(dose, parm) 
     {
@@ -22,7 +23,9 @@ function(fixed = c(NA, NA, NA, NA, NA, NA), names = c("b","c","d","e","f","g"))
         parmMat[,2] + (parmMat[,3] - parmMat[,2] + parmMat[,5]*exp(-1/(dose^parmMat[,6])))/(1 + exp(parmMat[,1]*(log(dose) - log(parmMat[,4]))))
     }
 
-    ## Defining the self starter function
+    ## Defining self starter function
+if (FALSE)
+{    
     ssfct <- function(dataFra)
     {
         dose2 <- dataFra[,1]
@@ -55,6 +58,19 @@ function(fixed = c(NA, NA, NA, NA, NA, NA), names = c("b","c","d","e","f","g"))
         startVal[5] <- (2*(median(resp3) - startVal[2]) - (startVal[3] - startVal[2]))*exp(1/(startVal[4]^startVal[6]))
 
         return(startVal[notFixed])
+    }
+}
+    if (!is.null(ssfct))
+    {
+        ssfct <- ssfct
+    } else {   
+        ssfct <- function(dframe)
+        {
+            initval <- c(llogistic()$ssfct(dframe), 0)   
+            initval[5] <- (2*(median(dframe[, 2])-initval[2])-(initval[3]-initval[2]))*exp(1/(initval[4]^initval[6]))
+    
+            return(initval[notFixed])
+        }        
     }
  
     ## Defining names

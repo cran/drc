@@ -14,8 +14,9 @@
 }
 
 \usage{
-  lnormal(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), fctName, fctText, 
-  loge = TRUE)
+  lnormal(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), 
+  method = c("1", "2", "3", "4"), ssfct = NULL,
+  fctName, fctText, loge = FALSE)
   
   LN.2(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
   
@@ -32,14 +33,16 @@
   \item{names}{vector of character strings giving the names of the parameters (should not contain ":").
   The default is reasonable (see under 'Usage'). The order of the parameters is: b, c, d, e, f 
   (see under 'Details' for the precise meaning of each parameter).}
+  \item{method}{character string indicating the self starter function to use.}  
+  \item{ssfct}{a self starter function to be used.}  
   \item{fctName}{character string used internally by convenience functions (optional).}  
   \item{fctText}{character string used internally by convenience functions (optional).}  
   \item{loge}{logical indicating whether or not ED50 or log(ED50) should be a parameter in the model. 
-  By default log(ED50) is a parameter.}
+  By default ED50 is a model parameter.}
   
   \item{upper}{numeric specifying the upper horizontal asymptote in the convenience function. 
   The default is 1.}
-  \item{...}{additional arguments from convenience functions to \code{lnormal}.}
+  \item{...}{additional arguments to be passed from the convenience functions to \code{lnormal}.}
 }
 
 \details{

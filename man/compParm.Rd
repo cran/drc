@@ -9,7 +9,7 @@
 }
 
 \usage{
-compParm(object, strVal, operator = "/", od = FALSE, pool = TRUE)
+compParm(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE)
 }
 
 \arguments{
@@ -18,7 +18,8 @@ compParm(object, strVal, operator = "/", od = FALSE, pool = TRUE)
   \item{operator}{a character. If equal to "/" (default) parameter ratios are compared. If equal to "-" parameter differences are compared.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
   \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
-  independently fitted curves as specified in \code{\link{drm}}.}  
+  independently fitted curves as specified in \code{\link{drm}}.}
+  \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}  
 }
 
 \value{

@@ -17,13 +17,13 @@
 }
 
 \usage{
-  W1.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+  W1.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
   
-  W2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"))
+  W2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
   
-  W1.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"))  
+  W1.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
   
-  W2.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"))    
+  W2.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)    
 }
 
 \arguments{
@@ -31,6 +31,7 @@
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
+  \item{...}{additional arguments to be passed from the convenience functions.}   
 }
 
 \details{
