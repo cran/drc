@@ -85,5 +85,6 @@ summary(lettuce.crsm3)
 ED(lettuce.crsm3, c(50))
 
 }
+
 \keyword{models}
 \keyword{nonlinear}

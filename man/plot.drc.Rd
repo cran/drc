@@ -35,7 +35,7 @@
   "bars" (averages and fitted curve(s) with model-based error ).}
   \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
   (using functionality in the CRAN package 'plotrix').}
-  \item{bp}{numeric value specifying the breap point below which the dose is zero (the amount of stretching on 
+  \item{bp}{numeric value specifying the break point below which the dose is zero (the amount of stretching on 
   the dose axis above zero in order to create the visual illusion of a logarithmic scale \emph{including} 0). 
   The default is the base-10 value corresponding to the rounded value of the minimum of the log10 values of 
   all positive dose values. This argument is only working for logarithmic dose axes.}
