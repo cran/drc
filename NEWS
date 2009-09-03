@@ -1,5 +1,17 @@
 ## Changes in 'drc'
 
+2009-09-03: The function comped() has been removed. 
+
+2009-09-02: The argument "extended" has been added to the function maED().
+
+2009-09-01: The twophase() model function based on log-logistic models has been added (after an idea by Ida Katarina Auf der Maur Hindrichsen).
+
+2009-07-28: Small bug in cedergreen() and ucedergreen() related to calculation of ED values has been fixed (reported by Clare Della Vedova).
+
+2009-07-27: Small bug in the function modelFit() has been fixed (after feedback from Heike Schmitt).
+
+2009-07-27: Help page for CRS.5a has been improved (after comment from Claire Della Vedova).
+
 2009-07-06: The functions lin.test(), mr.test(), and neill.test() have been added.
 
 2009-06-30: The data frame etmotc has been included.
@@ -8,7 +20,7 @@
 
 2009-06-02: The help pages for anova.drc and BC.4(), BC.5(), CRS.5.() have been improved.
 
-2009-05-29: The dataset ecvam has been included (migated from the package 'mrdrc').
+2009-05-29: The dataset ecvam has been included (migrated from the package 'mrdrc').
 
 2009-05-28: The function maED() for parametric model averaging has been added.
 
@@ -76,4 +88,4 @@ decay implemented differently.
 2008-10-02: New function mrdrm() for model-robust modelling included. Accompanying ED and
 predict methods also added. 
 
-2008-09-30: lettuce dataset got correct row numbers
+2008-09-30: The lettuce dataset got correct row numbers.

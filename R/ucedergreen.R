@@ -44,8 +44,8 @@ alpha)
         }
     }   
     
-    ## Setting the names of the parameters
-    names <- names[notFixed]
+#    ## Setting the names of the parameters
+#    names <- names[notFixed]
 
 
 #    ## Defining parameter to be scaled
@@ -102,9 +102,9 @@ alpha)
 #    if (length(upperc) == numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
     ## Defining the ED function
-    edfct <- function(parm, p, upper = 10000, interval = c(1e-4, 10000), ...)
+    edfct <- function(parm, p, lower = 1e-4, upper = 10000, ...)
     {    
-        cedergreen(alpha = alpha)$edfct(parm, 100-p, upper, interval, ...) 
+        cedergreen(fixed =  fixed, names = names, alpha = alpha)$edfct(parm, 100 - p, lower, upper, ...) 
     }
 
 #    ## Defining the SI function
@@ -116,7 +116,7 @@ alpha)
     ## Finding the maximal hormesis
     maxfct <- function(parm, upper, interval)
     {
-       retVal <- cedergreen(alpha = alpha)$maxfct(parm, upper, interval)
+       retVal <- cedergreen(fixed =  fixed, names = names, alpha = alpha)$maxfct(parm, upper, interval)
 #       retVal[2] <- (parm[2] + parm[3]) - (retVal[2] - parm[2])
        retVal[2] <- (parm[2] + parm[3]) - retVal[2]
               
@@ -124,7 +124,7 @@ alpha)
     }
 
     returnList <- 
-    list(fct = fct, ssfct = ssfct, names = names, edfct = edfct, maxfct = maxfct,
+    list(fct = fct, ssfct = ssfct, names = names[notFixed], edfct = edfct, maxfct = maxfct,
     name = "ucedergreen",
     text = "U-shaped Cedergreen-Ritz-Streibig", 
     noParm = sum(is.na(fixed)))

@@ -21,7 +21,7 @@
 
 \description{
   'CRS.5a', 'CRS.5b' and 'CRS.5c' provide the Cedergreen-Ritz-Streibig modified log-logistic model for describing
-  (inverse u-shaped) hormesis.
+  (inverse u-shaped or j-shaped) hormesis.
   
   'UCRS.5a', 'UCRS.5b' and 'UCRS.5c' provide the Cedergreen-Ritz-Streibig modified log-logistic model for
   describing u-shaped hormesis. 
@@ -39,7 +39,7 @@
 }
 
 \details{
-  The model function inverse u-shaped hormesis patterns is
+  The model function for inverse u-shaped hormetic patterns is
   
   \deqn{ f(x) = c + \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}},
 
@@ -57,8 +57,11 @@
     This parameter should be positive in order for the model to make sense.
   }  
   
-  The model function for u-shaped hormesis patterns is
+  The model function for u-shaped hormetic patterns is
   \deqn{ f(x) = c + d - \frac{d-c+f \exp(-1/x^{\alpha})}{1+\exp(b(\log(x)-\log(e)))}}
+  
+  This model also simplifies to the four-parameter log-logistic model in case \eqn{f=0} (in a slightly
+  different parameterization as compared to the one used in \code{\link{LL.4}}).
   
   The models denoted a,b,c are obtained by fixing the alpha parameter at 1, 0.5 and 0.25, respectively.  
 }

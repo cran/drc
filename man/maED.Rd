@@ -12,7 +12,7 @@
 
 \usage{
 maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
-level = 0.95, display = TRUE, na.rm = FALSE)
+level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 }
 
 \arguments{
@@ -25,6 +25,8 @@ level = 0.95, display = TRUE, na.rm = FALSE)
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{na.rm}{logical indicating whether or not NA occurring during model fitting should be left out of
   subsequent calculations.}
+  \item{extended}{logical specifying whether or not an extended output (including fit summaries) should be
+  returned.}
 }
 \details{
   Model-averaging of individual estimates is carried out as described by Buckland \emph{et al.} (1997) and 

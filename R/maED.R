@@ -1,5 +1,5 @@
 "maED" <- function(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
-level = 0.95, display = TRUE, na.rm = FALSE)
+level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 {
     interval <- match.arg(interval)
 
@@ -8,6 +8,9 @@ level = 0.95, display = TRUE, na.rm = FALSE)
     expVec <- as.vector(exp(-msMat[, 2] / 2))
     wVec <- expVec / sum(expVec, na.rm = na.rm)  
     # maybe better "combined" na.rm approach for edEst and wVec
+    
+#    ## Removing poor fits completely via a threshold (good approach?)
+#    wVec[wVec < 0.01] <- 0
     
     lenfl <- length(fctList)
     lenrl <- length(respLev)
@@ -60,33 +63,41 @@ level = 0.95, display = TRUE, na.rm = FALSE)
     }
     if (identical(interval, "buckland"))
     {
-#        print(edSe^2 + (t(t(edEst) - apply(edEst, 2, mean, na.rm = na.rm)))^2)
-        seVec <- apply(sqrt(edSe^2 + (t(t(edEst) - apply(edEst, 2, mean, na.rm = na.rm)))^2) * wVec, 2, sum, na.rm = na.rm)
+        seVec <- apply(sqrt(edSe^2 + (t(t(edEst) - apply(edEst, 2, mean, na.rm = na.rm)))^2) * wVec, 2, 
+        sum, na.rm = na.rm)
+### Thresholding                
+#        iVec <- wVec < 0.01        
+#        seVec <- apply(sqrt(edSe[iVec, ]^2 + (t(t(edEst[iVec, ]) - apply(edEst[iVec, ], 2, 
+#        mean, na.rm = na.rm)))^2) * wVec[iVec], 2, sum, na.rm = na.rm)
         quantVal <- qnorm(1 - (1 - level)/2) * seVec
         retMat <- as.matrix(cbind(edVec, seVec, edVec - quantVal, edVec + quantVal))
         colnames(retMat) <- c(colnames(edMat)[c(1, 2)], "Lower", "Upper")
     }
     if (identical(interval, "kang"))
-    {
-#        print(edCll)
-#        print(edClu)
-    
+    {  
         retMat <- as.matrix(cbind(apply(edEst * wVec, 2, sum, na.rm = na.rm), 
         apply(edCll * wVec, 2, sum, na.rm = na.rm), 
         apply(edClu * wVec, 2, sum, na.rm = na.rm)))
         colnames(retMat) <- colnames(edMat)[c(1,3,4)]
     }   
     rownames(retMat) <- rownames(edMat)
-    
+
+    ## Constructing matrix of fit summaries 
+    disMat <- as.matrix(cbind(edEst, wVec))
+    colnames(disMat) <- c(paste("EC", rownames(edMat), sep = ""), "Weight")
+    rownames(disMat) <- rownames(msMat)    
     if (display)
     {
-        disMat <- as.matrix(cbind(edEst, wVec))
-        colnames(disMat) <- c(paste("EC", rownames(edMat), sep = ""), "Weight")
-        rownames(disMat) <- rownames(msMat)
-        print(disMat) 
+        print(disMat)
+        cat("\n") 
     }
     
 #    resPrint(resMat, "Estimated effective doses", interval, "Model-averaging", display)
-    retMat
+    if (extended)
+    {
+        return(list(estimates = retMat, fits = disMat))
+    } else {
+        retMat
+    }
     
 }

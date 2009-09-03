@@ -5,3 +5,4 @@
     file.show(paste(.libPaths(), pkgname, filename, sep = "/"), 
     title = paste("Package information for", pkgname))
 }
+## drc:::showNews("drc")

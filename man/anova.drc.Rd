@@ -2,7 +2,7 @@
 
 \alias{anova.drc}
 
-\title{ANOVA for non-linear model fits}
+\title{ANOVA for dose-response model fits}
 
 \description{
   'anova' produces an analysis of variance table for one or two non-linear model fits.

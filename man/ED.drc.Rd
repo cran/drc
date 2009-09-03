@@ -53,17 +53,18 @@
   response. The latter is more suitable for dose-response data showing hormesis.} 
   \item{n}{numeric specifying the number of simulations for the bootstrap confidence intervals.}       
   \item{seedVal}{numeric giving the seed for the random number generator used for the bootstrap confidence intervals.}   
-  \item{...}{further arguments (none at the moment).}
+  \item{...}{see the details section below.}
 }
 
 \details{
   For hormesis models (\code{\link{braincousens}} and \code{\link{cedergreen}}), the additional 
-  arguments \code{lower} and \code{upper} may be supplied. 
-  The \code{lower} and \code{upper} arguments specify the lower and upper limits of the bisection method used to
-  find the ED values.  The lower and upper limits need to be smaller/larger than the EDx level to be calculated. 
-  The default limits are 0.001 and 1000 for \code{braincousens} and 0.0001 and 10000 for \code{cedergreen}, but this 
-  may need to be increased. Notice that the lower limit should not be set to 0 (use instead something 
-  like 1e-3, 1e-6, ...).
+  arguments \code{lower} and \code{upper} may be supplied. These arguments specify the lower and upper limits 
+  of the bisection method used to find the ED values.  The lower and upper limits need to be smaller/larger 
+  than the EDx level to be calculated. The default limits are 0.001 and 1000 for \code{braincousens} and 
+  0.0001 and 10000 for \code{cedergreen} and \code{\link{ucedergreen}}, but this  may need to be modified 
+  (for \code{\link{cedergreen}} the upper limit may need to be increased and for \code{\link{ucedergreen}} 
+  the lower limit may need to be increased). Note that the lower limit should not be set to 0 (use instead 
+  something like 1e-3, 1e-6, ...).
   
   For model-robust fits the arguments \code{lower} and \code{upper} can be used to specify reference values for the
   lower and upper limits of the dose-response relationship. This only applies for the continuous responses. For

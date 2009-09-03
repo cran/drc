@@ -15,8 +15,8 @@
 \format{
   A data frame with 24 observations on the following 2 variables.
   \describe{
-    \item{rootl}{a numeric vector (response)}  
-    \item{conc}{a numeric vector (predictor)}
+    \item{rootl}{a numeric vector of root lengths}  
+    \item{conc}{a numeric vector of concentrations of ferulic acid}
   }
 }
 
@@ -25,7 +25,7 @@
   of phenolic acids on root growth inhibition of perennial ryegrass (\emph{Lolium perenne L}).
 
   \code{conc} is the concentration of ferulic acid is in mM, and \code{rootl} is the root length 
-  of perennial ryegrass. 
+  of perennial ryegrass measured in cm. 
 }
 
 \source{
@@ -58,19 +58,21 @@ ryegrass.m3 <- drm(rootl ~ conc, data = ryegrass,
 fct = LL.4(names = c("Slope", "Lower Limit", "Upper Limit", "ED50")))
 summary(ryegrass.m3)
 
-
+## Comparing log-logistic and Weibull models
+## (Figure 2 in Ritz (2009))
 ryegrass.m0 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
 ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = W1.4())
 ryegrass.m2 <- drm(rootl ~ conc, data = ryegrass, fct = W2.4())
 
-plot(ryegrass.m0, conLevel=0.1, broken=TRUE, xlab="Dose", ylab="Root length", lwd=2, cex=1.2)
-plot(ryegrass.m1, add=TRUE, conLevel=0.1, broken=TRUE, lty=2, lwd=2)
-plot(ryegrass.m2, add=TRUE, conLevel=0.1, broken=TRUE, lty=3, lwd=2)
+plot(ryegrass.m0, broken=TRUE, xlab="Dose (mM)", ylab="Root length (cm)", lwd=2, 
+cex=1.2, cex.axis=1.2, cex.lab=1.2)
+plot(ryegrass.m1, add=TRUE, broken=TRUE, lty=2, lwd=2)
+plot(ryegrass.m2, add=TRUE, broken=TRUE, lty=3, lwd=2)
 
-arrows(3,7.5,1.4,7.5, 0.15, lwd=2)
+arrows(3, 7.5, 1.4, 7.5, 0.15, lwd=2)
 text(3,7.5, "Weibull-2", pos=4, cex=1.2)
 
-arrows(2.5,0.9,5.7,0.9, 0.15, lwd=2)
+arrows(2.5, 0.9, 5.7, 0.9, 0.15, lwd=2)
 text(3,0.9, "Weibull-1", pos=2, cex=1.2)
 
 

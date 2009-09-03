@@ -31,13 +31,15 @@ lnormal, LN.2, LN.3, LN.3u, LN.4,
 
 MM.2, MM.3, 
 
+twophase,
+
 weibull1, W1.2, W1.3, W1.3u, W1.4, w2, w3, w4, 
 
 weibull2, W2.2, W2.3, W2.3u, W2.4,
 
 boxcox.drc, bread.drc, estfun.drc,
 
-comped, compParm, diagnostics, drm, drmc, ED, getInitial, getMeanFunctions, isobole, 
+compParm, diagnostics, drm, drmc, ED, getInitial, getMeanFunctions, isobole, 
 lin.test, MAX, maED, mixdrc, mixture, modelFit, mr.test, mselect, multdrc, neill.test, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
 
 mrdrm)

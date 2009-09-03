@@ -31,6 +31,10 @@
         anovaForm <- afList$"anovaFormula"
         anovaData <- afList$"anovaData"        
         anovaModel <- anovaTest(anovaForm, anovaData)
+        if (is.null(anovaModel))
+        {
+            return(returnFct())
+        }
 
         anovaDF <- df.residual(anovaModel$"anovaFit")
         nlsDF <- df.residual(object)
