@@ -1,5 +1,6 @@
 "drmc" <- function(constr = FALSE, errorm = TRUE, maxIt = 500, method = "BFGS", 
-noMessage = FALSE, relTol = 1e-7, rmNA = FALSE, useD = FALSE, trace = FALSE, warnVal = -1)
+noMessage = FALSE, relTol = 1e-7, rmNA = FALSE, useD = FALSE, trace = FALSE, 
+otrace = FALSE, warnVal = -1)
 {
     return(list(
                 constr = constr,
@@ -11,5 +12,6 @@ noMessage = FALSE, relTol = 1e-7, rmNA = FALSE, useD = FALSE, trace = FALSE, war
                 rmNA = rmNA, 
                 useD = useD,
                 trace = trace,
+                otrace = otrace,
                 warnVal = warnVal))
 }

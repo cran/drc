@@ -30,6 +30,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     errorMessage <- control$"errorm"  # in drmOpt
     noMessage <- control$"noMessage"  # reporting finding control measurements? 
 #    trace <- control$"trace"
+#    otrace <- control$"otrace"
         
     ## Setting warnings policy
     options(warn = warnVal)
@@ -1126,8 +1127,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    print(startVecSc)
 #    print(multCurves2(dose, startVecSc))
 #    print(opfct(startVecSc))
-#    print(dose)
-#    print(resp)
+##    print(dose)
+##    print(resp)
      
     ## Scaling objective function
 #    if (type == "continuous")
@@ -1147,8 +1148,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     ## Optimising the objective function previously defined
     startVecSc <- as.vector(startVecSc)  # removing names
     nlsFit <- drmOpt(opfct, opdfct1, startVecSc, optMethod, constrained, warnVal, 
-    upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, trace = control$"trace",
-    matchCall = callDetail) 
+    upperLimits, lowerLimits, errorMessage, maxIt, relTol, parmVec = parmVec, traceVal = control$"trace",
+    matchCall = callDetail, silentVal = control$"otrace") 
 #    matchCall = match.call()) 
         
     if (!nlsFit$convergence) {return(nlsFit)}

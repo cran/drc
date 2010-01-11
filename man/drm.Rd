@@ -6,7 +6,7 @@
 \title{Fitting dose-response models}
 
 \description{
-  A general tools for fitting concentration/dose/time-response models.
+  A general model fitting function for concentration/dose/time-response models.
 }
 
 \usage{

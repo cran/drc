@@ -1,9 +1,6 @@
 "compParm" <-
 function(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE)
 {
-#    strParm <- object$"parNames"[[1]]
-#    lenSP <- length(strParm)
-
     if (inherits(object, "mixdrc")) {sep <- ".{1}"} else {sep <- ":{1}"}
     presentVec <- grep(paste("^", strVal, sep, sep = ""), object$"parNames"[[1]])  # strParm)           
 
@@ -13,17 +10,7 @@ function(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE
         stop("No parameters to compare")
     }
 
-    ## Extracting information from model fit
-#    sumObj <- summary(object, od = od)
-#    parm <- as.vector(coef(object))  # sumObj$"coefficients"
-#    
-#    if (inherits(object, "bindrc"))
-#    {
-#        varMat <- sumObj$"varMat"
-#    } else {  # taking different parameterisations into account
-##        varMat <- object$"transformation"%*%(sumObj$"varMat")%*%t(object$"transformation")
-#        varMat <- sumObj$"varMat"
-#    }    
+    ## Extracting information from model fit 
     if (inherits(object, "mixdrc")) 
     {
         sumObj <- summary(object)

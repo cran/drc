@@ -1,5 +1,17 @@
 ## Changes in 'drc'
 
+2010-01-11: The model function cedergreen() has been updated to ensure correct calculation of ED values (reported by Claire Della Vedova).
+
+2009-11-17: The help page of drm() has been updated.
+
+2009-10-13: confint has been improved to automatically use the appropriate reference
+distribution for the confidence intervals; Internal structure of ED() has also been modified (reported by Marc Weimer).
+
+2009-10-12: The self starter for twophase() has been slightly improved.
+
+2009-09-03: The functions NEC.2(), NEC.3(), NEC.4() for estimation of no effect
+concentration have been included (after an idea by Ralf Schaefer).
+
 2009-09-03: The function comped() has been removed. 
 
 2009-09-02: The argument "extended" has been added to the function maED().

@@ -10,7 +10,8 @@
 
 \usage{
   drmc(constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS", 
-  noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, trace = FALSE, warnVal = -1)
+  noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, 
+  trace = FALSE, otrace = FALSE, warnVal = -1)
 }
 
 \arguments{
@@ -26,6 +27,7 @@
     Default is FALSE (not removed).}
   \item{useD}{logical. If TRUE derivatives are used for estimation (if available).}  
   \item{trace}{logical. If TRUE the trace from \code{\link{optim}} is displayed.}  
+  \item{otrace}{logical. If TRUE the output from \code{\link{optim}} is displayed.}  
   \item{warnVal}{numeric. If equal to 0 then the warnings are stored and displayed at the end. 
     See under 'warn' in \code{\link{options}}. The default results in suppression of warnings.}
 }

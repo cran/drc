@@ -1,4 +1,4 @@
-"EDhelper" <- function(parmVec, respl, reference, type)
+"EDhelper" <- function(parmVec, respl, reference, type, cond = TRUE)
 {
     ## Converting absolute to relative
     if (type == "absolute") 
@@ -7,10 +7,18 @@
     } else {  
         p <- respl
     }
-    ## Swapping p for increasing curve
-    if ( (type == "relative") && (parmVec[1] < 0) && (reference == "control") )
+    ## Swapping p for an increasing curve
+    if (cond)
     {
-        p <- 100 - p
+        if ((type == "relative") && (parmVec[1] < 0) && (reference == "control"))
+        {
+            p <- 100 - p
+        }
+    } else {
+        if ((type == "relative") && (reference == "control"))
+        {
+            p <- 100 - p
+        }
     }
     p
 }

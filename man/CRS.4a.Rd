@@ -76,6 +76,10 @@ lettuce.crsm1 <- drm(lettuce[,c(2,1)], fct=CRS.4a())
 summary(lettuce.crsm1)
 ED(lettuce.crsm1, c(50))
 
+## Need to explicitly specify that the upper limit
+## is the reference in order to get ED10 and ED90 right
+ED(lettuce.crsm1, c(10, 50, 90), reference = "upper")
+
 lettuce.crsm2 <- drm(lettuce[,c(2,1)], fct=CRS.4b())
 summary(lettuce.crsm2)
 ED(lettuce.crsm2, c(50))

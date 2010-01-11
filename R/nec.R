@@ -1,4 +1,4 @@
-"nec" <- function(
+"NEC" <- function(
 fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), 
 fctName, fctText)
 {   
@@ -15,28 +15,19 @@ fctName, fctText)
     ## Defining the non-linear function
     fct <- function(dose, parm) 
     {
-#        print("A")
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
-#        print(notFixed)
-#        print(parm)
-#        print(parmMat[, notFixed])
         parmMat[, notFixed] <- parm
-#        print("B")
-#        LL.4(fixed[1:4])$fct(dose, parmMat[, 1:4]) + LL.3(fixed[5:7])$fct(dose, parmMat[, 5:7])
 
-        fixed1.4 <- fixed[1:4]
-        fixed5.7 <- fixed[5:7] 
-        LL.4()$fct(dose, parmMat[, 1:4, drop = FALSE]) + LL.3()$fct(dose, parmMat[, 5:7, drop = FALSE])
+        cParm <- parmMat[, 2]
+        doseDiff <- dose - parmMat[, 4]
+        cParm + (parmMat[, 3] - cParm) * exp(-parmMat[, 1] * doseDiff * (doseDiff > 0) )
     }
 
     ## Defining self starter function
     ssfct <- function(dframe)
     {  
-#        first4 <- drc:::llogistic.ssf(fixed = fixed[1:4])(dframe)  # drc::: not need
-        first4 <- drc:::llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)    
-    
-#    print(c(first4[1:2], first4[3]/2, first4[4]/3, first4[1], first4[3]/2, first4[4])[is.na(fixed)])
-        c(first4[1:2], first4[3]/2, first4[4]/3, first4[1], first4[3]/2, first4[4])[is.na(fixed)]
+        LLinit <- drc:::llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)  # drc::: not needed      
+        c(LLinit[1:3], LLinit[3]/3)[is.na(fixed)]
     }     
       
     ##Defining the first and second derivative (in the parameters) 
@@ -54,10 +45,53 @@ fctName, fctText)
     list(fct = fct, ssfct = ssfct, names = names[notFixed], 
     deriv1 = deriv1, deriv2 = deriv2, derivx = derivx, edfct = edfct,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
-    text = ifelse(missing(fctText), "Two-phase", fctText), 
+    text = ifelse(missing(fctText), "NEC", fctText), 
     noParm = sum(is.na(fixed))
     )
     
-    class(returnList) <- "two-phase"
+    class(returnList) <- "NEC"
     invisible(returnList)
+}
+
+
+"NEC.2" <-
+function(upper = 1, fixed = c(NA, NA), names = c("b", "e"), ...)
+{
+    ## Checking arguments
+    numParm <- 2
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( NEC(fixed = c(fixed[1], 0, upper, fixed[2]), 
+    names = c(names[1], "c", "d", names[2]), 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowupFixed("NEC", upper),
+    ...) )
+}
+
+"NEC.3" <-
+function(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
+{
+    ## Checking arguments
+    numParm <- 3
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( NEC(fixed = c(fixed[1], 0, fixed[2:3]), 
+    names = c(names[1], "c", names[2:3]),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("NEC"), 
+    ...) )
+}
+
+"NEC.4" <-
+function(fixed = c(NA, NA, NA, NA), names = c("b", "c", "d", "e"), ...)
+{
+    ## Checking arguments
+    numParm <- 4
+    if (!is.character(names) | !(length(names)==numParm)) {stop("Not correct names argument")}
+    if (!(length(fixed)==numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return( NEC(fixed = fixed, names = names,
+    fctName = as.character(match.call()[[1]]), ...) )
 }
