@@ -6,6 +6,7 @@
     {
         llVal <- object$loglik[3]
         attr(llVal, "df") <- object$loglik[5] - object$loglik[4]
+        attr(llVal, "nobs") <- nrow(object$data) # <--  extension provided by Tobias Verbeke
     } else {
 
 #        llVal <- summary(object)[[4]][1]
@@ -15,7 +16,8 @@
             loglik <- (object$estMethod$llfct)(object)
             
             llVal <- loglik[1]
-            attr(llVal, "df") <- loglik[2]            
+            attr(llVal, "df") <- loglik[2]   
+            attr(llVal, "nobs") <- nrow(object$data) # <--  extension provided by Tobias Verbeke       
 #        }
 
 #        if (object$"type"=="binomial")
@@ -39,3 +41,4 @@
     class(llVal) <- "logLik"
     return(llVal)
 }
+

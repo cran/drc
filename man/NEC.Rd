@@ -45,7 +45,12 @@
   
   \deqn{ f(x) = c + (d-c)\exp(-b(x-e)I(x-e)) + \frac{d2}{1+\exp(b2(\log(x)-\log(e2)))}}
   
-  where \eqn{I(x-e)} is the indicator function. It is equal to 0 for \eqn{x<=e} and equal 1 for \eqn{x>e}
+  where \eqn{I(x-e)} is the indicator function. It is equal to 0 for \eqn{x<=e} and equal 1 for \eqn{x>e}.
+  
+  In other words: The parameter e in \code{NEC} in "drc" corresponds to the parameter c' in Pires \emph{et al} (2002),
+  the parameter b in \code{NEC} in "drc" corresponds to the parameter m' in Pires \emph{et al} (2002), the parameter d 
+  in \code{NEC} in "drc" corresponds to the parameter l' in Pires \emph{et al} (2002), and finally the parameter c in 
+  \code{NEC} in "drc" (the lower horizontal limit) is (implictly) fixed at 0 in Pires \emph{et al} (2002)
 }
 
 \value{

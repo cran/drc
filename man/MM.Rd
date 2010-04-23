@@ -19,17 +19,20 @@
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. 
   NAs for parameter that are not fixed.}
-  \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). 
-  The order of the parameters is: y0, Vm, K (see under 'Details').}
+  \item{names}{a vector of character strings giving the names of the parameters (should not contain ":").}
   \item{...}{additional arguments from convenience functions to \code{\link{llogistic}}.}
 }
 
 \details{
-  The model is given by the mean function
+  The model is defined by the three-parameter model function
   
   \deqn{f(x, (c, d, e)) = c + \frac{d-c}{1+(e/x)}}
   
-  It is a decreasing three-parameter model. The two-parameter Michaelis-Menten model (\code{MM.2}) is obtained by
+  It is an increasing as a function of the dose \eqn{x}, attaining the lower limit \eqn{c} at dose 0 (\eqn{x=0}) 
+  and the upper limit \eqn{d} for infinitely large doses. The parameter \eqn{e} corresponds to the dose yielding a response
+  halfway between \eqn{c} and \eqn{d}. 
+  
+  The common two-parameter Michaelis-Menten model (\code{MM.2}) is obtained by
   setting \eqn{c} equal to 0.
 }
 

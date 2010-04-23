@@ -11,6 +11,7 @@ doseScaling = 1, respScaling = 1)
     opfct <- function(parm)  # , scaling = TRUE)
     {
 #        print(parm)
+
 #        if (scaling)
 #        { 
 #            sum( robustFct(((resp - multCurves(dose/scaleX, parm)) / scaleY)*weights), na.rm = rmNA)  

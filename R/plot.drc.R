@@ -179,7 +179,9 @@ legend, legendText, legendPos, cex.legend = 1)
     ## Calculating predicted values for error bars
     if (identical(type, "bars"))
     {
-        predictMat <- predict(object, interval = "confidence")[, 3:4]
+#        predictMat <- predict(object, interval = "confidence")[, 3:4]
+        predictMat <- predict(object, interval = "confidence")[, c("Lower", "Upper")]
+#        print(predictMat)
     
         barFct <- function(plotPoints)
         {
@@ -249,15 +251,21 @@ legend, legendText, legendPos, cex.legend = 1)
         plotPoints <- 
         switch(
             type, 
+            
             "average" = cbind(as.numeric(names(tapVec <- tapply(resp[indVec], 
             dose[indVec], mean))), tapVec),
-            "bars"    = cbind(as.numeric(names(tapVec <- tapply(resp[indVec], 
-            dose[indVec], mean))), tapVec, tapply(predictMat[indVec, 1], dose[indVec], head, 1),
+            
+            "bars"    = cbind(
+            as.numeric(names(tapVec <- tapply(resp[indVec], dose[indVec], mean))), 
+            tapVec, 
+            tapply(predictMat[indVec, 1], dose[indVec], head, 1),
             tapply(predictMat[indVec, 2], dose[indVec], head, 1)),
+            
             "none"    = cbind(dose[indVec], resp[indVec]),
             "all"     = cbind(dose[indVec], resp[indVec]),
             "obs"     = cbind(dose[indVec], resp[indVec])
         )
+#        print(plotPoints)
         ## New approach
 #        plotPointsRaw <- ppList[uniAss2[i]]
 #        plotPoints <- with(plotPointsRaw,

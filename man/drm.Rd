@@ -25,9 +25,12 @@
   \item{pmodels}{a data frame with a many columns as there are parameters in the non-linear function. 
   Or a list containing a formula for each parameter in the non-linear function.}
   
-  \item{weights}{a numeric vector containing weights.}
+  \item{weights}{
+    a numeric vector containing weights that are multiplied inside the squared errors (see the details below).
+  }
   
-  \item{data}{an optional data frame containing the variables in the model.}
+  \item{data}{
+    an optional data frame containing the variables in the model.}
   
   \item{subset}{an optional vector specifying a subset of observations to be used in the fitting process.}
   
@@ -75,8 +78,15 @@
 }
 
 \details{
-  This function uses the function 'optim' for the minimisation. The control arguments are specified using 
-  the function \code{\link{drmc}}.
+  This function relies on the general multi-purpose optimiser function \code{\link{optim}} for the minimisation of the minus log likelihood function. 
+  For a quantitative response this reduces to least squares estimation, which is carried out by minimising the following sums of squares
+  
+  \deqn{\sum_{i=1}^N [w_i (y_i-f_i)]^2}
+  
+  where \eqn{y_i}, \eqn{f_i}, and \eqn{w_i} correspond to the observed value, expected value, and the weight respectively, 
+  for the ith observation (from 1 to \eqn{N}).
+     
+  The control arguments are specified using the function \code{\link{drmc}}.
   
   For robust estimation MAD (median abslolute deviance) is used to estimate the residual variance.  
   

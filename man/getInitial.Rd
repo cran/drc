@@ -34,7 +34,7 @@
 
 %\seealso{}
 
-\examples{}
+%\examples{}
 
 \keyword{models}
 \keyword{nonlinear}

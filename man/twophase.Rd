@@ -58,8 +58,7 @@
   \code{\link{llogistic}}.
 }
 
-\examples{
-}
+%\examples{}
 
 \keyword{models}
 \keyword{nonlinear}

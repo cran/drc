@@ -17,7 +17,7 @@
 }
 
 \value{
-   The evaluated log likelihood as a numeric value and the corresponding degrees of freedom as an attribute.
+   The evaluated log likelihood as a numeric value and the corresponding degrees of freedom as well as the number of observations as attributes.
 }
 
 \note{

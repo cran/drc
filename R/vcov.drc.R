@@ -83,7 +83,8 @@ function(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
     if (inherits(invMat, "try-error"))
     {
         ## More stable than 'solve' (suggested by Nicholas Lewin-Koh - 2007-02-12)
-        ch <- try(chol(scaledH))
+        ch <- try(chol(scaledH), silent = TRUE)  
+        # "silent" argument added after report by Xuesong Yu - 2010-03-09
         if (inherits(ch, "try-error")) 
         {
             ch <- try(chol(0.99 * object$fit$hessian + 0.01 * diag(dim(object$fit$hessian)[1])))
