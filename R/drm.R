@@ -731,7 +731,19 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
             ## Identifying a dose response curve only consisting of control measurements
             if (sum(!is.na(startMat[i, ])) == 1) {upperPos <- (1:numNames)[!is.na(startMat[i, ])]}
         }
-#        print(startMat)    
+#        print(startMat)  
+
+#       New approach?
+#        timeUsed <- 0 
+#        ssFctWrapper <- function(dframeSubset)
+#        {
+#            ssFct(dframeSubset[is.finite(dframeSubset[1, ]), ])
+#            timeUsed <- timeUsed + system.time(ssFct(dframeSubset[is.finite(dframeSubset[1, ]), ]))[3]
+#        }  
+#        startMat2 <- matrix(as.vector(unlist(lapply(split(doseresp, assayNo), ssFctWrapper))), 
+#        numAss, numNames, byrow = TRUE)
+#        print(startMat2)  # for comparison  
+  
     
         ## Transforming matrix of starting values into a vector
         nrsm <- nrow(startMat)
@@ -1546,7 +1558,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     "curveVarNam", "origData", "weights",
     "dataList", "coefficients", "boxcox")
     ## Argument "scaleFct" not used anymore
-    class(returnList) <- c("drc", class(fct))
+    class(returnList) <- c("drc")  # , class(fct))
 
     return(returnList)
 }

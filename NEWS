@@ -1,5 +1,7 @@
 ## Changes in 'drc'
 
+2010-04-29: Dataset 'ecvam' has been removed. The mixdrc() function has been temperarily removed.
+
 2010-04-23: Minor bug in the predict method has been fixed. This means that type="bars" in the plot method now works again (after a bug report by Andy Robinson).
 
 2010-04-16: The help for NEC() has been improved (after a question from Inés González). 
