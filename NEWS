@@ -1,5 +1,9 @@
 ## Changes in 'drc'
 
+2010-05-31: Small bug in plot.drc() related to "xt" and "xtlab" arguments has been fixed (after a comment by Anja Coors).
+
+2010-05-06: The argument "clevel" has been added to ED(). The function maED() has been extended and now also handles model fits involving several curves (after a suggestion from Andre Kleensang).
+
 2010-04-29: Dataset 'ecvam' has been removed. The mixdrc() function has been temperarily removed.
 
 2010-04-23: Minor bug in the predict method has been fixed. This means that type="bars" in the plot method now works again (after a bug report by Andy Robinson).

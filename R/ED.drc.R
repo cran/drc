@@ -1,7 +1,7 @@
 ED <- function (object, ...) UseMethod("ED", object)
 
 "ED.drc" <-
-function(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
+function(object, respLev, interval = c("none", "delta", "fls", "tfls"), clevel = NULL,
 level = ifelse(!(interval == "none"), 0.95, NULL), reference = c("control", "upper"), 
 type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display = TRUE, 
 pool = TRUE, logBase = NULL, ...)
@@ -24,7 +24,8 @@ pool = TRUE, logBase = NULL, ...)
     if (is.null(EDlist)) {stop("ED values cannot be calculated")}         
     indexMat <- object$"indexMat"
     parmMat <- object$"parmMat"
-    strParm <- colnames(parmMat)    
+    strParm0 <- colnames(parmMat)    
+    strParm <- strParm0
     vcMat <- vcov(object, od = od, pool = pool)
     
     ## Defining vectors and matrices
@@ -55,6 +56,8 @@ pool = TRUE, logBase = NULL, ...)
         parmInd <- indexMat[, i]
         varCov <- vcMat[parmInd, parmInd]
 
+        if ((is.null(clevel)) || (strParm0[i] %in% clevel))
+        {
         for (j in 1:lenPV)
         {
             EDeval <- EDlist(parmChosen, respLev[j], reference = reference, type = type, ...)            
@@ -74,6 +77,11 @@ pool = TRUE, logBase = NULL, ...)
 
             dimNames[rowIndex] <- paste(strParm[i], respLev[j], sep = "")
             rowIndex <- rowIndex + 1
+        }
+        } else {
+            rowsToRemove <- rowIndex:(rowIndex + lenPV - 1)
+            EDmat <- EDmat[-rowsToRemove, , drop = FALSE]
+            dimNames <- dimNames[-rowsToRemove]
         }
     }
     

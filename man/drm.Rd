@@ -52,7 +52,7 @@
   Overrules any self starter function.}
    
   \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  
-  The default is \code{link{na.fail}}. To omit 'NA's use \code{\link{na.omit}}.}
+  The default is \code{\link{na.fail}}. To omit 'NA's use \code{\link{na.omit}}.}
    
   \item{robust}{a character string specifying the rho function for robust estimation. Default is non-robust 
   least squares estimation ("mean"). Available robust methods are: median estimation ("median"), 

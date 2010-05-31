@@ -12,7 +12,7 @@
 
 \usage{
 maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
-level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
+clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 }
 
 \arguments{
@@ -21,6 +21,8 @@ level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
   \item{respLev}{a numeric vector containing the response levels.}
   \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
   The choices "buckland" and "kang" are explained in the Details section.}
+  \item{clevel}{character string specifying the curve id in case on estimates for a specific curve or compound is requested. By default estimates
+  are shown for all curves.}
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{na.rm}{logical indicating whether or not NA occurring during model fitting should be left out of
@@ -44,7 +46,7 @@ level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 
 \references{ 
   Buckland, S. T. and Burnham, K. P. and Augustin, N. H. (1997)
-  Model Selection: An Integral Part of Inference
+  Model Selection: An Integral Part of Inference,
   \emph{Biometrics} \bold{53}, 603--618.
   
   Kang, Seung-Ho and Kodell, Ralph L. and Chen, James J. (2000)
@@ -74,6 +76,22 @@ c(10, 50, 90), "buckland")
 
 maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90), "kang")
+
+## Example with a model fit involving two compounds/curves
+S.alba.m1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
+pmodels=data.frame(Herbicide,1,1,Herbicide)) 
+
+## Model-averaged ED50 for both compounds
+maED(S.alba.m1, list(LL.3(), LN.4()), 50)
+
+## Model-averaged ED50 only for one compound (glyphosate)
+maED(S.alba.m1, list(LL.3(), LN.4()), 50, clevel="Glyphosate")
+
+## With confidence intervals
+maED(S.alba.m1, list(LL.3(), LN.4()), 50, interval="buckland")
+
+## For comparison model-specific confidence intervals
+ED(S.alba.m1, 50, interval="delta")  # wider!
 
 }
 

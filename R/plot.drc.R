@@ -291,7 +291,7 @@ legend, legendText, legendPos, cex.legend = 1)
             barFct(plotPoints)            
             
             ## Adding axes    
-            addAxes(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab)
+            addAxes(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel)
 
             ## Adding axis break
             ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX)       
@@ -447,7 +447,7 @@ if (FALSE)
 }
 }
 
-"addAxes" <- function(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab)
+"addAxes" <- function(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel)
 {
     if (!axes) {return(invisible(NULL))}  # doing nothing
     
@@ -461,6 +461,10 @@ if (FALSE)
     if (!is.null(xt)) 
     {
         xaxisTicks <- xt
+        if (identical(as.numeric(xaxisTicks)[1], 0))
+        { 
+            xaxisTicks[1] <- conLevel
+        }
     } else {
         xaxisTicks <- axTicks(1)
 
@@ -505,10 +509,10 @@ if (FALSE)
     }     
 
     ## Assigning special name to first tick mark
-    if (logX && (!is.null(conName)))
+    if (logX && (is.null(xtlab)) && (!is.null(conName)))
     {
         xLabels[1] <- conName
-    }    
+    }   
 
     ## Updating labels
     xLabels <- as.expression(xLabels)

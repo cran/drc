@@ -13,7 +13,7 @@
 
 \usage{
   \method{ED}{drc}(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
-  level = ifelse(!(interval == "none"), 0.95, NULL),
+  clevel = NULL, level = ifelse(!(interval == "none"), 0.95, NULL),
   reference = c("control", "upper"), type = c("relative", "absolute"), lref, uref,
   bound = TRUE, od = FALSE, display = TRUE, pool = TRUE, logBase = NULL, ...)
   
@@ -29,6 +29,8 @@
   Use "delta" for asymptotics-based confidence intervals (using the delta method and the t-distribution).
   Use "fls" for from logarithm scale based confidence intervals (in case the parameter in the model is log(ED50) as for
   the \code{\link{llogistic2}}) models. The only alternative for model-robust fits is using inverse regression.}
+  \item{clevel}{character string specifying the curve id in case on estimates for a specific curve or compound is requested. By default estimates
+  are shown for all curves.}
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}
   \item{type}{character string. Whether the specified response levels are absolute or relative (default).}

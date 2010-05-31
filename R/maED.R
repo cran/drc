@@ -1,6 +1,21 @@
 "maED" <- function(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
-level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
+clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 {
+    ncolPM <- ncol(object$"parmMat")
+    if ((!identical(ncolPM, 1)) && (is.null(clevel)))
+    {
+        retMat <- NULL
+        for (i in 1:ncolPM)
+        {
+#            print((colnames(object$"parmMat"))[i])
+            curveId <- (colnames(object$"parmMat"))[i]
+            cat(curveId, "\n") 
+            retMat <- rbind(retMat, 
+            maED(object, fctList, respLev, interval, clevel = curveId, level, display, na.rm, extended))
+        }
+        return(retMat)
+    } else {     # May 6 2010
+
     interval <- match.arg(interval)
 
     msMat <- do.call("mselect", list(object = object, fctList = fctList))
@@ -14,8 +29,15 @@ level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     
     lenfl <- length(fctList)
     lenrl <- length(respLev)
-    edEst <- matrix(NA, lenfl + 1, lenrl)
-    edSe <- matrix(NA, lenfl + 1, lenrl)    
+#    uniCID <- unique(S.alba.m1$data[, 4])
+#    lenuniCID <- length(uniCID)
+    
+    numRows <- lenfl + 1
+    numCols <- lenrl    
+#    numCols <- lenrl * lenuniCID
+        
+    edEst <- matrix(NA, numRows, numCols)
+    edSe <- matrix(NA, numRows, numCols)    
     
     ## Defining 'interval' argument for ED
     if (identical(interval, "kang"))
@@ -26,21 +48,23 @@ level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     }
     
     ## Calculating estimated ED values
-    edMat <- ED(object, respLev, interval2, display = FALSE)
+#    print(clevel)
+    edMat <- ED(object, respLev, interval2, clevel, display = FALSE)
+#    print(edMat)
     edEst[1, ] <- as.vector((edMat)[, 1])
     edSe[1, ] <- as.vector((edMat)[, 2])
     
     if (identical(interval2, "delta"))
     {
-        edCll <- matrix(NA, lenfl + 1, lenrl)
-        edClu <- matrix(NA, lenfl + 1, lenrl)
+        edCll <- matrix(NA, numRows, numCols)
+        edClu <- matrix(NA, numRows, numCols)
         
         edCll[1, ] <- as.vector((edMat)[, 3])
         edClu[1, ] <- as.vector((edMat)[, 4])        
     }
     for (i in 1:lenfl)
     {
-        edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, display = FALSE), silent = TRUE)
+        edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, clevel, display = FALSE), silent = TRUE)
         if (inherits(edMati, "try-error"))
         {
             edMati <- matrix(NA, length(respLev), 4)
@@ -84,8 +108,16 @@ level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 
     ## Constructing matrix of fit summaries 
     disMat <- as.matrix(cbind(edEst, wVec))
-    colnames(disMat) <- c(paste("EC", rownames(edMat), sep = ""), "Weight")
-    rownames(disMat) <- rownames(msMat)    
+#    colnames(disMat) <- c(paste("EC", rownames(edMat), sep = ""), "Weight")
+    colnames(disMat) <- c(paste("EC", respLev, sep = ""), "Weight")
+    rownames(disMat) <- rownames(msMat)
+
+#    if (lenuniCID > 1)
+#    {
+#        rownames(disMat) <- paste(rownames(msMat), uniCID, sep = "-")
+#    } else {
+#        rownames(disMat) <- rownames(msMat)    
+#    }
     if (display)
     {
         print(disMat)
@@ -99,5 +131,5 @@ level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     } else {
         retMat
     }
-    
+    }   #May 6 2010
 }
