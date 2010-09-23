@@ -167,7 +167,7 @@ if (FALSE)
 #        if (missing(upper2)) {upper2 <- 1000}
         interval <- c(lower, upper) 
         parmVec[notFixed] <- parm
-        p <- EDhelper(parmVec, respl, reference, type, FALSE)        
+        p <- EDhelper(parmVec, respl, reference, type, TRUE)  # FALSE)  Changed 2010-06-02 after e-mail from Claire       
         tempVal <- (100-p)/100
 
         helpFct <- function(dose) {parmVec[2]+(parmVec[3]-parmVec[2]+parmVec[5]*exp(-1/(dose^alpha)))/(1+exp(parmVec[1]*(log(dose)-log(parmVec[4]))))}

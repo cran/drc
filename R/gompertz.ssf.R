@@ -26,6 +26,6 @@
         ## Finding initial values for the b and e parameters    
         beVal <- findbe(x, y, cdVal[1], cdVal[2])      
     
-        return(c(beVal[1], cdVal, beVal[2])[is.na(fixed)])
+        return(c( (-1) * beVal[1], cdVal * c(0.8, 1.2), beVal[2])[is.na(fixed)])
     }
 }

@@ -10,19 +10,28 @@
 
 \usage{
 
-  \method{residuals}{drc}(object, type = c("working", "standardised"), ...)
+  \method{residuals}{drc}(object, typeRes = c("working", "standardised", "studentised"), ...)
 
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
-  \item{type}{character string. The type of residual to be returned.}
+  \item{typeRes}{character string specifying the type of residual to be returned: raw/working residuals, 
+  residuals standardised using the estimated residual standard error,
+  or studentised residuals based on the H matrix of partial derivatives of the model function.}
   \item{...}{additional arguments.}
 }
 
 \value{
-  Raw or standardised residuals extracted from 'object'.
+  The raw (also called working) residuals or some kind of scaled residuals extracted from 'object'. 
 }
+
+\details{
+  Standardised residuals are the raw residuals divided by a scale estimate (if available). 
+  
+  Studentised residuals are obtained by dividing by a scale estimate and in
+  addition a correction factor (square root of 1 minus h with h is a diagonal element in the hat matrix). 
+}  
 
 \note{
   The 'standardised' residuals are available for least squares estimation
@@ -41,7 +50,10 @@ ryegrass.m1 <- drm(rootl ~conc, data = ryegrass, fct = LL.4())
 plot(fitted(ryegrass.m1), residuals(ryegrass.m1))
 
 ## Using the standardised residuals
-plot(fitted(ryegrass.m1), residuals(ryegrass.m1, type = "standard"))
+plot(fitted(ryegrass.m1), residuals(ryegrass.m1, typeRes = "standard"))
+
+## Overlayering the studentised residuals ... not much of a difference
+points(fitted(ryegrass.m1), residuals(ryegrass.m1, typeRes = "student"), col = 2)
 
 }
 \keyword{models}

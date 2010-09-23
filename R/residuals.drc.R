@@ -1,18 +1,53 @@
 "residuals.drc" <-
-function(object, type = c("working", "standardised"), ...)
+function(object, typeRes = c("working", "standardised", "studentised"), ...)
 {
-    type <- match.arg(type)
+    typeRes <- match.arg(typeRes)
     
-    if (type == "standardised")
+    if (identical(typeRes, "standardised"))
     {
         rstan <- object$"estMethod"$"rstanfct"
         if (is.null(rstan)) 
         {
-            stop("No standardisation available")
+            cat("Scale parameter fixed at 1. So working residuals are returned\n\n")
+            return(object$"predres"[, 2])
+#            stop("No standardisation available")
         } else {
-            return(object$"predres"[, 2] / rstan(object))    
+#            print(rstan(object))
+            return(object$"predres"[, 2] / rstan(object))  
+#            return( object$"predres"[, 2] / sqrt(summary(object)$"resVar") )
         }
-    } else {
+    } 
+    
+    if (identical(typeRes, "studentised"))
+    {
+        Xmat <- object$"deriv1"
+        if (is.null(Xmat)) {stop("Studentised residuals not available")}
+        
+        Xprod <- solve(t(Xmat) %*% Xmat)
+        nrowX <- nrow(Xmat)        
+        Hdiag <- rep(NA, nrowX)
+        for (i in 1:nrowX)
+        {
+            Hdiag[i] <- Xmat[i, ] %*% Xprod %*% t(Xmat[i, , drop = FALSE])
+        }
+#        print(length(Hdiag))
+#        print(dim(object$"predres"))
+        scaleEst0 <- summary(object)$"resVar"
+        scaleEst <- ifelse(is.na(scaleEst0), 1, scaleEst0)  
+        # to handle response types that are not continuous/quantitative
+        
+        return(object$"predres"[, 2] / sqrt(scaleEst * (1 - Hdiag)))
+    }
+    
+    if (identical(typeRes, "working"))
+    {
         return(object$"predres"[, 2])
     }
+}
+
+"scaleEst" <- function(object)
+{
+
+
+
 }

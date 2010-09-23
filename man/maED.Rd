@@ -11,7 +11,7 @@
 }
 
 \usage{
-maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
+maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), linreg = FALSE,
 clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 }
 
@@ -21,6 +21,8 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
   \item{respLev}{a numeric vector containing the response levels.}
   \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
   The choices "buckland" and "kang" are explained in the Details section.}
+  \item{linreg}{logical indicating whether or not additionally a simple linear regression model 
+  should be fitted.}
   \item{clevel}{character string specifying the curve id in case on estimates for a specific curve or compound is requested. By default estimates
   are shown for all curves.}
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
@@ -64,18 +66,29 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 
 \examples{
 
+## Fitting an example dose-response model
 ryegrass.m1 <- drm(rootl~conc, data = ryegrass, fct = LL.4())
   
+## Comparing models (showing the AIC values)  
 mselect(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)))
   
+## Doing the actual model-averaging  
 maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90))  
   
+## With confidence intervals according to Buckland et al. (1997)  
 maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90), "buckland")
 
+## With confidence intervals according to Kang et al. (2000)
 maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90), "kang")
+
+## Comparing to model-averaged ED values with simple linear regression included
+maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+c(10, 50, 90), linreg = TRUE, interval = "buckland")
+
+
 
 ## Example with a model fit involving two compounds/curves
 S.alba.m1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),

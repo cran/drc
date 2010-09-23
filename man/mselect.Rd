@@ -11,14 +11,19 @@
 }
 
 \usage{
-  mselect(object, fctList = NULL, nested = FALSE)
+  mselect(object, fctList = NULL, nested = FALSE, sorted = c("IC", "Res var", "Lack of fit", "no"), linreg = FALSE, icfct = AIC)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
-  \item{fctList}{a list of non-linear functions to be compared.}
+  \item{fctList}{a list of dose-response functions to be compared.}
   \item{nested}{logical. TRUE results in F tests between adjacent models (in 'fctList'). 
   Only sensible for nested models.}
+  \item{sorted}{character string determining according to which criterion the model fits are ranked.}
+  \item{linreg}{logical indicating whether or not additionally polynomial regression models (linear, quadratic, and cubic models) 
+  should be fitted (they could be useful for a kind of informal lack-of-test consideration for the models specified, 
+  capturing unexpected departures).}
+  \item{icfct}{function for supplying the information criterion to be used. \code{\link{AIC}} and \code{\link{BIC}} are two options.}
 }
 
 \details{
@@ -50,7 +55,11 @@ ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
 ## Model selection
 mselect(ryegrass.m1, list(LL.3(), LL.5(), W1.3(), W1.4(), W2.4(), baro5()))
 
-mselect(ryegrass.m1, list(LL.5()), nested = TRUE)  # nested models
+## Model selection including linear, quadratic, and cubic regression models
+mselect(ryegrass.m1, list(LL.3(), LL.5(), W1.3(), W1.4(), W2.4(), baro5()), linreg = TRUE)
+
+## Comparing nested models
+mselect(ryegrass.m1, list(LL.5()), nested = TRUE)
 
 ### Example with quantal data
 ## Fitting initial two-parameter log-logistic model

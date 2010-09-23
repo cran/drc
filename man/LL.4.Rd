@@ -27,11 +27,11 @@
 }
 
 \details{
-  The four-parameter logistic function is given by the expression
+  The four-parameter log-logistic function is given by the expression
   \deqn{ f(x) = c + \frac{d-c}{1+\exp(b(\log(x)-\log(e)))}}
   
-  or in another parameterisation
-  \deqn{ f(x) = c + \frac{d-c}{1+\exp(b(\log(x)-e))}}  
+  or in another parameterisation (converting the term \eqn{\log(e)} into a parameter)
+  \deqn{ f(x) = c + \frac{d-c}{1+\exp(b(\log(x)-\tilde{e}))}}  
   
   The function is symmetric about the inflection point (\eqn{e}).  
 }

@@ -1,27 +1,32 @@
-"maED" <- function(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
+"maED" <- function(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), linreg = FALSE,
 clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 {
+#    print(linreg)
+#    print(level)
+    
+    ## Handling multiple curves in a single dataset
     ncolPM <- ncol(object$"parmMat")
-    if ((!identical(ncolPM, 1)) && (is.null(clevel)))
+    if ((!identical(ncolPM, 1)) && (is.null(clevel)))  # is also TRUE for a single curve!!!
     {
         retMat <- NULL
         for (i in 1:ncolPM)
         {
 #            print((colnames(object$"parmMat"))[i])
             curveId <- (colnames(object$"parmMat"))[i]
-            cat(curveId, "\n") 
+#            cat(curveId, "\n") 
             retMat <- rbind(retMat, 
-            maED(object, fctList, respLev, interval, clevel = curveId, level, display, na.rm, extended))
+            maED(object, fctList, respLev, interval, linreg = linreg, clevel = curveId, level = level, 
+            display = display, na.rm = na.rm, extended = extended))
         }
         return(retMat)
     } else {     # May 6 2010
 
     interval <- match.arg(interval)
 
-    msMat <- do.call("mselect", list(object = object, fctList = fctList))
+    msMat <- do.call("mselect", list(object = object, fctList = fctList, sorted = "no")) 
        
-    expVec <- as.vector(exp(-msMat[, 2] / 2))
-    wVec <- expVec / sum(expVec, na.rm = na.rm)  
+#    expVec <- as.vector(exp(-msMat[, 2] / 2))
+#    wVec <- expVec / sum(expVec, na.rm = na.rm)  
     # maybe better "combined" na.rm approach for edEst and wVec
     
 #    ## Removing poor fits completely via a threshold (good approach?)
@@ -36,8 +41,10 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     numCols <- lenrl    
 #    numCols <- lenrl * lenuniCID
         
-    edEst <- matrix(NA, numRows, numCols)
-    edSe <- matrix(NA, numRows, numCols)    
+    edEst <- matrix(NA, numRows + linreg, numCols)
+    edSe <- matrix(NA, numRows + linreg, numCols)    
+#    print(c(numRows, numRows + linreg))
+#    print(linreg)
     
     ## Defining 'interval' argument for ED
     if (identical(interval, "kang"))
@@ -78,6 +85,24 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
             edClu[i + 1, ] <- as.vector((edMati)[, 4])
         }
     }
+    
+#    print(edEst)
+    ## Adding simple linear regression fit
+    if (linreg)
+    {
+        linFit1 <- lm(object$"data"[, 2:1])
+        edLin <- ED.lin(linFit1, respLev)
+        edEst[lenfl + 2, ] <- unlist((edLin)[, 1])
+        edSe[lenfl + 2, ] <- unlist((edLin)[, 2])
+
+        ## Updating weights
+        expVec <- as.vector(exp(-c(msMat[, 2], AIC(linFit1)) / 2))
+    
+    } else {
+        expVec <- as.vector(exp(-msMat[, 2] / 2))
+    }
+#    print(edEst)
+    wVec <- expVec / sum(expVec, na.rm = na.rm)  
 
     edVec <- apply(edEst * wVec, 2, sum, na.rm = na.rm)
     if (identical(interval, "none"))
@@ -110,7 +135,13 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     disMat <- as.matrix(cbind(edEst, wVec))
 #    colnames(disMat) <- c(paste("EC", rownames(edMat), sep = ""), "Weight")
     colnames(disMat) <- c(paste("EC", respLev, sep = ""), "Weight")
-    rownames(disMat) <- rownames(msMat)
+#    rownames(disMat) <- rownames(msMat)
+    if (linreg) 
+    {
+        rownames(disMat) <- c(rownames(msMat), "Lin")
+    } else {
+        rownames(disMat) <- rownames(msMat)
+    }
 
 #    if (lenuniCID > 1)
 #    {
