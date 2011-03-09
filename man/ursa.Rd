@@ -3,6 +3,14 @@
 \Rdversion{1.1}
 
 \alias{ursa}
+\alias{genursa}
+\alias{actimL}
+
+\alias{genLoewe}
+\alias{genLoewe2}
+
+\alias{genBliss}
+\alias{genBliss2}
 
 \title{
   Model function for the universal response surface approach (URSA) for the quantitative assessment of drug interaction
@@ -13,7 +21,19 @@
 }
 
 \usage{
-ursa(fixed = c(NA, NA, NA, NA, NA, NA, NA), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NULL)
+  ursa(fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NULL)
+  
+  genursa(fixed = rep(NA, 13), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3"), ssfct = NULL)
+  
+  actimL(fixed = rep(NA, 14), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3", "g"), ssfct = NULL)
+  
+  genLoewe(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
+  
+  genLoewe2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
+  
+  genBliss(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
+
+  genBliss2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
 }
 
 \arguments{
@@ -52,7 +72,7 @@ ursa(fixed = c(NA, NA, NA, NA, NA, NA, NA), names = c("b1", "b2", "c", "d", "e1"
 %\note{}
 
 \seealso{
-  Other models for fitting mixture data are the Hewlett and Voelund models \code{\link{mixture}}, ~~~
+  Other models for fitting mixture data are the Hewlett and Voelund models \code{\link{mixture}}.
 }
 
 \examples{
@@ -67,29 +87,80 @@ effect <- c(106.00, 99.20, 115.00, 79.20, 70.10, 49.00, 21.00, 3.83, 74.20, 71.5
 
 greco <- data.frame(d1, d2, effect)
 
-## Fitting the URSA model
-greco.m1<-drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1))
+## Fitting a generalized Loewe additivity model with common maximum
+greco.m0a <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
-plot(fitted(greco.m1), residuals(greco.m1))
-summary(greco.m1)
+## Checking the model fit
+plot(fitted(greco.m0a), residuals(greco.m0a))
+
+## Fitting reduced model with lower limit c equal to 0
+greco.m0b <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+
+## Comparing models by means of an F-test
+anova(greco.m0b, greco.m0a)
+
+## Looking at the summary output
+summary(greco.m0b)
+
+## Below commented out to make faster check on CRAN
+## Fitting a generalized Loewe additivity model with different maxima
+#greco.m0c <- drm(effect~d1, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+
+## Checking the model fit
+#plot(fitted(greco.m0c), residuals(greco.m0c))
+
+## Looking at the summary output
+#summary(greco.m0c)  # suboptimal fit!
+
+
+## Fitting the URSA model
+#greco.m1 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1))
+#plot(fitted(greco.m1), residuals(greco.m1))
+#summary(greco.m1)
 
 ## Fitting the URSA model using values from Greco et al (1995) (p. 364)
-greco.m2<-drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), start=c(-1.05, -2.04,95.1,11.1,1.07,0.52))
+#greco.m2 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), start=c(-1.05, -2.04,95.1,11.1,1.07,0.52))
 # same fit as above
 
 ## Adjusting for variance heterogeneity
-greco.m3<-boxcox(greco.m2, method="anova")
+#greco.m3 <- boxcox(greco.m2, method = "anova")
 
-plot(fitted(greco.m3), residuals(greco.m3))  # improved, not great
-summary(greco.m3)
+#plot(fitted(greco.m3), residuals(greco.m3))  # improved, not great
+#summary(greco.m3)
 
 ## Getting closer to Greco's estimates
 #greco.m4<-drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0)  # not perfect
-greco.m4<-drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0, start=coef(greco.m3))
+#greco.m4 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0, 
+#start=coef(greco.m3))
 
-plot(fitted(greco.m4), residuals(greco.m4))  # better!
+#plot(fitted(greco.m4), residuals(greco.m4))  # better!
 
-summary(greco.m4)
+#summary(greco.m4)
+
+
+## Fitting the Bliss independence model (with common maximal response)
+#greco.bliss.m1 <- drm(effect~d1+d2, data=greco, fct=genBliss())
+#summary(greco.bliss.m1)
+# huge estimated f parameters!
+
+## Fitting the generalized Bliss independence model (with different maximal responses)
+#greco.bliss.m2 <- drm(effect~d1+d2, data=greco, fct=genBliss())
+#summary(greco.bliss.m2)
+# stable fit?
+
+#greco.bliss.m3 <- drm(effect~d1+d2, data=greco, fct=genBliss2(fixed=c(rep(NA,7),1,1)))
+#summary(greco.bliss.m2)
+# looks better
+
+
+## Fitting the actimL model (needs some tweaking with the starting values)
+#greco.actimL.m1 <- drm(effect~d1+d2, data=greco, fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))))
+
+#greco.actimL.m2 <- drm(effect~d1+d2, data=greco, fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))), start=coef(greco.actimL.m1)+rnorm(11,0,0.1))
+## perhaps some more tweaking with the starting values is needed to get the standard errors
+
+#summary(greco.actimL.m2)
+
 }
 
 \keyword{models}

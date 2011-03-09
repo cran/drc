@@ -5,7 +5,7 @@ xlab, ylab, xlim, ylim, ...)
 
     parmVec <- coef(object1)
     namesPV <- names(parmVec)
-    lenNPV <- length(namesPV)
+#    lenNPV <- length(namesPV)
 
     indVec <- regexpr(paste(ename, ":", sep = ""), namesPV, fixed = TRUE) > 0
     eVec <- parmVec[indVec]
@@ -15,8 +15,9 @@ xlab, ylab, xlim, ylim, ...)
     eVec <- (as.vector(edMat[, 1]))  # stripping off names
     seVec <- (as.vector(edMat[, 2]))  # stripping off names
 
-    mixProp <- unique(object1$data[,4])
-    mixProp <- mixProp[ (mixProp >= 0) & (mixProp <= 100) ]/100  # removing control level
+    mixProp <- unique(object1$data[, 4])
+    mixProp <- mixProp[ (mixProp >= 0) & (mixProp <= 100) ] / 100  # removing control level
+#    print(mixProp)
 
 #    posOnRay <- function(len, slope)
 #    {
@@ -37,14 +38,16 @@ xlab, ylab, xlim, ylim, ...)
 
     Ex <- eVec * mixProp
     Ey <- eVec * (1-mixProp) * exchange
+#    print(Ex)
+#    print(Ey)
 
-    lowerE <- eVec - cifactor*seVec
+    lowerE <- eVec - cifactor * seVec
 #    lowerEx <- lowerE*mixProp
 #    lowerEx <- lowerE*cos(mixProp*pi/2)
 #    lowerEy <- lowerE*(1-mixProp)*exchange    
 #    lowerEy <- lowerE*sin(mixProp*pi/2)*exchange    
 
-    upperE <- eVec + cifactor*seVec
+    upperE <- eVec + cifactor * seVec
 #    upperEx <- upperE*mixProp
 #    upperEx <- upperE*cos(mixProp*pi/2)
 #    upperEy <- upperE*(1-mixProp)*exchange
@@ -95,7 +98,7 @@ xlab, ylab, xlim, ylim, ...)
 #    raySlopes <- mixProp/(1 - mixProp) 
 #    raySlopes <- tan(mixProp * pi/2)
     for (i in raySlopes[is.finite(raySlopes)]) {abline(0, exchange*i, lty = 3)}
-    abline(v = 0, , lty = 3)  # adding vertical line (for infinite slope)       
+    abline(v = 0, lty = 3)  # adding vertical line (for infinite slope)       
 
 #    raySlopes <- mixProp/(1 - mixProp)
 #    for (i in raySlopes[is.finite(raySlopes)]) 
@@ -123,7 +126,7 @@ xlab, ylab, xlim, ylim, ...)
         ## Retrieving parameter estimates from fit of Hewlett's model
         parmVec <- coef(object2)
         namesPV <- names(parmVec)
-        lenNPV <- length(namesPV)
+#        lenNPV <- length(namesPV)
 
         curveStr1 <- paste("I(1/(", object1$curveVarNam, "/100))", sep = "")
         curveStr2 <- paste("I(1/(1 - ", object1$curveVarNam, "/100))", sep = "")
@@ -137,7 +140,8 @@ xlab, ylab, xlim, ylim, ...)
     
         ## Plotting the isobole based on the Voelund model
         ## Based on R lines from Helle Sørensen
-        if (inherits(object2, "Voelund"))
+#        if (inherits(object2, "Voelund"))
+        if (identical(object2$fct$name, "voelund"))         
         {
             Voelund <- function(t0, m0, eta, andeli)
             {
@@ -170,19 +174,21 @@ xlab, ylab, xlim, ylim, ...)
 #            xVal <- exchange * mvals
 
         } else {
-    
             ## Plotting the isobole based on the Hewlett model
             ## Based on R lines from Helle Sørensen
             Hewlett <- function(t, t0, m0, lambda)
             {
                 tmp <- (m0^(1/lambda) - (t*m0/t0)^(1/lambda))^lambda
-                tmp[ t > t0 ] <- 0
+                tmp[t > t0] <- 0
                 tmp
             }    
-            if (inherits(object2, "Hewlett")) 
+#            if (inherits(object2, "Hewlett")) 
+            if (identical(object2$fct$"name", "hewlett")) 
             {
-                lambda <- parmVec[lenNPV]            
-            } else {
+                lambda <- tail(parmVec , 1)  # parmVec[lenNPV]            
+            } #else {
+            if (identical(object2$fct$"name", "ca"))
+            {
                 lambda <- 1
             }
 #            yVal <- seq(0, ED50.1, length = 100)
@@ -190,6 +196,9 @@ xlab, ylab, xlim, ylim, ...)
 
             xVal <- seq(0, ED50.1, length = 100)
             yVal <- exchange * Hewlett(xVal, ED50.1, ED50.2, lambda)
+#            print(c(ED50.1, ED50.2, lambda))
+#            print(xVal)
+#            print(yVal)
         }
         if (identical(xaxis, "0")) 
         {

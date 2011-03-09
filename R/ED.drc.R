@@ -23,8 +23,25 @@ pool = TRUE, logBase = NULL, ...)
     EDlist <- object$fct$"edfct"  
     if (is.null(EDlist)) {stop("ED values cannot be calculated")}         
     indexMat <- object$"indexMat"
-    parmMat <- object$"parmMat"
-    strParm0 <- colnames(parmMat)    
+    parmMat <- matrix(coef(object)[indexMat], ncol = ncol(indexMat))   
+#    parmMat <- object$"parmMat"
+#    strParm0 <- colnames(parmMat)    
+    strParm0 <- sort(colnames(object$"parmMat"))
+    
+    curveNames <- colnames(object$"parmMat")
+    options(warn = -1)  # switching off warnings caused by coercion in the if statement
+    if (any(is.na(as.numeric(curveNames))))
+    {
+        curveOrder <- order(curveNames)
+    } else { # if names are numbers then skip re-ordering
+        curveOrder <- 1:length(curveNames)
+    }
+    options(warn = 0)  # normalizing behaviour of warnings
+    
+    strParm0 <- curveNames[curveOrder]
+    indexMat <- indexMat[, curveOrder, drop = FALSE]
+    parmMat <- parmMat[, curveOrder, drop = FALSE]
+    
     strParm <- strParm0
     vcMat <- vcov(object, od = od, pool = pool)
     

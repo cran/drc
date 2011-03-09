@@ -21,15 +21,15 @@ function(numNames, parNames, collapseList2, repStr1 = "factor(pmodels[, i])", re
     for (i in 1:length(parmVec))
     {
         pos <- regexpr(repStr1, parmVec[i], fixed = TRUE)
-        if (pos>0) 
+        if (pos > 0) 
         {
-            parmVec2[i] <- paste(substring(parmVec[i], 1, pos-1), substring(parmVec[i], pos+20), sep = "")
+            parmVec2[i] <- paste(substring(parmVec[i], 1, pos-1), substring(parmVec[i], pos + 20), sep = "")
         }
             
         pos <- regexpr(repStr2, parmVec[i], fixed = TRUE)
-        if (pos>0) 
+        if (pos > 0) 
         {
-            parmVec2[i] <- paste(substring(parmVec[i],1,pos-1), substring(parmVec[i], pos+15), sep="")
+            parmVec2[i] <- paste(substring(parmVec[i], 1, pos-1), substring(parmVec[i], pos + 15), sep = "")
         }
     }
     

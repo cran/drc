@@ -1,7 +1,29 @@
 ## Changes in 'drc' 
 
-2010-09-23: mselect() has been extended to include an argument for specifying the type of information 
-criterion to use. 
+2011-03-09: The BIC method has been removed (after suggestion from Prof. Brian Ripley).
+
+2011-02-04: The functions isobole() and mixture() have been modified in order to fix an error in the plotting of
+the isoboles (after a report from Andreas Betz).
+
+2010-12-16: The model function genursa2() has been replaced by actimL().
+
+2010-12-14: The model genursa2() for fitting the generalized URSA model has been included (after an idea by Hugo Ceulemans).
+
+2010-12-10: The model genursa() for fitting the generalized URSA model has been included (after an idea by Hugo Ceulemans).
+
+2010-12-09: The model function genBliss(), genBliss2(), and genLoewe2() for fitting generalized Bliss independence and Loewe additivity with different maxima has been included (after an idea by Hugo Ceulemans). 
+
+2010-11-23: The model function genLoewe() for fitting generalized Loewe additivity has been included (after an idea by Hugo Ceulemans). 
+
+2010-11-16: Small improvement in the summary output. Now the actual curve names are used.
+
+2010-11-11: A small bug in ED() (mismatch of curve names and parameter estimates) has been fixecd (after a report from Andreas Betz). 
+
+2010-11-03: A small bug in the plot produced by isobole() has been fixed (after an inquiry from Andreas Betz). 
+
+2010-10-12: A bug in the calculation of standard errors in SI() has been fixed (after a report from Andrea Onofri).
+
+2010-09-23: mselect() has been extended to include an argument for specifying the type of information criterion to use. 
 
 2010-09-20: maED() has been extended to include simple linear regression.
 
@@ -13,8 +35,7 @@ criterion to use.
 
 2010-06-02: ED values are now correct for cedergreen() models (after a bug report by Claire Della Vedova). 
 
-2010-05-31: Small bug in plot.drc() related to "xt" and "xtlab" arguments has been fixed (after a comment by Anja Coors). A small bug in comped() 
-has also been fixed (after a question from Jochen Zubrod). 
+2010-05-31: Small bug in plot.drc() related to "xt" and "xtlab" arguments has been fixed (after a comment by Anja Coors). A small bug in comped() has also been fixed (after a question from Jochen Zubrod). 
 
 2010-05-06: The argument "clevel" has been added to ED(). The function maED() has been extended and now also handles model fits 
 involving several curves (after a suggestion from Andre Kleensang). 

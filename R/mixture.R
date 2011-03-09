@@ -56,6 +56,7 @@
         if (missing(startm)) {startm <- NULL}
         
         class(mixtfct) <- "CA"  # otherwise it would be "Hewlett"
+        mixtfct$"name" <- "ca"  # overruling the default name "hewlett"
     }
     
     if (model == "Hewlett")

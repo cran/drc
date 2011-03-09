@@ -1,6 +1,8 @@
 ## functions
 export(
 
+actimL,
+
 AR.2, AR.3,
 
 baro5, 
@@ -13,7 +15,7 @@ ucedergreen, UCRS.4a, UCRS.4b, UCRS.4c, UCRS.5a, UCRS.5b, UCRS.5c, uml3a, uml3b,
 
 EXD.2, EXD.3, 
 
-fplogistic, FPL.4,
+fplogistic, FPL.4, genBliss, genBliss2, genLoewe, genLoewe2, genursa,
 
 gompertz, G.2, G.3, G.3u, G.4,
 
@@ -49,9 +51,8 @@ lin.test, MAX, maED, mixture, modelFit, mr.test, mselect, multdrc, neill.test, P
 mrdrm)
 
 #importFrom(MASS, boxcox, ginv)
-
-importFrom(nlme, BIC)
-exportMethods(BIC)
+#importFrom(nlme, BIC)
+#exportMethods(BIC)
 
 ## S3 methods
 S3method(anova, drc)

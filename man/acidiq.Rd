@@ -50,7 +50,7 @@ modelFit(acidiq.free)
 summary(acidiq.free)
 
 ## Plotting isobole structure
-isobole(acidiq.free, exchange = 0.1, xlim = c(0, 400), ylim = c(0,45))
+isobole(acidiq.free, xlim = c(0, 400), ylim = c(0, 450))
 
 ## Fitting the concentration addition model
 acidiq.ca <- mixture(acidiq.free, model = "CA")
@@ -59,7 +59,7 @@ acidiq.ca <- mixture(acidiq.free, model = "CA")
 anova(acidiq.ca, acidiq.free)  # rejected
 
 ## Plotting isobole based on concentration addition -- poor fit
-isobole(acidiq.free, acidiq.ca, exchange = 0.1, xlim = c(0, 420), ylim = c(0,45))  # poor fit
+isobole(acidiq.free, acidiq.ca, xlim = c(0, 420), ylim = c(0, 450))  # poor fit
 
 ## Fitting the Hewlett model
 acidiq.hew <- mixture(acidiq.free, model = "Hewlett")
@@ -69,7 +69,7 @@ anova(acidiq.free, acidiq.hew)  # accepted
 summary(acidiq.hew)
 
 ## Plotting isobole based on the Hewlett model
-isobole(acidiq.free, acidiq.hew, exchange = 0.1, xlim = c(0, 400), ylim = c(0,45))  # good fit
+isobole(acidiq.free, acidiq.hew, xlim = c(0, 400), ylim = c(0, 450))  # good fit
 
 }
 \keyword{datasets}

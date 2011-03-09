@@ -1,20 +1,20 @@
 Package: drc
+Version: 2.1-1
+Date: 2011-03-09
 Title: Analysis of dose-response curves
-LazyLoad: yes
-LazyData: yes
-Version: 2.0-1
 Author: Christian Ritz <ritz@bioassay.dk>, Jens Strebig
         <jcs@life.ku.dk>
 Maintainer: Christian Ritz <ritz@bioassay.dk>
+Depends: R (>= 2.0.0), alr3, gtools, lattice, magic, MASS, nlme,
+        plotrix, methods, stats4
+LazyLoad: yes
+LazyData: yes
 Description: Analysis of one or multiple curves with focus on
         concentration-response, dose-response and time-response curves
         used, for example in biology, environmental sciences, medicine,
         pharmacology, toxicology.
-License: GPL (>= 2)
-Depends: R (>= 2.0.0), alr3, lattice, magic, MASS, nlme, plotrix,
-        methods
-Date: 2010-09-23
+License: GPL-2
 URL: http://www.r-project.org, http://www.bioassay.dk
-Packaged: 2010-09-23 12:05:55 UTC; ritz
+Packaged: 2011-03-09 20:29:03 UTC; ritz
 Repository: CRAN
-Date/Publication: 2010-09-23 15:42:55
+Date/Publication: 2011-03-10 11:14:15

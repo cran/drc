@@ -1,7 +1,8 @@
 "hewlett" <- function(
 fixed = c(NA, NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f", "g"), 
 method = c("1", "2", "3", "4"), ssfct = NULL,
-eps = 1e-10)
+eps = 1e-10
+)
 {
     ## Checking arguments
     numParm <- 6

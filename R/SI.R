@@ -13,7 +13,7 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     {
         stop("Argument 'logBase' not specified for interval = 'fls'")
     }
-    sifct <- createsifct(object$"fct"$"edfct", logBase, identical(interval, "fls"))
+    sifct <- createsifct(object$"fct"$"edfct", logBase, identical(interval, "fls"), object$"indexMat", length(coef(object)))
 
     ## Checking contain of percVec vector ... should be numbers between 0 and 100
     if ( (type == "relative") && any(percVec<=0 | percVec>=100) ) 
@@ -36,133 +36,199 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     ## Calculating SI values
     numComp <- (lenPV*(lenPV-1)/2)*(lenEB * (lenEB - 1) / 2)
     
-    if (!identical(interval, "none"))
-    {
-        siMat <- matrix(0, numComp, 3)
-        cNames <- c("Estimate", "Lower", "Upper")
-    
-    } else {
-        siMat <- matrix(0, numComp, 4)
-        cNames <- c("Estimate", "Std. Error", "t-value", "p-value")
-    }
+#    if (!identical(interval, "none"))
+#    {
+#        siMat <- matrix(0, numComp, 3)
+#        cNames <- c("Estimate", "Lower", "Upper")
+#    
+#    } else {
+#        siMat <- matrix(0, numComp, 4)
+#        cNames <- c("Estimate", "Std. Error", "t-value", "p-value")
+#    }
     matchVec <- rep(TRUE, numComp)
     rNames <- rep("", numComp)
     oriMat <- matrix(0, numComp, 2)    
     degfree <- df.residual(object)  
     rowIndex <- 1
-    for (i in 1:lenPV)
+    
+    require(gtools, quietly = TRUE)
+    pairsMat <- combinations(lenEB, 2)  # canonical "2" as pairs are considered
+    percMat <- combinations(lenPV, 2)  # canonical "2" as pairs are considered
+    if (reverse)
     {
-        for (ii in 1:lenPV)
-        {
-            if (i>=ii) {next}
-            pVec <- percVec[c(i, ii)]
-
-            for (j in 1:lenEB)
-            {
-                for (k in 1:lenEB)
-                {
-                    if (j>=k) {next}
-                    matchVec[rowIndex] <- (is.null(compMatch) || all(c(strParm[j], strParm[k]) %in% compMatch))  
- 
-                    jInd <- j
-                    kInd <- k
-                    if (reverse) 
-                    {
-                        jInd <- k; kInd <- j; pVec <- pVec[c(2, 1)]
-                    }
-                   
-                    parmInd1 <- indexMat[, jInd]
-                    parmInd2 <- indexMat[, kInd]
-                    
-                    splInd <- splitInd(parmInd1, parmInd2)
-                    
-                    parmChosen1 <- parmMat[, jInd]
-                    parmChosen2 <- parmMat[, kInd]
-
-                    SIeval <- 
-                    sifct(parmChosen1, parmChosen2, pVec, 
-                    splInd[[1]][, 1], splInd[[2]][, 1], splInd[[3]][, 1], splInd[[3]][, 2], reference, type, ...)
-
-                    indInOrder <- c(splInd[[1]][, 2], splInd[[2]][, 2], splInd[[3]][, 3])
-                                       
-                    SIval <- SIeval$"val"  # SIeval[[1]]
-                    dSIval <- SIeval$"der"  # SIeval[[2]]
- 
-                    oriMat[rowIndex, 1] <- SIval
-                    oriMat[rowIndex, 2] <- sqrt(dSIval%*%varMat[indInOrder, indInOrder]%*%dSIval)  # sqrt(dSIval%*%varCov%*%dSIval)
-
-                    siMat[rowIndex, 1] <- SIval
-                    rNames[rowIndex] <- paste(strParm[jInd], "/", strParm[kInd], ":", pVec[1], "/", pVec[2], sep="")
-
-                    ## Using t-distribution for continuous data
-                    ##  only under the normality assumption
-                    if (identical(object$"type", "continuous"))
-                    {
-                        qFct <- function(x) {qt(x, degfree)}
-                        pFct <- function(x) {pt(x, degfree)}
-                    } else {
-                        qFct <- qnorm
-                        pFct <- pnorm
-                    }
-
-                    if (identical(interval, "none"))
-                    {
-                        siMat[rowIndex, 2] <- oriMat[rowIndex, 2]  # sqrt(dSIval%*%varCov%*%dSIval)
-
-                        ## Testing SI equal to 1
-                        tempStat <- (siMat[rowIndex, 1] - 1)/siMat[rowIndex, 2]
-                        siMat[rowIndex, 3] <- tempStat
-                        siMat[rowIndex, 4] <- pFct(-abs(tempStat)) + (1 - pFct(abs(tempStat)))
-                    }
-                    if ( (identical(interval, "delta")) || (identical(interval, "fls")) )
-                    {
-                        stErr <- oriMat[rowIndex, 2]  # sqrt(derEval%*%varCov%*%derEval)
-                        tquan <- qFct(1 - (1 - level)/2)
-                        
-                        siMat[rowIndex, 2] <- siMat[rowIndex, 1] - tquan * stErr
-                        siMat[rowIndex, 3] <- siMat[rowIndex, 1] + tquan * stErr
-                        ciLabel <- "Delta method"
-                    }
-                    if (identical(interval, "tfls"))
-                    {
-                        lsVal <- log(oriMat[rowIndex, 1])
-                        lsdVal <- oriMat[rowIndex, 2]/oriMat[rowIndex, 1]
-                        tquan <- qFct(1 - (1 - level)/2)
-                        
-                        siMat[rowIndex, 2] <- exp(lsVal - tquan * lsdVal)
-                        siMat[rowIndex, 3] <- exp(lsVal + tquan * lsdVal)
-                        ciLabel <- "To and from log scale"
-                    }
-                    if ((!is.null(logBase)) && (identical(interval, "fls")))
-                    {
-                        siMat[rowIndex, 1] <- logBase^(siMat[rowIndex, 1])
-                        siMat[rowIndex, 2] <- logBase^(siMat[rowIndex, 2])
-                        siMat[rowIndex, 3] <- logBase^(siMat[rowIndex, 3])
-                        ciLabel <- "From log scale"
-                    }
-                    if (identical(interval, "fieller"))  # using t-distribution
-                    {
-                        vcMat <- matrix(NA, 2, 2)
-                        vcMat[1, 1] <- SIeval$"der1"%*%varMat[parmInd1, parmInd1]%*%SIeval$"der1"
-                        vcMat[2, 2] <- SIeval$"der2"%*%varMat[parmInd2, parmInd2]%*%SIeval$"der2"
-                        vcMat[1, 2] <- SIeval$"der1"%*%varMat[parmInd1, parmInd2]%*%SIeval$"der2"
-                        vcMat[2, 1] <- vcMat[1, 2]
-                        muVec <- c(SIeval$"valnum", SIeval$"valden")
-                        
-                        siMat[rowIndex, 2:3] <- fieller(muVec, degfree, vcMat, level = level)  
-                        ciLabel <- "Fieller"
-                    }
-
-
-                    rowIndex <- rowIndex+1
-                }
-            }
-        }
+        pairsMat <- pairsMat[, 2:1, drop = FALSE]
+        percMat <- percMat[, 2:1, drop = FALSE]
+        strParm <- rev(strParm)
     }
-    dimnames(siMat) <- list(rNames, cNames)
-    siMat <- siMat[matchVec, , drop = FALSE]
 
-    resPrint(siMat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display)
+    appFct1 <- function(percVal)
+    {
+        apply(pairsMat, 1, siInner, pVec = percVec[percVal], compMatch = compMatch, object = object, varMat = varMat, 
+        level = level, reference = reference, type = type, sifct = sifct, interval = interval, degfree = degfree, logBase = logBase)
+    }
+    SImat <- matrix(apply(percMat, 1, appFct1), nrow = nrow(pairsMat) * nrow(percMat), byrow = TRUE)
+    
+#    matchVec[rowIndex] <- (is.null(compMatch) || all(c(strParm[j], strParm[k]) %in% compMatch))
+    
+    strParm0 <- sort(colnames(object$"parmMat"))
+    appFct2 <- function(percVal)
+    {
+        apply(pairsMat, 1, 
+        function(indPair, percVal) 
+        {
+            paste(strParm0[indPair[1]], "/", strParm0[indPair[2]], ":", percVec[percVal[1]], "/", percVec[percVal[2]], sep = "")
+        }, percVal = percVal)
+    }    
+    rownames(SImat) <- apply(percMat, 1, appFct2) 
+
+    appFct3 <- function(percVal)
+    {
+        apply(pairsMat, 1, 
+        function(indPair, percVal) 
+        {
+            (is.null(compMatch) || all(c(strParm0[indPair[1]], strParm0[indPair[2]]) %in% compMatch))
+        })
+    }
+    SImat <- SImat[as.vector(apply(percMat, 1, appFct3)), , drop = FALSE]
+    
+    if (!identical(interval, "none"))
+    {
+ #       siMat <- matrix(0, numComp, 3)
+        SImat <- SImat[, -4, drop = FALSE]
+        cNames <- c("Estimate", "Lower", "Upper")
+    
+    } else {
+#        siMat <- matrix(0, numComp, 4)
+        cNames <- c("Estimate", "Std. Error", "t-value", "p-value")
+    }    
+    colnames(SImat) <- cNames 
+#    print(SImat)
+    
+    ciLabel <- switch(interval,
+    "delta" = "Delta method",
+    "tfls" = "To and from log scale",
+    "fls" = "From log scale",
+    "fieller" = "Fieller")
+    
+    resPrint(SImat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display) 
+#    
+#    if (FALSE)
+#    {
+#    for (i in 1:lenPV)
+#    {
+#        for (ii in 1:lenPV)
+#        {
+#            if (i>=ii) {next}
+#            pVec <- percVec[c(i, ii)]
+#
+#            for (j in 1:lenEB)
+#            {
+#                for (k in 1:lenEB)
+#                {
+#                    if (j>=k) {next}
+#                    matchVec[rowIndex] <- (is.null(compMatch) || all(c(strParm[j], strParm[k]) %in% compMatch))  
+# 
+#                    jInd <- j
+#                    kInd <- k
+#                    if (reverse) 
+#                    {
+#                        jInd <- k; kInd <- j; pVec <- pVec[c(2, 1)]
+#                    }
+#                   
+#                    parmInd1 <- indexMat[, jInd]
+#                    parmInd2 <- indexMat[, kInd]
+#                    
+#                    splInd <- splitInd(parmInd1, parmInd2)
+#                    
+#                    parmChosen1 <- parmMat[, jInd]
+#                    parmChosen2 <- parmMat[, kInd]
+#
+#                    SIeval <- 
+#                    sifct(parmChosen1, parmChosen2, pVec, 
+#                    splInd[[1]][, 1], splInd[[2]][, 1], splInd[[3]][, 1], splInd[[3]][, 2], reference, type, jInd, kInd, ...)
+#
+#                    indInOrder <- c(splInd[[1]][, 2], splInd[[2]][, 2], splInd[[3]][, 3])
+#                                       
+#                    SIval <- SIeval$"val"  # SIeval[[1]]
+#                    dSIval <- SIeval$"der"  # SIeval[[2]]
+##                    print(dSIval)
+# 
+#                    oriMat[rowIndex, 1] <- SIval
+##                    oriMat[rowIndex, 2] <- sqrt(dSIval %*% varMat[indInOrder, indInOrder] %*% dSIval)  # sqrt(dSIval%*%varCov%*%dSIval)
+#                    oriMat[rowIndex, 2] <- sqrt(t(dSIval) %*% varMat %*% dSIval)
+#
+#                    siMat[rowIndex, 1] <- SIval
+#                    rNames[rowIndex] <- paste(strParm[jInd], "/", strParm[kInd], ":", pVec[1], "/", pVec[2], sep="")
+#
+#                    ## Using t-distribution for continuous data
+#                    ##  only under the normality assumption
+#                    if (identical(object$"type", "continuous"))
+#                    {
+#                        qFct <- function(x) {qt(x, degfree)}
+#                        pFct <- function(x) {pt(x, degfree)}
+#                    } else {
+#                        qFct <- qnorm
+#                        pFct <- pnorm
+#                    }
+#
+#                    if (identical(interval, "none"))
+#                    {
+#                        siMat[rowIndex, 2] <- oriMat[rowIndex, 2]  # sqrt(dSIval%*%varCov%*%dSIval)
+#
+#                        ## Testing SI equal to 1
+#                        tempStat <- (siMat[rowIndex, 1] - 1)/siMat[rowIndex, 2]
+#                        siMat[rowIndex, 3] <- tempStat
+#                        siMat[rowIndex, 4] <- pFct(-abs(tempStat)) + (1 - pFct(abs(tempStat)))
+#                    }
+#                    if ( (identical(interval, "delta")) || (identical(interval, "fls")) )
+#                    {
+#                        stErr <- oriMat[rowIndex, 2]  # sqrt(derEval%*%varCov%*%derEval)
+#                        tquan <- qFct(1 - (1 - level)/2)
+#                        
+#                        siMat[rowIndex, 2] <- siMat[rowIndex, 1] - tquan * stErr
+#                        siMat[rowIndex, 3] <- siMat[rowIndex, 1] + tquan * stErr
+#                        ciLabel <- "Delta method"
+#                    }
+#                    if (identical(interval, "tfls"))
+#                    {
+#                        lsVal <- log(oriMat[rowIndex, 1])
+#                        lsdVal <- oriMat[rowIndex, 2]/oriMat[rowIndex, 1]
+#                        tquan <- qFct(1 - (1 - level)/2)
+#                        
+#                        siMat[rowIndex, 2] <- exp(lsVal - tquan * lsdVal)
+#                        siMat[rowIndex, 3] <- exp(lsVal + tquan * lsdVal)
+#                        ciLabel <- "To and from log scale"
+#                    }
+#                    if ((!is.null(logBase)) && (identical(interval, "fls")))
+#                    {
+#                        siMat[rowIndex, 1] <- logBase^(siMat[rowIndex, 1])
+#                        siMat[rowIndex, 2] <- logBase^(siMat[rowIndex, 2])
+#                        siMat[rowIndex, 3] <- logBase^(siMat[rowIndex, 3])
+#                        ciLabel <- "From log scale"
+#                    }
+#                    if (identical(interval, "fieller"))  # using t-distribution
+#                    {
+#                        vcMat <- matrix(NA, 2, 2)
+#                        vcMat[1, 1] <- SIeval$"der1"%*%varMat[parmInd1, parmInd1]%*%SIeval$"der1"
+#                        vcMat[2, 2] <- SIeval$"der2"%*%varMat[parmInd2, parmInd2]%*%SIeval$"der2"
+#                        vcMat[1, 2] <- SIeval$"der1"%*%varMat[parmInd1, parmInd2]%*%SIeval$"der2"
+#                        vcMat[2, 1] <- vcMat[1, 2]
+#                        muVec <- c(SIeval$"valnum", SIeval$"valden")
+#                        
+#                        siMat[rowIndex, 2:3] <- fieller(muVec, degfree, vcMat, level = level)  
+#                        ciLabel <- "Fieller"
+#                    }
+#
+#
+#                    rowIndex <- rowIndex+1
+#                }
+#            }
+#        }
+#    }
+#    dimnames(siMat) <- list(rNames, cNames)
+#    siMat <- siMat[matchVec, , drop = FALSE]
+#
+#    resPrint(siMat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display)
     
 #    if (display)
 #    { 
@@ -250,7 +316,7 @@ function(mu, df, vcMat, level = 0.95, finney = FALSE, resVar)
     return(list(only1, only2, inCommon))
 }
 
-createsifct <- function(edfct, logBase = NULL, fls = FALSE)
+createsifct <- function(edfct, logBase = NULL, fls = FALSE, indexMat, lenCoef)
 {
     if (is.null(edfct)) 
     {
@@ -259,71 +325,104 @@ createsifct <- function(edfct, logBase = NULL, fls = FALSE)
         
         if (!fls)
         {
-            if (is.null(logBase))
+            if (is.null(logBase))  # this clause has been updated October 12 2010
             {
-                "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, reference, type, ...)
+                "sifct" <- function(parm1, parm2, pair, jInd, kInd, reference, type, ...)
+                ## ind1, ind2, cmonInd1, cmonInd2 not used
                 {
+#                    print(parm1)
+#                    print(parm2)
                     ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                     ED1v <- ED1[[1]]
-                    ED1d <- ED1[[2]]
+                    ED1d <- rep(0, lenCoef)
+                    ED1d[indexMat[, jInd]] <- ED1[[2]]        
+#                    print(ED1v)
+#                    print(ED1d)
         
                     ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
                     ED2v <- ED2[[1]]
-                    ED2d <- ED2[[2]]
-        
-                    SIpair <- ED1v/ED2v  # calculating the SI value
-        
-                    SIder1 <- ED1d/ED2v
-                    SIder2 <- (-ED2d/ED2v)*SIpair
-                    SIder12 <- commonParm(SIder1, SIder2, cmonInd1, cmonInd2)
-#                    SIder12 <- ED1d/ED2v - (ED2d/ED2v)*SIpair
+                    ED2d <- rep(0, lenCoef)
+                    ED2d[indexMat[, kInd]] <- ED2[[2]]        
+#                    print(ED2v)
+#                    print(ED2d)
 
-                    return(list(val = SIpair, der = c(SIder1[ind1], SIder2[ind2], SIder12),
+        
+                    SIpair <- ED1v / ED2v  # calculating the SI value        
+                    SIder <- (ED1d - SIpair * ED2d) / ED2v  # calculating the derivative of SI
+
+#                    SIder1 <- ED1d/ED2v
+#                    SIder2 <- (-ED2d/ED2v)*SIpair
+#                    SIder12 <- commonParm(SIder1, SIder2, cmonInd1, cmonInd2)
+#                    SIder12 <- ED1d/ED2v - (ED2d/ED2v)*SIpair
+                     
+#                    return(list(val = SIpair, der = c(SIder1[ind1], SIder2[ind2], SIder12),                    
+                    return(list(val = SIpair, der = SIder,
                     der1 = ED1d, der2 = ED2d, valnum = ED1v, valden = ED2v))
                 }
             } else {
         
-                "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, reference, type, ...)
+                "sifct" <- function(parm1, parm2, pair, jInd, kInd, reference, type, ...)
                 {
                     ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                     ED1v <- ED1[[1]]
-                    ED1d <- ED1[[2]]
+                    ED1d <- rep(0, lenCoef)
+                    ED1d[indexMat[, jInd]] <- ED1[[2]]        
         
                     ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
                     ED2v <- ED2[[1]]
-                    ED2d <- ED2[[2]]
+                    ED2d <- rep(0, lenCoef)
+                    ED2d[indexMat[, kInd]] <- ED2[[2]]        
+
+#                    ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
+#                    ED1v <- ED1[[1]]
+#                    ED1d <- ED1[[2]]       
+#                    ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
+#                    ED2v <- ED2[[1]]
+#                    ED2d <- ED2[[2]]
         
                     SIpair <- logBase^(ED1v - ED2v)  # calculating the SI value
+                    SIder <- SIpair * log(logBase) * (ED1d - ED2d)
         
-                    SIder1 <- SIpair*log(logBase)*ED1d
-                    SIder2 <- SIpair*log(logBase)*(-ED2d)
-                    SIder12 <- commonParm(SIder1, SIder2, cmonInd1, cmonInd2)
+#                    SIder1 <- SIpair*log(logBase)*ED1d
+#                    SIder2 <- SIpair*log(logBase)*(-ED2d)
+#                    SIder12 <- commonParm(SIder1, SIder2, cmonInd1, cmonInd2)
 
-                    return(list(val = SIpair, der = c(SIder1[ind1], SIder2[ind2], SIder12),
+#                    return(list(val = SIpair, der = c(SIder1[ind1], SIder2[ind2], SIder12),
+                    return(list(val = SIpair, der = SIder,
                     der1 = (log(logBase)*logBase^ED1v)*ED1d, der2 = (log(logBase)*logBase^ED2v)*ED2d, 
                     valnum = logBase^ED1v, valden = logBase^ED2v))
                 }        
             }
         } else {
             
-            "sifct" <- function(parm1, parm2, pair, ind1, ind2, cmonInd1, cmonInd2, reference, type, ...)
+            "sifct" <- function(parm1, parm2, pair, jInd, kInd, reference, type, ...)
             {
                 ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                 ED1v <- ED1[[1]]
-                ED1d <- ED1[[2]]
+                ED1d <- rep(0, lenCoef)
+                ED1d[indexMat[, jInd]] <- ED1[[2]]        
         
                 ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
                 ED2v <- ED2[[1]]
-                ED2d <- ED2[[2]]
-        
+                ED2d <- rep(0, lenCoef)
+                ED2d[indexMat[, kInd]] <- ED2[[2]]        
+
+#                ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
+#                ED1v <- ED1[[1]]
+#                ED1d <- ED1[[2]]       
+#                ED2 <- edfct(parm2, pair[2], reference = reference, type = type, ...)
+#                ED2v <- ED2[[1]]
+#                ED2d <- ED2[[2]]        
             
                 SIpair <- ED1v - ED2v  # calculating the log SI value
+                SIder <- ED1d - ED2d
         
-                SIder1 <- ED1d
-                SIder2 <- -ED2d
-                SIder12 <- commonParm(SIder1, SIder2, cmonInd1, cmonInd2)
+#                SIder1 <- ED1d
+#                SIder2 <- -ED2d
+#                SIder12 <- commonParm(SIder1, SIder2, cmonInd1, cmonInd2)
 
-                return(list(val = SIpair, der = c(SIder1[ind1], SIder2[ind2], SIder12),
+#                return(list(val = SIpair, der = c(SIder1[ind1], SIder2[ind2], SIder12),
+                return(list(val = SIpair, der = SIder,
                 der1 = ED1d, der2 = ED2d, valnum = ED1v, valden = ED2v))
             }
         }        
@@ -331,26 +430,16 @@ createsifct <- function(edfct, logBase = NULL, fls = FALSE)
     }
 }
 
-commonParm <- function(SIder1, SIder2, cmonInd1, cmonInd2)
-{
-    lind1 <- length(cmonInd1)
-    retVec <- rep(NA, lind1)
-    for (i in 1:lind1)
-    {
-        retVec[i] <- SIder1[cmonInd1[i]] + SIder2[cmonInd2[i]]
-    
-    }
-    return(retVec)
-}
+#commonParm <- function(SIder1, SIder2, cmonInd1, cmonInd2)
+#{
+#    lind1 <- length(cmonInd1)
+#    retVec <- rep(NA, lind1)
+#    for (i in 1:lind1)
+#    {
+#        retVec[i] <- SIder1[cmonInd1[i]] + SIder2[cmonInd2[i]]
+#    
+#    }
+#    return(retVec)
+#}
+#
 
-commatFct <- function(object, compMatch)
-{
-    parmMat <- object$parmMat
-
-    if (!is.null(compMatch))
-    {
-        return(parmMat[, (colnames(parmMat) %in% c(compMatch[1], compMatch[2])), drop = FALSE ])
-    } else {
-        parmMat
-    }
-}

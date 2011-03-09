@@ -1,8 +1,8 @@
-"ursa" <- function(
-fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NULL)
+"genLoewe" <- function(
+fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
 {
     ## Checking arguments
-    numParm <- 7
+    numParm <- 8
     if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
     if (!(length(fixed) == numParm)) {stop("Not correct 'fixed' argument")}    
 
@@ -12,7 +12,7 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
     parmVec1 <- parmVec
     parmVec2 <- parmVec
     
-    
+    ## Defining bisection algorithm  
     bisec <- function(fu, fuLow, fuHigh)
     {
 	      for(k in 1:25) 
@@ -43,16 +43,26 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
                 return(parmVec[4])
             } else {
 
+#                implicitFct <- function(e)
+#                {
+#                    scaledEffect <- (e - parmVec[3]) / (parmVec[4] - e)
+#                    recSlope1 <- 1/parmVec[1]
+#                    recSlope2 <- 1/parmVec[2] 
+#        
+#                    1/(parmVec[5] * (scaledEffect^recSlope1)) + 1/(parmVec[6] * (scaledEffect^recSlope2)) + 
+#                    parmVec[7]/(parmVec[5] * parmVec[6] * (scaledEffect^(recSlope1/2 + recSlope2/2))) - 1
+#                } 
+                
                 implicitFct <- function(e)
                 {
-                    scaledEffect <- (e - parmVec[3]) / (parmVec[4] - e)
-                    recSlope1 <- 1/parmVec[1]
-                    recSlope2 <- 1/parmVec[2] 
+                    invScaledEffect <- (parmVec[4] - parmVec[3]) / (e - parmVec[3])
+#                    recSlope1 <- 1/parmVec[1]
+#                    recSlope2 <- 1/parmVec[2] 
         
-                    1/(parmVec[5] * (scaledEffect^recSlope1)) + 1/(parmVec[6] * (scaledEffect^recSlope2)) + 
-                    parmVec[7]/(parmVec[5] * parmVec[6] * (scaledEffect^(recSlope1/2 + recSlope2/2))) - 1
+                    (1 / parmVec[5]) * ((invScaledEffect^(1 / parmVec[7]) - 1)^(1 / parmVec[1])) + 
+                    (1 / parmVec[6]) * ((invScaledEffect^(1 / parmVec[8]) - 1)^(1 / parmVec[2])) - 1
                 } 
-        
+                 
 #                print(c(implicitFct(parmVec[3]*1.01), implicitFct(parmVec[4]*0.99), parmVec[4]*0.99))
         
 #                reducFactor0 <- max(c((1/parmVec[5])^parmVec[1] + 1, (1/parmVec[6])^parmVec[2] + 1))
@@ -80,7 +90,7 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
     } else {
         ssfct <- function(dframe)
         {
-            initval <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 0.5) * c(-1, -1, rep(1, 5))
+            initval <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
     
             return(initval[notFixed])
         }        
@@ -99,19 +109,14 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
     ## Defining the SI function
     sifct <- NULL
 
-    ## Scale function
-#    scaleFct <- function(doseScaling, respScaling)
-#    {        
-#        c(1, 1, respScaling, respScaling, doseScaling, doseScaling, 1)[notFixed]
-#    }
-
+    ## Returning list with model function information
     returnList <- 
     list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, 
     edfct = edfct, sifct = sifct,  # scaleFct = scaleFct,
-    name = "ursa",
-    text = "URSA", 
+    name = "genLoewe",
+    text = "Generalized Loewe", 
     noParm = sum(is.na(fixed)))
                        
-    class(returnList) <- "ursa"
+    class(returnList) <- "genLoewe"
     invisible(returnList)
 }

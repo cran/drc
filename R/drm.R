@@ -135,11 +135,13 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     origResp <- resp  # in case of transformation of the response    
     lenData <- length(resp)
     numObs <- length(resp)
+
     xDim <- ncol(as.matrix(dose))
-    if (xDim > 1)
-    {
-        stop("drm() is only designed for 1-dim. dose vectors")
-    }
+#    if (xDim > 1)
+#    {
+#        stop("drm() is only designed for 1-dim. dose vectors")
+#    }
+
 #    dimData <- xDim + 1  # dimension of dose plus 1 dimensional response
     
 #    varNames <- names(mf)
@@ -265,8 +267,9 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    print(ciOrigLength)
 
 
-    
-    uniqueDose <- lapply(tapply(dose, assayNoOld, unique), length)
+    if (xDim > 1) {tempDoseVec <- dose[, 1]} else {tempDoseVec <- dose} 
+#    uniqueDose <- lapply(tapply(dose, assayNoOld, unique), length)
+    uniqueDose <- lapply(tapply(tempDoseVec, assayNoOld, unique), length)
     udNames <- names(uniqueDose[uniqueDose == 1])
     if (length(udNames) > 0) 
     {
@@ -322,6 +325,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
             }
         } else {
             modelMat <- model.matrix(~ factor(assayNo) - 1, level = unique(assayNo))  # no intercept term
+            colnames(modelMat) <- assayNames
             for (i in 1:numNames) 
             {
                 pmodelsList[[i]] <- modelMat
@@ -630,7 +634,6 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         } else {
             pmodelsList2[[i]] <- as.matrix(pmodelsList[[i]])  # columns are kept
         }
-    
     }
     
     ## Constructing vectors 'ncclVec' and 'parmPos' used below
@@ -641,7 +644,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     }
     parmPos <- c(0, cumsum(ncclVec)[-numNames])
 
-    ## Constructing parameter names
+    ## Constructing parameter names                       
     pnList <- drmParNames(numNames, parNames, pmodelsList2)
     parmVec <- pnList[[1]]
     parmVecA <- pnList[[2]]
@@ -712,7 +715,11 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         }
 #        doseresp <- data.frame(x = dose / doseScaling, y = origResp / respScaling)
 #        doseresp <- data.frame(dose, origResp)
-        isfi <- is.finite(dose)  # removing infinite dose values
+
+# Not sure this indicator is needed?! Only used once below!
+# Note is.finite() only works with vectors!
+# Commented out 2010-12-13   
+#        isfi <- is.finite(dose)  # removing infinite dose values
     
         ## Finding starting values for each curve
         for (i in 1:numAss)
@@ -720,7 +727,10 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
             indexT1 <- (assayNo == i)
             if (any(indexT1)) 
             {
-                logVec <- indexT1 & isfi
+# Commented out 2010-12-13            
+#                logVec <- indexT1 & isfi
+                logVec <- indexT1
+                                
 #                startMat[i, ] <- ssfct(doseresp[logVec, ])  # ssfct(dose[logVec], origResp[logVec] )
 #                startMat[i, ] <- ssfct(doseresp[logVec, ], doseScaling, respScaling)
                 startMat[i, ] <- ssFct(doseresp[logVec, ])

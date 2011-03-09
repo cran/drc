@@ -109,9 +109,11 @@ function(object, od = FALSE, pool = TRUE, ...)
     ## Forming a matrix of results        
 #    resultMat <- matrix(0, sum(notNA), 4, dimnames = list(parNames, c("Estimate", "Std. Error", "t-value", "p-value")))    
 #    resultMat[, 1] <- parVec[notNA]
-    parNames <- object$"parNames"[[1]]
+    
+    parNames <- object$"parNames"[[1]]    
     resultMat <- matrix(NA, length(parVec), 4, 
     dimnames = list(parNames, c("Estimate", "Std. Error", "t-value", "p-value")))    
+
     resultMat[, 1] <- parVec
     resultMat[, 2] <- estSE
     tempStat <- resultMat[, 1] / resultMat[, 2]
