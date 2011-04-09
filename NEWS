@@ -1,5 +1,12 @@
 ## Changes in 'drc' 
 
+2011-04-09: multdrc() has been completely removed.s 
+
+2011-04-04: The model function weibull2x() (a model including a sort of "lag time" parameter) 
+has been added (after a suggestion by Cécile Cornou).
+
+2011-03-23: A small bug in ED() has been fixed (after a report from Nathan Pace).
+
 2011-03-09: The BIC method has been removed (after suggestion from Prof. Brian Ripley).
 
 2011-02-04: The functions isobole() and mixture() have been modified in order to fix an error in the plotting of

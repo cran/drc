@@ -43,10 +43,12 @@ weibull1, W1.2, W1.3, W1.3u, W1.4, w2, w3, w4,
 
 weibull2, W2.2, W2.3, W2.3u, W2.4,
 
+weibull2x, W2x.3,
+
 boxcox.drc, bread.drc, estfun.drc,
 
 comped, compParm, diagnostics, drm, drmc, ED, getInitial, getMeanFunctions, isobole, 
-lin.test, MAX, maED, mixture, modelFit, mr.test, mselect, multdrc, neill.test, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
+lin.test, MAX, maED, mixture, modelFit, mr.test, mselect, neill.test, PR, rdrm, relpot, searchdrc, SI, simDR, yieldLoss,
 
 mrdrm)
 

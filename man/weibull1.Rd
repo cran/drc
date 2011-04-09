@@ -2,6 +2,7 @@
 
 \alias{weibull1}
 \alias{weibull2}
+\alias{weibull2x}
 
 \title{Weibull model functions}
 
@@ -22,6 +23,13 @@
            method = c("1", "2", "3", "4"), 
            ssfct = NULL,
            fctName, fctText)
+
+  weibull2x(fixed = rep(NA, 5), 
+           names = c("b", "c", "d", "e", "t0"),
+           method = c("1", "2", "3", "4"), 
+           ssfct = NULL,
+           fctName, fctText)
+
 }
 
 \arguments{

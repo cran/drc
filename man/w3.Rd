@@ -3,6 +3,7 @@
 \alias{W1.3}
 \alias{w3}
 \alias{W2.3}
+\alias{W2x.3}
 
 \alias{W1.3u}
 \alias{W2.3u}
@@ -20,6 +21,8 @@
   W1.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
   
   W2.3(fixed = c(NA, NA, NA), names = c("b", "d", "e"), ...)
+  
+  W2x.3(fixed = c(NA, NA, NA), names = c("d", "e", "t0"), ...)
   
   W1.3u(upper = 1, fixed = c(NA, NA, NA), names = c("b", "c", "e"), ...)  
   

@@ -23,8 +23,8 @@ pool = TRUE, logBase = NULL, ...)
     EDlist <- object$fct$"edfct"  
     if (is.null(EDlist)) {stop("ED values cannot be calculated")}         
     indexMat <- object$"indexMat"
-    parmMat <- matrix(coef(object)[indexMat], ncol = ncol(indexMat))   
-#    parmMat <- object$"parmMat"
+#    parmMat <- matrix(coef(object)[indexMat], ncol = ncol(indexMat))   
+    parmMat <- object$"parmMat"
 #    strParm0 <- colnames(parmMat)    
     strParm0 <- sort(colnames(object$"parmMat"))
     
@@ -70,6 +70,7 @@ pool = TRUE, logBase = NULL, ...)
     for (i in indexVec)
     {
         parmChosen <- parmMat[, i]
+#        print(parmChosen)
         parmInd <- indexMat[, i]
         varCov <- vcMat[parmInd, parmInd]
 
