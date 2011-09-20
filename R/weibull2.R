@@ -142,18 +142,34 @@ if (FALSE)
     edfct <- function(parm, p, reference, type, ...)
     {   
         parmVec[notFixed] <- parm
+
+        p <- absToRel(parmVec, p, type)
+
+        ## Reversing p
+#        if (identical(type, "absolute"))
+#        {
+#            p <- 100 - p
+#            type <- "relative"
+#        }
         
-        if ( (parmVec[1] > 0) && (reference == "control") ) 
-        {
-            p <- 100 - p
-            reference <- "upper"  # to avoid resetting of p in 'weibull1'    
-        }
-        if ( (parmVec[1] < 0) && (reference == "control") ) 
+        if (identical(type, "absolute") && (parmVec[1] > 0) && (reference == "control"))
         {
             p <- 100 - p
         }
+               
+#        if ( (parmVec[1] > 0) && (reference == "control") ) 
+#        {
+#            p <- 100 - p
+#            reference <- "upper"  # to avoid resetting of p in weibull1() called below    
+#        }
+#        if ( (parmVec[1] < 0) && (reference == "control") ) 
+#        {
+#            p <- 100 - p
+#        }
+    
                 
-        weibull1(fixed, names)$edfct(parm, 100 - p, reference, type, ...) 
+#        weibull1(fixed, names)$edfct(parm, 100 - p, reference, type, ...) 
+        weibull1(fixed, names)$edfct(parm, p, reference, "relative", ...) 
     }
 
 

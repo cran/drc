@@ -15,6 +15,13 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     ## Defining dose values -- dose in the first column!   
     doseVec <- newdata[, 1]
 
+    ## Transforming to dose scale if necessary
+    powerExp <- (object$"curve")[[2]]
+    if (!is.null(powerExp))
+    {
+        doseVec <- powerExp ^ doseVec
+    }
+
     ## Constructing matrix of parameter estimates
     parmMat <- object$"parmMat"        
     parmNames <- colnames(parmMat)

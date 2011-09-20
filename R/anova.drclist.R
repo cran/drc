@@ -190,7 +190,8 @@
             colStart <- " pmodels: "
         } else {
             fctStart <- " fct:      "
-            colStart <- " collapse: "
+            colStart <- " pmodels: "
+            # changed July 4 2011
         }
         cat("1st model\n")
         fctInfo <- ifelse(is.null(obj1$"text"), deparse(obj1[[8]]$fct), obj1$"text")

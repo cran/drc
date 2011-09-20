@@ -1,6 +1,6 @@
 "drm" <- function(
 formula, curveid, pmodels, weights, data = NULL, subset, fct, 
-type = c("continuous", "binomial", "Poisson", "quantal", "survival"), bcVal = NULL, bcAdd = 0, 
+type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
 start, na.action = na.fail, robust = "mean", logDose = NULL, 
 control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 {
@@ -132,6 +132,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         
     dose <- model.matrix(mt, mf)[,-c(1)]  # with no intercept
     resp <- model.response(mf, "numeric")
+    origDose <- dose
     origResp <- resp  # in case of transformation of the response    
     lenData <- length(resp)
     numObs <- length(resp)
@@ -659,7 +660,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 
     ## Scaling of dose and response values 
     scaleFct <- fct$"scaleFct"
-    if (!is.null(scaleFct))
+    if (!is.null(scaleFct))  # && (is.null(lowerl)) && (is.null(upperl)) )
+    # currently the scaling interferes with constraining optimization
     {
         # Defining scaling for dose and response values 
         doseScaling <- 10^(floor(log10(median(dose))))   
@@ -692,7 +694,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #        
 #        startVecSc <- startVec
     }      
-#    print(c(doseScaling, respScaling))    
+#    print(c(doseScaling, respScaling, longScaleVec))    
 
     ## Constructing vector of initial parameter values
     startVecList <- list()
@@ -721,10 +723,23 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 # Commented out 2010-12-13   
 #        isfi <- is.finite(dose)  # removing infinite dose values
     
+        if (identical(type, "event"))
+        {
+            dr2 <- doseresp[, 3]
+            doseresp[, 3] <- cumsum(dr2) / sum(dr2)
+#            doseresp[!is.finite(doseresp[, 2]), 1] <- NA
+            isFinite <- is.finite(doseresp[, 2])              
+            doseresp <- doseresp[isFinite, c(1, 3)]
+            names(doseresp) <- c("x", "y") 
+#            print(doseresp)           
+        } else {
+            isFinite <- is.finite(doseresp[, 2])
+        }
+    
         ## Finding starting values for each curve
         for (i in 1:numAss)
         {
-            indexT1 <- (assayNo == i)
+            indexT1 <- (assayNo[isFinite] == i)
             if (any(indexT1)) 
             {
 # Commented out 2010-12-13            
@@ -739,9 +754,19 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
             }
     
             ## Identifying a dose response curve only consisting of control measurements
-            if (sum(!is.na(startMat[i, ])) == 1) {upperPos <- (1:numNames)[!is.na(startMat[i, ])]}
+            if (sum(!is.na(startMat[i, ])) == 1) 
+            {
+                upperPos <- (1:numNames)[!is.na(startMat[i, ])]
+#                print(upperPos)
+            }
         }
-#        print(startMat)  
+#        print(startMat)
+          
+        startMat2 <- matrix(unlist(lapply(split(doseresp, assayNo[isFinite]), ssFct)), nrow = numAss, byrow = TRUE)
+        upperPos2 <- c(rep(1:numNames, numAss))[t(is.na(startMat))]
+#        print(upperPos2)
+#        print(startMat2)
+  
 
 #       New approach?
 #        timeUsed <- 0 
@@ -803,7 +828,6 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     parm2mat <- function(parm)
     {
 #        parmMatrix <- matrix(0, lenData, numNames)
-#print(parm)
         for (i in 1:numNames)
         {
 #           print(as.matrix(pmodelsList2[[i]]))
@@ -861,49 +885,50 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #        startVec <- as.vector(unlist(svList))
 #    } else {
 
-        drcFct1 <- function(dose, parm)
-        {
-            drcFct(dose, parm2mat(parm))
-        }
+    ## Defining model function 
+    multCurves <- modelFunction(dose, parm2mat, drcFct, cm, assayNoOld, upperPos, fct$"retFct", doseScaling, respScaling, 
+    isFinite = rep(TRUE, lenData))
+
+#    drcFct1 <- function(dose, parm)
+#    {
+#        drcFct(dose, parm2mat(parm))
 #    }
+##    }
+#
+#
+#    ## Defining model function        
+#    if (!is.null(fct$"retFct"))
+#    {
+#        drcFct <- fct$"retFct"(doseScaling, respScaling)  #, numObs)
+#        drcFct1 <- function(dose, parm)
+#        {
+#            drcFct(dose, parm2mat(parm))
+#        }
+#    }
+#
+#    if (is.null(cm)) 
+#    {
+#        multCurves <- function(dose, parm)
+#        {          
+#           drcFct1(dose, parm)  # fctList           
+#        }
+#    } else {
+#        iv <- assayNoOld == cm
+#        niv <- !iv
+#        fctEval <- rep(0, numObs)
+#
+#        multCurves <- function(dose, parm) 
+#        {
+#            parmVal <- parm2mat(parm)           
+#            fctEval[iv] <- parmVal[iv, upperPos, drop = FALSE]
+#            fctEval[niv] <- drcFct(dose[niv], parmVal[niv, , drop = FALSE])
+#
+#            fctEval
+#        }
+#    }
+##    print(startVec)
+##    print(multCurves(dose, startVec))
 
-
-    ## Defining model function        
-    if (!is.null(fct$"retFct"))
-    {
-        drcFct <- fct$"retFct"(doseScaling, respScaling)  #, numObs)
-        drcFct1 <- function(dose, parm)
-        {
-            drcFct(dose, parm2mat(parm))
-        }
-    }
-
-    if (is.null(cm)) 
-    {
-        multCurves <- function(dose, parm)
-        {          
-           drcFct1(dose, parm)  # fctList           
-        }
-    } else {
-        iv <- assayNoOld == cm
-        niv <- !iv
-        fctEval <- rep(0, numObs)
-
-        multCurves <- function(dose, parm) 
-        {
-            parmVal <- parm2mat(parm)           
-            fctEval[iv] <- parmVal[iv, upperPos, drop = FALSE]
-            fctEval[niv] <- drcFct(dose[niv], parmVal[niv, , drop = FALSE])
-
-            fctEval
-        }
-    }
-#    print(startVec)
-#    print(multCurves(dose, startVec))
-
-    ## Defining objective function
-#    robustFct <- drmRobust(robust, match.call(), numObs, length(startVec))  
-    robustFct <- drmRobust(robust, callDetail, numObs, length(startVec))  
     
     ## Defining first derivative (if available) ... used once in drmEMls()
     if (!is.null(dfct1))
@@ -947,7 +972,10 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    print(startVec)
 #    print(multCurves2(dose, startVec))    
 
-    ## Defining estimation method
+    ## Defining estimation method -- perhaps working for continuous data
+#    robustFct <- drmRobust(robust, match.call(), numObs, length(startVec))  
+    robustFct <- drmRobust(robust, callDetail, numObs, length(startVec))  
+
     if (type == "continuous")
     {
         ## Ordinary least squares estimation
@@ -991,7 +1019,16 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     if (identical(type, "Poisson"))
     {
         estMethod <- drmEMPoisson(dose, resp, multCurves2, startVecSc, doseScaling = doseScaling)
-    }          
+    }
+    if (identical(type, "event"))
+    {
+        estMethod <- drmEMeventtime(dose, resp, multCurves2, doseScaling = doseScaling)
+    }   
+#    if (identical(type, "Wadley"))
+#    {
+#        estMethod <- drmEMWadley(dose, resp, multCurves2, doseScaling = doseScaling)
+#        startVecSc <- c(startVecSc, max(resp) * 1.3)
+#    }                  
     opfct <- estMethod$opfct            
 
 
@@ -1046,6 +1083,9 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     } else {  ## In case upper limits are not specified
         upperLimits <- rep(Inf, length(startVec))
     }
+    
+    lowerLimits <- lowerLimits  / longScaleVec
+    upperLimits <- upperLimits  / longScaleVec
         
 #    if (all(!is.finite(lowerLimits)) && all(!is.finite(upperLimits))) 
 #    {
@@ -1175,7 +1215,25 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    matchCall = match.call()) 
         
     if (!nlsFit$convergence) {return(nlsFit)}
-     
+    
+    if (identical(type, "event"))
+    {
+#        notInfinite <- is.finite(dose[, 2])
+        dose <- dose[isFinite, 2]
+#        resp <- (cumsum(resp) / sum(resp))[isFinite]
+        ## Rescaling per curve id
+        resp <- (as.vector(unlist(tapply(resp, assayNo, function(x){cumsum(x) / sum(x)}))))[isFinite]
+#        
+#        lenData <- sum(notInfinite)
+#        numObs <- lenData       
+    }
+
+#    if (identical(type, "Wadley"))
+#    {
+#        longScaleVec <- c(longScaleVec, 1)
+#    
+#    }        
+         
 #    print(nlsFit) 
      
     ## Adjusting for pre-fit scaling 
@@ -1194,7 +1252,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         drcFct <- fct$"retFct"(1, 1)  #, numObs)  # resetting the scaling
         drcFct1 <- function(dose, parm)
         {
-            drcFct(dose, parm2mat(parm))
+            drcFct(dose, parm2mat(parm)[isFinite, , drop = FALSE])
         }
     }
     
@@ -1281,7 +1339,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     fixedParm <- (estMethod$"parmfct")(nlsFit)
 #    print(nlsFit$par)
 #    print(fixedParm)
-    parmMat[iVec, ] <- parm2mat(fixedParm)[pickCurve, ]
+    parmMat[iVec, ] <- (parm2mat(fixedParm))[pickCurve, ]
 
 #    if(!is.null(fctList))
 #    {
@@ -1296,7 +1354,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     {
 #        conPos <- upperPos
 #        print(conPos)
-        parmMat[-iVec, upperPos] <- parm2mat(fixedParm)[assayNoOld==cm, , drop = FALSE][1, upperPos]  
+        parmMat[-iVec, upperPos] <- (parm2mat(fixedParm))[assayNoOld == cm, , drop = FALSE][1, upperPos]  
         # 1: simply picking the first row
     }
     rownames(parmMat) <- assayNames
@@ -1309,14 +1367,14 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         if (!is.null(cm))
         {
 #            conPos <- conList$"pos"
-            parmMat[-iVec, upperPos] <- parm2mat(fixedParm)[assayNoOld==cm, , drop = FALSE][1, upperPos]  
+            parmMat[-iVec, upperPos] <- (parm2mat(fixedParm))[assayNoOld == cm, , drop = FALSE][1, upperPos]  
             # 1: simply picking the first row
         }
         rownames(parmMat) <- assayNames
     
         return(parmMat)
     }
-    parmMat <- pmFct( (estMethod$"parmfct")(nlsFit) )
+    parmMat <- pmFct(fixedParm)  # (estMethod$"parmfct")(nlsFit) )
 
 #    ## Scaling parameters
 #    if (!is.null(fct$scaleFct))
@@ -1378,7 +1436,15 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     {
         plotFct <- function(dose)
         {
-            if (xDim == 1) {lenPts <- length(dose)} else {lenPts <- nrow(dose)}
+#            if (xDim == 1) {lenPts <- length(dose)} else {lenPts <- nrow(dose)}
+            if (is.vector(dose)) 
+            {
+                lenPts <- length(dose)
+            } else {
+                lenPts <- nrow(dose)
+            }
+#            print(lenPts)
+#            print(ciOrigLength)
 
             curvePts <- matrix(NA, lenPts, ciOrigLength)  # numAss)
             for (i in 1:numAss)
@@ -1389,7 +1455,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #                    numNames <- matList[[i]][2]    
 #                }
             
-                if (i%in%iVec)
+                if (i %in% iVec)
                 {
 #                    parmChosen <- parmMat[i, ]
                     parmChosen <- parmMat[i, complete.cases(parmMat[i, ])]  # removing NAs 
@@ -1411,11 +1477,15 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 
 
     ## Computation of fitted values and residuals
-    predVec <- multCurves2(dose, fixedParm)    
+    if (identical(type, "event"))
+    {
+        multCurves2 <- modelFunction(dose, parm2mat, drcFct, cm, assayNoOld, upperPos, fct$"retFct", doseScaling, respScaling, isFinite)
+    }
+    predVec <- multCurves2(dose, fixedParm)        
     resVec <- resp - predVec
     resVec[is.nan(predVec)] <- 0    
 
-    diagMat <- matrix(c(predVec, resVec), numObs, 2)
+    diagMat <- matrix(c(predVec, resVec), length(dose), 2)
     colnames(diagMat) <- c("Predicted values", "Residuals")
 
 
@@ -1459,7 +1529,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     {
         dose <- origDose
     }
-    dataSet <- data.frame(dose, origResp, assayNo, assayNoOld, wVec)
+    dataSet <- data.frame(origDose, origResp, assayNo, assayNoOld, wVec)
     names(dataSet) <- c(varNames, anName, anName, "weights")
 
 
@@ -1515,8 +1585,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     ## Matrix of first derivatives evaluated at the parameter estimates
     if (isDF)
     {
-#        print(parmMat[assayNo, ])
-        deriv1Mat <- fct$"deriv1"(dose, parmMat[assayNo, , drop = FALSE])
+#        print((parmMat[assayNo, , drop = FALSE])[isFinite, , drop = FALSE])
+        deriv1Mat <- fct$"deriv1"(dose, (parmMat[assayNo, , drop = FALSE])[isFinite, , drop = FALSE])
     } else {
         deriv1Mat <- NULL
     }
@@ -1534,7 +1604,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     coefVec <- nlsFit$par
     names(coefVec) <- parmVec
 
-    ## Constructing data list
+    ## Constructing data list ... where is it used?
     wName <- callDetail[["weights"]]
     if (is.null(wName)) 
     {
@@ -1542,9 +1612,16 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     } else {
         wName <- deparse(wName)
     }
-    dataList <- list(dose = as.vector(dose), origResp = as.vector(origResp), weights = wVec, 
+    dataList <- list(dose = as.vector(origDose), origResp = as.vector(origResp), weights = wVec, 
     curveid = assayNoOld, resp = as.vector(resp),
     names = list(dName = varNames[1], orName = varNames[2], wName = wName, cNames = anName, rName = ""))
+    if (identical(type, "event"))
+    {
+        dataList <- list(dose = dose, origResp = resp, weights = wVec[isFinite], 
+        curveid = assayNoOld[isFinite], resp = resp,
+        names = list(dName = varNames[1], orName = varNames[2], wName = wName, cNames = anName, rName = ""))
+    }
+
 
     ## What about naming the vector of weights?
 

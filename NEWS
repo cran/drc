@@ -1,6 +1,35 @@
 ## Changes in 'drc' 
 
-2011-04-09: multdrc() has been completely removed.s 
+2011-09-20: Problem with logDose argument in drm() and subsequent plotting haas been solved (reported by Ralf Schäfer). 
+
+2011-09-02: Constrained estimation uses the actual limits provided (bug report by Andrew Kniss).
+
+2011-08-31: The functions genLoewe(), genLoewe2(), genBliss(), genBliss2(), and ursa() have been improved w.r.t. starting values. The model specification has also been simplified.
+
+2011-08-24: genBliss() and genBliss2() has been updated (after suggestions from Hugo Ceulemans). Functions iceLoewe1() and iceLoewe2.1() have
+benn added.
+
+2011-08-23: Error in ED calculation for the logistic models (e.g., L.4()) has been fixed (after a report from Daniel Gerhard).
+Error caused by update of the function deltaMethod() in alr3 has been fixed.
+
+2011-07-04: Small changes for the anova method. Adding df for event time and Poisson models.
+
+2011-07-01: Small update in the calculation of confidence intervals (after a suggestion from Scott Ray). 
+
+2011-06-24: The model function W2x.4() has been added (after a suggestion by Cécile Cornou).
+
+2011-05-24: Small improvement in the calculation of ED value for the log-normal and Weibull type 2 models. 
+"display" and "type" arguments have been added to maED(). 
+
+2011-05-19: The argument "type" can now also take the value "event" for fitting event times. 
+
+2011-05-10: The help page for spinach has been improved.
+
+2011-05-02: Simplifying the R lines in print.summary.drc() for printing the summary output of a model fit.
+
+2011-05-02: The self starter function for llogistic models can now handle infinite dose values (after a report from Marc Weimer).
+
+2011-04-09: multdrc() has been completely removed. 
 
 2011-04-04: The model function weibull2x() (a model including a sort of "lag time" parameter) 
 has been added (after a suggestion by Cécile Cornou).

@@ -39,7 +39,9 @@
     
         appFct <- function(respLev)
         {
-            delta.method(lmObject, paste("(", cVal, "-b0+", (100 - respLev)/(100), "*(", dVal - cVal, "))/b1", collapse = ""))
+#            deltaMethod(lmObject, paste("(", cVal, "-b0+", (100 - respLev)/(100), "*(", dVal - cVal, "))/b1", collapse = ""))
+            deltaMethod(lmObject, paste("(", cVal, "-b0+", (100 - respLev)/(100), "*(", dVal - cVal, "))/b1", collapse = ""),        
+            parameterNames=c("b0", "b1"))
         }
     } 
     if (lparco == 3)
@@ -78,7 +80,7 @@
 #        print(paste("(-b1+", signVal, "*sqrt(b1*b1 - 4*b2*(b0-", cVal + ((100 - respLev)/100) * (dVal - cVal), ")))/(2*b2)", collapse = ""))
         appFct <- function(respLev)
         {
-            delta.method(lmObject, paste("(-b1+", signVal, "*sqrt(b1*b1 - 4*b2*(b0-", cVal + ((100 - respLev)/100) * (dVal - cVal), ")))/(2*b2)", 
+            deltaMethod(lmObject, paste("(-b1+", signVal, "*sqrt(b1*b1 - 4*b2*(b0-", cVal + ((100 - respLev)/100) * (dVal - cVal), ")))/(2*b2)", 
             collapse = ""))
         }
     }

@@ -1,16 +1,17 @@
-"drmEMPoisson" <- 
-function(dose, resp, multCurves, startVec, doseScaling = 1)
+"drmEMeventtime" <- 
+function(dose, resp, multCurves, doseScaling = 1)
 {
-
-    ## Finding indices for doses that give contribution to likelihood function
-#    iv <- ( (multCurves(dose, startVec) > zeroTol) & (multCurves(dose, startVec) < 1-zeroTol) )
-
-
     ## Defining the objective function                
     opfct <- function(c)  # dose, resp and weights are fixed
     {                      
-        lambda <- multCurves(dose / doseScaling, c)
-        return( -sum(-lambda + resp*log(lambda)))
+        Fstart <- multCurves(dose[, 1] / doseScaling, c)
+        dose2 <- dose[, 2]
+#        IsFinite <- is.finite(dose2)
+#        Fend <- rep(1, length(dose2))
+        Fend <- multCurves(dose[, 2] / doseScaling, c)
+        Fend[!is.finite(dose2)] <- 1 
+        return( -sum(resp * log(Fend - Fstart)) )  
+        # minus in front of sum() as maximization is done as minimization
     }    
 
     
@@ -26,9 +27,9 @@ function(dose, resp, multCurves, startVec, doseScaling = 1)
 #        c( sum(log(choose(total, success))) - object$"fit"$"ofvalue", object$"sumList"$"df.residual" )
         
         c(
-        -object$"fit"$value + sum(log(gamma(resp+1))),
+        -object$"fit"$value,  # oops a constant is missing!
         object$"sumList"$"df.residual"
-        )  # adding scale constant
+        )
     }
     
        
@@ -52,7 +53,7 @@ function(dose, resp, multCurves, startVec, doseScaling = 1)
 }
 
 
-"drmLOFPoisson" <- function()
+"drmLOFeventtime" <- function()
 {
     return(list(anovaTest = NULL, gofTest = NULL))
 }

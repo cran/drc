@@ -1,5 +1,5 @@
 "genBliss2" <- function(
-fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
+fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
 {
     ## Checking arguments
     numParm <- 9
@@ -21,7 +21,10 @@ fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e1", "f1", "f2
         bVal <- parmMat[, 5]
         mVal <- pmax(parmMat[, 3], parmMat[, 4])
 
-        mVal + (bVal - mVal) * (((mVal - LL.5()$fct(dose[ ,1], parmMat[, c(1, 3, 4, 5, 7), drop = FALSE])) / (mVal - bVal)) * ((mVal - LL.5()$fct(dose[ ,2], parmMat[, c(2, 3, 4, 6, 8), drop = FALSE])) / (mVal - bVal)))
+#        mVal + (bVal - mVal) * (((mVal - LL.5()$fct(dose[ ,1], parmMat[, c(1, 3, 4, 5, 7), drop = FALSE])) / (mVal - bVal)) * ((mVal - LL.5()$fct(dose[ ,2], parmMat[, c(2, 3, 4, 6, 8), drop = FALSE])) / (mVal - bVal)))
+           
+        mVal - (mVal - LL.5()$fct(dose[, 1], parmMat[, c(1, 3, 5, 6, 8), drop = FALSE])) *
+               (mVal - LL.5()$fct(dose[, 2], parmMat[, c(2, 4, 5, 7, 9), drop = FALSE])) / (mVal - bVal)
     }    
 
     if (!is.null(ssfct))
@@ -30,10 +33,21 @@ fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e1", "f1", "f2
     } else {
         ssfct <- function(dframe)
         {
-            initVal1 <- llogistic()$ssfct(dframe[, c(1, 3)])
-            initVal2 <- llogistic()$ssfct(dframe[, c(2, 3)])
-#            initVal <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
-            initVal <- c(initVal1, initVal2)[c(1, 6, 2, 7, 8, 4, 9, 5, 10)] 
+#            initVal1 <- llogistic()$ssfct(dframe[, c(1, 3)])
+#            initVal2 <- llogistic()$ssfct(dframe[, c(2, 3)])
+##            initVal <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
+#            initVal <- c(initVal1, initVal2)[c(1, 6, 2, 7, 8, 4, 9, 5, 10)] 
+
+            startLL.d1 <- as.vector(coef(drm(dframe[, c(3,1)], fct = LL.4())))
+            startLL.d2 <- as.vector(coef(drm(dframe[, c(3,2)], fct = LL.4())))
+
+            if (startLL.d1[1] < 0)  # condition in terms of standard "drc" parameter "b"
+            {
+                initVal <- c(startLL.d1, startLL.d2, c(1, 1))[c(1, 5, 3, 7, 2, 4, 8, 9, 10)] * c(-1, -1, rep(1, 7))           
+            } else {
+                initVal <- c(startLL.d1, startLL.d2, c(1, 1))[c(1, 5, 2, 6, 3, 4, 8, 9, 10)]           
+            }
+#            print(initVal[notFixed]) 
     
             return(initVal[notFixed])
         }        

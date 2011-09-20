@@ -10,7 +10,8 @@
     rse <- switch(object$"type",
     "continuous" = fitValue / df.residual(object),
     "binomial" = NA,
-    "Poisson" = NA)
+    "Poisson" = NA,
+    "event" = NA)
     
     if (resvar) 
     {

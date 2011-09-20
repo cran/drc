@@ -174,7 +174,17 @@ fctName, fctText, loge = FALSE)
 #        {
 #            p <- 100 - p
 #        }
-        p <- EDhelper(parmVec, respl, reference, type)
+        p <- absToRel(parmVec, respl, type)
+    
+        ## Reversing p
+        if (identical(type, "absolute"))
+        {
+            p <- 100 - p
+        }
+        if (identical(type, "relative") && (parmVec[1] < 0) && (reference == "control"))
+        {
+            p <- 100 - p
+        }
     
         pProp <- 1 - (100-p) / 100
 #        EDp <- parmVec[4] * exp(qnorm(1-p) / parmVec[1])

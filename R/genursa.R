@@ -71,7 +71,6 @@ fixed = rep(NA, 13), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f
             }       
             return(retVal)
         }      
-
 #        print(apply(parmMat, 1, applyImplicitFct))                  
         apply(parmMat, 1, applyImplicitFct)
     }    

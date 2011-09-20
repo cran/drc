@@ -57,7 +57,7 @@ fctName, fctText)
             if (length(unique(x))==1) {return((c(NA, NA, startVal[3], NA, NA))[notFixed])}  
             # only estimate of upper limit if a single unique dose value 
 
-            indexT2 <- (x > 0)
+            indexT2 <- (x > 0 & is.finite(x))
 #            if (!any(indexT2)) {return((rep(NA, numParm))[notFixed])}  # for negative dose value
             x2 <- x[indexT2]
             y2 <- y[indexT2]

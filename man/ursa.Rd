@@ -8,6 +8,8 @@
 
 \alias{genLoewe}
 \alias{genLoewe2}
+\alias{iceLoewe.1}
+\alias{iceLoewe2.1}
 
 \alias{genBliss}
 \alias{genBliss2}
@@ -27,13 +29,17 @@
   
   actimL(fixed = rep(NA, 14), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3", "g"), ssfct = NULL)
   
-  genLoewe(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
+  genLoewe(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
   
   genLoewe2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
   
+  iceLoewe.1(fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e2", "f"), ssfct = NULL)
+  
+  iceLoewe2.1(fixed = rep(NA, 8), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f"), ssfct = NULL)
+  
   genBliss(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
 
-  genBliss2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
+  genBliss2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
 }
 
 \arguments{
@@ -87,40 +93,60 @@ effect <- c(106.00, 99.20, 115.00, 79.20, 70.10, 49.00, 21.00, 3.83, 74.20, 71.5
 
 greco <- data.frame(d1, d2, effect)
 
-## Fitting a generalized Loewe additivity model with common maximum
-greco.m0a <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+## Fitting a Loewe additivity model with common maximum and lower limit 0
+#greco.m0a <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1))
+#summary(greco.m0a)
+# not working any longer
+
+greco.m0a <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)))
+summary(greco.m0a)
+
+## Fitting a generalized Loewe additivity model with common maximal response
+#greco.m0b <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+
+greco.m0b <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)))
+summary(greco.m0b)
+# with NAs
 
 ## Checking the model fit
-plot(fitted(greco.m0a), residuals(greco.m0a))
+plot(fitted(greco.m0b), residuals(greco.m0b))
 
 ## Fitting reduced model with lower limit c equal to 0
-greco.m0b <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+#greco.m0c <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
 ## Comparing models by means of an F-test
-anova(greco.m0b, greco.m0a)
+#anova(greco.m0c, greco.m0b)
 
 ## Looking at the summary output
-summary(greco.m0b)
+#summary(greco.m0c)
 
 ## Below commented out to make faster check on CRAN
 ## Fitting a generalized Loewe additivity model with different maxima
-#greco.m0c <- drm(effect~d1, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+#greco.m0d <- drm(effect~d1, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+
+greco.m0d <- drm(effect~d1+d2, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,1,1)))
+summary(greco.m0d)
+
 
 ## Checking the model fit
-#plot(fitted(greco.m0c), residuals(greco.m0c))
+#plot(fitted(greco.m0d), residuals(greco.m0d))
 
 ## Looking at the summary output
-#summary(greco.m0c)  # suboptimal fit!
+#summary(greco.m0d)  # suboptimal fit!
 
 
 ## Fitting the URSA model
-#greco.m1 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1))
+#greco.m1 <- drm(effect~d1+d2, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)))
 #plot(fitted(greco.m1), residuals(greco.m1))
 #summary(greco.m1)
 
 ## Fitting the URSA model using values from Greco et al (1995) (p. 364)
-#greco.m2 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), start=c(-1.05, -2.04,95.1,11.1,1.07,0.52))
+#greco.m2 <- drm(effect~d1+d2, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), start=c(-1.05, -2.04,95.1,11.1,1.07,0.52))
 # same fit as above
+
+## Fitting with weights
+#greco.m2b <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), weights=1/residuals(greco.m1)^2, start=coef(greco.m1))
+#summary(greco.m2b)
 
 ## Adjusting for variance heterogeneity
 #greco.m3 <- boxcox(greco.m2, method = "anova")
@@ -137,24 +163,40 @@ summary(greco.m0b)
 
 #summary(greco.m4)
 
+## Fitting the Bliss independence model (with common baseline and maximal response)
+greco.bliss.m0 <- drm(effect~d1+d2, data=greco, fct=genBliss(fixed = c(rep(NA, 6),1,1)))
+summary(greco.bliss.m0)
 
-## Fitting the Bliss independence model (with common maximal response)
+## Fitting the generalized Bliss independence model (with common baseline and maximal response)
 #greco.bliss.m1 <- drm(effect~d1+d2, data=greco, fct=genBliss())
 #summary(greco.bliss.m1)
 # huge estimated f parameters!
+# huge standard errors on e parameter!
+
+# Likelihood ratio test comparing the two Bliss models
+#anova(greco.bliss.m1, greco.bliss.m0)
+# No need to assume that the f parameters are different from 1
+
 
 ## Fitting the generalized Bliss independence model (with different maximal responses)
-#greco.bliss.m2 <- drm(effect~d1+d2, data=greco, fct=genBliss())
+#greco.bliss.m2 <- drm(effect~d1+d2, data=greco, fct=genBliss2())
 #summary(greco.bliss.m2)
-# stable fit?
+# huge estimated f parameters!
+# huge standard errors on e parameter!
 
-#greco.bliss.m3 <- drm(effect~d1+d2, data=greco, fct=genBliss2(fixed=c(rep(NA,7),1,1)))
-#summary(greco.bliss.m2)
-# looks better
+#greco.bliss.m3 <- drm(effect~d1+d2, data=greco, fct=genBliss2(fixed=c(rep(NA, 7),1,1)))
+#summary(greco.bliss.m3)
+# much more realistic estimated e parameters
+
+# Likelihood ratio test comparing the two generalized Bliss models
+#anova(greco.bliss.m3, greco.bliss.m2)
+# No need to assume that the f parameters are different from 1
+
 
 
 ## Fitting the actimL model (needs some tweaking with the starting values)
 #greco.actimL.m1 <- drm(effect~d1+d2, data=greco, fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))))
+# now works (July 19 2011)
 
 #greco.actimL.m2 <- drm(effect~d1+d2, data=greco, fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))), start=coef(greco.actimL.m1)+rnorm(11,0,0.1))
 ## perhaps some more tweaking with the starting values is needed to get the standard errors

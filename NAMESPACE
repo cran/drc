@@ -23,6 +23,8 @@ gompertzd,
 
 gompGrowth.1, gompGrowth.2, gompGrowth.3, 
 
+iceLoewe.1, iceLoewe2.1,
+
 logistic, L.3, L.4, L.5,
 
 llogistic, LL.2, LL.3, LL.3u, LL.4, LL.5, l2, l3, l3u, l4, l5,
@@ -43,7 +45,7 @@ weibull1, W1.2, W1.3, W1.3u, W1.4, w2, w3, w4,
 
 weibull2, W2.2, W2.3, W2.3u, W2.4,
 
-weibull2x, W2x.3,
+weibull2x, W2x.3, W2x.4,
 
 boxcox.drc, bread.drc, estfun.drc,
 

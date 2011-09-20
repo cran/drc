@@ -34,6 +34,9 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
 
+        parmMat[, 5] <- parmMat[, 5] / dose[, 1]
+        parmMat[, 6] <- parmMat[, 6] / dose[, 2]
+
         applyImplicitFct <- function(parmVec)
         {
 #            print(parmVec)
@@ -46,8 +49,8 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
                 implicitFct <- function(e)
                 {
                     scaledEffect <- (e - parmVec[3]) / (parmVec[4] - e)
-                    recSlope1 <- 1/parmVec[1]
-                    recSlope2 <- 1/parmVec[2] 
+                    recSlope1 <- 1 / parmVec[1]
+                    recSlope2 <- 1 / parmVec[2] 
         
                     1/(parmVec[5] * (scaledEffect^recSlope1)) + 1/(parmVec[6] * (scaledEffect^recSlope2)) + 
                     parmVec[7]/(parmVec[5] * parmVec[6] * (scaledEffect^(recSlope1/2 + recSlope2/2))) - 1
@@ -80,9 +83,19 @@ fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NU
     } else {
         ssfct <- function(dframe)
         {
-            initval <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 0.5) * c(-1, -1, rep(1, 5))
+#            initval <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 0.5) * c(-1, -1, rep(1, 5))
+            
+            startLL.d1 <- as.vector(coef(drm(dframe[, c(3,1)], fct = LL.4())))
+            startLL.d2 <- as.vector(coef(drm(dframe[, c(3,2)], fct = LL.4())))
+
+            if (startLL.d1[1] < 0)  # condition in terms of standard "drc" parameter "b"
+            {
+                initVal <- c(startLL.d1, startLL.d2, 0)[c(1, 5, 3, 2, 4, 8, 9)]          
+            } else {
+                initVal <- c(startLL.d1, startLL.d2, 0)[c(1, 5, 2, 3, 4, 8, 9)] * c(-1, -1, rep(1, 5))           
+            }
     
-            return(initval[notFixed])
+            return(initVal[notFixed])              
         }        
     }    
     

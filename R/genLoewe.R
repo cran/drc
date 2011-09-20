@@ -1,5 +1,5 @@
 "genLoewe" <- function(
-fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e1", "f1", "f2"), ssfct = NULL)
+fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
 {
     ## Checking arguments
     numParm <- 8
@@ -33,6 +33,9 @@ fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e1", "f1", "f2"), ssf
     {
         parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
         parmMat[, notFixed] <- parm
+        
+        parmMat[, 5] <- parmMat[, 5] / dose[, 1]
+        parmMat[, 6] <- parmMat[, 6] / dose[, 2]        
 
         applyImplicitFct <- function(parmVec)
         {
@@ -89,8 +92,22 @@ fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e1", "f1", "f2"), ssf
         ssfct <- ssfct
     } else {
         ssfct <- function(dframe)
-        {
-            initval <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
+        {    
+#            initCD <- findcd(dframe[, 1], dframe[,3])  # keep be feeded into the LL.4 fits!            
+#            startLL.d1 <- as.vector(coef(drm(dframe[, c(3,1)], fct = LL.4(fixed = c(NA, initCD[1], initCD[2], NA)))))
+#            startLL.d1 <- c(startLL.d1[1], initCD[1], initCD[2], startLL.d1[2])
+# seems not to produce any improvement over the approach below
+            
+            startLL.d1 <- as.vector(coef(drm(dframe[, c(3,1)], fct = LL.4())))
+            startLL.d2 <- as.vector(coef(drm(dframe[, c(3,2)], fct = LL.4())))
+        
+            if (startLL.d1[1] < 0)  # condition in terms of standard "drc" parameter "b"
+            {
+                initval <- c(startLL.d1, startLL.d2, c(1, 1))[c(1, 5, 3, 2, 4, 8, 9, 10)]            
+            } else {
+                initval <- c(startLL.d1, startLL.d2, c(1, 1))[c(1, 5, 2, 3, 4, 8, 9, 10)] * c(-1, -1, rep(1, 6))           
+            }       
+#            initval <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
     
             return(initval[notFixed])
         }        

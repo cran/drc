@@ -12,7 +12,7 @@
 
 \usage{
 maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), linreg = FALSE,
-clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
+clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, na.rm = FALSE, extended = FALSE)
 }
 
 \arguments{
@@ -26,6 +26,7 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
   \item{clevel}{character string specifying the curve id in case on estimates for a specific curve or compound is requested. By default estimates
   are shown for all curves.}
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
+  \item{type}{character string. Whether the specified response levels are absolute or relative (default).}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{na.rm}{logical indicating whether or not NA occurring during model fitting should be left out of
   subsequent calculations.}
@@ -86,7 +87,7 @@ c(10, 50, 90), "kang")
 
 ## Comparing to model-averaged ED values with simple linear regression included
 maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
-c(10, 50, 90), linreg = TRUE, interval = "buckland")
+c(10, 50, 90), interval = "buckland", linreg = TRUE)
 
 
 

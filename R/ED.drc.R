@@ -124,7 +124,9 @@ pool = TRUE, logBase = NULL, ...)
 #        ciMat[, 1] <- EDmat[, 1] - tquan * EDmat[, 2]
 #        ciMat[, 2] <- EDmat[, 1] + tquan * EDmat[, 2]
         
+#        print(EDmat)
         intMat <- confint.basic(EDmat, level, object$"type", df.residual(object), FALSE)
+#        print(intMat)
         intLabel <- "Delta method"
     }
     

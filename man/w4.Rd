@@ -3,6 +3,7 @@
 \alias{W1.4}
 \alias{w4}
 \alias{W2.4}
+\alias{W2x.4}
 
 \title{The four-parameter Weibull functions}
 

@@ -41,7 +41,9 @@
 #    if (type == "t") {two <- qt(1 - alphah, df.residual(object))}    
     tailPercentile <- switch(intType, 
     binomial = qnorm(1 - alphah), 
-    continuous = qt(1 - alphah, dfres))
+    continuous = qt(1 - alphah, dfres),
+    event = qnorm(1 - alphah),
+    Poisson = qnorm(1 - alphah))
     
     estVec <- estMat[, 1]
     halfLength <- tailPercentile * estMat[, 2]

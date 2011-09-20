@@ -24,7 +24,8 @@ function(x, ...)
     cat("Parameter estimates:\n\n")
     printCoefmat(object$"coefficients")
 
-    if ((!is.null(object$"resVar")) && (!identical(object$"type", "binomial")))
+    if (!is.na(object$"resVar"))
+#    if ((!is.null(object$"resVar")) && (!identical(object$"type", "binomial")))
     {
         cat("\nResidual standard error")
         

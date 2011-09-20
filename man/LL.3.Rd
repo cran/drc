@@ -99,7 +99,7 @@ pmodels = data.frame(treatment, 1, treatment))
 
 summary(fe19.model1)
 modelFit(fe19.model1)
-plot(fe19.model1, conLevel = -1, ylim = c(0.1, 1.3))
+plot(fe19.model1, ylim = c(0, 1.1), bp = -1, broken = TRUE, legendPos = c(0, 1))
 abline(h = 1, lty = 2)
 
 }

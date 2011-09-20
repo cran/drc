@@ -48,16 +48,15 @@ summary(s.cap.m2)
 ## Residual plot after transformation (looks better)
 plot(fitted(s.cap.m2), residuals(s.cap.m2))
 
-## Calculating ED values on log scale (not so interesting)
-ED(s.cap.m2, c(10, 20, 50), ci="delta")
-
-## Calculating ED values on the original
-ED(s.cap.m2, c(10, 20, 50), ci="fls")
+## Calculating ED values on log scale
+ED(s.cap.m2, c(10, 20, 50), interval="delta")
 
 ## Fitting model with ED50 as parameter
 ## (for comparison)
-s.cap.m3 <- drm(count ~ conc, data = S.capricornutum, fct = LN.3(loge=FALSE))
-ED(s.cap.m3, c(10, 20, 50), ci = "delta")
+s.cap.m3 <- drm(count ~ conc, data = S.capricornutum, fct = LN.3(loge=TRUE))
+s.cap.m4 <- boxcox(s.cap.m3, method = "anova")
+summary(s.cap.m4)
+ED(s.cap.m4, c(10, 20, 50), interval = "fls")
 
 }
 \keyword{datasets}

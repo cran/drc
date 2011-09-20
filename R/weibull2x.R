@@ -97,4 +97,17 @@ function(fixed = c(NA, NA, NA), names = c("d", "e", "t0"), ...)
     return(weibull2x(fixed = c(1, 0, fixed[1:3]), names = c("b", "c", names[1:3]),
     fctName = as.character(match.call()[[1]]), 
     fctText = lowFixed("Weibull (type 2)"), ...))
+}            
+
+"W2x.4" <-
+function(fixed = c(NA, NA, NA, NA), names = c("c", "d", "e", "t0"), ...)
+{
+    ## Checking arguments
+    numParm <- 4
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+    if (!(length(fixed) == numParm)) {stop("Not correct length of 'fixed' argument")}
+
+    return(weibull2x(fixed = c(1, fixed[1:4]), names = c("b", names[1:4]),
+    fctName = as.character(match.call()[[1]]), 
+    fctText = lowFixed("Weibull (type 2)"), ...))
 }

@@ -1,6 +1,8 @@
 "maED" <- function(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), linreg = FALSE,
-clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
+clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, na.rm = FALSE, extended = FALSE)
 {
+    interval <- match.arg(interval)
+    type <- match.arg(type)
 #    print(linreg)
 #    print(level)
     
@@ -16,7 +18,7 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
 #            cat(curveId, "\n") 
             retMat <- rbind(retMat, 
             maED(object, fctList, respLev, interval, linreg = linreg, clevel = curveId, level = level, 
-            display = display, na.rm = na.rm, extended = extended))
+            type = type, display = display, na.rm = na.rm, extended = extended))
         }
         return(retMat)
     } else {     # May 6 2010
@@ -56,7 +58,7 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     
     ## Calculating estimated ED values
 #    print(clevel)
-    edMat <- ED(object, respLev, interval2, clevel, display = FALSE)
+    edMat <- ED(object, respLev, interval2, clevel, type = type, display = FALSE)
 #    print(edMat)
     edEst[1, ] <- as.vector((edMat)[, 1])
     edSe[1, ] <- as.vector((edMat)[, 2])
@@ -71,7 +73,7 @@ clevel = NULL, level = 0.95, display = TRUE, na.rm = FALSE, extended = FALSE)
     }
     for (i in 1:lenfl)
     {
-        edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, clevel, display = FALSE), silent = TRUE)
+        edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, clevel, type = type, display = FALSE), silent = TRUE)
         if (inherits(edMati, "try-error"))
         {
             edMati <- matrix(NA, length(respLev), 4)

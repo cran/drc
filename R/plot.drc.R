@@ -82,13 +82,17 @@ legend, legendText, legendPos, cex.legend = 1)
 #        conLevel <- ifelse(is.null(logDose), 1e-2, log(1e-2))
         
         ## Constructing appropriate break on dose axis
-        log10cl <- round(log10(min(dose[dose > 0]))) - 1
-        conLevel <- 10^(log10cl)
-        if (!is.null(logDose)) {conLevel <- log(conLevel)}  # natural logarithm
+        if (!is.null(logDose))  # natural logarithm
+        {
+            conLevel <- round(min(dose[is.finite(dose)])) - 1
+        } else {
+            log10cl <- round(log10(min(dose[dose > 0]))) - 1
+            conLevel <- 10^(log10cl)
+        }
     } else {
         conLevel <- bp
     }   
-    if ((xLimits[1] < conLevel) && logX) 
+    if ((xLimits[1] < conLevel) && (logX || (!is.null(logDose)))) 
     {
         xLimits[1] <- conLevel
         smallDoses <- (dose < conLevel)
@@ -192,7 +196,7 @@ legend, legendText, legendPos, cex.legend = 1)
         }
         
         pointFct <- function(plotPoints, cexVal, colVal, pchVal, ...){invisible(NULL)}    
-    }  else {
+    } else {
         barFct <- function(plotPoints){invisible(NULL)}
         
         pointFct <- function(plotPoints, cexVal, colVal, pchVal, ...)
@@ -291,15 +295,15 @@ legend, legendText, legendPos, cex.legend = 1)
             barFct(plotPoints)            
             
             ## Adding axes    
-            addAxes(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel)
+            addAxes(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel, logDose)
 
             ## Adding axis break
-            ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX)       
+            ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX, logDose)       
                            
         ## Plotting in the case "add = TRUE" and for all remaining curve ids
         } else {  
             ## Adding axis break (in fact only restricting the dose range to be plotted)
-            ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX, plotit = FALSE)       
+            ivMid <- brokenAxis(bcontrol, broken, conLevel, dosePts, gridsize, log, logX, logDose, plotit = FALSE)       
             
             if (!identical(type, "none"))  # equivalent of type = "n" in the above "plot" 
             {
@@ -447,7 +451,7 @@ if (FALSE)
 }
 }
 
-"addAxes" <- function(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel)
+"addAxes" <- function(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel, logDose)
 {
     if (!axes) {return(invisible(NULL))}  # doing nothing
     
@@ -471,10 +475,17 @@ if (FALSE)
         ## Styling the x axis tick marks
         if (identical(xtsty, "base10"))
         {    
-            ceilingxTicks <- ceiling(log10(xaxisTicks[-1]))
-            xaxisTicksOrig <- xaxisTicks
-            xaxisTicks <- c(xaxisTicks[1], 10^(unique(ceilingxTicks)))
+            if (!is.null(logDose)) 
+            {
+                ceilingxTicks <- ceiling(xaxisTicks[-1])
+                xaxisTicksOrig <- xaxisTicks
+                xaxisTicks <- c(xaxisTicks[1], unique(ceilingxTicks))
+            } else {
+                ceilingxTicks <- ceiling(log10(xaxisTicks[-1]))
+                xaxisTicksOrig <- xaxisTicks
+                xaxisTicks <- c(xaxisTicks[1], 10^(unique(ceilingxTicks)))
 #        xLabels <- c(xLabels[1], unlist(tapply(xLabels[-1], ceilingxTicks, head, 1)))
+            }
 
             ## Reverting to original tick marks in case too few were created
             if (length(xaxisTicks) < 3)
@@ -528,9 +539,10 @@ if (FALSE)
 
 
 ## Creating a broken axis
-"brokenAxis" <- function(bcontrol, broken, bp, dosePts, gridsize, log, logX, plotit = TRUE)
+"brokenAxis" <- function(bcontrol, broken, bp, dosePts, gridsize, log, logX, logDose, plotit = TRUE)
 {
-    if ((broken) && (logX))
+    notNullLD <- !is.null(logDose) 
+    if ((broken) && (logX  || (notNullLD)))
     {
         bList <- list(factor = 2, style = "slash", width = 0.02)
             
@@ -545,8 +557,14 @@ if (FALSE)
         breakStyle <- bList$"style"  # "slash"
         breakWidth <- bList$"width"  # 0.02  # default in axis.break
         clFactor <- bList$"factor"  # 2
-                     
-        brokenx <- clFactor * bp                   
+         
+        if (notNullLD)
+        {
+            brokenx <- log(clFactor * (logDose^bp), logDose)
+        } else {
+            brokenx <- clFactor * bp
+        }             
+#        brokenx <- clFactor * bp                   
         if ( (log == "x") || (log == "xy") || (log == "yx") )
         {
             ivMid <- dosePts > brokenx            

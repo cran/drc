@@ -21,11 +21,10 @@ fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssf
         bVal <- parmMat[, 4]
         mVal <- parmMat[, 3]
 
-#        LL5 <- function(doseVec, pMat)
-#        {
-#            LL.5()$fct(doseVec, pMat)
-#        }
-        mVal + (bVal - mVal) * (((mVal - LL.5()$fct(dose[ ,1], parmMat[, c(1, 3, 4, 5, 7), drop = FALSE])) / (mVal - bVal)) * ((mVal - LL.5()$fct(dose[ ,2], parmMat[, c(2, 3, 4, 6, 8), drop = FALSE])) / (mVal - bVal)))
+#        mVal + (bVal - mVal) * (((mVal - LL.5()$fct(dose[ ,1], parmMat[, c(1, 3, 4, 5, 7), drop = FALSE])) / (mVal - bVal)) * ((mVal - LL.5()$fct(dose[ ,2], parmMat[, c(2, 3, 4, 6, 8), drop = FALSE])) / (mVal - bVal)))
+
+        mVal - (mVal - LL.5()$fct(dose[, 1], parmMat[, c(1, 3, 4, 5, 7), drop = FALSE])) *
+               (mVal - LL.5()$fct(dose[, 2], parmMat[, c(2, 3, 4, 6, 8), drop = FALSE])) / (mVal - bVal)
     }    
 
     if (!is.null(ssfct))
@@ -34,10 +33,22 @@ fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssf
     } else {
         ssfct <- function(dframe)
         {
-            initVal1 <- llogistic()$ssfct(dframe[, c(1, 3)])
-            initVal2 <- llogistic()$ssfct(dframe[, c(2, 3)])
-#            initVal <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
-            initVal <- c(initVal1, initVal2)[c(1, 6, 2, 8, 4, 9, 5, 10)] 
+#            initVal1 <- llogistic()$ssfct(dframe[, c(1, 3)])
+#            initVal2 <- llogistic()$ssfct(dframe[, c(2, 3)])
+##            initVal <- c((llogistic()$ssfct(dframe))[c(1, 1:4, 4)], 1, 1) * c(-1, -1, rep(1, 6))
+#            initVal <- c(initVal1, initVal2)[c(1, 6, 2, 8, 4, 9, 5, 10)] 
+#            print(initVal[notFixed])
+
+            startLL.d1 <- as.vector(coef(drm(dframe[, c(3,1)], fct = LL.4())))
+            startLL.d2 <- as.vector(coef(drm(dframe[, c(3,2)], fct = LL.4())))
+
+            if (startLL.d1[1] < 0)  # condition in terms of standard "drc" parameter "b"
+            {
+                initVal <- c(startLL.d1, startLL.d2, c(1, 1))[c(1, 5, 3, 2, 4, 8, 9, 10)] * c(-1, -1, rep(1, 6))           
+            } else {
+                initVal <- c(startLL.d1, startLL.d2, c(1, 1))[c(1, 5, 2, 3, 4, 8, 9, 10)]           
+            }
+#            print(initVal[notFixed]) 
     
             return(initVal[notFixed])
         }        
