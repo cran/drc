@@ -1,12 +1,11 @@
 \name{modelFit}
 
 \alias{modelFit}
-%- Also NEED an '\alias' for EACH other topic documented here.
 
-\title{Checking the model fot}
+\title{Assessing the model fit}
 
 \description{
-  Checking the fit of dose-response model by means of formal lack-of-fit tests or graphical procedures.
+  Checking the fit of dose-response model by means of formal significance tests or graphical procedures.
 }
 
 \usage{
@@ -21,12 +20,10 @@
 
 \details{
   Currently two methods are available. For continuous data the clasical lack-of-fit test is applied 
-  (Bates and Watts, 1988). The test compares
-  the dose-response model to a more general ANOVA model using an approximate F-test. For quantal data the crude 
-  goodness-of-fit test based on Pearson's statistic is used. None of these tests are very powerful. A significant
-  test result is more alarming than a non-significant one. 
+  (Bates and Watts, 1988). The test compares the dose-response model to a more general ANOVA model 
+  using an approximate F-test. For quantal data the crude goodness-of-fit test based on Pearson's statistic is used. 
   
-  More methods will become available in the future.
+  None of these tests are very powerful. A significant test result is more alarming than a non-significant one. 
 }
 
 \value{

@@ -10,7 +10,7 @@
 
 \usage{
   drm(formula, curveid, pmodels, weights, data = NULL, subset, fct, 
-  type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
+  type = c("continuous", "binomial", "Poisson", "quantal", "event", "standard"), bcVal = NULL, bcAdd = 0, 
   start, na.action = na.fail, robust = "mean", logDose = NULL, 
   control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 }
@@ -22,7 +22,7 @@
   \item{curveid}{a numeric vector or factor containing the grouping of the data.}
   
   \item{pmodels}{a data frame with a many columns as there are parameters in the non-linear function. 
-  Or a list containing a formula for each parameter in the non-linear function.}
+  Or a list containing a formula for each parameter in the nonlinear function.}
   
   \item{weights}{
     a numeric vector containing weights that are multiplied inside the squared errors (see the details below).
@@ -39,13 +39,13 @@
   Currently available functions include, among others, the four- and five-parameter log-logistic models 
   \code{\link{LL.4}}, \code{\link{LL.5}} and the Weibull model \code{\link{W1.4}}. Use
   \code{\link{getMeanFunctions}} for a full list.}
-   
+     
+  \item{type}{a character string specifying the data type.}
+  
   \item{bcVal}{a numeric value specifying the lambda parameter to be used in the Box-Cox transformation.}
   
   \item{bcAdd}{a numeric value specifying the constant to be added on both sides prior to Box-Cox transformation. 
-  The default is 0.}
-  
-  \item{type}{a character string specifying the data type: continuous is the only option currently.}
+  The default is 0.}  
   
   \item{start}{an optional numeric vector containing starting values for all mean parameters in the model. 
   Overrules any self starter function.}
@@ -115,8 +115,9 @@
 }
 
 \seealso{
-  Examples using \code{\link{drm}} found in the help pages of \code{\link{secalonic}}, \code{\link{ryegrass}}, 
-  and many other datasets and functions in \code{drc}.
+  Examples using \code{\link{drm}} found in the help pages of \code{\link{ryegrass}} (continuous data), 
+  \code{\link{secalonic}} (continuous data), and \code{\link{selenium}} (binomial data), 
+  as well as for a number of other datasets and functions in \code{drc}.
 }
 
 %\examples{}

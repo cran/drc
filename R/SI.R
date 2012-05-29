@@ -13,7 +13,7 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     {
         stop("Argument 'logBase' not specified for interval = 'fls'")
     }
-    sifct <- createsifct(object$"fct"$"edfct", logBase, identical(interval, "fls"), object$"indexMat", length(coef(object)))
+#    sifct <- createsifct(object$"fct"$"edfct", logBase, identical(interval, "fls"), object$"indexMat", length(coef(object)))
 
     ## Checking contain of percVec vector ... should be numbers between 0 and 100
     if ( (type == "relative") && any(percVec<=0 | percVec>=100) ) 
@@ -27,11 +27,32 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
 
     ## Retrieving relevant quantities
     indexMat <- object$"indexMat"
-    lenEB <- ncol(indexMat)    
+#    lenEB <- ncol(indexMat)    
     parmMat <- object$"parmMat"
-    strParm <- colnames(parmMat)    
+#    strParm <- colnames(parmMat)    
+#    varMat <- vcov(object, od = od, pool = pool)
+##    compNames <- as.character(strParm)  # converting a factor
+
+
+    curveNames <- colnames(object$"parmMat")
+    options(warn = -1)  # switching off warnings caused by coercion in the if statement
+    if (any(is.na(as.numeric(curveNames))))
+    {
+        curveOrder <- order(curveNames)
+    } else { # if names are numbers then skip re-ordering
+        curveOrder <- 1:length(curveNames)
+    }
+    options(warn = 0)  # normalizing behaviour of warnings
+    
+    strParm0 <- curveNames[curveOrder]
+    indexMat <- indexMat[, curveOrder, drop = FALSE]
+    lenEB <- ncol(indexMat) 
+    sifct <- createsifct(object$"fct"$"edfct", logBase, identical(interval, "fls"), indexMat, length(coef(object)))    
+    
+    parmMat <- parmMat[, curveOrder, drop = FALSE]
+    
+    strParm <- strParm0
     varMat <- vcov(object, od = od, pool = pool)
-#    compNames <- as.character(strParm)  # converting a factor
 
     ## Calculating SI values
     numComp <- (lenPV*(lenPV-1)/2)*(lenEB * (lenEB - 1) / 2)
@@ -58,25 +79,28 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     {
         pairsMat <- pairsMat[, 2:1, drop = FALSE]
         percMat <- percMat[, 2:1, drop = FALSE]
-        strParm <- rev(strParm)
+#        strParm <- rev(strParm)
     }
+#    print(strParm)
+#    print(pairsMat)
 
     appFct1 <- function(percVal)
     {
-        apply(pairsMat, 1, siInner, pVec = percVec[percVal], compMatch = compMatch, object = object, varMat = varMat, 
-        level = level, reference = reference, type = type, sifct = sifct, interval = interval, degfree = degfree, logBase = logBase)
+        apply(pairsMat, 1, siInner, pVec = percVec[percVal], compMatch = compMatch, object = object, indexMat = indexMat, parmMat = parmMat, 
+        varMat = varMat, level = level, reference = reference, type = type, sifct = sifct, interval = interval, degfree = degfree, logBase = logBase)
     }
     SImat <- matrix(apply(percMat, 1, appFct1), nrow = nrow(pairsMat) * nrow(percMat), byrow = TRUE)
     
 #    matchVec[rowIndex] <- (is.null(compMatch) || all(c(strParm[j], strParm[k]) %in% compMatch))
     
-    strParm0 <- sort(colnames(object$"parmMat"))
+#    strParm0 <- sort(colnames(object$"parmMat"))
     appFct2 <- function(percVal)
     {
         apply(pairsMat, 1, 
         function(indPair, percVal) 
         {
-            paste(strParm0[indPair[1]], "/", strParm0[indPair[2]], ":", percVec[percVal[1]], "/", percVec[percVal[2]], sep = "")
+#            paste(strParm0[indPair[1]], "/", strParm0[indPair[2]], ":", percVec[percVal[1]], "/", percVec[percVal[2]], sep = "")
+            paste(strParm[indPair[1]], "/", strParm[indPair[2]], ":", percVec[percVal[1]], "/", percVec[percVal[2]], sep = "")
         }, percVal = percVal)
     }    
     rownames(SImat) <- apply(percMat, 1, appFct2) 
@@ -86,7 +110,8 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
         apply(pairsMat, 1, 
         function(indPair, percVal) 
         {
-            (is.null(compMatch) || all(c(strParm0[indPair[1]], strParm0[indPair[2]]) %in% compMatch))
+#            (is.null(compMatch) || all(c(strParm0[indPair[1]], strParm0[indPair[2]]) %in% compMatch))
+            (is.null(compMatch) || all(c(strParm[indPair[1]], strParm[indPair[2]]) %in% compMatch))
         })
     }
     SImat <- SImat[as.vector(apply(percMat, 1, appFct3)), , drop = FALSE]
@@ -110,7 +135,8 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     "fls" = "From log scale",
     "fieller" = "Fieller")
     
-    resPrint(SImat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display) 
+#    resPrint(SImat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display) 
+    resPrint(SImat, "Estimated ratios of effect doses", interval, ciLabel, display = display) 
 #    
 #    if (FALSE)
 #    {
@@ -332,9 +358,13 @@ createsifct <- function(edfct, logBase = NULL, fls = FALSE, indexMat, lenCoef)
                 {
 #                    print(parm1)
 #                    print(parm2)
+#                    print(indexMat)
+
                     ED1 <- edfct(parm1, pair[1], reference = reference, type = type, ...)
                     ED1v <- ED1[[1]]
                     ED1d <- rep(0, lenCoef)
+#                    print(indexMat[, jInd])
+#                    print(ED1[[2]])
                     ED1d[indexMat[, jInd]] <- ED1[[2]]        
 #                    print(ED1v)
 #                    print(ED1d)

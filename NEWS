@@ -1,6 +1,38 @@
 ## Changes in 'drc' 
 
-2011-09-20: Problem with logDose argument in drm() and subsequent plotting haas been solved (reported by Ralf Schäfer). 
+2012-05-29: ED() now also works for gompertz models (after a question from Calvin Odero).
+
+2012-05-29: The dataset germination has been included.
+
+2012-05-27: The dataset chickweed has been included.
+
+2012-05-23: Help page of lettuce has been revised. 
+
+2012-05-16: The dataset selenium has been included. 
+
+2012-05-16: Limit in dose scaling has been lifted (after a report from Andreas Wernitznig). 
+
+2012-03-13: Help page for the function modelFit() has been revised (removing a typo in the title) (after a comment from John Lynch).
+
+2012-03-01: Help page for the function mr.test() has been updated. 
+
+2012-02-20: Summary output for separate = TRUE now shows the original labels (levels in the variable curveid) (thanks a comment from Radu Slobodeanu).
+
+2012-01-23: Small scaling error in fitted method has been removed (after a report from Andreas Betz).
+
+2011-12-28: Plotting for event-time data has been improved.
+
+2011-12-21: Error in calculation of ED values for fplogistic() has been fixed. 
+
+2011-12-16: Help page of drm() (type argument) has been updated (after comment from Radu Slobodeanu). 
+
+2011-12-07: Error in label ordering and calculation of standard errors in SI() have been fixed (bug report by Andrew Kniss).
+
+2011-11-06: Problem with confidence intervals in the predict method has been solved (was reported on R-help sometimes ago: 2010-11-28).
+
+2011-10-27: Help page of mixture() has been slightly improved. 
+
+2011-09-20: Problem with logDose argument in drm() and subsequent plotting has been solved (reported by Ralf Schäfer). 
 
 2011-09-02: Constrained estimation uses the actual limits provided (bug report by Andrew Kniss).
 
@@ -9,8 +41,7 @@
 2011-08-24: genBliss() and genBliss2() has been updated (after suggestions from Hugo Ceulemans). Functions iceLoewe1() and iceLoewe2.1() have
 benn added.
 
-2011-08-23: Error in ED calculation for the logistic models (e.g., L.4()) has been fixed (after a report from Daniel Gerhard).
-Error caused by update of the function deltaMethod() in alr3 has been fixed.
+2011-08-23: Error in ED calculation for the logistic models (e.g., L.4()) has been fixed (after a report from Daniel Gerhard). The error was caused by an update of the function deltaMethod() in alr3 has been fixed.
 
 2011-07-04: Small changes for the anova method. Adding df for event time and Poisson models.
 

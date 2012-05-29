@@ -2,10 +2,10 @@
 
 \alias{mixture}
 
-\title{Fitting mixture models}
+\title{Fitting binary mixture models}
 
 \description{
-  'mixture' fits a concentration addition, Hewlett or Voelund model to data from mixture toxicity experiments.
+  'mixture' fits a concentration addition, Hewlett or Voelund model to data from binary mixture toxicity experiments.
 }
 
 \usage{

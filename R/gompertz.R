@@ -116,7 +116,16 @@ if (FALSE)
     }
 
     ## Defining the ED function
-    edfct <- NULL
+    edfct <- function (parm, respl, reference, type, ...) 
+    {
+        parmVec[notFixed] <- parm
+        p <- EDhelper(parmVec, respl, reference, type)
+        tempVal <- log(-log((100 - p)/100))
+        EDp <- tempVal/parmVec[1] + parmVec[4]
+        EDder <- EDp * c(-tempVal/(parmVec[1]^2), 0, 0, 1)
+        return(list(EDp, EDder[notFixed]))
+    }
+
 
     ## Defining functions returning lower and upper limit and monotonicity
     lowerAs <- pickParm(parmVec, notFixed, 2)

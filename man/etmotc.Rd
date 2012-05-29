@@ -37,7 +37,7 @@
 
 \source{
   Christensen, A. M. and Ingerslev, F. and Baun, A. 2006 
-  Ecotoxicity of mixtures of antibiotics used in aquacultures. 
+  Ecotoxicity of mixtures of antibiotics used in aquacultures, 
   \emph{Environmental Toxicology and Chemistry}, \bold{25}, 2208--2215.
 }
 

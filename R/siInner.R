@@ -1,22 +1,24 @@
-siInner <- function(indPair, pVec, compMatch, object, varMat, level, reference, type, sifct, interval, degfree, logBase)
+siInner <- function(indPair, pVec, compMatch, object, indexMat, parmMat, varMat, level, reference, type, sifct, interval, degfree, logBase)
 {
     jInd <- indPair[1]
     kInd <- indPair[2]
 
-    indexMat <- object$"indexMat"
+#    indexMat <- object$"indexMat"
     parmInd1 <- indexMat[, jInd]
     parmInd2 <- indexMat[, kInd]
-    parmMat <- matrix(coef(object)[indexMat], ncol = ncol(indexMat))
+#    parmMat <- matrix(coef(object)[indexMat], ncol = ncol(indexMat))
 
     parmChosen1 <- parmMat[, jInd]
     parmChosen2 <- parmMat[, kInd]
 
-    SIeval <- sifct(parmChosen1, parmChosen2, pVec, 1,2,1,2, reference, type, jInd, kInd)
+#    SIeval <- sifct(parmChosen1, parmChosen2, pVec, 1,2,1,2, reference, type, jInd, kInd)
+    SIeval <- sifct(parmChosen1, parmChosen2, pVec, jInd, kInd, reference, type)
 
     SIval <- SIeval$"val"  # SIeval[[1]]
     dSIval <- SIeval$"der"  # SIeval[[2]]
 #    print(dSIval)
 
+#    print(varMat)
     oriMatRow <- c(SIval, sqrt(t(dSIval) %*% varMat %*% dSIval))
     siMatRow <- matrix(NA, 1, 4)  # four is the maximum number of columns
     siMatRow[1, 1] <- SIval

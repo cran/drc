@@ -3,17 +3,22 @@ function(object, typeRes = c("working", "standardised", "studentised"), ...)
 {
     typeRes <- match.arg(typeRes)
     
+    rawResiduals <- object$"dataList"$"resp" - fitted(object)
+    
     if (identical(typeRes, "standardised"))
     {
         rstan <- object$"estMethod"$"rstanfct"
         if (is.null(rstan)) 
         {
             cat("Scale parameter fixed at 1. So working residuals are returned\n\n")
-            return(object$"predres"[, 2])
+#            return(object$"predres"[, 2])
+            return(rawResiduals)
+            
 #            stop("No standardisation available")
         } else {
-#            print(rstan(object))
-            return(object$"predres"[, 2] / rstan(object))  
+#            return(object$"predres"[, 2] / rstan(object))  
+            return(rawResiduals / rstan(object))  
+            
 #            return( object$"predres"[, 2] / sqrt(summary(object)$"resVar") )
         }
     } 
@@ -36,12 +41,14 @@ function(object, typeRes = c("working", "standardised", "studentised"), ...)
         scaleEst <- ifelse(is.na(scaleEst0), 1, scaleEst0)  
         # to handle response types that are not continuous/quantitative
         
-        return(object$"predres"[, 2] / sqrt(scaleEst * (1 - Hdiag)))
+#        return(object$"predres"[, 2] / sqrt(scaleEst * (1 - Hdiag)))
+        return(rawResiduals / sqrt(scaleEst * (1 - Hdiag)))
     }
     
     if (identical(typeRes, "working"))
     {
-        return(object$"predres"[, 2])
+#        return(object$"predres"[, 2])
+        return(rawResiduals)
     }
 }
 

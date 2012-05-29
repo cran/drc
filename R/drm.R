@@ -1,6 +1,6 @@
 "drm" <- function(
 formula, curveid, pmodels, weights, data = NULL, subset, fct, 
-type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
+type = c("continuous", "binomial", "Poisson", "quantal", "event", "standard"), bcVal = NULL, bcAdd = 0, 
 start, na.action = na.fail, robust = "mean", logDose = NULL, 
 control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 {
@@ -31,6 +31,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     noMessage <- control$"noMessage"  # reporting finding control measurements? 
 #    trace <- control$"trace"
 #    otrace <- control$"otrace"
+    dscaleThres <- control$"dscaleThres"
+    rscaleThres <- control$"rscaleThres"
         
     ## Setting warnings policy
     options(warn = warnVal)
@@ -278,6 +280,11 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         if (!noMessage) 
         {
             cat(paste("Control measurements detected for level: ", udNames, "\n", sep = ""))
+            
+            if (separate)
+            {
+                stop("Having a common control when fitting separate models does not make sense!\n")
+            }
         }
         conInd <- assayNoOld %in% udNames
         assayNo[conInd] <- (assayNo[!conInd])[1]
@@ -299,7 +306,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     ## Pooling data from different curves
     if ((separate) && (numAss < 2))
     {
-        warning("Nothing to pool", call. = FALSE)
+#        warning("Nothing to pool", call. = FALSE)
+        warning("Only one level: separate = TRUE has no effect", call. = FALSE)
         separate <- FALSE 
     }    
     if ((separate) && (!missing(pmodels)))
@@ -309,7 +317,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     }
     if (separate)
     {
-        return(idrm(dose, resp, assayNo, wVec, fct, type))
+#        return(idrm(dose, resp, assayNo, wVec, fct, type))
+        return(idrm(dose, resp, assayNoOld, wVec, fct, type))
     }    
     
     ## Handling "pmodels" argument
@@ -665,13 +674,15 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     {
         # Defining scaling for dose and response values 
         doseScaling <- 10^(floor(log10(median(dose))))   
-        if ( (is.na(doseScaling)) || (doseScaling < 1e-10) )
+#        if ( (is.na(doseScaling)) || (doseScaling < 1e-10) )  # changed May 16 2012
+        if ( (is.na(doseScaling)) || (doseScaling < dscaleThres) )
         {
             doseScaling <- 1
         }
 
         respScaling <- 10^(floor(log10(median(resp)))) 
-        if ( (is.na(respScaling)) || (respScaling < 1e-10) || (!identical(type, "continuous")) || (!is.null(bcVal)) )
+#        if ( (is.na(respScaling)) || (respScaling < 1e-10) || (!identical(type, "continuous")) || (!is.null(bcVal)) )  # changed May 16 2012
+        if ( (is.na(respScaling)) || (respScaling < rscaleThres) || (!identical(type, "continuous")) || (!is.null(bcVal)) )
         {
             respScaling <- 1
         }   
@@ -1023,7 +1034,11 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     if (identical(type, "event"))
     {
         estMethod <- drmEMeventtime(dose, resp, multCurves2, doseScaling = doseScaling)
-    }   
+    }  
+    if (identical(type, "standard"))
+    {
+        estMethod <- drmEMstandard(dose, resp, multCurves2, weights, doseScaling = doseScaling)
+    }      
 #    if (identical(type, "Wadley"))
 #    {
 #        estMethod <- drmEMWadley(dose, resp, multCurves2, doseScaling = doseScaling)
@@ -1218,14 +1233,34 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     
     if (identical(type, "event"))
     {
-#        notInfinite <- is.finite(dose[, 2])
-        dose <- dose[isFinite, 2]
-#        resp <- (cumsum(resp) / sum(resp))[isFinite]
+#        dose <- dose[isFinite, 2]
+#        resp <- (as.vector(unlist(tapply(resp, assayNo, function(x){cumsum(x) / sum(x)}))))[isFinite]
+
+#        orderDose <- order(dose0)
+#        dose1 <- dose0[orderDose]
+
+        assayNo0 <- assayNo[isFinite]
+        dose0 <- dose[, 2]
+        dose1 <- dose0[isFinite]
+        dose <- as.vector(unlist(tapply(dose1, assayNo0, function(x){unique(sort(x))})))
+        
         ## Rescaling per curve id
-        resp <- (as.vector(unlist(tapply(resp, assayNo, function(x){cumsum(x) / sum(x)}))))[isFinite]
-#        
-#        lenData <- sum(notInfinite)
-#        numObs <- lenData       
+        idList <- split(data.frame(dose0, resp), assayNo)
+#        print(idList)
+        
+        respFct <- function(idListElt)
+        {
+            doseVec <- idListElt[, 1]
+            dose2 <- unique(sort(doseVec))
+            orderDose <- order(doseVec)
+            resp1 <- tapply(idListElt[orderDose, 2], doseVec[orderDose], sum)  # obtaining one count per time interval
+            resp2 <- cumsum(resp1) / sum(resp1)
+            
+            cbind(dose2, resp2)[is.finite(dose2), , drop = FALSE]
+        }
+        drList <- lapply(idList, respFct)
+        dose <- as.vector(unlist(lapply(drList, function(x){x[, 1]})))
+        resp <- as.vector(unlist(lapply(drList, function(x){x[, 2]})))
     }
 
 #    if (identical(type, "Wadley"))
@@ -1561,26 +1596,27 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 
 
     ## Constructing an index matrix for use in ED and SI
-    hfct1 <- function(x)  # helper function
-    {
-        uniVec <- unique(x[!is.na(x)])
-        rv <- rep(NA, length(x))
-        for (i in 1:length(uniVec))
-        {
-            rv[abs(x-uniVec[i]) < 1e-12] <- i
-        }
-        rv
-    }
-    hfct2 <- function(x)
-    {
-        length(unique(x))
-    }
-#    parmMat <- t(parmMat)
-    mat1 <- t(apply(t(parmMat), 1, hfct1))  # , 1:ncol(parmMat)))
-    cnccl <- head(cumsum(ncclVec), -1)
-#    mat2 <- mat1
-    if (nrow(mat1) == 1) {mat1 <- t(mat1)}  # in case of only one curve
-    mat1[-1, ] <- mat1[-1, ] + cnccl
+# (commented out Dec 7 2011, replaced by definition below of the index matrix)
+#    hfct1 <- function(x)  # helper function
+#    {
+#        uniVec <- unique(x[!is.na(x)])
+#        rv <- rep(NA, length(x))
+#        for (i in 1:length(uniVec))
+#        {
+#            rv[abs(x-uniVec[i]) < 1e-12] <- i
+#        }
+#        rv
+#    }
+#    hfct2 <- function(x)
+#    {
+#        length(unique(x))
+#    }
+##    parmMat <- t(parmMat)
+#    mat1 <- t(apply(t(parmMat), 1, hfct1))  # , 1:ncol(parmMat)))
+#    cnccl <- head(cumsum(ncclVec), -1)
+##    mat2 <- mat1
+#    if (nrow(mat1) == 1) {mat1 <- t(mat1)}  # in case of only one curve
+#    mat1[-1, ] <- mat1[-1, ] + cnccl
 
     ## Matrix of first derivatives evaluated at the parameter estimates
     if (isDF)
@@ -1603,6 +1639,10 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     ## Parameter estimates
     coefVec <- nlsFit$par
     names(coefVec) <- parmVec
+    
+    ## Constructing the index matrix
+#    parmMat <- t(parmMat)
+    indexMat <- apply(t(parmMat), 2, function(x){match(x, coefVec)})
 
     ## Constructing data list ... where is it used?
     wName <- callDetail[["weights"]]
@@ -1632,7 +1672,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     list(parmVec, parmVecA, parmVecB), 
     diagMat, callDetail, dataSet, t(parmMat), fct, robust, estMethod, numObs - length(startVec), 
 #    anovaModel0, gofTest, 
-    sumList, NULL, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
+#    sumList, NULL, pmFct, pfFct, type, mat1, logDose, cm, deriv1Mat, 
+    sumList, NULL, pmFct, pfFct, type, indexMat, logDose, cm, deriv1Mat, 
     anName, data, wVec, 
     dataList,
     coefVec, bcVec)

@@ -4,7 +4,7 @@
 
 \docType{data}
 
-\title{Isobutylalcohol in nutrient solution in which lettuce plants were grown}
+\title{Hormesis in lettuce plants}
 
 \description{
   Data are from an experiment where isobutylalcohol was dissolved in a nutrient solution in which lettuce
@@ -57,7 +57,7 @@ plot(lettuce.m2, add = TRUE, broken = TRUE, type = "none", lty = 2)
 summary(lettuce.m2)
 
 ## Hormesis effect highly significant
-##  compare with t-test
+##  compare with t-test for the "f" parameter in the summary output)
 anova(lettuce.m1, lettuce.m2)
 
 }

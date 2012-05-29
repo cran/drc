@@ -7,9 +7,10 @@ level = 0.95, na.action = na.pass, od = FALSE, ...)
     ## Assigning dataset from object if no data frame is provided
     if (missing(newdata)) 
     {
-        predValues <- fitted(object)
+#        predValues <- fitted(object)  # not used
         newdata <- data.frame(object$data[, 1], object$data[, 3])
     } 
+    if (ncol(newdata) < 2) {newdata <- data.frame(newdata, rep(1, nrow(newdata)))}
     if (ncol(newdata) > 2) {stop("More than 2 variables in 'newdata' argument")}
     
     ## Defining dose values -- dose in the first column!   

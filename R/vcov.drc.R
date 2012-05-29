@@ -2,7 +2,7 @@
 function(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
 {
     ## Defining function for calculating variance-covariance matrix
-    contData <- identical(object$"type", "continuous")
+    contData <- identical(object$"type", "continuous") || identical(object$"type", "standard")
     if (contData)
     {
         vcovfct <- vcCont

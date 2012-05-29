@@ -11,7 +11,8 @@
     "continuous" = fitValue / df.residual(object),
     "binomial" = NA,
     "Poisson" = NA,
-    "event" = NA)
+    "event" = NA,
+    "standard" = fitValue / df.residual(object))
     
     if (resvar) 
     {

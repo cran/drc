@@ -46,13 +46,14 @@ mr.test(object1, object2, object, x, var.equal = TRUE, component = 1)
 
 \value{
   A p-value for test of the null hypothesis that the chosen mean structure is appropriate as compared
-  to the alternative mean structure provided. Ritz and Martinussen (2009) provide the details.
+  to the alternative mean structure provided (see Ritz and Martinussen (2011) for a detailed explanation).
 }
 
 \references{
-  Ritz, C and Martinussen, T. (2009) 
-  Lack-of-fit tests for assessing mean structures for continuous dose-response data, 
-  \emph{Submitted manuscript}
+  
+  Ritz, C and Martinussen, T. (2011)   
+  Lack-of-fit tests for assessing mean structures for continuous dose-response data,
+ \emph{Environmental and Ecological Statistics}, \bold{18}, 349--366
 }
 
 \author{
@@ -60,12 +61,12 @@ mr.test(object1, object2, object, x, var.equal = TRUE, component = 1)
 }
 
 \note{
-  This functionality is still under development. Currently, the null and alternative models are hardcoded!
-  In near future the function will be working for null and alternative models specified by the user.
+  This functionality is still experimental: Currently, the null and alternative models are hardcoded!
+  In the future the function will be working for null and alternative models specified by the user.
 }
 
 \seealso{
-  See also \code{\link{modelFit}} for details on the lack-of-fit test against an ANOVA model.
+  See also \code{\link{modelFit}} for details on the related lack-of-fit test against an ANOVA model.
 }
 \examples{
 

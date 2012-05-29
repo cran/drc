@@ -1,5 +1,6 @@
 "fitted.drc" <-
 function(object, ...)
 {
-    return(object$"predres"[, 1])
+    predict(object, ...)
+#    return(object$"predres"[, 1])
 }

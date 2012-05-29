@@ -84,32 +84,32 @@
 \examples{
 
 ## Data from Greco et al (1995)
-d1 <- c(0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 10, 20, 50, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5,10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 50, 50, 50, 50, 50)
-
-d2 <- c(0, 0, 0, 0.2, 0.5, 1, 2, 5, 0, 0, 0, 0, 0, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5)
-
-effect <- c(106.00, 99.20, 115.00, 79.20, 70.10, 49.00, 21.00, 3.83, 74.20, 71.50, 48.10, 30.90, 16.30, 76.30, 48.80, 44.50, 15.50, 3.21, 56.70, 47.50,
-26.80, 16.90, 3.25, 46.70, 35.60, 21.50, 11.10, 2.94, 24.80, 21.60, 17.30, 7.78, 1.84, 13.60, 11.10, 6.43, 3.34, 0.89)
-
-greco <- data.frame(d1, d2, effect)
+#d1 <- c(0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 10, 20, 50, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5,10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 50, 50, 50, 50, 50)
+#
+#d2 <- c(0, 0, 0, 0.2, 0.5, 1, 2, 5, 0, 0, 0, 0, 0, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5)
+#
+#effect <- c(106.00, 99.20, 115.00, 79.20, 70.10, 49.00, 21.00, 3.83, 74.20, 71.50, 48.10, 30.90, 16.30, 76.30, 48.80, 44.50, 15.50, 3.21, 56.70, 47.50,
+#26.80, 16.90, 3.25, 46.70, 35.60, 21.50, 11.10, 2.94, 24.80, 21.60, 17.30, 7.78, 1.84, 13.60, 11.10, 6.43, 3.34, 0.89)
+#
+#greco <- data.frame(d1, d2, effect)
 
 ## Fitting a Loewe additivity model with common maximum and lower limit 0
 #greco.m0a <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1))
 #summary(greco.m0a)
 # not working any longer
 
-greco.m0a <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)))
-summary(greco.m0a)
+#greco.m0a <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)))
+#summary(greco.m0a)
 
 ## Fitting a generalized Loewe additivity model with common maximal response
 #greco.m0b <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
-greco.m0b <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)))
-summary(greco.m0b)
+#greco.m0b <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)))
+#summary(greco.m0b)
 # with NAs
 
-## Checking the model fit
-plot(fitted(greco.m0b), residuals(greco.m0b))
+### Checking the model fit
+#plot(fitted(greco.m0b), residuals(greco.m0b))
 
 ## Fitting reduced model with lower limit c equal to 0
 #greco.m0c <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
@@ -124,8 +124,8 @@ plot(fitted(greco.m0b), residuals(greco.m0b))
 ## Fitting a generalized Loewe additivity model with different maxima
 #greco.m0d <- drm(effect~d1, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
-greco.m0d <- drm(effect~d1+d2, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,1,1)))
-summary(greco.m0d)
+#greco.m0d <- drm(effect~d1+d2, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,1,1)))
+#summary(greco.m0d)
 
 
 ## Checking the model fit
@@ -164,8 +164,8 @@ summary(greco.m0d)
 #summary(greco.m4)
 
 ## Fitting the Bliss independence model (with common baseline and maximal response)
-greco.bliss.m0 <- drm(effect~d1+d2, data=greco, fct=genBliss(fixed = c(rep(NA, 6),1,1)))
-summary(greco.bliss.m0)
+#greco.bliss.m0 <- drm(effect~d1+d2, data=greco, fct=genBliss(fixed = c(rep(NA, 6),1,1)))
+#summary(greco.bliss.m0)
 
 ## Fitting the generalized Bliss independence model (with common baseline and maximal response)
 #greco.bliss.m1 <- drm(effect~d1+d2, data=greco, fct=genBliss())

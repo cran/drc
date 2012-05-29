@@ -11,7 +11,7 @@
 \usage{
   drmc(constr = FALSE, errorm = TRUE, maxIt = 500, method="BFGS", 
   noMessage = FALSE, relTol = 1e-07, rmNA=FALSE, useD = FALSE, 
-  trace = FALSE, otrace = FALSE, warnVal = -1)
+  trace = FALSE, otrace = FALSE, warnVal = -1, dscaleThres = 1e-15, rscaleThres = 1e-15)
 }
 
 \arguments{
@@ -30,6 +30,8 @@
   \item{otrace}{logical. If TRUE the output from \code{\link{optim}} is displayed.}  
   \item{warnVal}{numeric. If equal to 0 then the warnings are stored and displayed at the end. 
     See under 'warn' in \code{\link{options}}. The default results in suppression of warnings.}
+  \item{dscaleThres}{numeric value specifying the threshold for dose scaling.}
+  \item{rscaleThres}{numeric value specifying the threshold for response scaling.}
 }
 
 \value{

@@ -96,7 +96,7 @@ fctName, fctText)
     }
 
     ## Defining the ED function
-    edfct <- function(parm, respl, reference, type, ...)
+    edfct <- function(parm, respl, reference, type, loged = FALSE, ...)
     {
         parmVec[notFixed] <- parm
         p <- EDhelper(parmVec, respl, reference, type)
@@ -112,26 +112,37 @@ fctName, fctText)
             invfp(log((100-p)/p), b, e)
         }
         
-        ## deriv(~b*(log(dose+1)^p1) + e*(log(dose+1)^p2), c("b", "c", "d", "e"), function(dose, b,c,d,e){})
-        ## note: c and d parameters need not be included
-        derfp <- function (dose, b, c, d, e) 
-        {
-            .expr2 <- log(dose + 1)
-            .expr3 <- .expr2^p1
-            .expr5 <- .expr2^p2
-            .value <- b * .expr3 + e * .expr5
-            .grad <- array(0, c(length(.value), 4L), list(NULL, c("b", "c", "d", "e")))
-            .grad[, "b"] <- .expr3
-            .grad[, "c"] <- 0
-            .grad[, "d"] <- 0
-            .grad[, "e"] <- .expr5
-            attr(.value, "gradient") <- .grad
-            .value
-        }
+#        ## deriv(~b*(log(dose+1)^p1) + e*(log(dose+1)^p2), c("b", "c", "d", "e"), function(dose, b,c,d,e){})
+#        ## note: c and d parameters need not be included
+#        derfp <- function (dose, b, c, d, e) 
+#        {
+#            .expr2 <- log(dose + 1)
+#            .expr3 <- .expr2^p1
+#            .expr5 <- .expr2^p2
+#            .value <- b * .expr3 + e * .expr5
+#            .grad <- array(0, c(length(.value), 4L), list(NULL, c("b", "c", "d", "e")))
+#            .grad[, "b"] <- .expr3
+#            .grad[, "c"] <- 0
+#            .grad[, "d"] <- 0
+#            .grad[, "e"] <- .expr5
+#            attr(.value, "gradient") <- .grad
+#            .value
+#        }
 
         EDp <- EDfct(parmVec[1], parmVec[2], parmVec[3], parmVec[4])
-        EDder <- 1 / attr(derfp(EDp, parmVec[1], parmVec[2], parmVec[3], parmVec[4]), "gradient")
-        EDder <- c(EDder[1], 0, 0, EDder[4])
+        
+        logEDp <- log(EDp+1)
+        denVal <- parmVec[1] * p1 * (logEDp)^(p1-1) + parmVec[4] * p2 * (logEDp)^(p2-1)
+        derVec <- (EDp+1) * c(logEDp^p1, logEDp^p2) / denVal
+        EDder <- c(derVec[1], 0, 0, derVec[2])
+        if (loged) 
+        {
+            EDder <- EDder / EDp
+            EDp <- log(EDp)
+        }
+        
+#        EDder <- 1 / attr(derfp(EDp, parmVec[1], parmVec[2], parmVec[3], parmVec[4]), "gradient")
+#        EDder <- c(EDder[1], 0, 0, EDder[4])
         return(list(EDp, EDder[notFixed]))
     }
     
