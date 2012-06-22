@@ -1,6 +1,6 @@
 Package: drc
-Version: 2.2-9
-Date: 2012-05-29
+Version: 2.3-0
+Date: 2012-06-22
 Title: Analysis of dose-response curves
 Author: Christian Ritz <ritz@bioassay.dk>, Jens Strebig
         <jcs@life.ku.dk>
@@ -15,6 +15,6 @@ Description: Analysis of one or multiple curves with focus on
         pharmacology, toxicology.
 License: GPL-2
 URL: http://www.r-project.org, http://www.bioassay.dk
-Packaged: 2012-06-09 22:06:38 UTC; ritz
+Packaged: 2012-06-22 08:22:26 UTC; ritz
 Repository: CRAN
-Date/Publication: 2012-06-10 07:07:58
+Date/Publication: 2012-06-22 09:04:52

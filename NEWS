@@ -1,5 +1,7 @@
 ## Changes in 'drc' 
 
+2012-06-22: vcov.drc() has been updated. 
+
 2012-05-29: ED() now also works for gompertz models (after a question from Calvin Odero).
 
 2012-05-29: The dataset germination has been included.

@@ -83,6 +83,9 @@
 
 \examples{
 
+## Note that all R lines below are commented out with one # (takes too long to compile for CRAN)
+##  but they are still mostly working fine
+
 ## Data from Greco et al (1995)
 #d1 <- c(0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 10, 20, 50, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5,10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 50, 50, 50, 50, 50)
 #

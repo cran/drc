@@ -1,6 +1,6 @@
-ff424ac742d90246f08b120ed849de2e *DESCRIPTION
+91f365cb3338a898e8e3b21af424493b *DESCRIPTION
 6c793fef045425f6ba638c42bea74bc7 *NAMESPACE
-78a3608bf10cc1aa91982212aea4e42b *NEWS
+b5cc4f4c5220e77913c7d1ee7ff9f2aa *NEWS
 b5cd9633346e3d008fccd410277e73fc *R/CRS.6.R
 035d16953facfd86418480fe02473ec7 *R/ED.drc.R
 7ab26ce2db59b695107e1ff9ab165d6b *R/ED.lin.R
@@ -31,7 +31,7 @@ b6c729ead1c40437a5ecb1c16ca26351 *R/drm.R
 0e10e01414ec868fff3daa6666040d8b *R/drmConvertParm.R
 27a20f589790d4e82f1925daefa1db31 *R/drmEMPoisson.R
 2d7b7e442dd1a5ee3457655757560391 *R/drmEMbinomial.R
-9e38cd6247bb47e640aed67eae4a1c3a *R/drmEMeventtime.R
+9e38cd6247bb47e640aed67eae4a1c3a *R/drmEMeventtime.r
 226a3c535a84412edf4befe8c2e42a5b *R/drmEMls.R
 b40e6d8da04e014c35a47fc69770cf94 *R/drmEMstandard.R
 4006a10da1fe5c8ae792084a88b355d8 *R/drmLOFbinomial.R
@@ -49,7 +49,7 @@ a18934710b1f28c79e4ed1e629ccd030 *R/findcd.R
 2b0fcf57724f4fe0b90b6531c1ce02be *R/genBliss.R
 6378743900c58461e4430f6051277715 *R/genBliss2.R
 5cf777ebbc0f5897fc720983d6b7c09f *R/genLoewe.R
-3d9f1cc40dee5c1842003e000924848e *R/genLoewe2.R
+3d9f1cc40dee5c1842003e000924848e *R/genLoewe2.r
 70d23d536fecf9fea7ef8c36062afa9c *R/genRetFct.R
 98988f6f2f34fb4f79fdcb4f437bc2d5 *R/genursa.R
 1a6397054a3a6a00f30eb8d006777793 *R/genursa2.R
@@ -108,7 +108,7 @@ a30226b18af2327c974f05a306e3501b *R/twophase.R
 a9de8dda797635b52a5e7401e6663a1c *R/ucedergreen.R
 b5a5b1b0b8fd1849818da11cacc7959b *R/update.drc.R
 69e02bbec49e40b99544e40b10b2eb64 *R/ursa.R
-04e2c8e3ae81a51b809b3609c5f61225 *R/vcov.drc.R
+86061a9d577fea073f700e1ae96a9014 *R/vcov.drc.R
 dfe6d0688dda6e1b7656d3155e2077ac *R/voelund.R
 7cb7bb5dca745da2dffd6a94d0aa2936 *R/weibull1.R
 c645a5d1698331620ed728ab7e794040 *R/weibull1.ssf.R
@@ -122,7 +122,7 @@ af0ea91c81e7767fe157037016e0fea4 *R/xlogx.R
 68c8dc5f5f5fb5074dfc0c6b9b5fe980 *data/M.bahia.rda
 69668c55196d79973d8da39b2a450186 *data/O.mykiss.rda
 641668d0b4955e51f67035c785f058a9 *data/P.promelas.rda
-63b4957cc2a8984f9aa1b94f4b0e23d6 *data/RScompetition.rda
+c03dfad24c59e14700496c478c5337b5 *data/RScompetition.rda
 f182d3ca2b4a31beae5581bf72100410 *data/S.alba.rda
 190577d3453a88a2070a15e7b72914e3 *data/S.capricornutum.rda
 4f4e4e514e565f0d35c737f50758cc73 *data/acidiq.rda
@@ -131,15 +131,15 @@ c18745f5683d4c5024174d2735af4799 *data/auxins.rda
 30c3cc66029f455e8563ae6073bdbf2d *data/beetGrowth.rda
 c303d0fcfd0ad02f769df03f4ba031d6 *data/chickweed.rda
 1495a457506562e94dd262059427b2d1 *data/chickweed0.rda
-fb320ec57a8c6b0b300cd4245bfc1986 *data/daphnids.rda
+e943ddb2a239eeb62a3c58f0d5fce1e8 *data/daphnids.rda
 d4fe1959dc4a4345ce71205298fce989 *data/deguelin.rda
-dd21ef7dc66ff95b498eea69c295d71a *data/earthworms.rda
+2c4a08b3513acf256375c9b728da2087 *data/earthworms.rda
 e1b555609598a4f9e4963ba1ddfc4501 *data/etmotc.rda
-b09196fc6dc4c73480f3808fa0fbadfc *data/finney71.rda
+52839b0e656ab80f50980f46a954e2b0 *data/finney71.rda
 fce33bb62c23b81263b172f09be7a5ff *data/germination.rda
 246343a627b5a869a4bf7955dd1067fd *data/glymet.rda
-954a63e5bd3f11f2eae0a66021044c97 *data/heartrate.rda
-674bd914807ffcd3282846e633e30942 *data/leaflength.rda
+26738ddca8be2d596cb9eb6b5914ec25 *data/heartrate.rda
+e3451703fc4f46fd55c41430919c49bf *data/leaflength.rda
 6f7b4adbed145966f70aa4aabd5e682b *data/lepidium.rda
 57c84775044c538a8f9ba7555ecdc4b3 *data/lettuce.rda
 9a016f2343f36dc84a12ec01107bd1e6 *data/mecter.rda
@@ -247,7 +247,7 @@ b4ff198553b08928acb3b10a11dd4454 *man/simDR.Rd
 adfb8be48556ae402bc4dc846a6ad19f *man/terbuthylazin.Rd
 d0e1aab2eb102580e2fbd923778ab734 *man/twophase.Rd
 4fa48dd3d8057242eee7d83ed51ad41c *man/update.drc.Rd
-95d2b22d34dea30b8ac41b41953e277e *man/ursa.Rd
+a6ec84291971321c9a44528ec1c55472 *man/ursa.Rd
 3ef8373543b4b4ea7b01c8853e4b3990 *man/vcov.drc.Rd
 0b12979cfaa57bb4123552c7ce7ea203 *man/vinclozolin.Rd
 ca302f696f8533685caea0370bcb912e *man/weibull1.Rd

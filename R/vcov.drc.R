@@ -88,10 +88,17 @@ function(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
         ## "silent" argument added after report by Xuesong Yu - 2010-03-09
         if (inherits(ch, "try-error")) 
         {
-            ch <- try(chol(0.99 * object$fit$hessian + 0.01 * diag(dim(object$fit$hessian)[1])))
+#            ch <- try(chol(0.99 * object$fit$hessian + 0.01 * diag(dim(object$fit$hessian)[1])), silent = TRUE)
+            ch <- try(chol(0.99 * scaledH + 0.01 * diag(dim(scaledH)[1])), silent = TRUE)  # 2012-06-22
         }
         ## Try regularizing if the varcov is unstable
-        if (!inherits(ch, "try-error")) {return(chol2inv(ch))}
+        if (!inherits(ch, "try-error")) 
+        {
+            return(chol2inv(ch))
+        } else {
+            numRows <- dim(scaledH)[1]
+            return(matrix(NA, numRows, numRows))
+        }
     } else {
         return(invMat)
     }
