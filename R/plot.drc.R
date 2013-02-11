@@ -42,7 +42,12 @@ legend, legendText, legendPos, cex.legend = 1)
     
 #    assayNo <- origData[, 3]
 #    assayNoOld <- as.vector(origData[, 4])  # as.vector() to remove factor structure
-    assayNoOld <- as.vector(dataList[["curveid"]])  # as.vector() to remove factor structure
+    if (!is.null(dataList[["plotid"]]))
+    {
+        assayNoOld <- dataList[["plotid"]]
+    } else {
+        assayNoOld <- as.vector(dataList[["curveid"]])  # as.vector() to remove factor structure
+    }
     numAss <- length(unique(assayNoOld))
     doPlot <- is.null(level) || any(unique(assayNoOld)%in%level)
     if (!doPlot) {stop("Nothing to plot")}

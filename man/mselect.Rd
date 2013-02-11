@@ -2,12 +2,12 @@
 
 \alias{mselect}
 
-\title{Model selection}
+\title{Dose-response model selection}
 
 \description{
-  Model selection by comparison of different models using the maximum log likelihood value, 
-  Akaike's information criterion (AIC), the estimated residual variance 
-  and the p-value from a lack-of-fit test as criteria.
+  Model selection by comparison of different models using the following criteria: the log likelihood value, 
+  Akaike's information criterion (AIC), the estimated residual standard error 
+  or the p-value from a lack-of-fit test.
 }
 
 \usage{
@@ -27,11 +27,12 @@
 }
 
 \details{
-  The maximum likelihood cannot be used for comparison unless the models are nested.
-
-  For Akaike's information criterion and the residual variance: the smaller the better and 
-  for lack-of-fit test: the larger the better. Note that the residual variance is only available for 
+  For Akaike's information criterion and the residual standard error: the smaller the better and 
+  for lack-of-fit test (against a one-way ANOVA model): the larger (the p-value) the better. Note that the residual standard error is only available for 
   continuous dose-response data.
+  
+  Log likelihood values cannot be used for comparison unless the models are nested.
+
 }
 
 \value{
@@ -48,7 +49,7 @@
 
 \examples{
 
-### Example with continuous data
+### Example with continuous/quantitative data
 ## Fitting initial four-parameter log-logistic model
 ryegrass.m1 <- drm(rootl ~ conc, data = ryegrass, fct = LL.4())
 
@@ -68,7 +69,7 @@ data = earthworms, fct = LL.2(), type = "binomial")
 
 ## Comparing 4 models
 mselect(earthworms.m1, list(W1.2(), W2.2(), LL.3()))
-# model selection based AIC or p value not working in this example!!!
+
 
 }
 \keyword{models}

@@ -1,9 +1,28 @@
 "residuals.drc" <-
-function(object, typeRes = c("working", "standardised", "studentised"), ...)
+function(object, typeRes = c("working", "standardised", "studentised"), trScale = TRUE, ...)
 {
     typeRes <- match.arg(typeRes)
     
-    rawResiduals <- object$"dataList"$"resp" - fitted(object)
+#    rawResiduals <- object$"dataList"$"resp" - fitted(object)  # changed 29/12 2012
+
+    if (trScale && (!is.null(object$"boxcox")))
+    {
+        ## Defining Box-Cox transformation function
+        bcfct <- function(x, lambda, bctol = 0.02, add)
+        # same function as in drm()
+        {
+            if (abs(lambda) > bctol)
+            {
+                return(((x + add)^lambda - 1)/lambda)
+            } else {
+                return(log(x + add))    
+            }
+        }
+        objBC <- object$"boxcox"
+        rawResiduals <- object$"dataList"$"resp" - bcfct(fitted(object), lambda = objBC$"lambda", add = objBC$"bcAdd")
+    } else {
+        rawResiduals <- object$"dataList"$"origResp" - fitted(object)
+    }
     
     if (identical(typeRes, "standardised"))
     {

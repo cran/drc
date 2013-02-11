@@ -37,9 +37,10 @@ clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, n
   Model-averaging of individual estimates is carried out as described by Buckland \emph{et al.} (1997) and 
   Kang \emph{et al.} (2000) using AIC-based weights. The two approaches differ w.r.t. the calculation of confidence
   intervals: Buckland \emph{et al.} (1997) provide an approximate variance formula under the assumption of
-  perfectly correlated estimates (so, confidence intervals will tend to be too wide), 
-  whereas Kang \emph{et al.} (2000) use the model weights to calculate confidence limits as weighted means of 
-  the confidence limits for the individual fits.
+  perfectly correlated estimates (so, confidence intervals will tend to be too wide). 
+  Kang \emph{et al.} (2000) use the model weights to calculate confidence limits as weighted means of 
+  the confidence limits for the individual fits; this procedure corresponds to using the standard error in Equation (3) 
+  given by Buckland \emph{et al.} (1997) (assuming symmetric confidence intervals based on the same percentile).
 }
 
 \value{

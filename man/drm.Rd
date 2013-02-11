@@ -10,7 +10,7 @@
 
 \usage{
   drm(formula, curveid, pmodels, weights, data = NULL, subset, fct, 
-  type = c("continuous", "binomial", "Poisson", "quantal", "event", "standard"), bcVal = NULL, bcAdd = 0, 
+  type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
   start, na.action = na.fail, robust = "mean", logDose = NULL, 
   control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 }
@@ -40,7 +40,7 @@
   \code{\link{LL.4}}, \code{\link{LL.5}} and the Weibull model \code{\link{W1.4}}. Use
   \code{\link{getMeanFunctions}} for a full list.}
      
-  \item{type}{a character string specifying the data type.}
+  \item{type}{a character string specifying the data type (parameter estimation will depend on the data type as different log likelihood function will be used).}
   
   \item{bcVal}{a numeric value specifying the lambda parameter to be used in the Box-Cox transformation.}
   

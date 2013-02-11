@@ -1,7 +1,7 @@
 "cedergreen" <- function(
 fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
 method = c("1", "2", "3", "4"), ssfct = NULL, 
-alpha)
+alpha, fctName, fctText)
 {
     ## Checking arguments
     numParm <- 5
@@ -281,8 +281,10 @@ if (FALSE)
     list(fct=fct, ssfct=ssfct, names=names, deriv1=deriv1, deriv2=deriv2,  # lowerc=lowerLimits, upperc=upperLimits, 
     edfct=edfct, maxfct=maxfct, 
 #    scaleInd=scaleInd, anovaYes=anovaYes, confct=confct,
-    name = "cedergreen",
-    text = "Cedergreen-Ritz-Streibig", 
+#    name = "cedergreen",
+#    text = "Cedergreen-Ritz-Streibig", 
+    name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
+    text = ifelse(missing(fctText), "Cedergreen-Ritz-Streibig", fctText),     
     noParm = sum(is.na(fixed)))
 
     class(returnList) <- "mllogistic"
@@ -295,7 +297,10 @@ function(names = c("b", "d", "e", "f"), ...)
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 1, ...))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 1, 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Cedergreen-Ritz-Streibig with lower limit 0 (alpha=1)",
+    ...))
 }
 
 ml3a <- CRS.4a
@@ -306,7 +311,10 @@ function(names = c("b", "d", "e", "f"), ...)
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.5, ...))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.5, 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Cedergreen-Ritz-Streibig with lower limit 0 (alpha=.5)",
+    ...))
 }
 
 ml3b <- CRS.4b
@@ -317,7 +325,10 @@ function(names = c("b", "d", "e", "f"), ...)
     ## Checking arguments
     if (!is.character(names) | !(length(names)==4)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.25, ...))
+    return(cedergreen(fixed = c(NA, 0, NA, NA, NA), names = c(names[1], "c", names[2:4]), alpha = 0.25, 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Cedergreen-Ritz-Streibig with lower limit 0 (alpha=.25)",
+    ...))
 }
 
 ml3c <- CRS.4c
@@ -328,7 +339,10 @@ function(names = c("b", "c", "d", "e", "f"), ...)
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
  
-    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 1, ...))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 1, 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Cedergreen-Ritz-Streibig (alpha=1)",
+    ...))
 }
 
 ml4a <- CRS.5a
@@ -339,7 +353,10 @@ function(names = c("b", "c", "d", "e", "f"), ...)
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.5, ...))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.5, 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Cedergreen-Ritz-Streibig (alpha=.5)",
+    ...))
 }
 
 ml4b <- CRS.5b
@@ -350,7 +367,10 @@ function(names = c("b", "c", "d", "e", "f"), ...)
     ## Checking arguments
     if (!is.character(names) | !(length(names)==5)) {stop("Not correct 'names' argument")}
 
-    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.25, ...))
+    return(cedergreen(fixed = c(NA, NA, NA, NA, NA), names = names, alpha = 0.25, 
+    fctName = as.character(match.call()[[1]]), 
+    fctText = "Cedergreen-Ritz-Streibig (alpha=.25)",
+    ...))
 }
 
 ml4c <- CRS.5c

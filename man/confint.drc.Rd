@@ -28,7 +28,7 @@
 }
 
 \details{
-  For binomial data the confidence intervals are based on the normal distribution, whereas \emph{t} distributions
+  For binomial and Poisson data the confidence intervals are based on the normal distribution, whereas \emph{t} distributions
   are used of for continuous/quantitative data.
 }
 

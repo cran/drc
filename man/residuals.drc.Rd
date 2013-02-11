@@ -2,15 +2,15 @@
 
 \alias{residuals.drc}
 
-\title{Extracting residuals from model}
+\title{Extracting residuals from the fitted dose-response model}
 
 \description{
-  'residuals' extracts residuals from an object of class 'drc'.
+  'residuals' extracts different types of residuals from an object of class 'drc'.
 }
 
 \usage{
 
-  \method{residuals}{drc}(object, typeRes = c("working", "standardised", "studentised"), ...)
+  \method{residuals}{drc}(object, typeRes = c("working", "standardised", "studentised"), trScale = TRUE, ...)
 
 }
 
@@ -19,6 +19,7 @@
   \item{typeRes}{character string specifying the type of residual to be returned: raw/working residuals, 
   residuals standardised using the estimated residual standard error,
   or studentised residuals based on the H matrix of partial derivatives of the model function.}
+  \item{trScale}{logical value indicating whether or not to return residuals on the transformed scale (in case a Box-Cox transformation was applied).}
   \item{...}{additional arguments.}
 }
 

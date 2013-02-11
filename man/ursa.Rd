@@ -61,7 +61,7 @@
   \emph{Int. Statist. Rev.}, \bold{47}, 1--12.
 
   Syracuse, K. C. and Greco, W. R. (1986) Comparison between the method of Chou and Talalay and a new method for the assessment of the combined effects
-  of drugs: A Monte-Carlo simulation study, \emph{Proceedings of the Biopharmaceutical Section of the American Statistsical Association}, 127--132.
+  of drugs: A Monte-Carlo simulation study, \emph{Proceedings of the Biopharmaceutical Section of the American Statistical Association}, 127--132.
 
   Greco, W. R. and Park H. S. and Rustum, Y. M. (1990) Application of a New Approach for the Quantitation of Drug Synergism
   to the Combination of cis-Diamminedichloroplatinum and 1-beta-D-Arabinofuranosylcytosine, \emph{Cancer Research}, \bold{50}, 5318--5327.

@@ -80,6 +80,8 @@ summary(nec.m1)
 
 plot(nec.m1)
 
+abline(v=coef(nec.m1)[4], lty=2)  # showing the estimated threshold 
+
 }
 
 \keyword{models}

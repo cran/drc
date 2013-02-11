@@ -20,7 +20,7 @@
   cedergreen(fixed = c(NA, NA, NA, NA, NA), 
   names = c("b", "c", "d", "e", "f"), 
   method = c("1", "2", "3", "4"), ssfct = NULL,
-  alpha)
+  alpha, fctName, fctText)
   
   CRS.6(fixed = c(NA, NA, NA, NA, NA, NA), 
   names = c("b","c","d","e","f","g"),
@@ -41,6 +41,8 @@
   \item{ssfct}{a self starter function to be used.}                 
   \item{alpha}{numeric value between 0 and 1, reflecting the steepness of the hormesis peak. 
   This argument needs to be specified.}
+  \item{fctName}{optional character string used internally by convenience functions.}  
+  \item{fctText}{optional character string used internally by convenience functions.}  
 }
 
 \details{

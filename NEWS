@@ -1,5 +1,31 @@
 ## Changes in 'drc' 
 
+2013-03-25: Help page for mselect() has been improved (after a comment from Sona Jesenska).
+
+2013-02-11: cedergreen() has been improved to provide meaningful names (after a suggestion from Dave Smithson).
+
+2013-01-11: plot methods works for fits obtained from drm() using separate = TRUE (after a report from Thomas Kroeber).
+
+2012-12-29: Model functions gaussian() and lgaussian() have been included (after a suggestion from Ismael Rodea). The method 
+for residuals has been extended to provide residuals on the transformed scale in case a Box-cox transformation
+was applied.
+
+2012-12-14: Help page for maED() has been extended.
+
+2012-11-19: Small bug in drm() related to starting values for event-time models resolved. 
+
+2012-10-22: hatvalues and cooks.distance methods have been added (after a question from Sunniva Förster). 
+noEffect() function included for testing the dose-response model against a simpler model with no dose effect 
+(after a suggestion by Ryan Hechinger).
+
+2012-09-08: backfit() function added (after a suggestion by Keld Sorensen).
+
+2012-08-25: Poisson models can be fitted weights (after a suggestion by Marie Laure Delignette-Muller).
+
+2012-08-20: Help page of NEC() has been updated.
+
+2012-07-04: Small error in plot.drc for event times fixed (after report from Christian Andreasen).
+
 2012-06-22: vcov.drc() has been updated. 
 
 2012-05-29: ED() now also works for gompertz models (after a question from Calvin Odero).

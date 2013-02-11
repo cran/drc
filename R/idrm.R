@@ -26,12 +26,15 @@
     retList <- fitList[[1]]
     if (oneFunction)
     {
+        dataMat <- fitList[[1]]$"data"   
+        tdataList <- fitList[[1]]$"dataList"   
+        
         parmMat <- fitList[[1]]$"parmMat"
         nlsFit <- fitList[[1]]$"nlsFit"
         
         parNames <- fitList[[1]]$"parNames"
         numPar <- length(parNames[[1]])        
-        parNames[[3]] <- rep(uniCur[i], numPar)
+        parNames[[3]] <- rep(uniCur[i], numPar) 
                
         if (numCur > 1)
         {
@@ -40,16 +43,23 @@
             pnList[[1]] <- parNames
             pnList[[1]][[3]] <- rep(uniCur[1], numPar)
             
-            
             for (i in 2:numCur)
             {
                 parmMat <- cbind(parmMat, fitList[[i]]$"parmMat")
+                dataMat <- rbind(dataMat, fitList[[i]]$"data")  
+                tdataList <- mapply(c, tdataList, fitList[[i]]$"dataList", SIMPLIFY = FALSE)              
                 nlsFit[[i]] <- fitList[[i]]$"nlsFit"
                 pnList[[i]] <- fitList[[i]]$"parNames"
                 pnList[[i]][[3]] <- rep(uniCur[i], numPar)
             }
         }
+        retList$"dataList" <- tdataList 
+        retList$"dataList"$"names" <- fitList[[1]]$"dataList"$"names"        
+        retList$"data" <- dataMat 
         retList$"parmMat" <- parmMat 
+        
+        plotFct <- function(x) {matrix(unlist(lapply(fitList, function(y)y$"curve"[[1]](x))), ncol = numCur)}
+        retList$"curve" <- list(plotFct, fitList[[1]]$"curve"[[2]])
 
         bVec <- as.vector(unlist(lapply(pnList, function(x){x[[2]]})))
         cVec <- as.vector(unlist(lapply(pnList, function(x){x[[3]]}))) 

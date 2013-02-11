@@ -1,6 +1,6 @@
 "drm" <- function(
 formula, curveid, pmodels, weights, data = NULL, subset, fct, 
-type = c("continuous", "binomial", "Poisson", "quantal", "event", "standard"), bcVal = NULL, bcAdd = 0, 
+type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
 start, na.action = na.fail, robust = "mean", logDose = NULL, 
 control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 {
@@ -732,16 +732,20 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 # Not sure this indicator is needed?! Only used once below!
 # Note is.finite() only works with vectors!
 # Commented out 2010-12-13   
-#        isfi <- is.finite(dose)  # removing infinite dose values
+        isfi <- is.finite(dose)  # removing infinite dose values
     
         if (identical(type, "event"))
         {
             dr2 <- doseresp[, 3]
-            doseresp[, 3] <- cumsum(dr2) / sum(dr2)
-#            doseresp[!is.finite(doseresp[, 2]), 1] <- NA
-            isFinite <- is.finite(doseresp[, 2])              
-            doseresp <- doseresp[isFinite, c(1, 3)]
-            names(doseresp) <- c("x", "y") 
+#            print(doseresp[, 2:3])
+            isFinite <- is.finite(doseresp[, 2])
+            respVec <- rep(NA, length(dr2))
+            respVec[isFinite] <- cumsum(dr2[isFinite]) / sum(dr2)
+#            doseresp[, 3] <- cumsum(dr2[isFinite]) / sum(dr2)
+##            doseresp[!is.finite(doseresp[, 2]), 1] <- NA              
+#            doseresp <- doseresp[isFinite, c(1, 3)]
+#            names(doseresp) <- c("x", "y") 
+            doseresp <- (data.frame(x = doseresp[, 1], y = respVec))[isFinite, ]
 #            print(doseresp)           
         } else {
             isFinite <- is.finite(doseresp[, 2])
@@ -1029,16 +1033,16 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     } 
     if (identical(type, "Poisson"))
     {
-        estMethod <- drmEMPoisson(dose, resp, multCurves2, startVecSc, doseScaling = doseScaling)
+        estMethod <- drmEMPoisson(dose, resp, multCurves2, startVecSc, weightsVec = wVec, doseScaling = doseScaling)
     }
     if (identical(type, "event"))
     {
         estMethod <- drmEMeventtime(dose, resp, multCurves2, doseScaling = doseScaling)
     }  
-    if (identical(type, "standard"))
-    {
-        estMethod <- drmEMstandard(dose, resp, multCurves2, weights, doseScaling = doseScaling)
-    }      
+#    if (identical(type, "standard"))
+#    {
+#        estMethod <- drmEMstandard(dose, resp, multCurves2, doseScaling = doseScaling)
+#    }      
 #    if (identical(type, "Wadley"))
 #    {
 #        estMethod <- drmEMWadley(dose, resp, multCurves2, doseScaling = doseScaling)
@@ -1259,8 +1263,15 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
             cbind(dose2, resp2)[is.finite(dose2), , drop = FALSE]
         }
         drList <- lapply(idList, respFct)
-        dose <- as.vector(unlist(lapply(drList, function(x){x[, 1]})))
+        lapList <- lapply(drList, function(x){x[, 1]})
+        dose <- as.vector(unlist(lapList))
         resp <- as.vector(unlist(lapply(drList, function(x){x[, 2]})))
+        
+        listCI <- split(assayNoOld[isFinite], assayNoOld[isFinite])
+        lenVec <- as.vector(unlist(lapply(lapList, function(x){length(x)})))
+        plotid <- as.factor(as.vector(unlist(mapply(function(x,y){x[1:y]}, listCI, lenVec))))
+    } else {
+        plotid <- NULL
     }
 
 #    if (identical(type, "Wadley"))
@@ -1658,7 +1669,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     if (identical(type, "event"))
     {
         dataList <- list(dose = dose, origResp = resp, weights = wVec[isFinite], 
-        curveid = assayNoOld[isFinite], resp = resp,
+        curveid = assayNoOld[isFinite], plotid = plotid, resp = resp,
         names = list(dName = varNames[1], orName = varNames[2], wName = wName, cNames = anName, rName = ""))
     }
 

@@ -1,5 +1,5 @@
 "drmEMPoisson" <- 
-function(dose, resp, multCurves, startVec, doseScaling = 1)
+function(dose, resp, multCurves, startVec, weightsVec, doseScaling = 1)
 {
 
     ## Finding indices for doses that give contribution to likelihood function
@@ -9,7 +9,7 @@ function(dose, resp, multCurves, startVec, doseScaling = 1)
     ## Defining the objective function                
     opfct <- function(c)  # dose, resp and weights are fixed
     {                      
-        lambda <- multCurves(dose / doseScaling, c)
+        lambda <- weightsVec * multCurves(dose / doseScaling, c)
         return( -sum(-lambda + resp*log(lambda)))
     }    
 
