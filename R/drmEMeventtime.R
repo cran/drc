@@ -8,7 +8,8 @@ function(dose, resp, multCurves, doseScaling = 1)
         dose2 <- dose[, 2]
 #        IsFinite <- is.finite(dose2)
 #        Fend <- rep(1, length(dose2))
-        Fend <- multCurves(dose[, 2] / doseScaling, c)
+#        Fend <- multCurves(dose[, 2] / doseScaling, c)
+        Fend <- multCurves(dose2 / doseScaling, c)
         Fend[!is.finite(dose2)] <- 1 
         return( -sum(resp * log(Fend - Fstart)) )  
         # minus in front of sum() as maximization is done as minimization

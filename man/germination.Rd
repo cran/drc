@@ -39,8 +39,8 @@
 %}
 
 \references{
-  Ritz, C., Pipper, C. B. and Streibig, J. C. (2012) Analysis of germination data from agricultural experiments,
-  \emph{Submitted}
+  Ritz, C., Pipper, C. B. and Streibig, J. C. (2013) Analysis of germination data from agricultural experiments,
+  \emph{European Journal of Agronomy}, \bold{45}, 1--6
 }
 
 \seealso{Analysis of a single germination curve is shown for \code{\link{chickweed}}.}
@@ -50,16 +50,22 @@
 ## Note that all R lines below are commented out with one # (takes too long to compile for CRAN)
 ##  but they are still working fine
 
-## Fitting two-parameter log-logistic curves to each combination of species and temperature (upper limit fixed at 1)
-## Note: Rows 24 and 62 are omitted from the dataset (all mungbean seeds germinated and thus no right-censoring in this case)
-#germLL.2 <- drm(germinated~start+end, species:factor(temp), data=germination[c(1:23, 25:61, 63:192), ], fct=LL.2(), type="event")
+## Fitting two-parameter log-logistic curves to each combination of species and temperature 
+##  (upper limit fixed at 1)
+## Note: Rows 24 and 62 are omitted from the dataset (all mungbean seeds germinated 
+##  and thus no right-censoring in this case)
+#germLL.2 <- drm(germinated~start+end, species:factor(temp), 
+#data=germination[c(1:23, 25:61, 63:192), ], fct=LL.2(), type="event")
 
 ## Fitting two-parameter log-logistic curves to each combination of species and temperature
-## Note: the argument start provides sensible initial parameter values for estimation procedure (is needed occasionally)
+## Note: the argument start provides sensible initial parameter values for estimation 
+##  procedure (is needed occasionally)
 ##  (initial values were obtained from the model fit germLL.2)
 ## Note also: the argument "upper" ensures that the upper limit cannot exceed 1
-##  (however, no restrictions are imposed on the two remaining parameters (as indicated by an infinite value)
-#germLL.3 <- drm(germinated~start+end, species:factor(temp), data=germination[c(1:23, 25:61, 63:192), ], fct=LL.3(), type="event",
+## (however, no restrictions are imposed on the two remaining parameters 
+## (as indicated by an infinite value)
+#germLL.3 <- drm(germinated~start+end, species:factor(temp), 
+#data=germination[c(1:23, 25:61, 63:192), ], fct=LL.3(), type="event",
 #start=c(coef(germLL.2)[1:13], rep(0.7,13), coef(germLL.2)[14:26]), 
 #upper = c(rep(Inf, 13), rep(1, 13), rep(Inf, 13)))
 
@@ -95,7 +101,8 @@
 #ylab="Proportion germinated",
 #main="Rice",   
 #pch=2:6,
-#legendPos=c(3, 1.05), legendText=c(expression(16*degree), expression(22*degree), expression(28*degree), expression(34*degree), expression(40*degree)))
+#legendPos=c(3, 1.05), legendText=c(expression(16*degree), expression(22*degree), 
+#expression(28*degree), expression(34*degree), expression(40*degree)))
 
 ## Plot for wheat
 #plot(germLL.3, log="", ylim=c(0, 1), xlim=c(0, 20), 
@@ -105,7 +112,8 @@
 #ylab="Proportion germinated", 
 #main="Wheat",
 #legendPos=c(3, 1.05), 
-#legendText=c(expression(10*degree), expression(16*degree), expression(22*degree), expression(28*degree), expression(34*degree), expression(40*degree)))
+#legendText=c(expression(10*degree), expression(16*degree), expression(22*degree), 
+#expression(28*degree), expression(34*degree), expression(40*degree)))
 
 }
 \keyword{datasets}

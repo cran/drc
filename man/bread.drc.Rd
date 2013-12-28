@@ -38,7 +38,7 @@
 
 %\note{}
 
-\seealso{For other applications see \code{\link[sandwich]{sandwich}}.}
+%\seealso{For other applications see \code{\link[sandwich]{sandwich}}.}
 
 \examples{
 

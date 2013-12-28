@@ -11,7 +11,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     type <- match.arg(type)
     
     ## Loading MASS
-    require(MASS, quietly = TRUE)  # used for boxcox and ginv
+#    require(MASS, quietly = TRUE)  # used for boxcox and ginv
 
     ## Setting na.action option
     options(na.action = deparse(substitute(na.action)))
@@ -777,8 +777,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         }
 #        print(startMat)
           
-        startMat2 <- matrix(unlist(lapply(split(doseresp, assayNo[isFinite]), ssFct)), nrow = numAss, byrow = TRUE)
-        upperPos2 <- c(rep(1:numNames, numAss))[t(is.na(startMat))]
+#        startMat2 <- matrix(unlist(lapply(split(doseresp, assayNo[isFinite]), ssFct)), nrow = numAss, byrow = TRUE)
+#        upperPos2 <- c(rep(1:numNames, numAss))[t(is.na(startMat))]
 #        print(upperPos2)
 #        print(startMat2)
   

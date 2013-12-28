@@ -42,7 +42,8 @@ pmodels = list(~1,~sex), type = "binomial")
 summary(Hv.m1)
 
 ## Fitting the same model as in Venables and Riply (2002)
-Hv.m2 <- glm(cbind(numdead, total-numdead)~sex+I(log2(dose))-1, data = H.virescens, family = binomial)
+Hv.m2 <- glm(cbind(numdead, total-numdead)~sex+I(log2(dose))-1, data = H.virescens, 
+family = binomial)
 
 ## Comapring the fits
 logLik(Hv.m1)

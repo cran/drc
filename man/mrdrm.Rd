@@ -11,8 +11,9 @@
 }
 
 \usage{
-  mrdrm(object1, object2, lambda = (0:10)/10, criterion = c("gcv", "lcv"), critFct = c("ls", "ll"), 
-  ls.weights = c("nonpar", "ad hoc", "none", "par", "response"), fixedEnd = FALSE, unitScale = FALSE)
+  mrdrm(object1, object2, lambda = (0:10)/10, criterion = c("gcv", "lcv"), 
+  critFct = c("ls", "ll"), ls.weights = c("nonpar", "ad hoc", "none", "par", "response"), 
+  fixedEnd = FALSE, unitScale = FALSE)
 }
 
 \arguments{
@@ -91,7 +92,8 @@ deguelin.mr2b3
 
 
 ## daphnids dataset at 24 hours
-daphnids1.m1<-drm(no/total~dose, weights = total, data = daphnids[1:8,], fct = LL.2(), type = "binomial")
+daphnids1.m1<-drm(no/total~dose, weights = total, data = daphnids[1:8,], 
+fct = LL.2(), type = "binomial")
 daphnids1.m2<-loess(no/total~dose, data = daphnids[1:8,], degree = 1)
 
 daphnids1.mr<-mrdrm(daphnids1.m1, daphnids1.m2)
@@ -101,7 +103,8 @@ plot(daphnids1.m1)
 plot(daphnids1.mr, add=TRUE, type="none", lty=2)
 
 ## daphnids dataset at 48 hours
-daphnids2.m1<-drm(no/total~dose, weights = total, data = daphnids[9:16,], fct = LL.2(), type = "binomial")
+daphnids2.m1<-drm(no/total~dose, weights = total, data = daphnids[9:16,], 
+fct = LL.2(), type = "binomial")
 daphnids2.m2<-loess(no/total~dose, data = daphnids[9:16,], degree = 1)
 
 daphnids2.mr<-mrdrm(daphnids2.m1, daphnids2.m2)

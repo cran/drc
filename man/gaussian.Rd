@@ -13,7 +13,8 @@
 }
 
 \usage{
-    gaussian(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), method = c("1", "2", "3", "4"), ssfct = NULL, fctName, fctText, loge = FALSE)
+    gaussian(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", "d", "e", "f"), 
+    method = c("1", "2", "3", "4"), ssfct = NULL, fctName, fctText, loge = FALSE)
     
     lgaussian(fixed = c(NA, NA, NA, NA, NA), names = c("b", "c", 
     "d", "e", "f"), method = c("1", "2", "3", "4"), ssfct = NULL, 

@@ -36,7 +36,8 @@
 leaflength.crs4c1 <- drm(DW ~ Dose, data = leaflength, fct = CRS.4c())
 plot(fitted(leaflength.crs4c1), residuals(leaflength.crs4c1))
 
-leaflength.crs4c2 <- boxcox(drm(DW ~ Dose, data = leaflength, fct = CRS.4c()), method = "anova", plotit = FALSE)
+leaflength.crs4c2 <- boxcox(drm(DW ~ Dose, data = leaflength, fct = CRS.4c()), 
+method = "anova", plotit = FALSE)
 summary(leaflength.crs4c2)
 
 ## Plottinf fitted curve and original data

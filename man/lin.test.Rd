@@ -13,7 +13,8 @@
 }
 
 \usage{
-  lin.test(object, noksSim = 20, seed = 20070325, plotit = TRUE, log = "", bp = 0.01, xlab, ylab, ylim, ...)
+  lin.test(object, noksSim = 20, seed = 20070325, plotit = TRUE, 
+  log = "", bp = 0.01, xlab, ylab, ylim, ...)
 }
 
 \arguments{

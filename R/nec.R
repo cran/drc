@@ -26,7 +26,7 @@ fctName, fctText)
     ## Defining self starter function
     ssfct <- function(dframe)
     {  
-        LLinit <- drc:::llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)  # drc::: not needed      
+        LLinit <- llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)  # drc::: not needed      
         c(LLinit[1:3], LLinit[3]/3)[is.na(fixed)]
     }     
       

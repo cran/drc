@@ -16,7 +16,7 @@ function(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
 #        summary(object)$"varMat"
         if (!is.null(object$"objList"))
         {
-            require(magic, quietly = TRUE)
+#            require(magic, quietly = TRUE)
 
             if ((contData) && (pool))
             {
@@ -66,7 +66,7 @@ function(object, ..., corr = FALSE, od = FALSE, pool = TRUE, unscaled = FALSE)
         }
         if (!is.null(object$"objList"))
         {
-            require(magic, quietly = TRUE)        
+#            require(magic, quietly = TRUE)        
             do.call("adiag", lapply(object$"objList", corrFct)) 
         } else {
             corrFct(object)

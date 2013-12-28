@@ -72,7 +72,7 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     degfree <- df.residual(object)  
     rowIndex <- 1
     
-    require(gtools, quietly = TRUE)
+#    require(gtools, quietly = TRUE)
     pairsMat <- combinations(lenEB, 2)  # canonical "2" as pairs are considered
     percMat <- combinations(lenPV, 2)  # canonical "2" as pairs are considered
     if (reverse)

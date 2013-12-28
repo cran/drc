@@ -10,7 +10,8 @@
 }
 
 \usage{
-isobole(object1, object2, exchange = 1, cifactor = 2, ename = "e", xaxis = "100", xlab, ylab, xlim, ylim, ...)
+isobole(object1, object2, exchange = 1, cifactor = 2, ename = "e", 
+xaxis = "100", xlab, ylab, xlim, ylim, ...)
 }
 
 \arguments{

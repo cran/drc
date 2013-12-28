@@ -12,12 +12,14 @@
 
 \usage{
   
-  \method{plot}{drc}(x, ..., add = FALSE, level = NULL, type = c("average", "all", "bars", "none", "obs"), 
+  \method{plot}{drc}(x, ..., add = FALSE, level = NULL, 
+  type = c("average", "all", "bars", "none", "obs"), 
   broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100, 
   log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
   yt = NULL, ytlab = NULL, ylab, ylim,
   cex, cex.axis = 1, col = FALSE, lty, pch, 
-  legend, legendText, legendPos, cex.legend = 1)
+  legend, legendText, legendPos, cex.legend = 1,
+  normal = FALSE, normRef = 1)
 
   \method{plot}{mrdrc}(x, ..., pava = FALSE)  
 }
@@ -32,7 +34,7 @@
   5 options:  "average" (averages and fitted curve(s); default), 
   "none" (only the fitted curve(s)), "obs" (only the data points), 
   "all" (all data points and fitted curve(s)) and 
-  "bars" (averages and fitted curve(s) with model-based error ).}
+  "bars" (averages and fitted curve(s) with model-based standard errors (see Details)).}
   \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
   (using functionality in the CRAN package 'plotrix').}
   \item{bp}{numeric value specifying the break point below which the dose is zero (the amount of stretching on 
@@ -77,22 +79,30 @@
   \item{lty}{a numeric vector specifying the line types.}
   \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
   \item{pava}{logical. If TRUE the fit is monotonised using pool adjacent violators algorithm.}  
+  \item{normal}{logical. If TRUE the plot of the normalized data and fitted curves are shown
+  (for details see Weimer et al. (2012) for details).} 
+  \item{normRef}{numeric specifying the reference for the normalization (default is 1).}  
 }
 
 \details{
-   \code{plot.mrdrc} takes the same arguments as \code{plot.drc}.
-
-  Suitable labels are automatically provided.
-  
   The use of \code{xlim} allows changing the range of the x axis, extrapolating the fitted dose-response curves. 
   Note that changing the range on the x axis may also entail a change of the range on the y axis. Sometimes
   it may be useful to extend the upper limit on the y axis (using \code{ylim}) in order to fit a legend into 
   the plot.
   
   See \code{\link{colors}} for the available colours.
+
+  Suitable labels are automatically provided.
   
   The arguments \code{broken} and \code{bcontrol} rely on the function \code{link{axis.break}} with arguments 
   \code{style} and \code{brw} in the package \code{plotrix}.
+  
+  The model-based standard errors used for the error bars are calculated as the fitted value plus/minus 
+  the estimated error times the 97.5\% quantile in the t distribution with degrees of freedom equal to the residual degrees of freedom for the model 
+  (or using a standard normal distribution in case of binomial and poisson data). The standard errors are obtained using the predict method 
+  with the argument interval = "confidence".
+  
+  \code{plot.mrdrc} takes the same arguments as \code{plot.drc}.
 }
 
 \value{
@@ -103,6 +113,12 @@
 \author{
   Christian Ritz and Jens C. Streibig
   Contributions from Xiaoyan Wang  
+}
+
+\references{
+  Weimer, M., Jiang, X., Ponta, O., Stanzel, S., Freyberger, A., Kopp-Schneider, A. (2012)
+  The impact of data transformations on concentration-response modeling.
+  \emph{Toxicology Letters}, \bold{213}, 292--298.
 }
 
 %\note{ ~~further notes~~ }

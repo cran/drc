@@ -11,10 +11,12 @@
 
 \usage{
 
-  \method{predict}{drc}(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"), 
+  \method{predict}{drc}(object, newdata, se.fit = FALSE, 
+  interval = c("none", "confidence", "prediction"), 
   level = 0.95, na.action = na.pass, od = FALSE, ...)
 
-  \method{predict}{mrdrc}(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"), 
+  \method{predict}{mrdrc}(object, newdata, se.fit = FALSE, 
+  interval = c("none", "confidence", "prediction"), 
   level = 0.95, pava = FALSE, ...)
 }
 

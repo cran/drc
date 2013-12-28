@@ -11,8 +11,9 @@
 }
 
 \usage{
-maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), linreg = FALSE,
-clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, na.rm = FALSE, extended = FALSE)
+maED(object, fctList = NULL, respLev, interval = c("none", "buckland", "kang"), 
+linreg = FALSE, clevel = NULL, level = 0.95, type = c("relative", "absolute"), 
+display = TRUE, na.rm = FALSE, extended = FALSE)
 }
 
 \arguments{
@@ -72,22 +73,27 @@ clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, n
 ryegrass.m1 <- drm(rootl~conc, data = ryegrass, fct = LL.4())
   
 ## Comparing models (showing the AIC values)  
-mselect(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)))
+mselect(ryegrass.m1, 
+list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)))
   
 ## Doing the actual model-averaging  
-maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+maED(ryegrass.m1, 
+list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90))  
   
 ## With confidence intervals according to Buckland et al. (1997)  
-maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+maED(ryegrass.m1, 
+list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90), "buckland")
 
 ## With confidence intervals according to Kang et al. (2000)
-maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+maED(ryegrass.m1, 
+list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90), "kang")
 
 ## Comparing to model-averaged ED values with simple linear regression included
-maED(ryegrass.m1, list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
+maED(ryegrass.m1, 
+list(LL.5(), LN.4(), W1.4(), W2.4(), FPL.4(-1,1), FPL.4(-2,3), FPL.4(-0.5,0.5)), 
 c(10, 50, 90), interval = "buckland", linreg = TRUE)
 
 

@@ -17,9 +17,10 @@
   reference = c("control", "upper"), type = c("relative", "absolute"), lref, uref,
   bound = TRUE, od = FALSE, display = TRUE, pool = TRUE, logBase = NULL, ...)
   
-  \method{ED}{mrdrc}(object, respLev, interval = c("none", "approximate", "bootstrap"), level = 0.95, 
-  method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, display = TRUE, lower, upper,
-  intType = c("confidence", "prediction"), minmax = c("response", "dose"), n = 1000, seedVal = 200810311, ...) 
+  \method{ED}{mrdrc}(object, respLev, interval = c("none", "approximate", "bootstrap"), 
+  level = 0.95, method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, 
+  display = TRUE, lower, upper, intType = c("confidence", "prediction"), 
+  minmax = c("response", "dose"), n = 1000, seedVal = 200810311, ...) 
 }
 
 \arguments{

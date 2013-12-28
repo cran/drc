@@ -23,23 +23,34 @@
 }
 
 \usage{
-  ursa(fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), ssfct = NULL)
+  ursa(fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e1", "f"), 
+  ssfct = NULL)
   
-  genursa(fixed = rep(NA, 13), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3"), ssfct = NULL)
+  genursa(fixed = rep(NA, 13), 
+  names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3"), 
+  ssfct = NULL)
   
-  actimL(fixed = rep(NA, 14), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3", "g"), ssfct = NULL)
+  actimL(fixed = rep(NA, 14), names = 
+  c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2", "e3", "f3", "b3", "c3", "g"), 
+  ssfct = NULL)
   
-  genLoewe(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
+  genLoewe(fixed = rep(NA, 8), names = 
+  c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
   
-  genLoewe2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
+  genLoewe2(fixed = rep(NA, 9), names = 
+  c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
   
-  iceLoewe.1(fixed = rep(NA, 7), names = c("b1", "b2", "c", "d", "e1", "e2", "f"), ssfct = NULL)
+  iceLoewe.1(fixed = rep(NA, 7), names = 
+  c("b1", "b2", "c", "d", "e1", "e2", "f"), ssfct = NULL)
   
-  iceLoewe2.1(fixed = rep(NA, 8), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f"), ssfct = NULL)
+  iceLoewe2.1(fixed = rep(NA, 8), names = 
+  c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f"), ssfct = NULL)
   
-  genBliss(fixed = rep(NA, 8), names = c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
+  genBliss(fixed = rep(NA, 8), names = 
+  c("b1", "b2", "c", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
 
-  genBliss2(fixed = rep(NA, 9), names = c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
+  genBliss2(fixed = rep(NA, 9), names = 
+  c("b1", "b2", "c1", "c2", "d", "e1", "e2", "f1", "f2"), ssfct = NULL)
 }
 
 \arguments{
@@ -87,17 +98,22 @@
 ##  but they are still mostly working fine
 
 ## Data from Greco et al (1995)
-#d1 <- c(0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 10, 20, 50, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5,10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 50, 50, 50, 50, 50)
+#d1 <- c(0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 10, 20, 50, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5,
+#10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 50, 50, 50, 50, 50)
 #
-#d2 <- c(0, 0, 0, 0.2, 0.5, 1, 2, 5, 0, 0, 0, 0, 0, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5)
+#d2 <- c(0, 0, 0, 0.2, 0.5, 1, 2, 5, 0, 0, 0, 0, 0, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 
+#1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5, 0.2, 0.5, 1, 2, 5)
 #
-#effect <- c(106.00, 99.20, 115.00, 79.20, 70.10, 49.00, 21.00, 3.83, 74.20, 71.50, 48.10, 30.90, 16.30, 76.30, 48.80, 44.50, 15.50, 3.21, 56.70, 47.50,
-#26.80, 16.90, 3.25, 46.70, 35.60, 21.50, 11.10, 2.94, 24.80, 21.60, 17.30, 7.78, 1.84, 13.60, 11.10, 6.43, 3.34, 0.89)
+#effect <- c(106.00, 99.20, 115.00, 79.20, 70.10, 49.00, 21.00, 3.83, 74.20, 71.50, 
+#48.10, 30.90, 16.30, 76.30, 48.80, 44.50, 15.50, 3.21, 56.70, 47.50,
+#26.80, 16.90, 3.25, 46.70, 35.60, 21.50, 11.10, 2.94, 24.80, 21.60, 17.30, 7.78, 
+#1.84, 13.60, 11.10, 6.43, 3.34, 0.89)
 #
 #greco <- data.frame(d1, d2, effect)
 
 ## Fitting a Loewe additivity model with common maximum and lower limit 0
-#greco.m0a <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1))
+#greco.m0a <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,1,1)),
+#pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1))
 #summary(greco.m0a)
 # not working any longer
 
@@ -105,7 +121,8 @@
 #summary(greco.m0a)
 
 ## Fitting a generalized Loewe additivity model with common maximal response
-#greco.m0b <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+#greco.m0b <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA)), 
+#pmodels=list(~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
 #greco.m0b <- drm(effect~d1+d2, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)))
 #summary(greco.m0b)
@@ -115,7 +132,8 @@
 #plot(fitted(greco.m0b), residuals(greco.m0b))
 
 ## Fitting reduced model with lower limit c equal to 0
-#greco.m0c <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+#greco.m0c <- drm(effect~d1, data=greco, fct=genLoewe(fixed=c(NA,NA,0,NA,NA,NA,NA,NA)), 
+#pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
 ## Comparing models by means of an F-test
 #anova(greco.m0c, greco.m0b)
@@ -125,7 +143,8 @@
 
 ## Below commented out to make faster check on CRAN
 ## Fitting a generalized Loewe additivity model with different maxima
-#greco.m0d <- drm(effect~d1, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
+#greco.m0d <- drm(effect~d1, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,NA,NA)), 
+#pmodels=list(~1,~1,~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1,~1))
 
 #greco.m0d <- drm(effect~d1+d2, data=greco, fct=genLoewe2(fixed=c(NA,NA,NA,NA,NA,NA,NA,1,1)))
 #summary(greco.m0d)
@@ -144,11 +163,14 @@
 #summary(greco.m1)
 
 ## Fitting the URSA model using values from Greco et al (1995) (p. 364)
-#greco.m2 <- drm(effect~d1+d2, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), start=c(-1.05, -2.04,95.1,11.1,1.07,0.52))
+#greco.m2 <- drm(effect~d1+d2, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), 
+#start=c(-1.05, -2.04,95.1,11.1,1.07,0.52))
 # same fit as above
 
 ## Fitting with weights
-#greco.m2b <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), weights=1/residuals(greco.m1)^2, start=coef(greco.m1))
+#greco.m2b <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), 
+#pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), weights=1/residuals(greco.m1)^2, 
+#start=coef(greco.m1))
 #summary(greco.m2b)
 
 ## Adjusting for variance heterogeneity
@@ -158,8 +180,10 @@
 #summary(greco.m3)
 
 ## Getting closer to Greco's estimates
-#greco.m4<-drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0)  # not perfect
-#greco.m4 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0, 
+#greco.m4<-drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), 
+#pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0)  # not perfect
+#greco.m4 <- drm(effect~d1, data=greco, fct=ursa(fixed=c(NA,NA,0,NA,NA,NA,NA)), 
+#pmodels=list(~1,~1,~1,~I(1/d1)-1,~I(1/d2)-1,~1), bcVal=0, 
 #start=coef(greco.m3))
 
 #plot(fitted(greco.m4), residuals(greco.m4))  # better!
@@ -198,10 +222,12 @@
 
 
 ## Fitting the actimL model (needs some tweaking with the starting values)
-#greco.actimL.m1 <- drm(effect~d1+d2, data=greco, fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))))
+#greco.actimL.m1 <- drm(effect~d1+d2, data=greco, 
+#fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))))
 # now works (July 19 2011)
 
-#greco.actimL.m2 <- drm(effect~d1+d2, data=greco, fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))), start=coef(greco.actimL.m1)+rnorm(11,0,0.1))
+#greco.actimL.m2 <- drm(effect~d1+d2, data=greco, 
+#fct=actimL(fixed=c(rep(NA,7),1,1,NA,1,rep(NA,3))), start=coef(greco.actimL.m1)+rnorm(11,0,0.1))
 ## perhaps some more tweaking with the starting values is needed to get the standard errors
 
 #summary(greco.actimL.m2)

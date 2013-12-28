@@ -33,7 +33,8 @@ fctName, fctText)
     ssfct <- function(dframe)
     {  
 #        first4 <- drc:::llogistic.ssf(fixed = fixed[1:4])(dframe)  # drc::: not need
-        first4 <- drc:::llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)    
+#        first4 <- drc:::llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)    
+        first4 <- llogistic.ssf(fixed = c(NA, NA, NA, NA, 1))(dframe)    
     
 #    print(c(first4[1:2], first4[3]/2, first4[4]/3, first4[1], first4[3]/2, first4[4])[is.na(fixed)])
 

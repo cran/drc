@@ -52,7 +52,8 @@
 ## Incorrect analysis using a logistic regression model
 ## (treating event times as binomial data)
 ## The argument "type" specifies that binomial data are supplied 
-chickweed.m0a <- drm(count/200 ~ time, weights = rep(200, 34), data = chickweed0, fct = LL.3(), type = "binomial")
+chickweed.m0a <- drm(count/200 ~ time, weights = rep(200, 34), 
+data = chickweed0, fct = LL.3(), type = "binomial")
 summary(chickweed.m0a) # showing a summmary of the model fit (including parameter estimates)
 
 ## Incorrect analysis based on nonlinear regression
@@ -78,9 +79,11 @@ summary(chickweed.m1)  # showing a summmary of the model fit (including paramete
 ED(chickweed.m1, c(10, 50, 90))
 
 ## Plotting data and fitted regression curve
-plot(chickweed.m1, xlab = "Time (hours)", ylab = "Proportion germinated", xlim=c(0, 340), ylim=c(0, 0.25), log="", lwd=2, cex=1.2)  
+plot(chickweed.m1, xlab = "Time (hours)", ylab = "Proportion germinated", 
+xlim=c(0, 340), ylim=c(0, 0.25), log="", lwd=2, cex=1.2)  
 ## Adding the fitted curve obtained using nonlinear regression
-plot(chickweed.m0b, add = TRUE, lty = 2, xlim=c(0, 340), ylim=c(0, 0.25), log="", lwd=2, cex=1.2)
+plot(chickweed.m0b, add = TRUE, lty = 2, xlim=c(0, 340), 
+ylim=c(0, 0.25), log="", lwd=2, cex=1.2)
 # Note: the event-time model has slightly better fit at the upper limit
 
 ## Enhancing the plot (to look like in the reference paper)
@@ -105,7 +108,8 @@ names(coefVec) <- c("b","d","e")
 
 predFct <- function(tival)
 {
-    as.numeric(deltaMethod(coefVec, paste("d/(1+exp(b*(log(",tival,")-log(e))))"), vcov(chickweed.m1)))
+    as.numeric(deltaMethod(coefVec, paste("d/(1+exp(b*(log(",tival,")-log(e))))"), 
+    vcov(chickweed.m1)))
 }
 predFctv <- Vectorize(predFct, "tival")
 

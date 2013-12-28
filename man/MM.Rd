@@ -67,10 +67,12 @@ coef(met.mm.m1)[4] / coef(met.mm.m1)[5] * 100
 SI(met.mm.m1, c(50,50))
 
 ## Simplified models
-met.mm.m2a <- drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~factor(product), ~1))
+met.mm.m2a <- drm(gain~dose, product, data=methionine, fct=MM.3(), 
+pmodels = list(~1, ~factor(product), ~1))
 anova(met.mm.m2a, met.mm.m1)  # model reduction not possible
 
-met.mm.m2b <- drm(gain~dose, product, data=methionine, fct=MM.3(), pmodels = list(~1, ~1, ~factor(product)))
+met.mm.m2b <- drm(gain~dose, product, data=methionine, fct=MM.3(), 
+pmodels = list(~1, ~1, ~factor(product)))
 anova(met.mm.m2b, met.mm.m1)  # model reduction not possible
 
 }

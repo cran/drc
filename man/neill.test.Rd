@@ -13,7 +13,8 @@
 }
 
 \usage{
-  neill.test(object, grouping, method = c("c-finest", "finest", "percentiles"), breakp = NULL, display = TRUE)
+  neill.test(object, grouping, method = c("c-finest", "finest", "percentiles"), 
+  breakp = NULL, display = TRUE)
 }
 
 \arguments{

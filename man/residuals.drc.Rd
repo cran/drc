@@ -10,7 +10,8 @@
 
 \usage{
 
-  \method{residuals}{drc}(object, typeRes = c("working", "standardised", "studentised"), trScale = TRUE, ...)
+  \method{residuals}{drc}(object, typeRes = c("working", "standardised", "studentised"), 
+  trScale = TRUE, ...)
 
 }
 

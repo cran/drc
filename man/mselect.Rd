@@ -11,7 +11,8 @@
 }
 
 \usage{
-  mselect(object, fctList = NULL, nested = FALSE, sorted = c("IC", "Res var", "Lack of fit", "no"), linreg = FALSE, icfct = AIC)
+  mselect(object, fctList = NULL, nested = FALSE, 
+  sorted = c("IC", "Res var", "Lack of fit", "no"), linreg = FALSE, icfct = AIC)
 }
 
 \arguments{

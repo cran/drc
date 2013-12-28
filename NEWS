@@ -1,5 +1,22 @@
 ## Changes in 'drc' 
 
+2013-10-22: Adding "fixed" value to output from logistic() (after a suggestion from Daniel Gerhard). 
+
+2013-10-01: Help page for "germination" has been updated. 
+
+2013-09-30: bread.drc() and estfun.drc() have been updated to handle fits for binomial and Poisson data 
+(after a suggestion by Signe M. Jensen).
+
+2013-08-22: Help page for plot.drc() has been improved regarding the explanation on the use of error bars
+(after an enquiry from Julien Delafontaine).
+
+2013-05-24: Help page for "selenium" has been improved (after a comment from Keith Taulbee).
+
+2013-05-21: An argument for specifying the reference for the normalization (after a suggestion from Sunniva Foerster).
+
+2013-05-14: An argument for showing normalized data and fitted curves has been added to the plot method (after a suggestion
+from Ludwig A. Hothorn). 
+
 2013-03-25: Help page for mselect() has been improved (after a comment from Sona Jesenska).
 
 2013-02-11: cedergreen() has been improved to provide meaningful names (after a suggestion from Dave Smithson).

@@ -83,7 +83,7 @@ S3method(print, mrdrc)
 S3method(print, summary.drc)
 S3method(residuals, drc)
 S3method(summary, drc)
-S3method(summary, mixdrc)
+#S3method(summary, mixdrc)
 S3method(update, drc)
 S3method(vcov, drc)
 

@@ -115,7 +115,7 @@ if (FALSE)
         EDderFct <- 
         function (b, c, d, e, f) 
         {
-            .expr2 <- 100/(100 - p)
+            .expr2 <- 100/p
             .expr4 <- .expr2^(1/f)
             .expr5 <- .expr4 - 1
             .expr6 <- log(.expr5)
@@ -204,7 +204,7 @@ if (FALSE)
     inversion = invfct,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Logistic (ED50 as parameter)", fctText),    
-    noParm = sum(is.na(fixed)))
+    noParm = sum(is.na(fixed)), fixed = fixed)
 
     class(returnList) <- "Boltzmann"
     invisible(returnList)

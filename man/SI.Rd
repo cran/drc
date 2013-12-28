@@ -19,7 +19,8 @@
   display = TRUE, pool = TRUE, logBase = NULL, ...)
   
   relpot(object, plotit = TRUE, compMatch = NULL, percVec = NULL, interval = "none", 
-  type = c("relative", "absolute"), scale = c("original", "percent", "unconstrained"), ...)
+  type = c("relative", "absolute"), 
+  scale = c("original", "percent", "unconstrained"), ...)
 }
 
 \arguments{

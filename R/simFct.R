@@ -142,7 +142,7 @@ coverFct <- function(mfit, simres, edVec = NULL)
     edVal <- simres$edVal
     if (is.null(edVec)) 
     {
-        edVec <- drc:::ED(mfit, edVal, display = FALSE)[, 1]
+        edVec <- ED(mfit, edVal, display = FALSE)[, 1]
     }
 
 #    notNA <- sum(!is.na(simres$edArray[1, 2,]))

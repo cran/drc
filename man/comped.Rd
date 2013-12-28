@@ -10,7 +10,8 @@
 }
 
 \usage{
-  comped(est, se, log = TRUE, interval = TRUE, operator = c("-", "/"), level = 0.95, df = NULL)
+  comped(est, se, log = TRUE, interval = TRUE, operator = c("-", "/"), 
+  level = 0.95, df = NULL)
 }
 
 \arguments{

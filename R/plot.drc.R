@@ -4,7 +4,8 @@ broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100
 log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
 yt = NULL, ytlab = NULL, ylab, ylim,
 cex, cex.axis = 1, col = FALSE, lty, pch, 
-legend, legendText, legendPos, cex.legend = 1)
+legend, legendText, legendPos, cex.legend = 1,
+normal = FALSE, normRef = 1)
 {    
     object <- x
     type <- match.arg(type)
@@ -39,6 +40,18 @@ legend, legendText, legendPos, cex.legend = 1)
     dataList <- object[["dataList"]]
     dose <- dataList[["dose"]]
     resp <- dataList[["origResp"]]
+    curveid <- dataList[["curveid"]]
+    levels(curveid) <- unique(dataList[["curveid"]])
+    
+    ## Normalizing the response values
+    if (normal)
+    {
+        respList <- split(resp, curveid)
+        resp <- unlist(mapply(normalizeLU, respList, as.list(as.data.frame(getLU(object))), normRef = normRef))            
+#        respNew <- unlist(mapply(normalizeLU, respList, as.list(as.data.frame(getLU(object)))))    
+#        print(respNew)
+#        print(resp)
+    }
     
 #    assayNo <- origData[, 3]
 #    assayNoOld <- as.vector(origData[, 4])  # as.vector() to remove factor structure
@@ -46,7 +59,7 @@ legend, legendText, legendPos, cex.legend = 1)
     {
         assayNoOld <- dataList[["plotid"]]
     } else {
-        assayNoOld <- as.vector(dataList[["curveid"]])  # as.vector() to remove factor structure
+        assayNoOld <- as.vector(curveid)  # as.vector() to remove factor structure
     }
     numAss <- length(unique(assayNoOld))
     doPlot <- is.null(level) || any(unique(assayNoOld)%in%level)
@@ -136,6 +149,15 @@ legend, legendText, legendPos, cex.legend = 1)
     } else {
         plotMat <- plotFct(logDose^(dosePts))
     }
+    ## Normalizing the fitted values
+    if (normal)
+    {
+        respList <- split(resp, curveid)
+        plotMat <- mapply(normalizeLU, as.list(as.data.frame(plotMat)), as.list(as.data.frame(getLU(object))), normRef = normRef)            
+#        pmNew <- mapply(normalizeLU, as.list(as.data.frame(plotMat)), as.list(as.data.frame(getLU(object))))    
+#        print(pmNew)
+#        print(plotMat)
+    }    
 #    numCol <- ncol(plotMat)
 
     maxR <- max(resp)
@@ -578,7 +600,7 @@ if (FALSE)
         }
         if (plotit)
         {
-            require(plotrix, quietly = TRUE)
+#            require(plotrix, quietly = TRUE)
             axis.break(1, brokenx, style = breakStyle, brw = breakWidth)        
         }
         
@@ -649,3 +671,29 @@ xLimits, yLimits)
         if (is.null(defVal)) {return(1:lenlev)} else {rep(defVal, lenlev)}
     }
 }
+
+
+getLU <- function(object)
+{
+    parmMat <- object$"parmMat"
+#    rownames(parmMat) <- object$"parNames"[[2]]
+
+    fixedVal <- object$fct$fixed
+    lenFV <- length(fixedVal)
+#    parmMatExt <- matrix(NA, length(fixedVal), ncol(parmMat))
+    parmMatExt <- matrix(fixedVal, length(fixedVal), ncol(parmMat))
+    parmMatExt[is.na(fixedVal), ] <- parmMat
+
+    parmMatExt
+}
+
+
+normalizeLU <- function(x, y, normRef = 1)
+{
+    cVal <- y[2]
+    dVal <- y[3]  
+    normRef * ((x - cVal) / (dVal - cVal))
+}
+
+#mapply(normalizeLU, as.list(as.data.frame(matrix(1:20, 10, 2))), as.list(as.data.frame(getLU(S.alba.m1))))
+
