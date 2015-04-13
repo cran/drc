@@ -47,40 +47,47 @@
 
 \examples{
 
-## Note that all R lines below are commented out with one # (takes too long to compile for CRAN)
-##  but they are still working fine
-
 ## Fitting two-parameter log-logistic curves to each combination of species and temperature 
 ##  (upper limit fixed at 1)
 ## Note: Rows 24 and 62 are omitted from the dataset (all mungbean seeds germinated 
 ##  and thus no right-censoring in this case)
-#germLL.2 <- drm(germinated~start+end, species:factor(temp), 
-#data=germination[c(1:23, 25:61, 63:192), ], fct=LL.2(), type="event")
+
+## germLL.2 <- drm(germinated ~ start + end, species:factor(temp), 
+## data = germination[c(1:23, 25:61, 63:192), ], fct = LL.2(), type = "event")
+## plot(germLL.2, ylim=c(0, 1.5), legendPos=c(2.5,1.5))  # plotting the fitted curves and the data
+## summary(germLL.2)  # showing the parameter estimates
 
 ## Fitting two-parameter log-logistic curves to each combination of species and temperature
-## Note: the argument start provides sensible initial parameter values for estimation 
-##  procedure (is needed occasionally)
+## Note: the argument "start" may be used for providing sensible initial 
+##  parameter values for estimation procedure (is needed occasionally)
 ##  (initial values were obtained from the model fit germLL.2)
 ## Note also: the argument "upper" ensures that the upper limit cannot exceed 1
 ## (however, no restrictions are imposed on the two remaining parameters 
 ## (as indicated by an infinite value)
-#germLL.3 <- drm(germinated~start+end, species:factor(temp), 
-#data=germination[c(1:23, 25:61, 63:192), ], fct=LL.3(), type="event",
-#start=c(coef(germLL.2)[1:13], rep(0.7,13), coef(germLL.2)[14:26]), 
-#upper = c(rep(Inf, 13), rep(1, 13), rep(Inf, 13)))
+
+## germLL.3 <- drm(germinated~start+end, species:factor(temp), 
+## data = germination[c(1:23, 25:61, 63:192), ], fct = LL.3(), type = "event",
+## start = c(coef(germLL.2)[1:13], rep(0.7,13), coef(germLL.2)[14:26]), 
+## upper = c(rep(Inf, 13), rep(1, 13), rep(Inf, 13)))
+
+## Plotting the fitted curves and the data
+## plot(germLL.3, ylim = c(0, 1.5), legendPos = c(2.5,1.5))
 
 ## Showing the parameter estimates
-#summary(germLL.3)
+## summary(germLL.3)
+
+## Showing the parameter estimates with robust standard errors
+## library(lmtest)
+## coeftest(germLL.3, vcov = sandwich) 
 
 ## Calculating t50 with associated standard errors
-#ED(germLL.3, 50)
+## ED(germLL.3, 50)
 
 ## Calculating t10, t20, t50 with 95% confidence intervals
-#ED(germLL.3, c(10, 20, 50), interval="delta")
+## ED(germLL.3, c(10, 20, 50), interval = "delta")
 
 ## Comparing t50 between combinations by means of approximate t-tests
-#compParm(germLL.3, "e", "-")
-
+## compParm(germLL.3, "e", "-")
 
 ## Making plots of fitted regression curves for each species
 

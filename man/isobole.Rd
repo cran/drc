@@ -38,7 +38,11 @@ xaxis = "100", xlab, ylab, xlim, ylim, ...)
   No value is returned. Only used for the side effect: the isobologram shown.
 }
 
-%\references{}
+\references{
+  Ritz, C. and Streibig, J. C. (2014)
+  From additivity to synergism - A modelling perspective
+  \emph{Synergy}, \bold{1}, 22--29.
+}
 
 \author{Christian Ritz}
 

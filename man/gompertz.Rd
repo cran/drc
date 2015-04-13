@@ -64,13 +64,7 @@
 
 \seealso{The Weibull model \code{\link{weibull2}} is closely related to the Gompertz model.}
 
-\examples{
-
-bg.m1 <- drm(weightInf~DAE, data = beetGrowth, fct = G.3())
-summary(bg.m1)
-plot(bg.m1)
-
-}
+%\examples{}
 
 \keyword{models}
 \keyword{nonlinear}

@@ -22,7 +22,7 @@ siInner <- function(indPair, pVec, compMatch, object, indexMat, parmMat, varMat,
     oriMatRow <- c(SIval, sqrt(t(dSIval) %*% varMat %*% dSIval))
     siMatRow <- matrix(NA, 1, 4)  # four is the maximum number of columns
     siMatRow[1, 1] <- SIval
-
+    
     ## Using t-distribution for continuous data
     ##  only under the normality assumption
     if (identical(object$"type", "continuous"))
@@ -72,14 +72,17 @@ siInner <- function(indPair, pVec, compMatch, object, indexMat, parmMat, varMat,
     if (identical(interval, "fieller"))  # using t-distribution
     {
         vcMat <- matrix(NA, 2, 2)
-        vcMat[1, 1] <- SIeval$"der1" %*% varMat[parmInd1, parmInd1] %*% SIeval$"der1"
-        vcMat[2, 2] <- SIeval$"der2" %*% varMat[parmInd2, parmInd2] %*% SIeval$"der2"
-        vcMat[1, 2] <- SIeval$"der1" %*% varMat[parmInd1, parmInd2] %*% SIeval$"der2"
+#        vcMat[1, 1] <- SIeval$"der1" %*% varMat[parmInd1, parmInd1] %*% SIeval$"der1"
+#        vcMat[2, 2] <- SIeval$"der2" %*% varMat[parmInd2, parmInd2] %*% SIeval$"der2"
+#        vcMat[1, 2] <- SIeval$"der1" %*% varMat[parmInd1, parmInd2] %*% SIeval$"der2"        
+        vcMat[1, 1] <- SIeval$"der1" %*% varMat %*% SIeval$"der1"
+        vcMat[2, 2] <- SIeval$"der2" %*% varMat %*% SIeval$"der2"
+        vcMat[1, 2] <- SIeval$"der1" %*% varMat %*% SIeval$"der2"
         vcMat[2, 1] <- vcMat[1, 2]
         muVec <- c(SIeval$"valnum", SIeval$"valden")
 
         siMatRow[2:3] <- fieller(muVec, degfree, vcMat, level = level)
         ciLabel <- "Fieller"
     }
-    siMatRow
+    c(siMatRow, dSIval)
 }

@@ -28,13 +28,13 @@
 }
 
 \details{
-  The two-parameter logistic function is given by the expression
+  The two-parameter log-logistic function is given by the expression
   \deqn{ f(x) = \frac{1}{1+\exp(b(\log(x)-\log(e)))}}
   
   or in another parameterisation
   \deqn{ f(x) = \frac{1}{1+\exp(b(\log(x)-e))}}  
   
-  The function is symmetric about the inflection point (\eqn{e}).  
+  The model function is symmetric about the inflection point (\eqn{e}).  
 }
 
 \value{

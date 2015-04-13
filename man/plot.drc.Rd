@@ -1,7 +1,5 @@
 \name{plot.drc}
-
 \alias{plot.drc}
-\alias{plot.mrdrc}
 
 \title{Plotting fitted curves for a 'drc' or 'mrdrc' object}
 
@@ -13,15 +11,14 @@
 \usage{
   
   \method{plot}{drc}(x, ..., add = FALSE, level = NULL, 
-  type = c("average", "all", "bars", "none", "obs"), 
+  type = c("average", "all", "bars", "none", "obs", "confidence"), 
   broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100, 
   log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
   yt = NULL, ytlab = NULL, ylab, ylim,
   cex, cex.axis = 1, col = FALSE, lty, pch, 
   legend, legendText, legendPos, cex.legend = 1,
-  normal = FALSE, normRef = 1)
-
-  \method{plot}{mrdrc}(x, ..., pava = FALSE)  
+  normal = FALSE, normRef = 1, confidence.level = 0.95
+  )
 }
 
 \arguments{
@@ -33,8 +30,10 @@
   \item{type}{a character string specifying how to plot the data. There are currently
   5 options:  "average" (averages and fitted curve(s); default), 
   "none" (only the fitted curve(s)), "obs" (only the data points), 
-  "all" (all data points and fitted curve(s)) and 
-  "bars" (averages and fitted curve(s) with model-based standard errors (see Details)).}
+  "all" (all data points and fitted curve(s)), 
+  "bars" (averages and fitted curve(s) with model-based standard errors (see Details)), and
+  "confidence" (confidence bands for fitted curve(s)).
+  }
   \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
   (using functionality in the CRAN package 'plotrix').}
   \item{bp}{numeric value specifying the break point below which the dose is zero (the amount of stretching on 
@@ -78,10 +77,11 @@
   \item{cex.legend}{numeric specifying the legend text size.}
   \item{lty}{a numeric vector specifying the line types.}
   \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
-  \item{pava}{logical. If TRUE the fit is monotonised using pool adjacent violators algorithm.}  
   \item{normal}{logical. If TRUE the plot of the normalized data and fitted curves are shown
   (for details see Weimer et al. (2012) for details).} 
-  \item{normRef}{numeric specifying the reference for the normalization (default is 1).}  
+  \item{normRef}{numeric specifying the reference for the normalization
+    (default is 1).}  
+  \item{confidence.level}{confidence level for error bars. Defaults to 0.95.}
 }
 
 \details{
@@ -97,10 +97,14 @@
   The arguments \code{broken} and \code{bcontrol} rely on the function \code{link{axis.break}} with arguments 
   \code{style} and \code{brw} in the package \code{plotrix}.
   
-  The model-based standard errors used for the error bars are calculated as the fitted value plus/minus 
-  the estimated error times the 97.5\% quantile in the t distribution with degrees of freedom equal to the residual degrees of freedom for the model 
-  (or using a standard normal distribution in case of binomial and poisson data). The standard errors are obtained using the predict method 
-  with the argument interval = "confidence".
+  The model-based standard errors used for the error bars are calculated
+  as the fitted value plus/minus the estimated error times the
+  1-(alpha/2) quantile in the t distribution with degrees of freedom
+  equal to the residual degrees of freedom for the model (or using a
+  standard normal distribution in case of binomial and poisson data),
+  where alpha=1-confidence.level. The standard errors are obtained using
+  the predict method with the arguments interval = "confidence"
+  and level=confidence.level.
   
   \code{plot.mrdrc} takes the same arguments as \code{plot.drc}.
 }
@@ -112,7 +116,7 @@
 
 \author{
   Christian Ritz and Jens C. Streibig
-  Contributions from Xiaoyan Wang  
+  Contributions from Xiaoyan Wang and Gregory Warnes 
 }
 
 \references{
@@ -136,6 +140,9 @@ plot(ryegrass.m1, broken = TRUE)
 
 ## Adding fitted curve for the second model (not much difference)
 plot(ryegrass.m2, broken = TRUE, add = TRUE, type = "none", col = 2, lty = 2)
+
+## Add confidence region for the first model.
+plot(ryegrass.m1, broken = TRUE, type="confidence", add=TRUE) 
 
 ## Finetuning the axis break
 plot(ryegrass.m1, broken = TRUE, bcontrol = list(style = "gap"))
@@ -162,6 +169,12 @@ plot(spinach.m1, level = c(1,2), main = "User-specified curves")
 
 ## Plot with symbol of different sizes
 plot(spinach.m1, cex = c(1,2,3,4,5), main = "User-specified symbil sizes")
+
+## Plot with confidence regions
+plot(spinach.m1, col = TRUE, main = "Confidence Regions", type="confidence")
+
+## Add points
+plot(spinach.m1, col = TRUE, add=TRUE)
 
 ## Fitting another model to be plotted below
 lettuce.m1 <- drm(weight~conc, data = lettuce, fct = LL.4())

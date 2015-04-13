@@ -2,7 +2,8 @@
 formula, curveid, pmodels, weights, data = NULL, subset, fct, 
 type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
 start, na.action = na.fail, robust = "mean", logDose = NULL, 
-control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
+control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE,
+pshifts = NULL)
 {
 #    ## Matching 'adjust' argument
 #    adjust <- match.arg(adjust)
@@ -154,6 +155,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    print(model.extract(mf, "weights"))
 #    print(model.weights(mf))
     varNames <- names(mf)[c(2, 1)]  
+    varNames0 <- names(mf) 
     # only used once, but mf is overwritten later on
 
     ## Retrieving weights
@@ -318,7 +320,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     if (separate)
     {
 #        return(idrm(dose, resp, assayNo, wVec, fct, type))
-        return(idrm(dose, resp, assayNoOld, wVec, fct, type))
+        return(idrm(dose, resp, assayNoOld, wVec, fct, type, control))
     }    
     
     ## Handling "pmodels" argument
@@ -901,8 +903,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    } else {
 
     ## Defining model function 
-    multCurves <- modelFunction(dose, parm2mat, drcFct, cm, assayNoOld, upperPos, fct$"retFct", doseScaling, respScaling, 
-    isFinite = rep(TRUE, lenData))
+    multCurves <- modelFunction(dose, parm2mat, drcFct, cm, assayNoOld, upperPos, fct$"retFct", 
+                                doseScaling, respScaling, isFinite = rep(TRUE, lenData), pshifts)
 
 #    drcFct1 <- function(dose, parm)
 #    {
@@ -1033,7 +1035,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     } 
     if (identical(type, "Poisson"))
     {
-        estMethod <- drmEMPoisson(dose, resp, multCurves2, startVecSc, weightsVec = wVec, doseScaling = doseScaling)
+        estMethod <- drmEMPoisson(dose, resp, multCurves2, startVecSc, weightsVec = wVec, 
+                                  doseScaling = doseScaling)
     }
     if (identical(type, "event"))
     {
@@ -1267,9 +1270,16 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         dose <- as.vector(unlist(lapList))
         resp <- as.vector(unlist(lapply(drList, function(x){x[, 2]})))
         
-        listCI <- split(assayNoOld[isFinite], assayNoOld[isFinite])
-        lenVec <- as.vector(unlist(lapply(lapList, function(x){length(x)})))
+#        listCI <- split(assayNoOld[isFinite], assayNoOld[isFinite])
+#        splitFactor <- factor(assayNoOld[isFinite], exclude = NULL)
+        splitFactor <- factor(assayNo, exclude = NULL)        
+        listCI <- split(splitFactor, splitFactor)
+        lenVec <- as.vector(unlist(lapply(lapList, length)))
+#        print(listCI)
+#        print(lenVec)
         plotid <- as.factor(as.vector(unlist(mapply(function(x,y){x[1:y]}, listCI, lenVec))))
+#        plotid <- plotid[complete.cases(plotid)] 
+        levels(plotid) <- unique(assayNoOld)
     } else {
         plotid <- NULL
     }
@@ -1387,6 +1397,9 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    print(fixedParm)
     parmMat[iVec, ] <- (parm2mat(fixedParm))[pickCurve, ]
 
+    indexMat2 <- parm2mat(1:length(fixedParm))
+    indexMat2 <- indexMat2[!duplicated(indexMat2), ]
+
 #    if(!is.null(fctList))
 #    {
 #         parmMat <- matrix(NA, numAss, numNames)
@@ -1421,6 +1434,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         return(parmMat)
     }
     parmMat <- pmFct(fixedParm)  # (estMethod$"parmfct")(nlsFit) )
+#    print(pmFct(1:length(fixedParm)))
 
 #    ## Scaling parameters
 #    if (!is.null(fct$scaleFct))
@@ -1576,7 +1590,14 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
         dose <- origDose
     }
     dataSet <- data.frame(origDose, origResp, assayNo, assayNoOld, wVec)
-    names(dataSet) <- c(varNames, anName, anName, "weights")
+    
+#    print(varNames0)
+    if (identical(type, "event"))
+    {
+        names(dataSet) <- c(varNames0[c(2, 3, 1)], anName, anName, "weights")
+    } else {
+        names(dataSet) <- c(varNames0[c(2, 1)], anName, anName, "weights")
+    }
 
 
 #    ## Box-Cox information
@@ -1663,7 +1684,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     } else {
         wName <- deparse(wName)
     }
-    dataList <- list(dose = as.vector(origDose), origResp = as.vector(origResp), weights = wVec, 
+#    dataList <- list(dose = as.vector(origDose), origResp = as.vector(origResp), weights = wVec, 
+    dataList <- list(dose = origDose, origResp = as.vector(origResp), weights = wVec, 
     curveid = assayNoOld, resp = as.vector(resp),
     names = list(dName = varNames[1], orName = varNames[2], wName = wName, cNames = anName, rName = ""))
     if (identical(type, "event"))
@@ -1687,7 +1709,8 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
     sumList, NULL, pmFct, pfFct, type, indexMat, logDose, cm, deriv1Mat, 
     anName, data, wVec, 
     dataList,
-    coefVec, bcVec)
+    coefVec, bcVec,
+    indexMat2)
     
     names(returnList) <- c("varParm", "fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
 #    names(returnList) <- c("fit", "curve", "summary", "start", "parNames", "predres", "call", "data", 
@@ -1695,7 +1718,7 @@ control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
 #    "anova", "gofTest", 
     "sumList", "scaleFct", "pmFct", "pfFct", "type", "indexMat", "logDose", "cm", "deriv1",
     "curveVarNam", "origData", "weights",
-    "dataList", "coefficients", "boxcox")
+    "dataList", "coefficients", "boxcox", "indexMat2")
     ## Argument "scaleFct" not used anymore
     class(returnList) <- c("drc")  # , class(fct))
 

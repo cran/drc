@@ -81,18 +81,19 @@ function(object, od = FALSE, pool = TRUE, ...)
     
         if (object$robust=="Tukey's biweight")
         {
-            psifct <- psi.bisquare
+            psifct <- psi.bisquare  # in MASS
         }
         if (object$robust=="metric Winsorizing")
         {
-            psifct <- psi.huber
+            psifct <- psi.huber  # in MASS
         }
         if (object$robust=="metric trimming")
         {
             psifct <- psi.trimmed
         }
     
-        resVec <- residuals(object)
+#        resVec <- residuals(object)
+        resVec <- (object)[["predres"]][, "Residuals"]
         psiprime <- psifct(resVec/sqrt(resVar), deriv=1)
         meanpp <- mean(psiprime)
         
@@ -101,6 +102,9 @@ function(object, od = FALSE, pool = TRUE, ...)
         K <- 1 + length(parVec[notNA])*var(psiprime)/(object$summary[7]*meanpp^2)        
         w <- psifct(resVec/sqrt(resVar))
         s <- sum((resVec*w)^2)/object$summary[6]
+        print(parVec[notNA])
+        print(var(psiprime))
+        print(c(K,w,s))
         stddev <- sqrt(s)*(K/meanpp)       
         estSE <- sqrt(diag(solve(sumVec1$hessian[notNA, notNA]/mean(psiprime)*resVar)))*stddev
     }

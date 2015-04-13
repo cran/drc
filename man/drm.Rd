@@ -5,7 +5,7 @@
 \title{Fitting dose-response models}
 
 \description{
-  A general model fitting function for concentration/dose/time-response models.
+  A general model fitting function for analysis of concentration/dose/time-effect/response data.
 }
 
 \usage{
@@ -13,7 +13,7 @@
   type = c("continuous", "binomial", "Poisson", "quantal", "event"), 
   bcVal = NULL, bcAdd = 0, 
   start, na.action = na.fail, robust = "mean", logDose = NULL, 
-  control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE)
+  control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE, pshifts = NULL)
 }
 
 \arguments{
@@ -26,7 +26,9 @@
   Or a list containing a formula for each parameter in the nonlinear function.}
   
   \item{weights}{
-    a numeric vector containing weights that are multiplied inside the squared errors (see the details below).
+    a numeric vector containing weights. For continuous/quantitative responses weights are multiplied inside the squared errors (see the details below).
+    For binomial reponses weights provide information about the total number of binary observations used to obtain the response (which is a proportion): 
+    1/2 and 10/20 lead to different analyses due to the different totals (2 vs. 20) even though the proportion in both cases is 0.5.
   }
   
   \item{data}{
@@ -75,22 +77,24 @@
   (the default corresponds to plus infinity for all parameters).}
   
   \item{separate}{logical value indicating whether curves should be fit separately (independent of each other).}
+  
+  \item{pshifts}{a matrix of constants to be added to the matrix of parameters. Default is no shift for all parameters.}
 }
 
 \details{
-  This function relies on the general multi-purpose optimiser function \code{\link{optim}} for the minimisation of the minus log likelihood function. 
-  For a quantitative response this reduces to least squares estimation, which is carried out by minimising the following sums of squares
+  This function relies on the general optimiser function \code{\link{optim}} for the minimisation of negative log likelihood function. 
+  For a continuous response this reduces to least squares estimation, which is carried out by minimising the following sums of squares
   
   \deqn{\sum_{i=1}^N [w_i (y_i-f_i)]^2}
   
-  where \eqn{y_i}, \eqn{f_i}, and \eqn{w_i} correspond to the observed value, expected value, and the weight respectively, 
-  for the ith observation (from 1 to \eqn{N}).
+  where \eqn{y_i}, \eqn{f_i}, and \eqn{w_i} correspond to the observed value, expected value, and the weight respectively, for the ith observation (from 1 to \eqn{N}).
      
   The control arguments are specified using the function \code{\link{drmc}}.
   
-  For robust estimation MAD (median abslolute deviance) is used to estimate the residual variance.  
-  
   Setting \code{lowerl} and/or \code{upperl} automatically invokes constrained optimisation.
+  
+  The columns of a data frame argument to \code{pmodels} are automatically converted into factors. 
+  This does not happen if a list is specified.   
 }
 
 \value{
@@ -102,13 +106,12 @@
 \author{Christian Ritz and Jens C. Streibig}
 
 \note{
-  The \code{curve} argument is subsequently used for plotting dose-response curves. For large datasets 
-  it need not represent the actual curves, but it could represent several curves having the parameters 
-  (to avoid too many curves in the plot). The same applies for use with the function \code{\link{ED.drc}} 
-  and \code{\link{SI}}.
+%  The argument \code{curveid} is subsequently used for plotting dose-response curves. For large datasets 
+%  it need not represent the actual curves, but it could represent several curves having the parameters 
+%  (to avoid too many curves in the plot). The same applies for use with the function \code{\link{ED.drc}} 
+%  and \code{\link{SI}}.
 
-  The columns of a data frame argument to \code{pmodels} are automatically converted into factors. 
-  This does not happen if a list is specified. 
+  For robust estimation MAD (median abslolute deviance) is used to estimate the residual variance.  
   
 %  The data frame argument allows collapsing parameters for 
 %  some or all curves (using \code{\link{colFct}}), whereas the list argument allows specification of 

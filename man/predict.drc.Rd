@@ -13,7 +13,7 @@
 
   \method{predict}{drc}(object, newdata, se.fit = FALSE, 
   interval = c("none", "confidence", "prediction"), 
-  level = 0.95, na.action = na.pass, od = FALSE, ...)
+  level = 0.95, na.action = na.pass, od = FALSE, vcov. = vcov, ...)
 
   \method{predict}{mrdrc}(object, newdata, se.fit = FALSE, 
   interval = c("none", "confidence", "prediction"), 
@@ -30,6 +30,8 @@
   \item{na.action}{function determining what should be done with missing values in 'newdata'. 
   The default is to predict 'NA'.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
+  \item{vcov.}{function providing the variance-covariance matrix. \code{\link{vcov}} is the default, 
+  but \code{sandwich} is also an option (for obtaining robust standard errors).}  
   \item{pava}{logical. If TRUE the fit is monotoniosed using pool adjacent violators algorithm.}
   \item{\dots}{further arguments passed to or from other methods.}
 }

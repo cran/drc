@@ -25,6 +25,8 @@
 #        env2 <- parent.frame(n=2)
 #        print(ls(envir=env2))
 #        eval(call, envir = env2)
+
+#        eval(call, envir = parent.frame(), enclos = .GlobalEnv)
         eval(call, parent.frame())
     } else call
 }

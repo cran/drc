@@ -71,9 +71,14 @@ summary(chickweed.m0b)  # showing a summmary of the model fit (including paramet
 #head(chickweed)  # showing top 6 lines of the dataset
 #tail(chickweed)  # showing bottom 6 lines
 
-## Fitting the event-time model by specifying the argument type explicitly
+## Fitting the event-time model (by specifying the argument type explicitly)
 chickweed.m1 <- drm(count~start+end, data = chickweed, fct = LL.3(), type = "event")
 summary(chickweed.m1)  # showing a summmary of the model fit (including parameter estimates)
+
+## Summary output with robust standard errors
+## library(lmtest)
+## library(sandwich)
+## coeftest(chickweed.m1, vcov = sandwich)
 
 ## Calculating t10, t50, t90 for the distribution of viable seeds
 ED(chickweed.m1, c(10, 50, 90))
@@ -103,24 +108,24 @@ points(196, 0.1, cex = 2, pch = 0)
 ## Adding confidence intervals
 
 ## Predictions from the event-time model
-coefVec <- coef(chickweed.m1)
-names(coefVec) <- c("b","d","e")
-
-predFct <- function(tival)
-{
-    as.numeric(deltaMethod(coefVec, paste("d/(1+exp(b*(log(",tival,")-log(e))))"), 
-    vcov(chickweed.m1)))
-}
-predFctv <- Vectorize(predFct, "tival")
-
-etpred <- t(predFctv(0:340))
-lines(0:340, etpred[,1]-1.96*etpred[,2], lty=1, lwd=2, col="darkgray")
-lines(0:340, etpred[,1]+1.96*etpred[,2], lty=1, lwd=2, col="darkgray")
-
-## Predictions from the nonlinear regression model
-nrpred <- predict(chickweed.m0b, data.frame(time=0:340), interval="confidence")
-lines(0:340, nrpred[,2], lty=2, lwd=2, col="darkgray")
-lines(0:340, nrpred[,3], lty=2, lwd=2, col="darkgray")
+#coefVec <- coef(chickweed.m1)
+#names(coefVec) <- c("b","d","e")
+#
+#predFct <- function(tival)
+#{
+#    as.numeric(deltaMethod(coefVec, paste("d/(1+exp(b*(log(",tival,")-log(e))))"), 
+#    vcov(chickweed.m1)))
+#}
+#predFctv <- Vectorize(predFct, "tival")
+#
+#etpred <- t(predFctv(0:340))
+#lines(0:340, etpred[,1]-1.96*etpred[,2], lty=1, lwd=2, col="darkgray")
+#lines(0:340, etpred[,1]+1.96*etpred[,2], lty=1, lwd=2, col="darkgray")
+#
+### Predictions from the nonlinear regression model
+#nrpred <- predict(chickweed.m0b, data.frame(time=0:340), interval="confidence")
+#lines(0:340, nrpred[,2], lty=2, lwd=2, col="darkgray")
+#lines(0:340, nrpred[,3], lty=2, lwd=2, col="darkgray")
 
 }
 \keyword{datasets}

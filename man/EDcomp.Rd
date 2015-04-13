@@ -1,17 +1,19 @@
-\name{SI}
+\name{EDcomp}
 
+\alias{EDcomp}
 \alias{SI}
 \alias{relpot}
 
 \title{Comparing selectivity indices across curves}
 
 \description{
-  'SI' compares selectivity indices for arbitrary dosage across curves.
+  'EDcomp' compares selectivity indices for arbitrary dosage across curves.
   The selectivity is the ratio between effective dosages from different curves. 
 }
 
 \usage{
-  SI(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
+  EDcomp(object, percVec, percMat = NULL, compMatch = NULL, od = FALSE, vcov. = vcov, 
+  reverse = FALSE, 
   interval = c("none", "delta", "fieller", "fls"), 
   level = ifelse(!(interval == "none"), 0.95, NULL),
   reference = c("control", "upper"),  
@@ -26,16 +28,20 @@
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{percVec}{a numeric vector of dosage values.}
+  \item{percMat}{a matrix with 2 columns providing the pairs of indices \code{percVec} to be compared. 
+  By default all pairs are compared.}
   \item{compMatch}{an optional character vector of names of assays to be compared. If not specified all comparisons are supplied.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used. This argument only makes a difference for
   binomial data.}
+  \item{vcov.}{function providing the variance-covariance matrix. \code{\link{vcov}} is the default, 
+  but \code{sandwich} is also an option (for obtaining robust standard errors).}
   \item{reverse}{logical. If TRUE the order of comparison of two curves is reversed.}
   \item{interval}{character string specifying the type of confidence intervals to be supplied. The default is "none". 
   Use "delta" for asymptotics-based confidence intervals (using the delta method and the t-distribution).
   Use "fieller" for confidence intervals based on Fieller's theorem (with help from the delta method).
-  Use "fls" for from-logarithm-scale-based confidence intervals (in case the parameter in the model fit is 
+  Use "fls" for confidence interval back-transformed from logarithm scale (in case the parameter in the model fit is 
   log(ED50) as is the case for the \code{\link{logistic}} or \code{\link{llogistic2}} models); currently
-  the argumetn \code{logBase} then also needs to be specified.}
+  the argument \code{logBase} then also needs to be specified.}
   \item{level}{numeric. The level for the confidence intervals. Default is 0.95.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}  
   \item{type}{character string specifying whether absolute or relative response levels are supplied.}
@@ -67,8 +73,9 @@
 }
 
 \value{
-  A matrix with columns containing the estimates, estimated standard errors, 
-  t-statistics for testing indices equal to 1 and the corresponding p-values.
+  A list containing the shown matrix with columns containing the estimates, estimated standard errors, 
+  t-statistics for testing indices equal to 1 and the corresponding p-values and, as the second list component, 
+  a list with elements to be plugged directly into \code{parm} in the package \emph{multcomp}.
 }
 
 \references{
@@ -97,20 +104,30 @@
 
 \examples{
 
-m1 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
+spinach.LL.4 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
 
-SI(m1, c(50,50))
-SI(m1, c(10,50))
-SI(m1, c(10,50), reverse = TRUE)
+EDcomp(spinach.LL.4, c(50,50))
+EDcomp(spinach.LL.4, c(10,50))
+EDcomp(spinach.LL.4, c(10,50), reverse = TRUE)
+
+## Using the package multcomp
+#sires <- SI(spinach.LL.4, c(25, 50, 75))
+#library(multcomp)
+#summary(glht(parm(sires[[2]][[1]], sires[[2]][[2]]), rhs = 1))
+
+## Comparing specific ratios: 25/25, 50/50, 75/75
+#sires2 <- SI(spinach.LL.4, c(25, 50, 75), matrix(c(1, 1, 2, 2, 3, 3), 3, 2, byrow = TRUE))
+#library(multcomp)
+#summary(glht(parm(sires2[[2]][[1]], sires2[[2]][[2]]), rhs = 1))
 
 
 ## Relative potency of two herbicides
 m2 <- drm(DryMatter~Dose, Herbicide, 
 data = S.alba, fct = LL.3())
 
-SI(m2, c(50, 50))  
-SI(m2, c(50, 50), ci = "delta")
-SI(m2, c(50, 50), ci = "fieller")
+EDcomp(m2, c(50, 50))  
+EDcomp(m2, c(50, 50), interval = "delta")
+EDcomp(m2, c(50, 50), interval = "fieller")
 
 ## Comparison based on absolute
 ##  response level
@@ -118,9 +135,9 @@ SI(m2, c(50, 50), ci = "fieller")
 m3 <- drm(SLOPE~DOSE, CURVE,
 data = spinach, fct = LL.4())
 
-SI(m3, c(0.5,0.5), c(2,4), type="a", ci="fieller")
+EDcomp(m3, c(0.5,0.5), compMatch = c(2,4), type = "absolute", interval = "fieller")
 
-SI(m3, c(55,80), c(2,4))  
+EDcomp(m3, c(55,80), compMatch = c(2,4))  
 # same comparison using a relative response level
 
 
@@ -128,7 +145,7 @@ SI(m3, c(55,80), c(2,4))
 m4 <- drm(drymatter~log(dose), treatment, data=G.aparine[-c(1:40), ], 
 pmodels = data.frame(treatment,treatment,1,treatment), fct = LL2.4())
 
-SI(m4, c(50,50), ci="fls", logBase=exp(1))
+EDcomp(m4, c(50,50), interval = "fls", logBase = exp(1))
 
 }
 

@@ -6,7 +6,7 @@ backfit <- function(drcObject)
     # arranged according to ascending dose values
     # therefore unique doses are sorted below
 
-    backfitValues <- ED(drcObject, meansVec, type = "absolute", display = FALSE)[, 1]
+    backfitValues <- ED(drcObject, meansVec, type = "absolute", display = FALSE, multcomp = TRUE)[["EDdisplay"]][, 1]
 
     return(cbind(dose = sort(unique(DLdose)), backfit = backfitValues))
 }

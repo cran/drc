@@ -30,7 +30,7 @@
                 tempFit <- try(drm(sim1$y[k, ]~sim1$x[k, ], fct = fct), silent = TRUE)
                 if (!inherits(tempFit, "try-error"))
                 {
-                    edVal <- ED(tempFit, edVec, display = FALSE)
+                    edVal <- ED(tempFit, edVec, display = FALSE, multcomp = TRUE)[["EDdisplay"]]
                     tempMat[k, ] <- edVal[, 1] - edTRUE
                 }
             }

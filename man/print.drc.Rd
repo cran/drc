@@ -1,7 +1,6 @@
 \name{print.drc}
 
 \alias{print.drc}
-\alias{print.mrdrc}
 
 \title{Printing key features}
 
@@ -13,7 +12,6 @@
 
   \method{print}{drc}(x, ..., digits = max(3, getOption("digits") - 3))
 
-  \method{print}{mrdrc}(x, ...)
 }
 
 \arguments{

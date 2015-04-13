@@ -36,48 +36,48 @@
 
 \examples{
 
-## Fitting a model with a common control
-c.m1 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
-pmodels = data.frame(treatment,treatment,1,treatment), fct = LL.4())
+## Fitting a model with a common control (so a single upper limit: "1")
+G.aparine.m1 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
+pmodels = data.frame(treatment, treatment, 1, treatment), fct = LL.4())
 
 ## Visual inspection of fit
-plot(c.m1, broken = TRUE)
+plot(G.aparine.m1, broken = TRUE)
 
 ## Lack of fit test
-modelFit(c.m1)
+modelFit(G.aparine.m1)
 
 ## Summary output
-summary(c.m1)
+summary(G.aparine.m1)
 
 ## Predicted values with se and confidence intervals
-predict(c.m1, interval = "confidence")
+predict(G.aparine.m1, interval = "confidence")
 
 ## Calculating the relative potency
-SI(c.m1, c(50,50))
+SI(G.aparine.m1, c(50,50))
 
 ## Showing the relative potency as a
 ## function of the response level
-relpot(c.m1)
-relpot(c.m1, ci = "delta")
+relpot(G.aparine.m1)
+relpot(G.aparine.m1, interval = "delta")
 # appears constant!
 
 ## Response level in percent
-relpot(c.m1, scale="percent")
+relpot(G.aparine.m1, scale = "percent")
 
-## Fitting a reduced model
-c.m2 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
-pmodels = data.frame(1,treatment,1,treatment), fct = LL.4())
+## Fitting a reduced model (with a common slope parameter)
+G.aparine.m2 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
+pmodels = data.frame(1, treatment, 1, treatment), fct = LL.4())
 
-anova(c.m2, c.m1)
+anova(G.aparine.m2, G.aparine.m1)
 
 ## Showing the relative potency 
-relpot(c.m2)
+relpot(G.aparine.m2)
 
 ## Fitting the same model in a different parameterisation
-c.m3<-drm(drymatter~dose, treatment, data=G.aparine, 
-pmodels=data.frame(treatment,treatment,1,treatment),fct=LL2.4())
+G.aparine.m3 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
+pmodels = data.frame(treatment, treatment, 1, treatment), fct = LL2.4())
 
-SI(c.m3, c(50,50), logBase = exp(1))
+SI(G.aparine.m3, c(50, 50), logBase = exp(1))
 
 }
 \keyword{datasets}

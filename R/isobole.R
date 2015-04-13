@@ -11,7 +11,7 @@ xlab, ylab, xlim, ylim, ...)
     eVec <- parmVec[indVec]
     seVec <- (summary(object1)$"coefficients")[indVec, 2]
 
-    edMat <- ED(object1, 50, display = FALSE)
+    edMat <- ED(object1, 50, display = FALSE, multcomp = TRUE)[["EDdisplay"]]
     eVec <- (as.vector(edMat[, 1]))  # stripping off names
     seVec <- (as.vector(edMat[, 2]))  # stripping off names
 
@@ -133,72 +133,53 @@ xlab, ylab, xlim, ylim, ...)
         ED50.1 <- parmVec[regexpr(curveStr1, namesPV, fixed = TRUE) > 0]
         ED50.2 <- parmVec[regexpr(curveStr2, namesPV, fixed = TRUE) > 0]
         ## maybe use an extractor like 'EDmix' instead of the above 4 lines
-#        print(c(ED50.1, ED50.2))
-        
-#        ED50.1 <- parmVec[regexpr("I(1/(pct1/100))", namesPV, fixed = TRUE) > 0]
-#        ED50.2 <- parmVec[regexpr("I(1/(1 - pct1/100))", namesPV, fixed = TRUE) > 0]
-    
+  
         ## Plotting the isobole based on the Voelund model
-        ## Based on R lines from Helle Sørensen
-#        if (inherits(object2, "Voelund"))
         if (identical(object2$fct$name, "voelund"))         
         {
-            Voelund <- function(t0, m0, eta, andeli)
+            Voelund0 <- function(t0, m0, eta, prop)
             {
-                if (andeli == 1) 
+                if (prop == 1) 
                 {
-                    tmp <- log(t0) 
-                } else if (andeli == 0) 
+                    retVal <- log(t0) 
+                } else if (prop == 0) 
                 {
-                    tmp <- log(m0)
+                    retVal <- log(m0)
                 } else {
-                    propor <- (1- andeli) / andeli
-                    tmp <- (1+t0/m0*propor)^(1-eta[1]) + (t0/m0*propor)^eta[2] * (1+t0/m0*propor)^(1-eta[2])
-                    tmp <- t0/tmp    
-                    tmp <- log(tmp*(1+propor))
+                    propr <- (1 - prop) / prop
+                    tempVal <- (1+t0/m0*propr)^(1-eta[1]) + (t0/m0*propr)^eta[2] * (1+t0/m0*propr)^(1-eta[2])
+                    retVal <- log((t0 / tempVal) * (1 + propr))
                 } 
-                tmp
+                retVal
             }
-            Voelund2 <- Vectorize(Voelund, "andeli")
+            Voelund <- Vectorize(Voelund0, "prop")
                                      
             mixVec <- seq(1, 0, length = 100)  # oops hardcoded "100"
-            voeVec <- exp(Voelund2(ED50.1, ED50.2, tail(parmVec, 2), mixVec))        
+            voeVec <- exp(Voelund(ED50.1, ED50.2, tail(parmVec, 2), mixVec))        
             tvals <- mixVec * voeVec
             mvals <- (1 - mixVec) * voeVec
-#            tvals <- voeVec * cos(mixVec*pi/2)
-#            mvals <- voeVec * sin(mixVec*pi/2)
 
             xVal <- tvals
-#            yVal <- tvals
             yVal <- exchange * mvals
-#            xVal <- exchange * mvals
 
         } else {
-            ## Plotting the isobole based on the Hewlett model
-            ## Based on R lines from Helle Sørensen
             Hewlett <- function(t, t0, m0, lambda)
             {
-                tmp <- (m0^(1/lambda) - (t*m0/t0)^(1/lambda))^lambda
-                tmp[t > t0] <- 0
-                tmp
+                retVal <- (m0^(1/lambda) - (t*m0/t0)^(1/lambda))^lambda
+                retVal[t > t0] <- 0
+                retVal
             }    
-#            if (inherits(object2, "Hewlett")) 
             if (identical(object2$fct$"name", "hewlett")) 
             {
-                lambda <- tail(parmVec , 1)  # parmVec[lenNPV]            
-            } #else {
+                lambda <- tail(parmVec , 1)            
+            } 
             if (identical(object2$fct$"name", "ca"))
             {
                 lambda <- 1
             }
-#            yVal <- seq(0, ED50.1, length = 100)
-#            xVal <- exchange*Hewlett(yVal, ED50.1, ED50.2, lambda)
-
             xVal <- seq(0, ED50.1, length = 100)
             yVal <- exchange * Hewlett(xVal, ED50.1, ED50.2, lambda)
-#            print(c(ED50.1, ED50.2, lambda))
-#            print(xVal)
-#            print(yVal)
+
         }
         if (identical(xaxis, "0")) 
         {
@@ -208,6 +189,5 @@ xlab, ylab, xlim, ylim, ...)
         }    
         lines(xVal, yVal)        
     }
-
 #    invisible()
 }

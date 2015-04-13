@@ -1,5 +1,5 @@
-"SI" <-
-function(object, percVec, compMatch = NULL, od = FALSE, reverse = FALSE, 
+"EDcomp" <-
+function(object, percVec, percMat = NULL, compMatch = NULL, od = FALSE, vcov. = vcov, reverse = FALSE, 
 interval = c("none", "delta", "fieller", "fls"), level = ifelse(!(interval == "none"), 0.95, NULL), 
 reference = c("control", "upper"), type = c("relative", "absolute"),
 display = TRUE, pool = TRUE, logBase = NULL, ...)
@@ -52,7 +52,8 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     parmMat <- parmMat[, curveOrder, drop = FALSE]
     
     strParm <- strParm0
-    varMat <- vcov(object, od = od, pool = pool)
+#    varMat <- vcov(object, od = od, pool = pool)
+    varMat <- vcov.(object)    
 
     ## Calculating SI values
     numComp <- (lenPV*(lenPV-1)/2)*(lenEB * (lenEB - 1) / 2)
@@ -73,8 +74,12 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     rowIndex <- 1
     
 #    require(gtools, quietly = TRUE)
+    
     pairsMat <- combinations(lenEB, 2)  # canonical "2" as pairs are considered
-    percMat <- combinations(lenPV, 2)  # canonical "2" as pairs are considered
+    if (is.null(percMat))
+    {
+        percMat <- combinations(lenPV, 2)  # canonical "2" as pairs are considered
+    }
     if (reverse)
     {
         pairsMat <- pairsMat[, 2:1, drop = FALSE]
@@ -89,7 +94,10 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
         apply(pairsMat, 1, siInner, pVec = percVec[percVal], compMatch = compMatch, object = object, indexMat = indexMat, parmMat = parmMat, 
         varMat = varMat, level = level, reference = reference, type = type, sifct = sifct, interval = interval, degfree = degfree, logBase = logBase)
     }
-    SImat <- matrix(apply(percMat, 1, appFct1), nrow = nrow(pairsMat) * nrow(percMat), byrow = TRUE)
+    SImat0 <- matrix(apply(percMat, 1, appFct1), nrow = nrow(pairsMat) * nrow(percMat), byrow = TRUE)
+    SImat <- SImat0[, 1:4, drop = FALSE]
+#    print(SImat)
+    dSImat <- SImat0[, 5:ncol(SImat0), drop = FALSE] 
     
 #    matchVec[rowIndex] <- (is.null(compMatch) || all(c(strParm[j], strParm[k]) %in% compMatch))
     
@@ -136,7 +144,13 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
     "fieller" = "Fieller")
     
 #    resPrint(SImat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display) 
-    resPrint(SImat, "Estimated ratios of effect doses", interval, ciLabel, display = display) 
+    resPrint(SImat, "Estimated ratios of effect doses", interval, ciLabel, display = display)
+    
+#    invisible(SImat) 
+    ## require(multcomp, quietly = TRUE)
+    invisible(list(SIdisplay = SImat, SImultcomp = list(SImat[, 1], dSImat %*% varMat %*% t(dSImat))))  
+#    invisible(list(SImat, SImultcomp = list(EDest = EDmat[, 1], EDvcov = dEDmat %*% vcMat %*% t(dEDmat))))      
+
 #    
 #    if (FALSE)
 #    {
@@ -270,6 +284,8 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
 #    }
 #    invisible(siMat)   
 }
+
+SI <- EDcomp
 
 
 "fieller" <-

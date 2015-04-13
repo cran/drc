@@ -9,13 +9,16 @@
 }
 
 \usage{
-compParm(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE)
+  compParm(object, strVal, operator = "/", vcov. = vcov, od = FALSE, 
+  pool = TRUE, display = TRUE)
 }
 
 \arguments{
   \item{object}{an object of class 'drc'.}
   \item{strVal}{a name of parameter to compare.}
   \item{operator}{a character. If equal to "/" (default) parameter ratios are compared. If equal to "-" parameter differences are compared.}
+  \item{vcov.}{function providing the variance-covariance matrix. \code{\link{vcov}} is the default, 
+  but \code{sandwich} is also an option (for obtaining robust standard errors).}  
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
   \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
   independently fitted curves as specified in \code{\link{drm}}.}
@@ -25,13 +28,12 @@ compParm(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE
 \value{
   A matrix with columns containing the estimates, estimated standard errors, values of t-statistics and p-values for the null hypothesis that 
   the ratio equals 1 or that the difference equals 0 (depending on the \code{operator} argument). 
-  
-  No adjustment for multiplicity is applied. See \code{\link{p.adjust}} on how to do adjust p-values.
 }
 
 \details{
   The function compares actual parameter estimates, and therefore the results depend on the parameterisation used. Probably it is most useful
-  in combination with 'collapse' arguments (in \code{\link{drm}}) that are data frames or lists with formulas without intercept (-1). 
+  in combination with the argument \code{collapse} in \code{\link{drm}} for specifying parameter constraints in models, either through 
+  data frames or lists with formulas without intercept (-1). 
 }
 
 \author{Christian Ritz}

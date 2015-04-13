@@ -35,15 +35,15 @@
 }
 
 \references{
-  Soerensen, H. and Cedergreen, N. and Skovgaard, I. M. and Streibig, J. C. (2007) 
-  An isobole-based statistical model and test for synergism/antagonism in binary mixture toxicity experiments, 
-  \emph{Environmental and Ecological Statistics}, \bold{14}, 383--397.
+  Ritz, C. and Streibig, J. C. (2014)
+  From additivity to synergism - A modelling perspective
+  \emph{Synergy}, \bold{1}, 22--29.
 }
 
 \author{Christian Ritz}
 
 \seealso{
-  The examples in \code{\link{acidiq}} (the Hewlett model), \code{\link{glymet}} (concentration addition) 
+  The examples in \code{\link{acidiq}} (the Hewlett model), \code{\link{glymet}} (dose/concentration addition) 
   and \code{\link{mecter}} (the Voelund model).
 }
 

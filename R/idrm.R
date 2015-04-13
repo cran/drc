@@ -1,4 +1,4 @@
-"idrm" <- function(x, y, curveid, weights, fct, type)
+"idrm" <- function(x, y, curveid, weights, fct, type, control)
 {
     oneFunction <- !is.list(fct[[1]])
  
@@ -11,13 +11,13 @@
         if (oneFunction)
         {
             fitList[[i]] <- drm(y~x, curveid, weights = weights, fct = fct, type = type, 
-            subset = curveid == uniCur[i], separate = FALSE)
+            subset = curveid == uniCur[i], separate = FALSE, control = control)
         } else {
             tempFitlist <- list()
             for (j in 1:length(fct))
             {
                 tempFitlist[[j]] <- drm(y~x, curveid, weights = weights, fct = fct[[j]], 
-                type = type, subset = curveid == uniCur[i], separate = FALSE)
+                type = type, subset = curveid == uniCur[i], separate = FALSE, control = control)
             }
             fitList[[i]] <- tempFitlist
         }

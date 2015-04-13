@@ -31,25 +31,27 @@
   Christensen, M. G. and Teicher, H. B., and Streibig, J. C. (2003) Linking fluorescence 
   induction curve and biomass in herbicide screening, \emph{Pest Management Science},
   \bold{59},  1303--1310.
-
 }
 
 \seealso{
-  See the examples in the examples sections in \code{\link{drm}} and \code{\link{SI}}.
+  See the examples sections for \code{\link{drm}} and \code{\link{EDcomp}}.
 }
 
 \examples{
 
 ## Fitting a log-logistic model with
 ##  common lower and upper limits
-S.alba.m1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
+S.alba.LL.4.1 <- drm(DryMatter~Dose, Herbicide, data=S.alba, fct = LL.4(),
 pmodels=data.frame(Herbicide,1,1,Herbicide)) 
+summary(S.alba.LL.4.1)
 
 ## Applying the optimal transform-both-sides Box-Cox transformation
-S.alba.m2 <- boxcox(S.alba.m1, method = "anova") 
+## (using the initial model fit)  
+S.alba.LL.4.2 <- boxcox(S.alba.LL.4.1, method = "anova") 
+summary(S.alba.LL.4.2)
 
 ## Plotting fitted regression curves together with the data
-plot(S.alba.m2)
+plot(S.alba.LL.4.2)
 
 }
 \keyword{datasets}

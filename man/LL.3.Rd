@@ -41,13 +41,13 @@
 }
 
 \details{
-  The three-parameter logistic function with lower limit 0 is
+  The three-parameter log-logistic function with lower limit 0 is
   \deqn{ f(x) = 0 + \frac{d-0}{1+\exp(b(\log(x)-\log(e)))}}
   
   or in another parameterisation
   \deqn{ f(x) = 0 + \frac{d-0}{1+\exp(b(\log(x)-e))}}
     
-  The three-parameter logistic function with upper limit 1 is
+  The three-parameter log-logistic function with upper limit 1 is
   \deqn{ f(x) = c + \frac{1-c}{1+\exp(b(\log(x)-\log(e)))}}
   
   or in another parameterisation
@@ -89,7 +89,8 @@ logdose <- c(2.17, 2,1.68,1.08,-Inf,1.79,1.66,1.49,1.17,0.57)
 n <- c(142,127,128,126,129,125,117,127,51,132)
 r <- c(142,126,115,58,21,125,115,114,40,37)
 treatment <- factor(c("w213","w213","w213","w213",
-"control","w214","w214","w214","w214","w214"))
+"w214","w214","w214","w214","w214","w214"))
+# Note that the control is included in one of the two treatment groups
 finney.ex19 <- data.frame(logdose, n, r, treatment)
 
 ## Fitting model where the lower limit is estimated

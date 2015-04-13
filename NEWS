@@ -1,5 +1,40 @@
 ## Changes in 'drc' 
 
+2015-04-13: Help pages for ED() and isobole() has been updated. Some code has been tidied up.
+
+2015-04-12: The plot method extended to provide confidence bands (contribution by Gregory Warnes). 
+
+2014-12-17: The argument "pshifts" has been added to drm() to allow weights on parameters 
+(after a comment from Florent Baty).
+
+2014-11-13: The argument "control" is now correctly propagated in case separate = TRUE in drm() 
+(after a report by Andy Liaw).
+
+2014-06-30: The help page for ursa() has been improved (in particular the example section).
+
+2014-06-25: A number of not fully implemented model functions for mixture data have been removed.
+
+2014-04-23: The model function gammadr() and multi2() have been added.
+
+2014-04-06: The argument "vcov." has been added to compParm().
+
+2014-03-26: The argument "vcov." has been added to EDcomp() and predict().
+
+2014-03-19: The argument "vcov." has been added to ED() to allow choosing between the standard vcov method and 
+the sandwich function for robust standard errors. SI() has been renamed into EDcomp().
+
+2014-03-05: The bread and estfun methods have been extended to event-time data. The help page for G.aparine 
+has been improved. 
+
+2014-03-03: A number of functions depending on ED() and SI() have been updated. The predict method has been improved.
+Plot functionality for event-time data has been improved (after a report from Eshagh Keshtkar).
+
+2014-02-24: ED() and SI() return (invisible) a list with 1 components where the second can be used directly with
+the package multcomp (after a suggestion by Daniel Gerhard).
+
+2014-02-12: Small bug in the plot method (not ordering labels in legend text correctly) has been fixed 
+(after a report by Francois Keck).
+
 2013-10-22: Adding "fixed" value to output from logistic() (after a suggestion from Daniel Gerhard). 
 
 2013-10-01: Help page for "germination" has been updated. 

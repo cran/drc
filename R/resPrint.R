@@ -12,5 +12,5 @@
         cat("\n")
         printCoefmat(resMat)
     }
-    invisible(resMat)
+#    invisible(resMat)
 }

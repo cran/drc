@@ -1,7 +1,8 @@
 "compParm" <-
-function(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE)
+function(object, strVal, operator = "/", vcov. = vcov, od = FALSE, pool = TRUE, display = TRUE)
 {
-    if (inherits(object, "mixdrc")) {sep <- ".{1}"} else {sep <- ":{1}"}
+#    if (inherits(object, "mixdrc")) {sep <- ".{1}"} else {sep <- ":{1}"}
+    sep <- ":{1}"
     presentVec <- grep(paste("^", strVal, sep, sep = ""), object$"parNames"[[1]])  # strParm)           
 
     lenPV <- length(presentVec)
@@ -11,15 +12,17 @@ function(object, strVal, operator = "/", od = FALSE, pool = TRUE, display = TRUE
     }
 
     ## Extracting information from model fit 
-    if (inherits(object, "mixdrc")) 
-    {
-        sumObj <- summary(object)
-        parm <- sumObj$"coefficients"
-        varMat <- sumObj$"varMat"
-    } else {
-        parm <- as.vector(coef(object))
-        varMat <- vcov(object, od = od, pool = pool)
-    }
+#    if (inherits(object, "mixdrc")) 
+#    {
+#        sumObj <- summary(object)
+#        parm <- sumObj$"coefficients"
+#        varMat <- sumObj$"varMat"
+#    } else {
+#        parm <- as.vector(coef(object))
+#        varMat <- vcov(object, od = od, pool = pool)
+#    }
+    parm <- as.vector(coef(object))
+    varMat <- vcov.(object)
     
     ## Defining comparison function and its derivative
     if (identical(operator, "/"))

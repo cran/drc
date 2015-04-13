@@ -2,7 +2,6 @@
 
 \alias{ED}
 \alias{ED.drc}
-\alias{ED.mrdrc}
 
 \title{Estimating effective doses}
 
@@ -15,12 +14,8 @@
   \method{ED}{drc}(object, respLev, interval = c("none", "delta", "fls", "tfls"), 
   clevel = NULL, level = ifelse(!(interval == "none"), 0.95, NULL),
   reference = c("control", "upper"), type = c("relative", "absolute"), lref, uref,
-  bound = TRUE, od = FALSE, display = TRUE, pool = TRUE, logBase = NULL, ...)
-  
-  \method{ED}{mrdrc}(object, respLev, interval = c("none", "approximate", "bootstrap"), 
-  level = 0.95, method = c("bisection", "grid"), cgridsize = 20, gridsize = 100, 
-  display = TRUE, lower, upper, intType = c("confidence", "prediction"), 
-  minmax = c("response", "dose"), n = 1000, seedVal = 200810311, ...) 
+  bound = TRUE, od = FALSE, vcov. = vcov, display = TRUE, pool = TRUE, logBase = NULL, 
+  multcomp = FALSE, ...)  
 }
 
 \arguments{
@@ -35,27 +30,17 @@
   \item{level}{numeric. The level for the confidence intervals. The default is 0.95.}
   \item{reference}{character string. Is the upper limit or the control level the reference?}
   \item{type}{character string. Whether the specified response levels are absolute or relative (default).}
-  \item{lref}{numeric value specifying the lower limit to serve reference.}
-  \item{uref}{numeric value specifying the upper limit to serve reference (eg. 100\%).}  
+  \item{lref}{numeric value specifying the lower limit to serve as reference.}
+  \item{uref}{numeric value specifying the upper limit to serve as reference (e.g., 100\%).}  
   \item{bound}{logical. If TRUE only ED values between 0 and 100\% are allowed. FALSE is useful for hormesis models.}
   \item{od}{logical. If TRUE adjustment for over-dispersion is used.}
+  \item{vcov.}{function providing the variance-covariance matrix. \code{\link{vcov}} is the default, 
+  but \code{sandwich} is also an option (for obtaining robust standard errors).}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
   independently fitted curves as specified in \code{\link{drm}}.}
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}  
-  \item{method}{character string specifying if bisection or grid search should be used to determine ED estimates.
-  Grid search may give better results for ED level close to the boundaries of the dose range or in case of
-  a non-monotonous dose-response curves. The bisection method is faster than the grid search.}
-  \item{cgridsize}{numeric specifying the number of grid points in the initial grid used for both bisection and grid
-  search to narrow down the interval where the ED estimate is to be found.}
-  \item{gridsize}{numeric specifying the number of grid points in the second finer grid search.}
-  \item{lower}{numeric value specifying the lower reference limit.}
-  \item{upper}{numeric specifying the upper reference limit.}  
-  \item{intType}{character string specifying whether confidence or prediction intervals are requested.} 
-  \item{minmax}{character string indicating if the control level should be based on the the minimum dose or the maximum
-  response. The latter is more suitable for dose-response data showing hormesis.} 
-  \item{n}{numeric specifying the number of simulations for the bootstrap confidence intervals.}       
-  \item{seedVal}{numeric giving the seed for the random number generator used for the bootstrap confidence intervals.}   
+  \item{multcomp}{logical to switch on output for use with the package multcomp. Default is FALSE (corresponding to the original output).}
   \item{...}{see the details section below.}
 }
 
@@ -64,19 +49,20 @@
   arguments \code{lower} and \code{upper} may be supplied. These arguments specify the lower and upper limits 
   of the bisection method used to find the ED values.  The lower and upper limits need to be smaller/larger 
   than the EDx level to be calculated. The default limits are 0.001 and 1000 for \code{braincousens} and 
-  0.0001 and 10000 for \code{cedergreen} and \code{\link{ucedergreen}}, but this  may need to be modified 
+  0.0001 and 10000 for \code{cedergreen} and \code{\link{ucedergreen}}, but this may need to be modified 
   (for \code{\link{cedergreen}} the upper limit may need to be increased and for \code{\link{ucedergreen}} 
   the lower limit may need to be increased). Note that the lower limit should not be set to 0 (use instead 
   something like 1e-3, 1e-6, ...).
-  
-  For model-robust fits the arguments \code{lower} and \code{upper} can be used to specify reference values for the
-  lower and upper limits of the dose-response relationship. This only applies for the continuous responses. For
-  quantal responses, the reference values are fixed 0 and 1, respectively.
+
 }
 
 \value{
-  A matrix with two or more columns, containing the estimates 
+  An invisible matrix containing the shown matrix with two or more columns, containing the estimates 
   and the corresponding estimated standard errors and possibly lower and upper confidence limits.
+  Or, alternatively, an invisible list containing the shown matrix with two or more columns, containing the estimates 
+  and the corresponding estimated standard errors and possibly lower and upper confidence limits
+  and, as the second list component, a list with elements to be plugged directly into \code{parm} 
+  in the package \emph{multcomp} (in case the argument \code{multcomp} is TRUE).
 }
 
 %\references{ ~put references to the literature/web site here ~ }
@@ -85,26 +71,26 @@
 %\note{This function is only implemented for the built-in functions of class 'braincousens', 'gompertz', 'logistic' and 'mlogistic'.}
 
 \seealso{
-  The related function \code{\link{SI}}. For model-robust fits, examples are found 
-  in the help of \code{\link{mrdrm}}.
+  \code{\link{backfit}}, \code{\link{isobole}}, and \code{\link{maED}} use \code{\link{ED}} for specific calculations involving ED values.
+
+  The related function \code{\link{EDcomp}} may be used for estimating differences and ratios of ED values, 
+  whereas \code{\link{compParm}} may be used to compare other model parameters. 
 }
 
 \examples{
 
-### How to use 'ED'
-
 ## Fitting 4-parameter log-logistic model
-ryegrass.m1<-drm(ryegrass, fct = LL.4())
+ryegrass.m1 <- drm(ryegrass, fct = LL.4())
 
 ## Calculating EC/ED values
 ED(ryegrass.m1, c(10, 50, 90)) 
 ## first column: the estimates of ED10, ED50 and ED90
-## second column: the estimated standard errors 
+## second column: the corresponding estimated standard errors 
 
 ### How to use the argument 'ci'
 
 ## Also displaying 95% confidence intervals
-ED(ryegrass.m1, c(10,50,90), interval = "delta")
+ED(ryegrass.m1, c(10, 50, 90), interval = "delta")
 
 ## Comparing delta method and back-transformed 
 ##  confidence intervals for ED values
@@ -113,8 +99,8 @@ ED(ryegrass.m1, c(10,50,90), interval = "delta")
 ##  in different parameterisation (using LL2.4)
 ryegrass.m2 <- drm(ryegrass, fct = LL2.4())  
 
-ED(ryegrass.m1, c(10,50,90), interval = "fls")
-ED(ryegrass.m2, c(10,50,90), interval = "delta")
+ED(ryegrass.m1, c(10, 50, 90), interval = "fls")
+ED(ryegrass.m2, c(10, 50, 90), interval = "delta")
 
 
 ### How to use the argument 'bound'
@@ -125,14 +111,14 @@ data = lettuce, fct = BC.4())
 
 ### Calculating ED[-10]
 
-# It does not work
+# This does not work
 #ED(lettuce.m1, -10)  
 
 ## Now it does work
 ED(lettuce.m1, -10, bound = FALSE)  # works
 ED(lettuce.m1, -20, bound = FALSE)  # works
 
-## It does not work for another reason: ED[-30] does not exist 
+## The following does not work for another reason: ED[-30] does not exist 
 #ED(lettuce.m1, -30, bound = FALSE)  
 
 }

@@ -1,11 +1,11 @@
-"plot.drc" <-
-function(x, ..., add = FALSE, level = NULL, type = c("average", "all", "bars", "none", "obs"), 
+"plot.drc" <- 
+function(x, ..., add = FALSE, level = NULL, type = c("average", "all", "bars", "none", "obs", "confidence"), 
 broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100, 
 log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
 yt = NULL, ytlab = NULL, ylab, ylim,
 cex, cex.axis = 1, col = FALSE, lty, pch, 
 legend, legendText, legendPos, cex.legend = 1,
-normal = FALSE, normRef = 1)
+normal = FALSE, normRef = 1, confidence.level = 0.95)
 {    
     object <- x
     type <- match.arg(type)
@@ -211,7 +211,8 @@ normal = FALSE, normRef = 1)
     if (identical(type, "bars"))
     {
 #        predictMat <- predict(object, interval = "confidence")[, 3:4]
-        predictMat <- predict(object, interval = "confidence")[, c("Lower", "Upper")]
+        predictMat <- predict(object, interval = "confidence",
+                              level=confidence.level)[, c("Lower", "Upper")]
 #        print(predictMat)
     
         barFct <- function(plotPoints)
@@ -221,11 +222,38 @@ normal = FALSE, normRef = 1)
             plotCI(plotPoints[, 1], pp3 + 0.5 * (pp4 - pp3), 
             li = pp3, ui = pp4, add = TRUE, pch = NA)
         }
+
+        ciFct <- function(level, ...){invisible(NULL)}
         
         pointFct <- function(plotPoints, cexVal, colVal, pchVal, ...){invisible(NULL)}    
-    } else {
+    } else if (identical(type, "confidence"))
+    {
+
         barFct <- function(plotPoints){invisible(NULL)}
+
+        ciFct <- function(level, ...)
+            {
+                newdata <- data.frame(DOSE=dosePts, CURVE=rep(level, length(dosePts)))
+                predictMat <- predict(object, 
+                                      newdata=newdata,
+                                      interval = "confidence",
+                                      level=confidence.level)
+
+                x <- c(dosePts, rev(dosePts))
+                y <- c(predictMat[,"Lower"], rev(predictMat[,"Upper"]))
+                polygon(x,y, border=NA, ...)
+            }
         
+        pointFct <- function(plotPoints, cexVal, colVal, pchVal, 
+                             ...) {
+            invisible(NULL)
+        }  
+    }
+    else {
+        barFct <- function(plotPoints){invisible(NULL)}
+
+        ciFct <- function(level, ...){invisible(NULL)}
+
         pointFct <- function(plotPoints, cexVal, colVal, pchVal, ...)
         {
             points(plotPoints, cex = cexVal, col = colVal, pch = pchVal, ...)                
@@ -320,6 +348,9 @@ normal = FALSE, normRef = 1)
             
             ## Adding error bars
             barFct(plotPoints)            
+
+            ## Add confidence regions
+            ciFct(level=i, col=alpha(colourVec[i],0.25))
             
             ## Adding axes    
             addAxes(axes, cex.axis, conName, xt, xtlab, xtsty, xttrim, logX, yt, ytlab, conLevel, logDose)
@@ -337,8 +368,11 @@ normal = FALSE, normRef = 1)
                 pointFct(plotPoints, cexVec[i], colourVec[i], pchVec[i], ...)
             
                 ## Adding error bars
-                barFct(plotPoints)
-            }
+                barFct(plotPoints) 
+
+                ## Add confidence regions
+                ciFct(level=i, col=alpha(colourVec[i],0.25))
+           }
         }
     }
     
@@ -388,7 +422,6 @@ normal = FALSE, normRef = 1)
     
     invisible(retData)
 }
-
 
 "getRange" <- function(x, y, xlim)
 {

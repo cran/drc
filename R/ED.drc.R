@@ -3,8 +3,8 @@ ED <- function (object, ...) UseMethod("ED", object)
 "ED.drc" <-
 function(object, respLev, interval = c("none", "delta", "fls", "tfls"), clevel = NULL,
 level = ifelse(!(interval == "none"), 0.95, NULL), reference = c("control", "upper"), 
-type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, display = TRUE, 
-pool = TRUE, logBase = NULL, ...)
+type = c("relative", "absolute"), lref, uref, bound = TRUE, od = FALSE, vcov. = vcov, # robust = false,
+display = TRUE, pool = TRUE, logBase = NULL, multcomp = FALSE, ...)
 {
     interval <- match.arg(interval)
     reference <- match.arg(reference)
@@ -43,7 +43,13 @@ pool = TRUE, logBase = NULL, ...)
     parmMat <- parmMat[, curveOrder, drop = FALSE]
     
     strParm <- strParm0
-    vcMat <- vcov(object, od = od, pool = pool)
+#    if (robust)
+#    {
+#        vcMat <- sandwich(object)
+#    } else {
+#        vcMat <- vcov(object, od = od, pool = pool)
+#    }
+    vcMat <- vcov.(object)
     
     ## Defining vectors and matrices
     ncolIM <- ncol(indexMat)
@@ -67,6 +73,8 @@ pool = TRUE, logBase = NULL, ...)
 
     ## Calculating estimates and estimated standard errors
     rowIndex <- 1
+    lenIV <- length(indexVec)
+    dEDmat <- matrix(0, lenPV * lenIV, nrow(vcMat))
     for (i in indexVec)
     {
         parmChosen <- parmMat[, i]
@@ -81,6 +89,9 @@ pool = TRUE, logBase = NULL, ...)
             EDeval <- EDlist(parmChosen, respLev[j], reference = reference, type = type, ...)            
             EDval <- EDeval[[1]]
             dEDval <- EDeval[[2]]
+#            print(c(i,j,parmInd))
+#            print(dEDval)
+            dEDmat[(i-1)*lenPV + j, parmInd] <- dEDval 
             
             oriMat[rowIndex, 1] <- EDval
             oriMat[rowIndex, 2] <- sqrt(dEDval %*% varCov %*% dEDval)
@@ -175,5 +186,17 @@ pool = TRUE, logBase = NULL, ...)
     }   
     dimnames(EDmat) <- list(dimNames, colNames)
     resPrint(EDmat, "Estimated effective doses", interval, intLabel, display = display)
+    
+    ## require(multcomp, quietly = TRUE)
+#    invisible(list(EDdisplay = EDmat, EDmultcomp = list(EDmat[, 1], dEDmat %*% vcMat %*% t(dEDmat))))  
+    
+    if(multcomp)
+    {  
+        invisible(list(EDdisplay = EDmat, 
+                       EDmultcomp = parm(EDmat[, 1], (dEDmat %*% vcMat %*% t(dEDmat))[1:nrow(EDmat), 1:nrow(EDmat), drop = FALSE])))
+    } else {
+        invisible(EDmat)
+      
+    }   
 }
 
