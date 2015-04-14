@@ -1,4 +1,4 @@
-568ec82bff55dcd41649f2df181fe2b4 *DESCRIPTION
+700de4e30e70b02cc0293dd0fe45ad24 *DESCRIPTION
 678d6ba2d747b9c7aee35ff61bbc033b *LICENCE
 a21e4162d2ce0299b95c4e690700dadb *NAMESPACE
 e80b782cf900cc83163828c997cfb551 *NEWS
@@ -84,7 +84,7 @@ bd9e635303080ade11277f427916fbf1 *R/neill.test.R
 cb849686e158787b523e8d89a7610efa *R/noEffect.R
 91f3639dd7beddc04c7719fd1583af5b *R/onAttach.R
 692156c3cc8226876f6616265ac156d2 *R/pickParm.R
-3cf7a2833006311605601793ecc81bf2 *R/plot.drc.R
+469c538fb895546fc98731e2f585ea61 *R/plot.drc.R
 694bd82d41deaa1b0d286e74fcf7b1e4 *R/predict.drc.R
 510ce422c9881d9f9bd8803faa012bbc *R/print.drc.R
 789170bdc89f6eca73ee10cd7d2500ab *R/print.summary.drc.R
@@ -153,7 +153,7 @@ e34b79db749561796aee090c8263989e *man/AR.Rd
 0022fb6cb84789c0e9eca4d9e8340953 *man/BC.Rd
 4799bd6cde171d413b8b9a71bd2b150c *man/CRS.4a.Rd
 4a8452549069c37a80e4dd74c4095dc4 *man/CRS.5a.Rd
-5e2f46beacec30ab3e6d725837072f82 *man/ED.drc.Rd
+335657b8a8ba27034685fed946a8f9b6 *man/ED.drc.Rd
 4cd1439972ecdcf52c196fa313bcc245 *man/EDcomp.Rd
 7f087d498ae45cc7e3ceb0baf88131be *man/EXD.Rd
 ceb22902f0e3968237aa8cdebf893148 *man/G.aparine.Rd
@@ -230,7 +230,7 @@ feab3e47333f6692103ac1391dca2cfe *man/multi2.Rd
 03765004e903071ba33088d7c9157702 *man/nasturtium.Rd
 23cf8f3660aa28e102869048a97008cd *man/neill.test.Rd
 964d31e1502a4936e748f49379c48b3d *man/noEffect.Rd
-6354a746807f0d1430d84286923e1dbe *man/plot.drc.Rd
+e5fbd12a9f3803a22c8e989758929fb1 *man/plot.drc.Rd
 80eaefaeff64b018669c6dbf75a6d031 *man/predict.drc.Rd
 f8436f23ffe8038cb7e4c540932c21ab *man/print.drc.Rd
 49ccf1974918a90463b525c78953c355 *man/print.summary.drc.Rd

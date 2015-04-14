@@ -1,7 +1,8 @@
 \name{plot.drc}
+
 \alias{plot.drc}
 
-\title{Plotting fitted curves for a 'drc' or 'mrdrc' object}
+\title{Plotting fitted dose-response curves}
 
 \description{
   \code{plot} displays fitted curves and observations in the same plot window, 
@@ -11,14 +12,14 @@
 \usage{
   
   \method{plot}{drc}(x, ..., add = FALSE, level = NULL, 
-  type = c("average", "all", "bars", "none", "obs", "confidence"), 
-  broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, gridsize = 100, 
-  log = "x", xtsty, xttrim = TRUE, xt = NULL, xtlab = NULL, xlab, xlim, 
+  type = c("average", "all", "bars", "none", "obs", "confidence"),  
+  broken = FALSE, bp, bcontrol = NULL, conName = NULL, axes = TRUE, 
+  gridsize = 100, log = "x", xtsty, xttrim = TRUE, 
+  xt = NULL, xtlab = NULL, xlab, xlim, 
   yt = NULL, ytlab = NULL, ylab, ylim,
   cex, cex.axis = 1, col = FALSE, lty, pch, 
   legend, legendText, legendPos, cex.legend = 1,
-  normal = FALSE, normRef = 1, confidence.level = 0.95
-  )
+  normal = FALSE, normRef = 1, confidence.level = 0.95)
 }
 
 \arguments{
@@ -30,10 +31,9 @@
   \item{type}{a character string specifying how to plot the data. There are currently
   5 options:  "average" (averages and fitted curve(s); default), 
   "none" (only the fitted curve(s)), "obs" (only the data points), 
-  "all" (all data points and fitted curve(s)), 
+  "all" (all data points and fitted curve(s)),
   "bars" (averages and fitted curve(s) with model-based standard errors (see Details)), and
-  "confidence" (confidence bands for fitted curve(s)).
-  }
+  "confidence" (confidence bands for fitted curve(s)).}
   \item{broken}{logical. If TRUE the x axis is broken provided this axis is logarithmic 
   (using functionality in the CRAN package 'plotrix').}
   \item{bp}{numeric value specifying the break point below which the dose is zero (the amount of stretching on 
@@ -76,11 +76,10 @@
   \item{legendPos}{numeric vector of length 2 giving the position of the legend.}
   \item{cex.legend}{numeric specifying the legend text size.}
   \item{lty}{a numeric vector specifying the line types.}
-  \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}
+  \item{pch}{a vector of plotting characters or symbols (see \code{\link{points}}).}  
   \item{normal}{logical. If TRUE the plot of the normalized data and fitted curves are shown
   (for details see Weimer et al. (2012) for details).} 
-  \item{normRef}{numeric specifying the reference for the normalization
-    (default is 1).}  
+  \item{normRef}{numeric specifying the reference for the normalization (default is 1).}  
   \item{confidence.level}{confidence level for error bars. Defaults to 0.95.}
 }
 
@@ -94,7 +93,8 @@
 
   Suitable labels are automatically provided.
   
-  The arguments \code{broken} and \code{bcontrol} rely on the function \code{link{axis.break}} with arguments 
+  The arguments \code{broken} and \code{bcontrol} rely on the function 
+  \code{link{axis.break}} with arguments 
   \code{style} and \code{brw} in the package \code{plotrix}.
   
   The model-based standard errors used for the error bars are calculated
@@ -105,18 +105,16 @@
   where alpha=1-confidence.level. The standard errors are obtained using
   the predict method with the arguments interval = "confidence"
   and level=confidence.level.
-  
-  \code{plot.mrdrc} takes the same arguments as \code{plot.drc}.
 }
 
 \value{
   An invisible data frame with the values used for plotting the fitted curves. The first column contains the dose values,
-  and the following columns (one for each curve) contain the fitted response values.
+and the following columns (one for each curve) contain the fitted response values.
 }
 
 \author{
   Christian Ritz and Jens C. Streibig
-  Contributions from Xiaoyan Wang and Gregory Warnes 
+  Contributions from Xiaoyan Wang and Greg Warnes 
 }
 
 \references{
@@ -171,7 +169,7 @@ plot(spinach.m1, level = c(1,2), main = "User-specified curves")
 plot(spinach.m1, cex = c(1,2,3,4,5), main = "User-specified symbil sizes")
 
 ## Plot with confidence regions
-plot(spinach.m1, col = TRUE, main = "Confidence Regions", type="confidence")
+plot(spinach.m1, col = TRUE, main = "Confidence Regions", type = "confidence")
 
 ## Add points
 plot(spinach.m1, col = TRUE, add=TRUE)

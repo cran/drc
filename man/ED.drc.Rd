@@ -37,8 +37,7 @@
   \item{vcov.}{function providing the variance-covariance matrix. \code{\link{vcov}} is the default, 
   but \code{sandwich} is also an option (for obtaining robust standard errors).}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
-  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
-  independently fitted curves as specified in \code{\link{drm}}.}
+  \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with independently fitted curves as specified in \code{\link{drm}}.}
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}  
   \item{multcomp}{logical to switch on output for use with the package multcomp. Default is FALSE (corresponding to the original output).}
   \item{...}{see the details section below.}
