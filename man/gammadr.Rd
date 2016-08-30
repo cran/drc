@@ -52,10 +52,10 @@
 
 %\note{}
 
-\seealso{
-  The basic component in the two-phase model is the log-logistic model
-  \code{\link{llogistic}}.
-}
+%\seealso{
+%  The basic component in the two-phase model is the log-logistic model
+%  \code{\link{llogistic}}.
+%}
 
 %\examples{}
 

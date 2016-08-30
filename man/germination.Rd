@@ -39,8 +39,7 @@
 %}
 
 \references{
-  Ritz, C., Pipper, C. B. and Streibig, J. C. (2013) Analysis of germination data from agricultural experiments,
-  \emph{European Journal of Agronomy}, \bold{45}, 1--6
+  Ritz, C., Pipper, C. B. and Streibig, J. C. (2013) Analysis of germination data from agricultural experiments, \emph{Europ. J. Agronomy}, \bold{45}, 1--6.  
 }
 
 \seealso{Analysis of a single germination curve is shown for \code{\link{chickweed}}.}

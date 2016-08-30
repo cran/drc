@@ -24,8 +24,7 @@
 
 \arguments{
   \item{x}{an object of class 'drc'.}
-  \item{...}{additional graphical arguments. For instance, use \code{lwd=2} or \code{lwd=3} to increase the width 
-  of plot symbols.}
+  \item{...}{additional graphical arguments. For instance, use \code{lwd=2} or \code{lwd=3} to increase the width of plot symbols.}
   \item{add}{logical. If TRUE then add to already existing plot.} 
   \item{level}{vector of character strings. To plot only the curves specified by their names.}
   \item{type}{a character string specifying how to plot the data. There are currently
@@ -113,8 +112,7 @@ and the following columns (one for each curve) contain the fitted response value
 }
 
 \author{
-  Christian Ritz and Jens C. Streibig
-  Contributions from Xiaoyan Wang and Greg Warnes 
+  Christian Ritz and Jens C. Streibig. Contributions from Xiaoyan Wang and Greg Warnes. 
 }
 
 \references{

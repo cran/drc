@@ -49,19 +49,39 @@ weibull2x, W2x.3, W2x.4,
 
 bread.drc, estfun.drc,
 
-backfit, comped, compParm, diagnostics, drm, drmc, ED, EDcomp, getInitial, getMeanFunctions, isobole, 
-lin.test, MAX, maED, mixture, modelFit, mr.test, mselect, neill.test, noEffect, PR, rdrm, relpot, searchdrc, SI, simDR, 
-yieldLoss)
+backfit, CIcomp, CIcompX, comped, compParm, drm, drmc, ED, EDcomp, getInitial, getMeanFunctions, isobole, 
+lin.test, MAX, maED, mixture, modelFit, mr.test, mselect, neill.test, noEffect, plotFACI, PR, rdrm, relpot, searchdrc, 
+simDR, yieldLoss)
 
 importFrom(car, deltaMethod)
 importFrom(gtools, combinations)
 importFrom(multcomp, parm)
-importFrom(plotrix, axis.break, plotCI)
+importFrom(plotrix, axis.break, dispersion, plotCI)
 importFrom(MASS, boxcox, ginv, psi.bisquare, psi.huber)
 importFrom(scales, alpha)
 #importFrom(nlme, BIC)
-importFrom(stats, cooks.distance, hatvalues)
+#importFrom(stats, cooks.distance, hatvalues)
 #exportMethods(BIC)
+
+
+importFrom("graphics", "abline", "axTicks", "axis", "lines", "par",
+            "plot", "points", "polygon", "segments", "text")
+
+importFrom("stats", "AIC", "anova", "as.formula", "binomial", "coef",
+           "complete.cases", "cooks.distance", "cutree", "deriv", "deviance",
+           "df.residual", "dgamma", "dist", "dnorm", "fitted",
+           "fivenum", "formula", "glm", "hatvalues", "hclust", "integrate", "lm",
+           "loess", "logLik", "mad", "median", "model.extract",
+           "model.frame", "model.matrix", "model.response",
+           "model.weights", "na.omit", "na.pass", "optim", "pchisq",
+           "pf", "pgamma", "pnorm", "poisson", "predict",
+           "printCoefmat", "pt", "qchisq", "qnorm", "qt", "quantile",
+           "rbinom", "residuals", "rnorm", "sd", "uniroot", "update",
+           "vcov", "weights")
+
+importFrom("utils", "head", "tail")
+
+
 
 ## S3 methods
 S3method(anova, drc)
@@ -82,5 +102,3 @@ S3method(residuals, drc)
 S3method(summary, drc)
 S3method(update, drc)
 S3method(vcov, drc)
-
-

@@ -52,6 +52,7 @@
         nObs <- x[["dataList"]][["resp"]] * nTotal
         fittedVal <- fitted(x)
         rval0 <- nObs/fittedVal + (nObs - nTotal)/(1 - fittedVal)
+        rval0[!is.finite(rval0)] <- 0  # handling fitted values equal to 0 or 1
 #        rval <- x$deriv1 * rval0
         xderiv2 <- xderiv2Fct(xderiv1, indMat, curveID)
         rval <- xderiv2 * rval0    

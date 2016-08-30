@@ -32,12 +32,33 @@ level = 0.95, na.action = na.pass, od = FALSE, vcov. = vcov, ...)
 #            newdata <- data.frame(dataList[["dose"]], dataList[["curveid"]])
 #        }
     } else {
-        if (ncol(newdata) < (doseDim + 1)) {newdata <- data.frame(newdata, rep(1, nrow(newdata)))}
-#        ndncol <- ncol(newdata)
-#        doseVec <- newdata[, 1:(ndncol-1)]
-        doseVec <- newdata[, 1:doseDim]
-#        groupLevels <- as.character(newdata[, ndncol])  # 'as.character()' used to suppress factor levels         
-        groupLevels <- as.character(newdata[, doseDim + 1])  # 'as.character()' used to suppress factor levels         
+        
+        dName <- dataList[["names"]][["dName"]]
+        if (any(names(newdata) %in% dName))
+        {
+            doseVec <- newdata[, dName]  
+        } else {
+            doseVec <- newdata[, 1]
+#            warning("Dose variable not in 'newdata'")
+        }
+        
+        cName <- dataList[["names"]][["cNames"]]
+        if (any(names(newdata) %in% cName))
+        {
+            groupLevels <- as.character(newdata[, cName])  
+            # as.character() removes factor encoding  
+          
+        } else {
+            groupLevels <- rep(1, nrow(newdata))
+        }
+#         
+#         
+#         if (ncol(newdata) < (doseDim + 1)) {newdata <- data.frame(newdata, rep(1, nrow(newdata)))}
+# #        ndncol <- ncol(newdata)
+# #        doseVec <- newdata[, 1:(ndncol-1)]
+#         doseVec <- newdata[, 1:doseDim]
+# #        groupLevels <- as.character(newdata[, ndncol])  # 'as.character()' used to suppress factor levels         
+#         groupLevels <- as.character(newdata[, doseDim + 1])  # 'as.character()' used to suppress factor levels         
     }
     noNewData <- length(groupLevels)
     

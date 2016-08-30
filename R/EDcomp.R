@@ -2,7 +2,7 @@
 function(object, percVec, percMat = NULL, compMatch = NULL, od = FALSE, vcov. = vcov, reverse = FALSE, 
 interval = c("none", "delta", "fieller", "fls"), level = ifelse(!(interval == "none"), 0.95, NULL), 
 reference = c("control", "upper"), type = c("relative", "absolute"),
-display = TRUE, pool = TRUE, logBase = NULL, ...)
+display = TRUE, pool = TRUE, logBase = NULL, multcomp = FALSE, ...)
 {
      ## Matching the argument 'method'
      interval <- match.arg(interval)
@@ -146,10 +146,27 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
 #    resPrint(SImat, "Estimated ratios of effect doses\n", interval, ciLabel, display = display) 
     resPrint(SImat, "Estimated ratios of effect doses", interval, ciLabel, display = display)
     
-#    invisible(SImat) 
-    ## require(multcomp, quietly = TRUE)
-    invisible(list(SIdisplay = SImat, SImultcomp = list(SImat[, 1], dSImat %*% varMat %*% t(dSImat))))  
-#    invisible(list(SImat, SImultcomp = list(EDest = EDmat[, 1], EDvcov = dEDmat %*% vcMat %*% t(dEDmat))))      
+##    invisible(SImat) 
+#    ## require(multcomp, quietly = TRUE)
+##    invisible(list(SImat, SImultcomp = list(EDest = EDmat[, 1], EDvcov = dEDmat %*% vcMat %*% t(dEDmat))))
+## these lines are older
+
+#    invisible(list(SIdisplay = SImat, SImultcomp = list(SImat[, 1], dSImat %*% varMat %*% t(dSImat))))  
+
+    if(multcomp)
+    {         
+        SImat1 <- SImat[, 1]
+        namesVec <- names(SImat1)
+        SImat1VC <- dSImat %*% varMat %*% t(dSImat)
+        colnames(SImat1VC) <- namesVec
+        rownames(SImat1VC) <- namesVec
+      
+#        invisible(list(multcomp = list(SImat[, 1], dSImat %*% varMat %*% t(dSImat))))       
+        invisible(list(multcomp = parm(SImat1, SImat1VC)))
+        
+    } else {
+        invisible(SImat)       
+    } 
 
 #    
 #    if (FALSE)
@@ -285,7 +302,7 @@ display = TRUE, pool = TRUE, logBase = NULL, ...)
 #    invisible(siMat)   
 }
 
-SI <- EDcomp
+#SI <- EDcomp
 
 
 "fieller" <-

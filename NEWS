@@ -1,5 +1,32 @@
 ## Changes in 'drc' 
 
+2016-07-25: na.omit() is now the default in drm(). New functions included: CIcomp(), CIcompX(), and plotFACI() for calculating combination indices
+based on effective doses and also effects as described in the paper by Martin-Betancor et al. (2015). An accompanying
+dataset named "metals" has also been included.
+
+2016-07-21: A small bug in printing confidence intervals has been fixed (after a report from Johannes Ranke). The
+output text has also been modified slightly. 
+
+2016-06-03: A small error for binomial data in the function estfun.drc for use with the package "sandwich" has been fixed (after a report from Andrew Kniss).
+
+2015-12-16: The predict method has been updated (after a report from Duncan Mackay). The function SI()
+has been completely replaced by the function EDcomp().
+
+2015-09-16: The function isobole() now also propagates graphical arguments to fitted isoboles.  
+
+2015-08-19: The print.summary.drc method shows a warning message in case of df<1. 
+Calculation of the log likelihood for binomial data has updated and improved.  
+
+2015-08-14: The function backfit() has been updated.
+
+2015-08-10: The function diagnostics() has been removed.
+
+2015-08-07: Help page for EDcomp() updated.
+
+2015-07-30: Robust estimation is working again (ater reports from Kathy Mutambanengwe, Sten Ilmjärv, and Corina Dueñas Roca).
+
+2015-04-14: Minor labelling issue in the plot method resolved (with help from Bert Oosthuyse). 
+
 2015-04-13: Help pages for ED() and isobole() has been updated. Some code has been tidied up.
 
 2015-04-12: The plot method extended to provide confidence bands (contribution by Gregory Warnes). 
@@ -8,7 +35,7 @@
 (after a comment from Florent Baty).
 
 2014-11-13: The argument "control" is now correctly propagated in case separate = TRUE in drm() 
-(after a report by Andy Liaw).
+(after a report from Andy Liaw).
 
 2014-06-30: The help page for ursa() has been improved (in particular the example section).
 

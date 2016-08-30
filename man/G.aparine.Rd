@@ -50,10 +50,11 @@ modelFit(G.aparine.m1)
 summary(G.aparine.m1)
 
 ## Predicted values with se and confidence intervals
-predict(G.aparine.m1, interval = "confidence")
+#predict(G.aparine.m1, interval = "confidence")
+# long output
 
 ## Calculating the relative potency
-SI(G.aparine.m1, c(50,50))
+EDcomp(G.aparine.m1, c(50,50))
 
 ## Showing the relative potency as a
 ## function of the response level
@@ -77,7 +78,7 @@ relpot(G.aparine.m2)
 G.aparine.m3 <- drm(drymatter ~ dose, treatment, data = G.aparine, 
 pmodels = data.frame(treatment, treatment, 1, treatment), fct = LL2.4())
 
-SI(G.aparine.m3, c(50, 50), logBase = exp(1))
+EDcomp(G.aparine.m3, c(50, 50), logBase = exp(1))
 
 }
 \keyword{datasets}

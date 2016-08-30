@@ -12,7 +12,7 @@
   drm(formula, curveid, pmodels, weights, data = NULL, subset, fct, 
   type = c("continuous", "binomial", "Poisson", "quantal", "event"), 
   bcVal = NULL, bcAdd = 0, 
-  start, na.action = na.fail, robust = "mean", logDose = NULL, 
+  start, na.action = na.omit, robust = "mean", logDose = NULL, 
   control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE, pshifts = NULL)
 }
 
@@ -53,8 +53,7 @@
   \item{start}{an optional numeric vector containing starting values for all mean parameters in the model. 
   Overrules any self starter function.}
    
-  \item{na.action}{a function which indicates what should happen when the data contain 'NA's.  
-  The default is \code{\link{na.fail}}. To omit 'NA's use \code{\link{na.omit}}.}
+  \item{na.action}{a function for treating mising values ('NA's). Default is \code{\link{na.omit}}.}
    
   \item{robust}{a character string specifying the rho function for robust estimation. Default is non-robust 
   least squares estimation ("mean"). Available robust methods are: median estimation ("median"), 

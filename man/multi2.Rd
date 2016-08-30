@@ -44,7 +44,9 @@
 }
 
 \references{
-  NN 
+  Wheeler, M. W., Bailer, A. J. (2009)
+  Comparing model averaging with other model selection strategies for benchmark dose estimation,
+  \emph{Environmental and Ecological Statistics}, \bold{16}, 37--51.
 }
 
 \author{

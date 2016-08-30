@@ -31,12 +31,12 @@ xlab = expression(lambda), ylab = "log-Likelihood", ...)
 
 \details{
   The optimal lambda value is determined using a profile likelihood approach: 
-  For each lambda value the non-linear regression model is fitted and the lambda value resulting in thre largest
-  value of the log likelihood function is picked.
+  For each lambda value the dose-response regression model is fitted and the lambda value (and corresponding model fit) resulting in the largest
+  value of the log likelihood function is chosen.
 }
 
 \value{
-  An object of class \code{\link{nls}} (returned invisibly). 
+  An object of class "drc" (returned invisibly). 
   If plotit = TRUE a plot of loglik vs lambda is shown indicating a confidence interval (by default 95%) about 
   the optimal lambda value.
 }
@@ -52,20 +52,17 @@ xlab = expression(lambda), ylab = "log-Likelihood", ...)
 
 \seealso{
   For linear regression the analogue is \code{\link[MASS]{boxcox}}. 
-  
-%  For general non-linear regression models
-%  fitted using \code{\link{nls}} you can use \code{\link{boxcox.nls}}.
 }
 
 \examples{
 
 ## Fitting log-logistic model without transformation
-m1 <- drm(ryegrass, fct = LL.4())
-summary(m1)
+ryegrass.m1 <- drm(ryegrass, fct = LL.4())
+summary(ryegrass.m1)
 
-## Fitting the same model with optimal Box-Cox transformation
-m2 <- boxcox(m1)
-summary(m2)
+## Fitting the same model with the optimal Box-Cox transformation
+ryegrass.m2 <- boxcox(ryegrass.m1)
+summary(ryegrass.m2)
 
 }
 

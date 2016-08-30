@@ -1,14 +1,13 @@
 \name{EDcomp}
 
 \alias{EDcomp}
-\alias{SI}
 \alias{relpot}
 
-\title{Comparing selectivity indices across curves}
+\title{Comparison of relative potencies between dose-response curves}
 
 \description{
-  'EDcomp' compares selectivity indices for arbitrary dosage across curves.
-  The selectivity is the ratio between effective dosages from different curves. 
+  Relative potencies (also called selectivity indices) for arbitrary doses are compared between
+  fitted dose-response curves.
 }
 
 \usage{
@@ -18,7 +17,8 @@
   level = ifelse(!(interval == "none"), 0.95, NULL),
   reference = c("control", "upper"),  
   type = c("relative", "absolute"),
-  display = TRUE, pool = TRUE, logBase = NULL, ...)
+  display = TRUE, pool = TRUE, logBase = NULL, 
+  multcomp = FALSE, ...)
   
   relpot(object, plotit = TRUE, compMatch = NULL, percVec = NULL, interval = "none", 
   type = c("relative", "absolute"), 
@@ -48,7 +48,8 @@
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with
-  independently fitted curves as specified in \code{\link{drm}}.}  
+  independently fitted curves as specified in \code{\link{drm}}.}
+  \item{multcomp}{logical to switch on output for use with the package multcomp (which needs to be activated first). Default is FALSE (corresponding to the original output).}  
   \item{...}{In \code{SI}: additional arguments to the function doing the calculations. 
   For instance the upper limit for the bisection method 
   needs to be larger than the ED values used in the required relative pontency.
@@ -60,9 +61,9 @@
 
 \details{
   The function \code{relpot} is a convenience function, which is useful for assessing how the relative potency
-  changes as a function of the response level (eg for plotting as outlined in Ritz \emph{et al} (2006)).
+  changes as a function of the response level (e.g., for plotting as outlined by Ritz \emph{et al} (2006)).
   
-  Fieller's theorem is incorporated using the formulas Kotz and Johnson (1983) and Finney (1978).
+  Fieller's theorem is incorporated using the formulas provided by Kotz and Johnson (1983) and Finney (1978).
 
   For objects of class 'braincousens' or 'mlogistic' the additional argument may be the 'upper' argument
   or the 'interval' argument. The 'upper' argument specifies the upper limit of the bisection method. 
@@ -72,10 +73,11 @@
   Notice that the lower limit should not be set to 0 (use something like 1e-3, 1e-6, ...).
 }
 
-\value{
-  A list containing the shown matrix with columns containing the estimates, estimated standard errors, 
-  t-statistics for testing indices equal to 1 and the corresponding p-values and, as the second list component, 
-  a list with elements to be plugged directly into \code{parm} in the package \emph{multcomp}.
+\value{  
+  An invisible matrix containing the shown matrix with two or more columns, containing the estimates 
+  and the corresponding estimated standard errors and possibly lower and upper confidence limits.
+  Or, alternatively, a list with elements that may be plugged directly into \code{parm} 
+  in the package \emph{multcomp} (in case the argument \code{multcomp} is TRUE).
 }
 
 \references{
@@ -92,14 +94,13 @@
 \author{Christian Ritz}
 
 \note{
-  This function is only implemented for the following built-in functions available in the package \emph{drc}: 
-  \code{\link{braincousens}}, \code{\link{cedergreen}}, \code{\link{ucedergreen}}, \code{\link{llogistic}}
+  This function only works for the following built-in functions available in the package \emph{drc}: 
+  \code{\link{braincousens}}, \code{\link{cedergreen}}, \code{\link{ucedergreen}}, \code{\link{llogistic}},
   and \code{\link{weibull1}}.
 }
 
 \seealso{
-  A related functions \code{\link{ED.drc}} (for calculating effective doses) and 
-  \code{\link{relpot}} (for displaying relative potencies).
+  A related function is \code{\link{ED.drc}} (used for calculating effective doses).
 }
 
 \examples{
@@ -129,7 +130,7 @@ EDcomp(m2, c(50, 50))
 EDcomp(m2, c(50, 50), interval = "delta")
 EDcomp(m2, c(50, 50), interval = "fieller")
 
-## Comparison based on absolute
+## Comparison based on an absolute
 ##  response level
 
 m3 <- drm(SLOPE~DOSE, CURVE,

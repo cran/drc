@@ -11,7 +11,8 @@ xlab, ylab, xlim, ylim, ...)
     eVec <- parmVec[indVec]
     seVec <- (summary(object1)$"coefficients")[indVec, 2]
 
-    edMat <- ED(object1, 50, display = FALSE, multcomp = TRUE)[["EDdisplay"]]
+#    edMat <- ED(object1, 50, display = FALSE, multcomp = TRUE)[["EDdisplay"]]
+    edMat <- ED(object1, 50, display = FALSE)
     eVec <- (as.vector(edMat[, 1]))  # stripping off names
     seVec <- (as.vector(edMat[, 2]))  # stripping off names
 
@@ -187,7 +188,7 @@ xlab, ylab, xlim, ylim, ...)
             xVal <- yVal
             yVal <- tempVal
         }    
-        lines(xVal, yVal)        
+        lines(xVal, yVal, ...)        
     }
 #    invisible()
 }

@@ -44,7 +44,8 @@ type = c("relative", "absolute"), scale = c("original", "percent", "unconstraine
     {
         for (i in 1:lenpv)
         {
-            SIobj <- SI(object, rep(percVec[i], 2), compMatch, type = type, display = FALSE)[["SIdisplay"]]
+            SIobj <- EDcomp(object, rep(percVec[i], 2), compMatch, 
+                            type = type, display = FALSE)
             rpVec[i] <- SIobj[1]
         }
     } else {
@@ -53,7 +54,8 @@ type = c("relative", "absolute"), scale = c("original", "percent", "unconstraine
 
         for (i in 1:lenpv)
         {
-            SIobj <- SI(object, rep(percVec[i], 2), compMatch, interval = interval, type = type, display = FALSE)[["SIdisplay"]]
+            SIobj <- EDcomp(object, rep(percVec[i], 2), compMatch, interval = interval, 
+                            type = type, display = FALSE)
             rpVec[i] <- SIobj[1]
             lrpVec[i] <- SIobj[2]
             urpVec[i] <- SIobj[3]            
@@ -92,7 +94,7 @@ type = c("relative", "absolute"), scale = c("original", "percent", "unconstraine
         ## Adding reference line corresponding to EC50/ED50
         if (type == "relative")
         { 
-            abline(h = SI(object, c(50, 50), compMatch, type = type, display = FALSE)[["SIdisplay"]][1], lty = 2)
+            abline(h = EDcomp(object, c(50, 50), compMatch, type = type, display = FALSE)[1], lty = 2)
         }
         
     }

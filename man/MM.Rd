@@ -64,7 +64,7 @@ ED(met.mm.m1, c(10, 50))
 coef(met.mm.m1)[4] / coef(met.mm.m1)[5] * 100
 
 ## Calculating bioefficacy: approach 2
-SI(met.mm.m1, c(50,50))
+EDcomp(met.mm.m1, c(50,50))
 
 ## Simplified models
 met.mm.m2a <- drm(gain~dose, product, data=methionine, fct=MM.3(), 

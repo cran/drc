@@ -34,8 +34,8 @@
    
    By default confidence interval relies on percentiles in the normal distribution.  
    
-   In case the entire dataset is available the functions \code{\link{drm}} and (subsequently) \code{\link{SI}}
-   should be used.
+   In case the entire dataset is available the functions \code{\link{drm}} and (subsequently) \code{\link{EDcomp}}
+   should be used instead.
 }
 
 \value{
@@ -59,7 +59,7 @@
 
 \seealso{
   The function \code{\link{ED.drc}} calculates arbitrary effective dose values based on a model fit. The function
-  \code{\link{SI}} calculates relative potencies based on arbitrary effective dose values.
+  \code{\link{EDcomp}} calculates relative potencies based on arbitrary effective dose values.
 }
 
 \examples{

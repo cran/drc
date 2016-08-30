@@ -39,12 +39,11 @@
 }
 
 \source{
-  Data are kindly provided by Lisa Borggaard (formlerly at the Faculty of Life Sciences, University of Copenhagen).
+  Data are kindly provided by Lisa Borggaard (formerly at the Faculty of Life Sciences, University of Copenhagen).
 }
 
 \references{
-  Ritz, C., Pipper, C. B. and Streibig, J. C. (2012) Analysis of germination data from agricultural experiments,
-  \emph{Submitted}
+  Ritz, C., Pipper, C. B. and Streibig, J. C. (2013) Analysis of germination data from agricultural experiments, \emph{Europ. J. Agronomy}, \bold{45}, 1--6.  
 }
 
 \examples{

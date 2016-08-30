@@ -34,8 +34,7 @@
 }
 
 \references{
-  Notttingham, Q. J. and Birch, J. B. (2000) A semiparametric approach to analysing dose-response data,
-  \emph{Statist. Med.}, \bold{19}, 389--404.
+  Notttingham, Q. J. and Birch, J. B. (2000) A semiparametric approach to analysing dose-response data, \emph{Statist. Med.}, \bold{19}, 389--404.
 }
 
 \examples{

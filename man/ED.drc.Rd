@@ -39,7 +39,7 @@
   \item{display}{logical. If TRUE results are displayed. Otherwise they are not (useful in simulations).}
   \item{pool}{logical. If TRUE curves are pooled. Otherwise they are not. This argument only works for models with independently fitted curves as specified in \code{\link{drm}}.}
   \item{logBase}{numeric. The base of the logarithm in case logarithm transformed dose values are used.}  
-  \item{multcomp}{logical to switch on output for use with the package multcomp. Default is FALSE (corresponding to the original output).}
+  \item{multcomp}{logical to switch on output for use with the package multcomp (which needs to be activated first). Default is FALSE (corresponding to the original output).}
   \item{...}{see the details section below.}
 }
 
@@ -58,9 +58,7 @@
 \value{
   An invisible matrix containing the shown matrix with two or more columns, containing the estimates 
   and the corresponding estimated standard errors and possibly lower and upper confidence limits.
-  Or, alternatively, an invisible list containing the shown matrix with two or more columns, containing the estimates 
-  and the corresponding estimated standard errors and possibly lower and upper confidence limits
-  and, as the second list component, a list with elements to be plugged directly into \code{parm} 
+  Or, alternatively, a list with elements that may be plugged directly into \code{parm} 
   in the package \emph{multcomp} (in case the argument \code{multcomp} is TRUE).
 }
 
@@ -70,7 +68,7 @@
 %\note{This function is only implemented for the built-in functions of class 'braincousens', 'gompertz', 'logistic' and 'mlogistic'.}
 
 \seealso{
-  \code{\link{backfit}}, \code{\link{isobole}}, and \code{\link{maED}} use \code{\link{ED}} for specific calculations involving ED values.
+  \code{\link{backfit}}, \code{\link{isobole}}, and \code{\link{maED}} use \code{\link{ED}} for specific calculations involving estimated ED values.
 
   The related function \code{\link{EDcomp}} may be used for estimating differences and ratios of ED values, 
   whereas \code{\link{compParm}} may be used to compare other model parameters. 

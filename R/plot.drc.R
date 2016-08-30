@@ -48,7 +48,9 @@ normal = FALSE, normRef = 1, confidence.level = 0.95)
     if (normal)
     {
         respList <- split(resp, curveid)
-        resp <- unlist(mapply(normalizeLU, respList, as.list(as.data.frame(getLU(object))), normRef = normRef))            
+        resp <- unlist(mapply(normalizeLU, respList, 
+                              as.list(as.data.frame(getLU(object))), 
+                              normRef = normRef))            
 #        respNew <- unlist(mapply(normalizeLU, respList, as.list(as.data.frame(getLU(object)))))    
 #        print(respNew)
 #        print(resp)
@@ -176,7 +178,9 @@ normal = FALSE, normRef = 1, confidence.level = 0.95)
     if (normal)
     {
         respList <- split(resp, curveid)
-        plotMat <- mapply(normalizeLU, as.list(as.data.frame(plotMat)), as.list(as.data.frame(getLU(object))), normRef = normRef)            
+        plotMat <- mapply(normalizeLU, as.list(as.data.frame(plotMat)), 
+                          as.list(as.data.frame(getLU(object))), 
+                          normRef = normRef)            
 #        pmNew <- mapply(normalizeLU, as.list(as.data.frame(plotMat)), as.list(as.data.frame(getLU(object))))    
 #        print(pmNew)
 #        print(plotMat)

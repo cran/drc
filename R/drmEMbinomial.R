@@ -23,15 +23,9 @@ doseScaling = 1, respScaling = 1)
         omZT <- 1 - zeroTol
         prob[prob > omZT] <- omZT
         prob[prob < zeroTol] <- zeroTol
-        -sum((resp * weights) * log(prob / (1 - prob)) + (weights * log(1 - prob)))        
-#        -sum((resp * weights)[iv] * log(prob / (1 - prob)) + (weights[iv] * log(1 - prob)))
+        -sum((resp * weights) * log(prob / (1 - prob)) + (weights * log(1 - prob)))
         
-#        print(sum(retVec[is.finite(retVec)])) 
-#        sum(retVec[is.finite(retVec)])
-#        print(retVec)
-#        sum(retVec)
-
-#        return( -sum((resp*weights)[iv]*log(prob/(1-prob))+weights[iv]*log(1-prob)) )
+#        -sum((resp * weights) * log(prob) + ((weights - resp * weights) * log(1 - prob)))        
     }    
     
     ## Defining self starter function

@@ -185,6 +185,7 @@ display = TRUE, pool = TRUE, logBase = NULL, multcomp = FALSE, ...)
         colNames <- c(colNames, "Lower", "Upper")         
     }   
     dimnames(EDmat) <- list(dimNames, colNames)
+    rownames(EDmat) <- paste("e", rownames(EDmat), sep = ":")
     resPrint(EDmat, "Estimated effective doses", interval, intLabel, display = display)
     
     ## require(multcomp, quietly = TRUE)
@@ -192,11 +193,19 @@ display = TRUE, pool = TRUE, logBase = NULL, multcomp = FALSE, ...)
     
     if(multcomp)
     {  
-        invisible(list(EDdisplay = EDmat, 
-                       EDmultcomp = parm(EDmat[, 1], (dEDmat %*% vcMat %*% t(dEDmat))[1:nrow(EDmat), 1:nrow(EDmat), drop = FALSE])))
+        EDmat1 <- EDmat[, 1]
+        namesVec <- names(EDmat1)  # paste("e", names(EDmat1), sep = ":")
+#        names(EDmat1) <- namesVec
+        
+        EDmat1VC <- (dEDmat %*% vcMat %*% t(dEDmat))[1:nrow(EDmat), 1:nrow(EDmat), drop = FALSE]
+        colnames(EDmat1VC) <- namesVec
+        rownames(EDmat1VC) <- namesVec
+        
+        invisible(list(#EDdisplay = EDmat, 
+#                       EDmultcomp = parm(EDmat[, 1], (dEDmat %*% vcMat %*% t(dEDmat))[1:nrow(EDmat), 1:nrow(EDmat), drop = FALSE])))
+                        EDmultcomp = parm(EDmat1, EDmat1VC)))
     } else {
-        invisible(EDmat)
-      
+        invisible(EDmat)     
     }   
 }
 

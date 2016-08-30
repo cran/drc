@@ -61,7 +61,7 @@ summary(met.as.m1)
 coef(met.as.m1)[5] / coef(met.as.m1)[4] * 100
 
 ## Calculating bioefficacy: approach 2
-SI(met.as.m1, c(50,50))
+EDcomp(met.as.m1, c(50,50))
 
 ## Simplified models
 met.as.m2<-drm(gain ~ dose, product, data = methionine, fct = AR.3(), 

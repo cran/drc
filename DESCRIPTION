@@ -1,6 +1,6 @@
 Package: drc
-Version: 2.5-12
-Date: 2015-04-14
+Version: 3.0-1
+Date: 2016-08-25
 Title: Analysis of Dose-Response Curves
 Author: Christian Ritz <ritz@bioassay.dk>, Jens C. Strebig <streibig@bioassay.dk>
 Maintainer: Christian Ritz <ritz@bioassay.dk>
@@ -12,6 +12,6 @@ Description: Analysis of dose-response data is made available through a suite of
 License: GPL-2 | file LICENCE
 URL: http://www.r-project.org, http://www.bioassay.dk
 NeedsCompilation: no
-Packaged: 2015-04-14 11:13:08 UTC; mwr165
+Packaged: 2016-08-24 23:24:51 UTC; mwr165
 Repository: CRAN
-Date/Publication: 2015-04-14 14:53:24
+Date/Publication: 2016-08-30 01:33:38

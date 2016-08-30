@@ -58,7 +58,8 @@ clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, n
     
     ## Calculating estimated ED values
 #    print(clevel)
-    edMat <- ED(object, respLev, interval2, clevel, type = type, display = FALSE, multcomp = TRUE)[["EDdisplay"]]
+#    edMat <- ED(object, respLev, interval2, clevel, type = type, display = FALSE, multcomp = TRUE)[["EDdisplay"]]
+    edMat <- ED(object, respLev, interval2, clevel, type = type, display = FALSE)
 #    print(edMat)
     edEst[1, ] <- as.vector((edMat)[, 1])
     edSe[1, ] <- as.vector((edMat)[, 2])
@@ -73,7 +74,9 @@ clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, n
     }
     for (i in 1:lenfl)
     {
-        edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, clevel, type = type, display = FALSE, multcomp = TRUE)[["EDdisplay"]], silent = TRUE)
+#        edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, clevel, type = type, display = FALSE, multcomp = TRUE)[["EDdisplay"]], silent = TRUE)
+      edMati <- try(ED(update(object, fct = fctList[[i]]), respLev, interval2, clevel, 
+                       type = type, display = FALSE), silent = TRUE)      
         if (inherits(edMati, "try-error"))
         {
             edMati <- matrix(NA, length(respLev), 4)
@@ -136,7 +139,7 @@ clevel = NULL, level = 0.95, type = c("relative", "absolute"), display = TRUE, n
     ## Constructing matrix of fit summaries 
     disMat <- as.matrix(cbind(edEst, wVec))
 #    colnames(disMat) <- c(paste("EC", rownames(edMat), sep = ""), "Weight")
-    colnames(disMat) <- c(paste("EC", respLev, sep = ""), "Weight")
+    colnames(disMat) <- c(paste("ED", respLev, sep = ""), "Weight")
 #    rownames(disMat) <- rownames(msMat)
     if (linreg) 
     {

@@ -78,7 +78,6 @@ function(object, od = FALSE, pool = TRUE, ...)
             return(retVec)            
         }
     
-    
         if (object$robust=="Tukey's biweight")
         {
             psifct <- psi.bisquare  # in MASS
@@ -91,22 +90,57 @@ function(object, od = FALSE, pool = TRUE, ...)
         {
             psifct <- psi.trimmed
         }
-    
+
+        if (FALSE)
+        {  
 #        resVec <- residuals(object)
         resVec <- (object)[["predres"]][, "Residuals"]
-        psiprime <- psifct(resVec/sqrt(resVar), deriv=1)
+        psiprime <- psifct(resVec/sqrt(resVar), deriv = 1)
         meanpp <- mean(psiprime)
         
         notNA <- !is.na(parVec) 
         sumVec1 <- object$fit 
-        K <- 1 + length(parVec[notNA])*var(psiprime)/(object$summary[7]*meanpp^2)        
+        
+#        K <- 1 + length(parVec[notNA])*var(psiprime)/(object$summary[7]*meanpp^2) 
+
+        nVal <- object[["sumList"]][["lenData"]]
+        dfVal <- object[["sumList"]][["df.residual"]]
+
+        pVal <- nVal - dfVal
+        K <- 1 + pVal * var(psiprime) / (nVal * meanpp^2)        
         w <- psifct(resVec/sqrt(resVar))
-        s <- sum((resVec*w)^2)/object$summary[6]
-        print(parVec[notNA])
-        print(var(psiprime))
-        print(c(K,w,s))
-        stddev <- sqrt(s)*(K/meanpp)       
-        estSE <- sqrt(diag(solve(sumVec1$hessian[notNA, notNA]/mean(psiprime)*resVar)))*stddev
+#        s <- sum((resVec*w)^2)/object$summary[6]
+        s <- sum((resVec*w)^2) / dfVal 
+        print(c(K, resVar, s, mean(psiprime)^2, mean(w^2)))
+
+#        print(parVec[notNA])
+#        print(var(psiprime))
+#        print(c(K,w,s))
+        stddev <- sqrt(s) * (K / meanpp)
+#        invXXt <- solve(sumVec1$hessian[notNA, notNA] / mean(psiprime) * resVar)
+        invXXt <- solve(sumVec1$hessian[notNA, notNA]) * (mean(psiprime) / resVar)
+        estSE <- sqrt(diag(invXXt)) * stddev
+        # formulas (6.5) (6.14) in Huber: Robust Statistics?
+        } # end of FALSE 
+
+#        objDer <- object[["deriv"]]
+#        if ( (!is.null(objDer)) && (!observed) )
+#        {
+#            estSE <- sqrt(resVar * (sum(w^2)/(nVal - dfVal) / mean(psiprime)^2) * diag(solve(t(objDer) %*% objDer)) )
+#            # formula (6.5) in Huber: Robust Statistics
+#        } else {
+            # Observed information-type of variance-covariance matrix
+#            estSE <- sqrt(resVar * diag(solve(object[["fit"]][["hessian"]])))
+#        }
+         # Observed "information"-type of variance-covariance matrix
+         estSE <- sqrt(resVar * diag(solve(object[["fit"]][["hessian"]])))
+
+#          resVec <- (object)[["predres"]][, "Residuals"]
+#          psiprime <- psifct(resVec/sqrt(resVar), deriv = 1)
+#          w <- psifct(resVec/sqrt(resVar))
+#          K <- mean(w^2) / (mean(psiprime)^2) 
+#          estSE <- sqrt(resVar * K * diag(solve(object[["fit"]][["hessian"]])))
+# 
     }
 
 

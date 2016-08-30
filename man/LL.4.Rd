@@ -55,7 +55,6 @@
 spinach.m1 <- drm(SLOPE~DOSE, CURVE, data = spinach, fct = LL.4())
 spinach.m1
 
-rm(model1)
 
 }
 

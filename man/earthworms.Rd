@@ -7,9 +7,8 @@
 \title{Earthworm toxicity test}
 
 \description{
-  The dataset is obtained from a toxicity test using earthworms, and it contains the number of earthworms 
-  remaining in a container that is contaminated with a toxic substance (not disclosed) and not
-  migrating to the neighbouring uncontaminated container).
+  The dataset was obtained from a toxicity test using earthworms, and it contains the number of earthworms 
+  remaining in a container that was contaminated with a toxic substance (not disclosed) at various doses; so the number of earthworms not migrating to the neighbouring uncontaminated container.
 }
 
 \usage{data(earthworms)}

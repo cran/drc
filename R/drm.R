@@ -1,7 +1,7 @@
 "drm" <- function(
 formula, curveid, pmodels, weights, data = NULL, subset, fct, 
 type = c("continuous", "binomial", "Poisson", "quantal", "event"), bcVal = NULL, bcAdd = 0, 
-start, na.action = na.fail, robust = "mean", logDose = NULL, 
+start, na.action = na.omit, robust = "mean", logDose = NULL, 
 control = drmc(), lowerl = NULL, upperl = NULL, separate = FALSE,
 pshifts = NULL)
 {

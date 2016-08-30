@@ -42,6 +42,11 @@ function(x, ...)
             paste(format(x[1]), paste("(", as.character(x[2]), " degrees of freedom)\n", sep = ""))
         }
         cat(paste(rownames(rseMat), apply(rseMat, 1, printFct)), sep = "")
+        
+        if (df.residual(x) < 1) 
+        {
+          cat("\nWarning: Too complex model fitted as df<1\n")
+        }
     }
 
     if (!is.null(object$"varComp"))
