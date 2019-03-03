@@ -198,10 +198,10 @@ level = 0.95, na.action = na.pass, od = FALSE, vcov. = vcov, ...)
 
             if (!se.fit)
             {
-                retMat[rowIndex, 3:4] <- retMat[rowIndex, 1] + (tquan * sqrt(varVal + sumObjRV)) * c(-1, 1)
+                retMat[rowIndex, 3:4] <- retMat[rowIndex, 1] + as.vector(tquan * sqrt(varVal + sumObjRV)) * c(-1, 1)
 #                retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal + sumObjRV)
-#                retMat[rowIndex, 4] <- retMat[rowIndex, 1] + tquan * sqrt(varVal + sumObjRV)   
-            }    
+#                retMat[rowIndex, 4] <- retMat[rowIndex, 1] + tquan * sqrt(varVal + sumObjRV)
+            }
 #            if (identical(interval, "confidence"))
 #            {
 #                retMat[rowIndex, 3] <- retMat[rowIndex, 1] - tquan * sqrt(varVal)
